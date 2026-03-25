@@ -1,0 +1,717 @@
+'use client'
+import React from 'react'
+import { useState, Suspense, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Card from '@mui/material/Card'
+import Chip from '@mui/material/Chip'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import InputLabel from '@mui/material/InputLabel'
+import InputAdornment from '@mui/material/InputAdornment'
+import CardContent from '@mui/material/CardContent'
+import AddIcon from '@mui/icons-material/Add'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import EmergencyIcon from '@mui/icons-material/Emergency'
+import ReplayIcon from '@mui/icons-material/Replay'
+import TimerOffIcon from '@mui/icons-material/TimerOff'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import TablePagination from '@mui/material/TablePagination'
+import Skeleton from '@mui/material/Skeleton'
+import SearchIcon from '@mui/icons-material/Search'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
+import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido } from '@/data/pedidos'
+
+// ── SLA Chip ──────────────────────────────────────────────────────────
+function SLAChip({ status, texto }: { status: SLAStatus; texto: string }) {
+  const colorMap: Record<SLAStatus, { bg: string; color: string }> = {
+    ok: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
+    warning: { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+    violated: { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
+  }
+  const { bg, color } = colorMap[status]
+  return (
+    <Chip
+      icon={<AccessTimeIcon style={{ fontSize: 12, color }} />}
+      label={texto}
+      size="small"
+      sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 700, height: 22 }}
+    />
+  )
+}
+
+// ── IA Sugestão Chip ──────────────────────────────────────────────────
+function IASugestaoChip({ sugestao }: { sugestao: IASugestao }) {
+  const colorMap: Record<IASugestao, { bg: string; color: string }> = {
+    Aprovar: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
+    Negar: { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
+    'Junta Médica': { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+  }
+  const { bg, color } = colorMap[sugestao]
+  return (
+    <Chip
+      label={sugestao}
+      size="small"
+      sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 700, height: 22 }}
+    />
+  )
+}
+
+// ── Categoria Chip ────────────────────────────────────────────────────
+const catColorMap: Record<string, { bg: string; color: string }> = {
+  'Internação': { bg: 'rgba(144,43,41,0.1)', color: '#902B29' },
+  'Urgência/Emergência': { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
+  'Oncologia': { bg: 'rgba(124,58,237,0.1)', color: '#7c3aed' },
+  'Terapias Especiais': { bg: 'rgba(37,99,235,0.1)', color: '#2563eb' },
+  'OPME': { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+  'Exames Alta Complexidade': { bg: 'rgba(8,145,178,0.1)', color: '#0891b2' },
+  'Cirurgias Eletivas': { bg: 'rgba(5,150,105,0.1)', color: '#059669' },
+  'Home Care': { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
+  'SADT': { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
+}
+
+function CategoriaChip({ categoria }: { categoria: string }) {
+  const { bg, color } = catColorMap[categoria] || { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' }
+  return (
+    <Chip label={categoria} size="small" sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 600, height: 22 }} />
+  )
+}
+
+// ── Tipo Guia Chip ────────────────────────────────────────────────────
+function TipoGuiaChip({ tipo }: { tipo: string }) {
+  const map: Record<string, { bg: string; color: string }> = {
+    Eleitiva: { bg: 'rgba(37,99,235,0.1)', color: '#2563eb' },
+    Urgente: { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+    'Emergência': { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
+  }
+  const { bg, color } = map[tipo] || { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' }
+  return (
+    <Chip label={tipo} size="small" sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 700, height: 20 }} />
+  )
+}
+
+// ── Origem Chip ───────────────────────────────────────────────────────
+const origemMap: Record<OrigemPedido, { label: string; bg: string; color: string; icon: React.ReactNode }> = {
+  app:       { label: 'App Athena', bg: 'rgba(37,99,235,0.08)',   color: '#2563eb', icon: <PhoneAndroidIcon style={{ fontSize: 11 }} /> },
+  whatsapp:  { label: 'WhatsApp',   bg: 'rgba(22,163,74,0.08)',   color: '#16a34a', icon: <WhatsAppIcon style={{ fontSize: 11 }} /> },
+  email:     { label: 'E-mail',     bg: 'rgba(8,145,178,0.08)',   color: '#0891b2', icon: <EmailOutlinedIcon style={{ fontSize: 11 }} /> },
+  prestador: { label: 'Prestador',  bg: 'rgba(144,43,41,0.08)',   color: '#902B29', icon: <LocalHospitalOutlinedIcon style={{ fontSize: 11 }} /> },
+}
+function OrigemChip({ origem }: { origem: OrigemPedido }) {
+  const { label, bg, color, icon } = origemMap[origem]
+  return (
+    <Chip
+      icon={<span style={{ display: 'flex', alignItems: 'center', marginLeft: 6, color }}>{icon}</span>}
+      label={label}
+      size="small"
+      sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 600, height: 22, '& .MuiChip-icon': { color } }}
+    />
+  )
+}
+
+// ── Priority Dot ──────────────────────────────────────────────────────
+function PrioDot({ prio }: { prio: 'alta' | 'media' | 'baixa' }) {
+  const color = prio === 'alta' ? '#d4183d' : prio === 'media' ? '#f59e0b' : '#16a34a'
+  return (
+    <Box
+      sx={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: color, mx: 'auto' }}
+      title={prio === 'alta' ? 'Alta prioridade' : prio === 'media' ? 'Média prioridade' : 'Baixa prioridade'}
+    />
+  )
+}
+
+// ── Metric Card ───────────────────────────────────────────────────────
+function MetricCard({
+  value,
+  label,
+  sublabel,
+  linkLabel,
+  onLinkClick,
+  valueColor,
+  icon,
+  iconBg,
+}: {
+  value: number | string
+  label: string
+  sublabel?: string
+  linkLabel: string
+  onLinkClick: () => void
+  valueColor?: string
+  icon: React.ReactNode
+  iconBg: string
+}) {
+  return (
+    <Card
+      onClick={onLinkClick}
+      sx={{
+        flex: 1,
+        cursor: 'pointer',
+        transition: 'box-shadow 150ms ease, transform 150ms ease',
+        '&:hover': { boxShadow: '0 4px 16px rgba(0,0,0,0.12)', transform: 'translateY(-1px)' },
+      }}
+    >
+      <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+        {/* Top row: label left — icon right */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1.5 }}>
+          <Box>
+            <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.3 }}>
+              {label}
+            </Typography>
+            {sublabel && (
+              <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', opacity: 0.75, lineHeight: 1.2, display: 'block', mt: 0.25 }}>
+                {sublabel}
+              </Typography>
+            )}
+          </Box>
+          <Box sx={{ width: 36, height: 36, borderRadius: '10px', backgroundColor: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            {icon}
+          </Box>
+        </Box>
+        {/* Big number */}
+        <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1, color: valueColor || 'text.primary', fontSize: 26, mb: 0.75 }}>
+          {value}
+        </Typography>
+        {/* Link */}
+        <Typography
+          variant="caption"
+          sx={{ color: 'primary.main', fontWeight: 600, fontSize: 12, '&:hover': { textDecoration: 'underline' } }}
+        >
+          {linkLabel} →
+        </Typography>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ── Main inner component ──────────────────────────────────────────────
+function FilaInner() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const initialCategoria = searchParams.get('categoria') || 'Todas'
+
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
+  const [categoriaFilter, setCategoriaFilter] = useState(initialCategoria)
+  const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas')
+  const [prestadorFilter, setPrestadorFilter] = useState('Todos')
+  const [iaFilter, setIaFilter] = useState('Todas')
+  const [tabValue, setTabValue] = useState(0)
+  const [page, setPage] = useState(0)
+  const rowsPerPage = 10
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 800)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Update filters when URL params change
+  useEffect(() => {
+    setCategoriaFilter(searchParams.get('categoria') || 'Todas')
+    setSlaFilter(searchParams.get('sla') || 'Todas')
+  }, [searchParams])
+
+  const hasFilters =
+    search !== '' ||
+    categoriaFilter !== 'Todas' ||
+    slaFilter !== 'Todas' ||
+    prestadorFilter !== 'Todos' ||
+    iaFilter !== 'Todas'
+
+  const isParado12h = (p: (typeof pedidos)[number]) => {
+    const t = parseInt(p.tempoFila)
+    return !isNaN(t) && t > 12
+  }
+
+  const filteredByTab = pedidos.filter((p) => {
+    if (tabValue === 1) return p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência'
+    if (tabValue === 2) return p.status === 'Devolutiva'
+    if (tabValue === 3) return isParado12h(p)
+    return true
+  })
+
+  const filtered = filteredByTab.filter((p) => {
+    const matchSearch =
+      search === '' ||
+      p.id.toLowerCase().includes(search.toLowerCase()) ||
+      p.beneficiario.nome.toLowerCase().includes(search.toLowerCase()) ||
+      p.beneficiario.carteirinha.includes(search) ||
+      (p.procedimentos[0]?.descricao || '').toLowerCase().includes(search.toLowerCase())
+    const matchCat = categoriaFilter === 'Todas' || p.categoria === categoriaFilter
+    const matchSla =
+      slaFilter === 'Todas' ||
+      (slaFilter === 'No prazo' && p.slaStatus === 'ok') ||
+      (slaFilter === 'Atenção' && p.slaStatus === 'warning') ||
+      (slaFilter === 'Violado' && p.slaStatus === 'violated')
+    const matchPrest =
+      prestadorFilter === 'Todos' || p.prestador.hospital === prestadorFilter
+    const matchIA = iaFilter === 'Todas' || p.iaSugestao === iaFilter
+    return matchSearch && matchCat && matchSla && matchPrest && matchIA
+  })
+
+  const pagedItems = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
+  const urgEmergCount = pedidos.filter((p) => p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência').length
+  const devolutivasCount = pedidos.filter((p) => p.status === 'Devolutiva').length
+const parados12h = pedidos.filter(isParado12h).length
+
+  return (
+    <Box sx={{ p: 3 }}>
+      {/* Header */}
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+        <Typography variant="h4" fontWeight={700}>
+          {categoriaFilter === 'Todas' ? 'Fila Operacional' : categoriaFilter}
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => router.push('/nova-solicitacao')}
+          sx={{ mt: 0.5, minHeight: 44 }}
+          aria-label="Nova solicitação"
+        >
+          Nova Solicitação
+        </Button>
+      </Box>
+
+      {/* Metric Cards Row — apenas na fila geral */}
+      {categoriaFilter === 'Todas' && <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <Box key={i} sx={{ flex: 1, minWidth: 140 }}>
+              <Skeleton variant="rectangular" height={88} sx={{ borderRadius: 2 }} />
+            </Box>
+          ))
+        ) : (
+          <>
+            <MetricCard
+              value={pedidos.length}
+              label="Na Fila de Análise"
+              sublabel="Total de pedidos ativos"
+              linkLabel="Ver todos os pedidos"
+              onLinkClick={() => setTabValue(0)}
+              icon={<FormatListBulletedIcon sx={{ fontSize: 18, color: '#902B29' }} />}
+              iconBg="rgba(144,43,41,0.1)"
+            />
+            <MetricCard
+              value={urgEmergCount}
+              label="Urgência / Emergência"
+              sublabel="Requerem atenção imediata"
+              linkLabel="Ver pedidos em U/E"
+              onLinkClick={() => setTabValue(1)}
+              valueColor="#d4183d"
+              icon={<EmergencyIcon sx={{ fontSize: 18, color: '#d4183d' }} />}
+              iconBg="rgba(212,24,61,0.1)"
+            />
+            <MetricCard
+              value={devolutivasCount}
+              label="Devolutivas"
+              sublabel="Aguardando complemento"
+              linkLabel="Ver as devolutivas"
+              onLinkClick={() => setTabValue(2)}
+              valueColor="#b45309"
+              icon={<ReplayIcon sx={{ fontSize: 18, color: '#b45309' }} />}
+              iconBg="rgba(245,158,11,0.12)"
+            />
+            <MetricCard
+              value={parados12h}
+              label="Parados há mais de 12h"
+              sublabel="SLA em risco"
+              linkLabel="Ver pedidos"
+              onLinkClick={() => setTabValue(3)}
+              valueColor="#ea580c"
+              icon={<TimerOffIcon sx={{ fontSize: 18, color: '#ea580c' }} />}
+              iconBg="rgba(234,88,12,0.1)"
+            />
+          </>
+        )}
+      </Box>}
+
+      {/* Table Card */}
+      <Card>
+        {/* Tabs */}
+        <Box sx={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+          <Tabs
+            value={tabValue}
+            onChange={(_e, v) => { setTabValue(v); setPage(0) }}
+            aria-label="Abas da fila"
+            sx={{
+              px: 2,
+              '& .MuiTab-root': { minHeight: 48, fontSize: 13, fontWeight: 600 },
+              '& .Mui-selected': { color: 'primary.main' },
+              '& .MuiTabs-indicator': { backgroundColor: 'primary.main' },
+            }}
+          >
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  Fila Geral
+                  <Chip label={pedidos.length} size="small" sx={{ height: 18, fontSize: 12, fontWeight: 700 }} />
+                </Box>
+              }
+              aria-label="Fila Geral"
+            />
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  Urgência/Emergência
+                  <Chip
+                    label={urgEmergCount}
+                    size="small"
+                    sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d' }}
+                  />
+                </Box>
+              }
+              aria-label="Urgência/Emergência"
+            />
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  Devolutivas
+                  <Chip
+                    label={devolutivasCount}
+                    size="small"
+                    sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309' }}
+                  />
+                </Box>
+              }
+              aria-label="Devolutivas"
+            />
+            <Tab
+              label={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  SLA em Risco
+                  <Chip
+                    label={parados12h}
+                    size="small"
+                    sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(234,88,12,0.1)', color: '#ea580c' }}
+                  />
+                </Box>
+              }
+              aria-label="SLA em Risco"
+            />
+          </Tabs>
+        </Box>
+
+        {/* Filter bar */}
+        <Box
+          sx={{
+            px: 2,
+            py: 1.75,
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto',
+            gap: 1.5,
+            alignItems: 'center',
+            borderBottom: '1px solid rgba(0,0,0,0.06)',
+          }}
+        >
+          <TextField
+            placeholder="Buscar (ID, nome, carteirinha...)"
+            size="small"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(0) }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+              },
+              htmlInput: { 'aria-label': 'Buscar na fila' },
+            }}
+          />
+          <FormControl size="small" fullWidth>
+            <InputLabel>Categoria</InputLabel>
+            <Select
+              value={categoriaFilter}
+              label="Categoria"
+              onChange={(e) => { setCategoriaFilter(e.target.value); setPage(0) }}
+            >
+              <MenuItem value="Todas">Todas</MenuItem>
+              <MenuItem value="Internação">Internação</MenuItem>
+              <MenuItem value="Urgência/Emergência">Urgência/Emergência</MenuItem>
+              <MenuItem value="Oncologia">Oncologia</MenuItem>
+              <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
+              <MenuItem value="OPME">OPME</MenuItem>
+              <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
+              <MenuItem value="Cirurgias Eletivas">Cirurgias Eletivas</MenuItem>
+              <MenuItem value="Home Care">Home Care</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Situação SLA</InputLabel>
+            <Select
+              value={slaFilter}
+              label="Situação SLA"
+              onChange={(e) => { setSlaFilter(e.target.value); setPage(0) }}
+            >
+              <MenuItem value="Todas">Todas</MenuItem>
+              <MenuItem value="No prazo">No prazo</MenuItem>
+              <MenuItem value="Atenção">Atenção</MenuItem>
+              <MenuItem value="Violado">Violado</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Prestador</InputLabel>
+            <Select
+              value={prestadorFilter}
+              label="Prestador"
+              onChange={(e) => { setPrestadorFilter(e.target.value); setPage(0) }}
+            >
+              <MenuItem value="Todos">Todos</MenuItem>
+              <MenuItem value="Hospital São Lucas">Hospital São Lucas</MenuItem>
+              <MenuItem value="Clínica Integrar TEA">Clínica Integrar TEA</MenuItem>
+              <MenuItem value="Hospital Sírio-Libanês SP">Hospital Sírio-Libanês SP</MenuItem>
+              <MenuItem value="Lab Diagnostium">Lab Diagnostium</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" fullWidth>
+            <InputLabel>Sugestão IA</InputLabel>
+            <Select
+              value={iaFilter}
+              label="Sugestão IA"
+              onChange={(e) => { setIaFilter(e.target.value); setPage(0) }}
+            >
+              <MenuItem value="Todas">Todas</MenuItem>
+              <MenuItem value="Aprovar">Aprovar</MenuItem>
+              <MenuItem value="Negar">Negar</MenuItem>
+              <MenuItem value="Junta Médica">Junta Médica</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="text"
+            size="small"
+            disabled={!hasFilters}
+            onClick={() => {
+              setSearch('')
+              setCategoriaFilter('Todas')
+              setSlaFilter('Todas')
+              setPrestadorFilter('Todos')
+              setIaFilter('Todas')
+              setPage(0)
+            }}
+            sx={{ minHeight: 36, fontSize: 12, color: 'text.secondary' }}
+          >
+            Limpar
+          </Button>
+        </Box>
+
+        {/* Table */}
+        {loading ? (
+          <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} variant="rectangular" height={48} sx={{ borderRadius: 1 }} />
+            ))}
+          </Box>
+        ) : (
+          <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0 }}>
+            <Table aria-label="Tabela da fila operacional" size="small">
+              <TableHead>
+                <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' } }}>
+                  <TableCell align="center" sx={{ width: 40 }}>Prio.</TableCell>
+                  <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
+                  <TableCell sx={{ minWidth: 80 }}>Tipo</TableCell>
+                  <TableCell sx={{ minWidth: 120 }}>Origem</TableCell>
+                  <TableCell sx={{ minWidth: 160 }}>Beneficiário</TableCell>
+                  <TableCell sx={{ minWidth: 160 }}>Prestador</TableCell>
+                  {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 130 }}>Categoria</TableCell>}
+                  <TableCell sx={{ minWidth: 180, maxWidth: 180 }}>Procedimento</TableCell>
+                  <TableCell sx={{ minWidth: 100 }}>Protocolo</TableCell>
+                  <TableCell sx={{ minWidth: 100 }}>Tempo em Fila</TableCell>
+                  <TableCell sx={{ minWidth: 110 }}>SLA</TableCell>
+                  <TableCell sx={{ minWidth: 130 }}>IA</TableCell>
+                  <TableCell sx={{ minWidth: 90 }}>Ações</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {pagedItems.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={12} align="center" sx={{ py: 6 }}>
+                      <Typography color="text.secondary" variant="body2">
+                        Nenhum pedido encontrado com os filtros aplicados.
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  pagedItems.map((pedido) => (
+                    <TableRow
+                      key={pedido.id}
+                      onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                      aria-label={`Pedido ${pedido.id}`}
+                      sx={{
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s ease',
+                        '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
+                        ...(pedido.status === 'Devolutiva' && {
+                          borderLeft: '3px solid #f59e0b',
+                        }),
+                      }}
+                    >
+                      <TableCell align="center">
+                        <PrioDot prio={pedido.prioridade} />
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body2"
+                          fontWeight={700}
+                          sx={{ color: 'primary.main', fontSize: 12 }}
+                        >
+                          {pedido.id}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <TipoGuiaChip tipo={pedido.tipoGuia} />
+                      </TableCell>
+                      <TableCell>
+                        <OrigemChip origem={pedido.origem} />
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
+                          {pedido.beneficiario.nome}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                          {pedido.beneficiario.plano}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontSize: 12 }}>
+                          {pedido.prestador.hospital}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                          {pedido.prestador.medico}
+                        </Typography>
+                      </TableCell>
+                      {categoriaFilter === 'Todas' && <TableCell>
+                        <CategoriaChip categoria={pedido.categoria} />
+                      </TableCell>}
+                      <TableCell sx={{ maxWidth: 180 }}>
+                        <Typography
+                          variant="body2"
+                          fontWeight={700}
+                          sx={{ fontSize: 12, fontFamily: 'monospace' }}
+                        >
+                          {pedido.procedimentos[0]?.tuss || '—'}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{
+                            fontSize: 12,
+                            display: 'block',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {pedido.procedimentos[0]?.descricao || '—'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                          {pedido.dataProtocolo.split(' ')[0]}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                          {pedido.dataProtocolo.split(' ')[1]}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <AccessTimeIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                            {pedido.tempoFila}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <SLAChip status={pedido.slaStatus} texto={pedido.slaTexto} />
+                      </TableCell>
+                      <TableCell>
+                        <IASugestaoChip sugestao={pedido.iaSugestao} />
+                      </TableCell>
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                          aria-label={`Analisar pedido ${pedido.id}`}
+                          sx={{ minHeight: 32, fontSize: 12, px: 1.5 }}
+                        >
+                          Analisar
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+
+        {/* Pagination */}
+        <Box
+          sx={{
+            px: 2,
+            borderTop: '1px solid rgba(0,0,0,0.07)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+          }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, py: 1.5 }}>
+            Exibindo {Math.min(page * rowsPerPage + 1, filtered.length)}–{Math.min((page + 1) * rowsPerPage, filtered.length)} de {filtered.length} solicitações
+          </Typography>
+          <TablePagination
+            component="div"
+            count={filtered.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(_e, newPage) => setPage(newPage)}
+            rowsPerPageOptions={[rowsPerPage]}
+            labelDisplayedRows={() => ''}
+            sx={{
+              '& .MuiTablePagination-toolbar': { minHeight: 40 },
+              '& .MuiTablePagination-spacer': { display: 'none' },
+              '& .MuiTablePagination-displayedRows': { display: 'none' },
+            }}
+          />
+        </Box>
+      </Card>
+    </Box>
+  )
+}
+
+
+export default function FilaPage() {
+  return (
+    <Suspense fallback={
+      <Box sx={{ p: 3 }}>
+        <Skeleton variant="text" width={300} height={40} sx={{ mb: 3 }} />
+        <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} variant="rectangular" height={88} sx={{ flex: 1, borderRadius: 2 }} />
+          ))}
+        </Box>
+        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 2 }} />
+      </Box>
+    }>
+      <FilaInner />
+    </Suspense>
+  )
+}
