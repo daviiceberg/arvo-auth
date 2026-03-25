@@ -57,7 +57,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import ZoomInIcon from '@mui/icons-material/ZoomIn'
 import ZoomOutIcon from '@mui/icons-material/ZoomOut'
 import PrintIcon from '@mui/icons-material/Print'
-import { historicoEntries, type DecisaoAcao, type HistoricoEntry } from '@/data/pedidos'
+import EditIcon from '@mui/icons-material/Edit'
+import { historicoEntries, type DecisaoAcao, type HistoricoEntry, type Ajuste } from '@/data/pedidos'
 
 // ── Sorted list (same default order as list page) ─────────────────────
 const sortedEntries = [...historicoEntries].sort((a, b) => {
@@ -1029,6 +1030,43 @@ export default function HistoricoDetalhePage() {
                         </Typography>
                       )}
                     </Box>
+
+                    {/* Ajustes aplicados */}
+                    {entry.ajustes && entry.ajustes.length > 0 && (
+                      <Box sx={{ backgroundColor: 'rgba(255,251,235,0.8)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 2, p: 2, mt: 1.5 }}>
+                        <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: '#b45309', textTransform: 'uppercase', letterSpacing: 0.5, display: 'block', mb: 1.25 }}>
+                          Ajustes Aplicados
+                        </Typography>
+                        <Divider sx={{ mb: 1.25, borderColor: 'rgba(245,158,11,0.2)' }} />
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                          {(entry.ajustes as Ajuste[]).map((aj) => {
+                            const campoLabel = aj.campo === 'quantidade' ? 'Quantidade autorizada'
+                              : aj.campo === 'prestador' ? 'Prestador executante'
+                              : 'Código do procedimento'
+                            return (
+                              <Box key={aj.id}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+                                  <EditIcon sx={{ fontSize: 13, color: '#b45309', flexShrink: 0 }} />
+                                  <Typography sx={{ fontSize: 12, fontWeight: 700 }}>{campoLabel}</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.25, flexWrap: 'wrap' }}>
+                                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Solicitado:</Typography>
+                                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.valorAnterior}</Typography>
+                                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>→ Autorizado:</Typography>
+                                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>{aj.valorNovo}</Typography>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, display: 'block', mb: 0.25 }}>
+                                  Motivo: {aj.motivo}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
+                                  Por: {aj.operador} · {new Date(aj.timestamp).toLocaleDateString('pt-BR')} {new Date(aj.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                </Typography>
+                              </Box>
+                            )
+                          })}
+                        </Box>
+                      </Box>
+                    )}
                   </Box>
                 )}
 

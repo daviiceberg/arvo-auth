@@ -60,7 +60,9 @@ import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import { pedidos, Pedido, IASugestao, OrigemPedido } from '@/data/pedidos'
+import Drawer from '@mui/material/Drawer'
+import EditIcon from '@mui/icons-material/Edit'
+import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste } from '@/data/pedidos'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 function statusColor(status: string): { bg: string; color: string } {
@@ -834,10 +836,333 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
   )
 }
 
+// ── Mock user profile (in a real app, from auth context) ──────────────
+const USER_PERFIL: 'Autorizador' | 'Gestor' | 'Auditor' = 'Gestor'
+
+const MOTIVOS_AJUSTE = [
+  'Quantidade acima do protocolo clínico da operadora',
+  'Quantidade acima da diretriz ANS (DUT)',
+  'Prestador não credenciado para este procedimento',
+  'Prestador solicitado indisponível — substituição por credenciado',
+  'Código digitado incorretamente pelo operador',
+  'Código incompatível com o CID informado',
+  'Determinação de junta médica',
+  'Outro (descrever na fundamentação)',
+]
+
+function formatAjusteTimestamp(ts: string): string {
+  const d = new Date(ts)
+  return `${d.toLocaleDateString('pt-BR')} · ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+}
+
+// ── Ajuste Drawer ──────────────────────────────────────────────────────
+interface AjusteDrawerProps {
+  open: boolean
+  pedidoId: string
+  pedidoStatus: string
+  proc: { codigo: string; descricao: string; qty: number; prestador: string } | null
+  onClose: () => void
+  onConfirm: (ajuste: Omit<Ajuste, 'id'>) => void
+}
+
+function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm }: AjusteDrawerProps) {
+  const [campo, setCampo] = useState<'quantidade' | 'prestador' | 'codigo' | ''>('')
+  const [novaQty, setNovaQty] = useState('')
+  const [novoPrestador, setNovoPrestador] = useState('')
+  const [novoCNES, setNovoCNES] = useState('')
+  const [novoCodigo, setNovoCodigo] = useState('')
+  const [novaDesc, setNovaDesc] = useState('')
+  const [motivo, setMotivo] = useState('')
+  const [fundamentacao, setFundamentacao] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const camposDisponiveis =
+    USER_PERFIL === 'Gestor'
+      ? [{ value: 'quantidade', label: 'Quantidade autorizada' }, { value: 'prestador', label: 'Prestador executante' }, { value: 'codigo', label: 'Código do procedimento' }]
+      : [{ value: 'quantidade', label: 'Quantidade autorizada' }]
+
+  const qtyNum = parseInt(novaQty, 10)
+  const qtyStatus =
+    !novaQty || isNaN(qtyNum) ? null
+    : qtyNum < (proc?.qty ?? 0) ? 'below'
+    : qtyNum === (proc?.qty ?? 0) ? 'equal'
+    : 'above'
+
+  // Reset when proc changes or drawer closes
+  useEffect(() => {
+    if (!open) return
+    setCampo('')
+    setNovaQty('')
+    setNovoPrestador('')
+    setNovoCNES('')
+    setNovoCodigo('')
+    setNovaDesc('')
+    setMotivo('')
+    setFundamentacao('')
+    setErrors({})
+  }, [open, proc?.codigo])
+
+  // Escape key
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open, onClose])
+
+  const validate = () => {
+    const errs: Record<string, string> = {}
+    if (!campo) errs.campo = 'Selecione o campo a ajustar'
+    if (campo === 'quantidade') {
+      if (!novaQty || isNaN(qtyNum) || qtyNum < 1) errs.novaQty = 'Informe uma quantidade válida (mín. 1)'
+      if (qtyStatus === 'above') errs.novaQty = 'Não é possível autorizar mais que o solicitado'
+    }
+    if (campo === 'prestador' && !novoPrestador.trim()) errs.novoPrestador = 'Informe o novo prestador'
+    if (campo === 'codigo') {
+      if (!novoCodigo.trim()) errs.novoCodigo = 'Informe o novo código'
+      if (!novaDesc.trim()) errs.novaDesc = 'Informe a nova descrição'
+    }
+    if (!motivo) errs.motivo = 'Selecione o motivo'
+    if (motivo === 'Outro (descrever na fundamentação)' && !fundamentacao.trim()) errs.fundamentacao = 'Fundamentação obrigatória quando motivo é "Outro"'
+    return errs
+  }
+
+  const handleConfirm = () => {
+    const errs = validate()
+    if (Object.keys(errs).length > 0) { setErrors(errs); return }
+    if (!proc || !campo) return
+
+    let valorAnterior = ''
+    let valorNovo = ''
+    if (campo === 'quantidade') { valorAnterior = String(proc.qty); valorNovo = novaQty }
+    if (campo === 'prestador') { valorAnterior = proc.prestador; valorNovo = novoCNES ? `${novoPrestador} (CNES: ${novoCNES})` : novoPrestador }
+    if (campo === 'codigo') { valorAnterior = proc.codigo; valorNovo = `${novoCodigo} — ${novaDesc}` }
+
+    onConfirm({
+      procedimentoCodigo: proc.codigo,
+      procedimentoDescricao: proc.descricao,
+      campo: campo as 'quantidade' | 'prestador' | 'codigo',
+      valorAnterior,
+      valorNovo,
+      motivo,
+      fundamentacao: fundamentacao.trim() || undefined,
+      operador: 'Ana Paula Santos',
+      perfil: USER_PERFIL,
+      timestamp: new Date().toISOString(),
+    })
+  }
+
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedidoStatus)
+
+  return (
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={() => {/* overlay click does NOT close — only X or Cancelar */}}
+      PaperProps={{
+        role: 'dialog',
+        'aria-label': 'Ajustar procedimento',
+        sx: { width: 480, p: 0, display: 'flex', flexDirection: 'column' },
+      }}
+      ModalProps={{ keepMounted: false }}
+    >
+      {/* Header */}
+      <Box sx={{ px: 3, pt: 2.5, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.08)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexShrink: 0 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
+            <EditIcon sx={{ fontSize: 16, color: '#b45309' }} />
+            <Typography fontWeight={700} sx={{ fontSize: 15 }}>Ajustar Procedimento</Typography>
+          </Box>
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+            {pedidoId} · {proc?.codigo}
+          </Typography>
+        </Box>
+        <IconButton size="small" onClick={onClose} sx={{ mt: -0.5 }}>
+          <CloseIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      </Box>
+
+      {/* Scrollable body */}
+      <Box sx={{ flex: 1, overflowY: 'auto', px: 3, py: 2.5, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        {/* Valores atuais */}
+        <Box sx={{ backgroundColor: '#f9fafb', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 1.5, p: 2 }}>
+          <Typography variant="caption" sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', display: 'block', mb: 1.25 }}>
+            Valores Atuais (somente leitura)
+          </Typography>
+          {[
+            { label: 'Código', value: proc?.codigo },
+            { label: 'Descrição', value: proc?.descricao },
+            { label: 'Qtd. Solicitada', value: proc ? `${proc.qty} sessões` : '' },
+            { label: 'Prestador', value: proc?.prestador },
+          ].map((f) => (
+            <Box key={f.label} sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, width: 110, flexShrink: 0 }}>{f.label}:</Typography>
+              <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600 }}>{f.value}</Typography>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Ajuste proposto */}
+        <Box>
+          <Typography variant="caption" sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', display: 'block', mb: 1.5 }}>
+            Ajuste Proposto
+          </Typography>
+
+          <FormControl fullWidth size="small" sx={{ mb: errors.campo ? 0.5 : 2 }} error={!!errors.campo}>
+            <InputLabel>Campo a ajustar *</InputLabel>
+            <Select value={campo} label="Campo a ajustar *" onChange={e => { setCampo(e.target.value as typeof campo); setErrors(v => ({ ...v, campo: '' })) }} autoFocus>
+              {camposDisponiveis.map(c => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
+            </Select>
+            {errors.campo && <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.campo}</Typography>}
+          </FormControl>
+
+          {/* Quantidade */}
+          {campo === 'quantidade' && (
+            <Box sx={{ mb: 2 }}>
+              <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
+                <TextField size="small" label="Qtd. solicitada" value={proc?.qty ?? ''} disabled sx={{ flex: 1 }} />
+                <TextField
+                  size="small"
+                  label="Qtd. autorizada *"
+                  value={novaQty}
+                  onChange={e => { setNovaQty(e.target.value.replace(/\D/g, '')); setErrors(v => ({ ...v, novaQty: '' })) }}
+                  inputProps={{ min: 1, inputMode: 'numeric' }}
+                  placeholder="Ex: 20"
+                  error={!!errors.novaQty}
+                  sx={{ flex: 1 }}
+                />
+              </Box>
+              {errors.novaQty && <Typography sx={{ fontSize: 11, color: 'error.main', mb: 0.75 }}>{errors.novaQty}</Typography>}
+              {qtyStatus === 'below' && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                  <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309' }} />
+                  <Typography sx={{ fontSize: 12, color: '#b45309' }}>Autorizando menos que o solicitado ({proc?.qty} → {novaQty})</Typography>
+                </Box>
+              )}
+              {qtyStatus === 'equal' && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                  <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />
+                  <Typography sx={{ fontSize: 12, color: '#16a34a' }}>Mantendo a quantidade solicitada</Typography>
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {/* Prestador */}
+          {campo === 'prestador' && (
+            <Box sx={{ mb: 2 }}>
+              <TextField size="small" label="Prestador atual" value={proc?.prestador ?? ''} disabled fullWidth sx={{ mb: 1.5 }} />
+              <TextField
+                size="small"
+                label="Novo prestador *"
+                value={novoPrestador}
+                onChange={e => { setNovoPrestador(e.target.value); setErrors(v => ({ ...v, novoPrestador: '' })) }}
+                placeholder="Nome do prestador credenciado"
+                error={!!errors.novoPrestador}
+                helperText={errors.novoPrestador}
+                fullWidth
+                sx={{ mb: 1.5 }}
+              />
+              <TextField
+                size="small"
+                label="CNES (opcional)"
+                value={novoCNES}
+                onChange={e => setNovoCNES(e.target.value.replace(/\D/g, ''))}
+                inputProps={{ inputMode: 'numeric' }}
+                fullWidth
+              />
+            </Box>
+          )}
+
+          {/* Código */}
+          {campo === 'codigo' && (
+            <Box sx={{ mb: 2 }}>
+              <TextField size="small" label="Código atual" value={proc?.codigo ?? ''} disabled fullWidth sx={{ mb: 1.5 }} />
+              <Alert severity="warning" sx={{ mb: 1.5, fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
+                Alteração de código requer respaldo de junta médica ou diretriz ANS. Certifique-se de registrar a fundamentação abaixo.
+              </Alert>
+              <TextField
+                size="small"
+                label="Novo código TISS *"
+                value={novoCodigo}
+                onChange={e => { setNovoCodigo(e.target.value); setErrors(v => ({ ...v, novoCodigo: '' })) }}
+                placeholder="Código TISS"
+                error={!!errors.novoCodigo}
+                helperText={errors.novoCodigo}
+                fullWidth
+                sx={{ mb: 1.5 }}
+              />
+              <TextField
+                size="small"
+                label="Nova descrição *"
+                value={novaDesc}
+                onChange={e => { setNovaDesc(e.target.value); setErrors(v => ({ ...v, novaDesc: '' })) }}
+                error={!!errors.novaDesc}
+                helperText={errors.novaDesc}
+                fullWidth
+              />
+            </Box>
+          )}
+
+          {/* Motivo */}
+          <FormControl fullWidth size="small" sx={{ mb: errors.motivo ? 0.5 : 2 }} error={!!errors.motivo}>
+            <InputLabel>Motivo do ajuste *</InputLabel>
+            <Select value={motivo} label="Motivo do ajuste *" onChange={e => { setMotivo(e.target.value); setErrors(v => ({ ...v, motivo: '' })) }}>
+              {MOTIVOS_AJUSTE.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
+            </Select>
+            {errors.motivo && <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.motivo}</Typography>}
+          </FormControl>
+
+          <TextField
+            label={`Fundamentação clínica/regulatória${motivo === 'Outro (descrever na fundamentação)' ? ' *' : ' (opcional)'}`}
+            multiline
+            rows={3}
+            size="small"
+            fullWidth
+            value={fundamentacao}
+            onChange={e => { setFundamentacao(e.target.value); setErrors(v => ({ ...v, fundamentacao: '' })) }}
+            error={!!errors.fundamentacao}
+            helperText={errors.fundamentacao}
+          />
+        </Box>
+
+        {/* Aviso auditoria */}
+        <Alert severity="warning" icon={<WarningAmberIcon sx={{ fontSize: 16 }} />} sx={{ fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
+          Este ajuste será registrado no histórico da guia com seu nome e data/hora.
+        </Alert>
+      </Box>
+
+      {/* Footer */}
+      <Box sx={{ px: 3, py: 2, borderTop: '1px solid rgba(0,0,0,0.08)', display: 'flex', gap: 1.5, flexShrink: 0 }}>
+        <Button variant="outlined" fullWidth onClick={onClose} sx={{ fontWeight: 600 }}>
+          Cancelar
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          onClick={handleConfirm}
+          disabled={isGuiaFinalizada}
+          sx={{ fontWeight: 600, backgroundColor: '#b45309', '&:hover': { backgroundColor: '#92400e' } }}
+        >
+          Confirmar Ajuste
+        </Button>
+      </Box>
+    </Drawer>
+  )
+}
+
 // ── Procedimentos ─────────────────────────────────────────────────────
-function ProcedimentosSection({ pedido }: { pedido: Pedido }) {
+interface ProcedimentosSectionProps {
+  pedido: Pedido
+  allAjustes: Ajuste[]
+  onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string }) => void
+}
+
+function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: ProcedimentosSectionProps) {
   const procs = pedido.procedimentos
   const p = pedido.prestador
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedido.status)
+
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
@@ -846,27 +1171,103 @@ function ProcedimentosSection({ pedido }: { pedido: Pedido }) {
         </Typography>
         <Table size="small">
           <TableBody>
-            {procs.map((proc) => (
-              <TableRow key={proc.codigo}>
-                <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120 }}>{proc.codigo}</TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 13 }}>{proc.descricao}</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontSize: 12 }}>
-                  Qtd: {proc.qty}{proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}
-                </TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontSize: 12 }}>
-                  {proc.dataInicio} → {proc.dataFim}
-                </TableCell>
-                <TableCell>
-                  {proc.cid && (
-                    <Chip
-                      label={`CID ${proc.cid}`}
-                      size="small"
-                      sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12, height: 20 }}
-                    />
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+            {procs.map((proc) => {
+              const ajuste = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'quantidade')
+              const ajustePrestador = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'prestador')
+              const ajusteCodigo = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'codigo')
+              const hasAnyAjuste = allAjustes.some(a => a.procedimentoCodigo === proc.codigo)
+
+              return (
+                <TableRow key={proc.codigo}>
+                  <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
+                    {ajusteCodigo ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.codigo}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[0]}</Typography>
+                      </Box>
+                    ) : proc.codigo}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
+                    {ajusteCodigo ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.descricao}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[1] ?? ajusteCodigo.valorNovo}</Typography>
+                      </Box>
+                    ) : proc.descricao}
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                    {ajuste ? (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+                        <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty} ·</Typography>
+                        <Typography sx={{ fontSize: 12, color: '#b45309', fontWeight: 700 }}>Aut: {ajuste.valorNovo} ✏</Typography>
+                      </Box>
+                    ) : (
+                      `Qtd: ${proc.qty}${proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}`
+                    )}
+                    {ajustePrestador && (
+                      <Box sx={{ mt: 0.5 }}>
+                        <Typography sx={{ fontSize: 11, color: 'text.disabled', textDecoration: 'line-through' }}>{ajustePrestador.valorAnterior}</Typography>
+                        <Typography sx={{ fontSize: 11, color: '#b45309', fontWeight: 600 }}>✏ {ajustePrestador.valorNovo}</Typography>
+                      </Box>
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                    {proc.dataInicio} → {proc.dataFim}
+                  </TableCell>
+                  <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+                      {proc.cid && (
+                        <Chip
+                          label={`CID ${proc.cid}`}
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12, height: 20 }}
+                        />
+                      )}
+                      {hasAnyAjuste && !isGuiaFinalizada && (
+                        <Chip
+                          icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
+                          label="Ajustado"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(180,83,9,0.1)', color: '#b45309', fontWeight: 700, fontSize: 11, height: 20 }}
+                        />
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
+                    {USER_PERFIL !== 'Auditor' && (
+                      isGuiaFinalizada ? (
+                        <Tooltip title="Guia já finalizada — edição não permitida">
+                          <span>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              disabled
+                              startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                              sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', py: 0.25, px: 1 }}
+                            >
+                              Ajustar
+                            </Button>
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital })}
+                          sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#b45309', color: '#b45309', backgroundColor: 'rgba(180,83,9,0.04)' } }}
+                        >
+                          Ajustar
+                        </Button>
+                      )
+                    )}
+                    {USER_PERFIL === 'Auditor' && (
+                      <Chip label="Somente leitura" size="small" sx={{ fontSize: 11, height: 20, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary' }} />
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
         <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
@@ -888,6 +1289,82 @@ function ProcedimentosSection({ pedido }: { pedido: Pedido }) {
             ))}
           </Box>
         </Box>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ── Ajustes Registrados Section ────────────────────────────────────────
+function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
+  const [collapsed, setCollapsed] = useState(true)
+  if (ajustes.length === 0) return null
+
+  const campoLabel: Record<Ajuste['campo'], string> = {
+    quantidade: 'Qtd. autorizada alterada',
+    prestador: 'Prestador executante alterado',
+    codigo: 'Código do procedimento alterado',
+  }
+
+  return (
+    <Card sx={{ border: '1px solid rgba(245,158,11,0.35) !important', backgroundColor: 'rgba(255,251,235,0.6)' }}>
+      <CardContent sx={{ p: 0 }}>
+        <Box
+          onClick={() => setCollapsed(v => !v)}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 1.75, cursor: 'pointer', userSelect: 'none' }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <EditIcon sx={{ fontSize: 15, color: '#b45309' }} />
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>
+              Ajustes Registrados ({ajustes.length})
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Typography sx={{ fontSize: 12, color: '#b45309', fontWeight: 600 }}>
+              {collapsed ? 'ver todos' : 'recolher'}
+            </Typography>
+            <ExpandMoreIcon sx={{ fontSize: 16, color: '#b45309', transform: collapsed ? 'none' : 'rotate(180deg)', transition: 'transform 200ms' }} />
+          </Box>
+        </Box>
+        <Collapse in={!collapsed}>
+          <Box sx={{ px: 3, pb: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            {ajustes.map((aj) => (
+              <Box
+                key={aj.id}
+                sx={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 1.5, p: 1.75 }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.75 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                    <EditIcon sx={{ fontSize: 13, color: '#b45309' }} />
+                    <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{campoLabel[aj.campo]}</Typography>
+                  </Box>
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, flexShrink: 0, ml: 1 }}>
+                    {formatAjusteTimestamp(aj.timestamp)}
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.5 }}>
+                  {aj.procedimentoCodigo} — {aj.procedimentoDescricao}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5, flexWrap: 'wrap' }}>
+                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>De:</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.valorAnterior}</Typography>
+                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>→ Para:</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>{aj.valorNovo}</Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25 }}>
+                  Motivo: {aj.motivo}
+                </Typography>
+                {aj.fundamentacao && (
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25, fontStyle: 'italic' }}>
+                    {aj.fundamentacao}
+                  </Typography>
+                )}
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
+                  Por: {aj.operador} ({aj.perfil})
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </Collapse>
       </CardContent>
     </Card>
   )
@@ -1301,6 +1778,29 @@ function AnaliseInner() {
     open: false, msg: '', severity: 'success',
   })
 
+  // Ajuste state
+  const [ajusteDrawerOpen, setAjusteDrawerOpen] = useState(false)
+  const [ajusteDrawerProc, setAjusteDrawerProc] = useState<{ codigo: string; descricao: string; qty: number; prestador: string } | null>(null)
+  const [localAjustes, setLocalAjustes] = useState<Ajuste[]>([])
+  const [showAjusteAprovarConfirm, setShowAjusteAprovarConfirm] = useState(false)
+
+  const allAjustes: Ajuste[] = [...(pedido.ajustes ?? []), ...localAjustes]
+
+  const handleAjustarClick = (proc: { codigo: string; descricao: string; qty: number; prestador: string }) => {
+    setAjusteDrawerProc(proc)
+    setAjusteDrawerOpen(true)
+  }
+
+  const handleAjusteConfirm = (ajuste: Omit<Ajuste, 'id'>) => {
+    const newAjuste: Ajuste = { id: `ADJ-${Date.now()}`, ...ajuste }
+    setLocalAjustes(prev => [...prev, newAjuste])
+    setAjusteDrawerOpen(false)
+    const campoLabel = ajuste.campo === 'quantidade' ? `Qtd. autorizada alterada de ${ajuste.valorAnterior} para ${ajuste.valorNovo}`
+      : ajuste.campo === 'prestador' ? `Prestador alterado para ${ajuste.valorNovo}`
+      : `Código alterado para ${ajuste.valorNovo}`
+    setSnackbar({ open: true, msg: `✓ Ajuste registrado — ${campoLabel}`, severity: 'warning' })
+  }
+
   // Dialog state
   const [showAprovarDialog, setShowAprovarDialog] = useState(false)
   const [showNegarDialog, setShowNegarDialog] = useState(false)
@@ -1322,7 +1822,7 @@ function AnaliseInner() {
 
   // Keyboard shortcuts
   useEffect(() => {
-    const isAnyDialogOpen = showAprovarDialog || showNegarDialog || showPendenciarDialog || showJuntaDialog || showDivergenciaDialog || showShortcutsHelp
+    const isAnyDialogOpen = showAprovarDialog || showNegarDialog || showPendenciarDialog || showJuntaDialog || showDivergenciaDialog || showShortcutsHelp || showAjusteAprovarConfirm || ajusteDrawerOpen
     const handler = (e: KeyboardEvent) => {
       const tag = (document.activeElement?.tagName || '').toLowerCase()
       if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement)?.isContentEditable) return
@@ -1336,7 +1836,7 @@ function AnaliseInner() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [showAprovarDialog, showNegarDialog, showPendenciarDialog, showJuntaDialog, showDivergenciaDialog, showShortcutsHelp, currentIndex, total])
+  }, [showAprovarDialog, showNegarDialog, showPendenciarDialog, showJuntaDialog, showDivergenciaDialog, showShortcutsHelp, showAjusteAprovarConfirm, ajusteDrawerOpen, currentIndex, total])
 
   // Lists for selects/checkboxes
   const motivosAprovacao = [
@@ -1379,6 +1879,14 @@ function AnaliseInner() {
 
   // Decision handlers
   const handleAprovarClick = () => {
+    if (allAjustes.length > 0) {
+      setShowAjusteAprovarConfirm(true)
+      return
+    }
+    doAprovar()
+  }
+
+  const doAprovar = () => {
     if (pedido.iaSugestao !== 'Aprovar') {
       setPendingAction('autorizar')
       setShowDivergenciaDialog(true)
@@ -1447,7 +1955,8 @@ function AnaliseInner() {
             <PendenciaBanner pedido={pedido} />
             <AlertasBanner pedido={pedido} />
             <BeneficiarioSection pedido={pedido} />
-            <ProcedimentosSection pedido={pedido} />
+            <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
+            <AjustesRegistradosSection ajustes={allAjustes} />
             <HistoricoConsolidadoSection pedido={pedido} />
             <ObservacoesSection pedido={pedido} />
             <DocumentosSection pedido={pedido} />
@@ -1471,7 +1980,7 @@ function AnaliseInner() {
         open={snackbar.open}
         autoHideDuration={4000}
         onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <Alert
           onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
@@ -1481,6 +1990,47 @@ function AnaliseInner() {
           {snackbar.msg}
         </Alert>
       </Snackbar>
+
+      {/* Ajuste Drawer */}
+      <AjusteDrawer
+        open={ajusteDrawerOpen}
+        pedidoId={pedido.id}
+        pedidoStatus={pedido.status}
+        proc={ajusteDrawerProc}
+        onClose={() => setAjusteDrawerOpen(false)}
+        onConfirm={handleAjusteConfirm}
+      />
+
+      {/* Confirmar aprovação com ajustes */}
+      <Dialog open={showAjusteAprovarConfirm} onClose={() => setShowAjusteAprovarConfirm(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, fontSize: 15 }}>Aprovação com ajustes registrados</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, fontSize: 13 }}>
+            Esta guia possui <strong>{allAjustes.length} ajuste{allAjustes.length > 1 ? 's' : ''} registrado{allAjustes.length > 1 ? 's' : ''}</strong>:
+          </Typography>
+          {allAjustes.map((aj) => (
+            <Box key={aj.id} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
+              <EditIcon sx={{ fontSize: 13, color: '#b45309', mt: 0.15, flexShrink: 0 }} />
+              <Typography variant="caption" sx={{ fontSize: 12 }}>
+                {aj.campo === 'quantidade' ? `Quantidade reduzida de ${aj.valorAnterior} para ${aj.valorNovo}`
+                  : aj.campo === 'prestador' ? `Prestador alterado para ${aj.valorNovo}`
+                  : `Código alterado para ${aj.valorNovo}`}
+              </Typography>
+            </Box>
+          ))}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5, fontSize: 13 }}>
+            Confirma a aprovação com esses ajustes aplicados?
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
+          <Button variant="outlined" onClick={() => setShowAjusteAprovarConfirm(false)} sx={{ fontWeight: 600 }}>
+            Revisar
+          </Button>
+          <Button variant="contained" onClick={() => { setShowAjusteAprovarConfirm(false); doAprovar() }} sx={{ fontWeight: 600 }}>
+            Confirmar aprovação com ajustes
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Aprovar Dialog */}
       <Dialog open={showAprovarDialog} onClose={() => setShowAprovarDialog(false)} maxWidth="sm" fullWidth>

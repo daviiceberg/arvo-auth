@@ -27,6 +27,20 @@ export type Procedimento = {
   nivelAud: NivelAuditoria
 }
 
+export interface Ajuste {
+  id: string
+  procedimentoCodigo: string
+  procedimentoDescricao: string
+  campo: 'quantidade' | 'prestador' | 'codigo'
+  valorAnterior: string
+  valorNovo: string
+  motivo: string
+  fundamentacao?: string
+  operador: string
+  perfil: string
+  timestamp: string
+}
+
 export type Pedido = {
   id: string
   status: StatusGuia
@@ -65,6 +79,7 @@ export type Pedido = {
   pendenciaMotivos?: string[]
   pendenciaResponsavel?: string
   pendenciaData?: string
+  ajustes?: Ajuste[]
 }
 
 export const pedidos: Pedido[] = [
@@ -268,6 +283,20 @@ export const pedidos: Pedido[] = [
       { nome: 'Laudo-TEA-Pediatra.pdf', tipo: 'Laudo Médico', data: '05/03/2026' },
       { nome: 'Relatorio-Progresso-Q1.pdf', tipo: 'Relatório Terapêutico', data: '18/03/2026' },
     ],
+    ajustes: [
+      {
+        id: 'ADJ-001',
+        procedimentoCodigo: '50000471',
+        procedimentoDescricao: 'Terapia ABA Intensiva — Programa de Intervenção Precoce',
+        campo: 'quantidade',
+        valorAnterior: '24',
+        valorNovo: '20',
+        motivo: 'Quantidade acima do protocolo clínico da operadora',
+        operador: 'Ana Paula Santos',
+        perfil: 'Autorizadora',
+        timestamp: '2026-03-24T10:52:00',
+      },
+    ],
   },
   {
     id: 'REQ-2026-04820',
@@ -338,6 +367,20 @@ export const pedidos: Pedido[] = [
       { nome: 'RNM-Coluna-Lombar-2026.pdf', tipo: 'Exame de Imagem', data: '10/02/2026' },
       { nome: 'Relatorio-Fisioterapia.pdf', tipo: 'Relatório Clínico', data: '01/03/2026' },
       { nome: 'Orcamento-OPME-XYZ.pdf', tipo: 'Orçamento OPME', data: '15/03/2026' },
+    ],
+    ajustes: [
+      {
+        id: 'ADJ-002',
+        procedimentoCodigo: '81000100',
+        procedimentoDescricao: 'Sistema de Fixação Pedicular Lombar — OPME Coluna Vertebral L4-L5',
+        campo: 'prestador',
+        valorAnterior: 'Hospital São Lucas',
+        valorNovo: 'Hospital Universitário Regional',
+        motivo: 'Prestador não credenciado para este procedimento',
+        operador: 'Ana Paula Santos',
+        perfil: 'Autorizadora',
+        timestamp: '2026-03-23T14:30:00',
+      },
     ],
   },
   {
@@ -1064,6 +1107,7 @@ export interface HistoricoEntry {
   iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[]
   documentos?: { nome: string; tipo: string; data: string }[]
   juntaMedica?: JuntaMedica
+  ajustes?: Ajuste[]
 }
 
 export const historicoEntries: HistoricoEntry[] = [
@@ -1411,6 +1455,21 @@ export const historicoEntries: HistoricoEntry[] = [
     documentos: [
       { nome: 'Laudo Médico — HIS-2026-0033.pdf', tipo: 'Laudo Médico', data: '19/03/2026 08:00' },
       { nome: 'Guia de Autorização — HIS-2026-0033.pdf', tipo: 'Guia Médica', data: '21/03/2026 10:15' },
+    ],
+    ajustes: [
+      {
+        id: 'ADJ-003',
+        procedimentoCodigo: '30722013',
+        procedimentoDescricao: 'Artroplastia total de joelho — prótese não cimentada',
+        campo: 'prestador',
+        valorAnterior: 'Hospital São Camilo',
+        valorNovo: 'Hospital Santa Cruz',
+        motivo: 'Prestador não credenciado para este procedimento',
+        fundamentacao: 'Hospital São Camilo com credenciamento suspenso para cirurgias ortopédicas desde 01/03/2026. Redirecionado para Hospital Santa Cruz, credenciado e com equipe disponível.',
+        operador: 'Ana Paula Santos',
+        perfil: 'Gestora',
+        timestamp: '2026-03-21T09:40:00',
+      },
     ],
   },
   {
