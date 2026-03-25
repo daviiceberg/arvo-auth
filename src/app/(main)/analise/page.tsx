@@ -964,7 +964,7 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm }
         'aria-label': 'Ajustar procedimento',
         sx: { width: 480, p: 0, display: 'flex', flexDirection: 'column' },
       }}
-      ModalProps={{ keepMounted: false }}
+      ModalProps={{ keepMounted: false, sx: { zIndex: 1300 } }}
     >
       {/* Header */}
       <Box sx={{ px: 3, pt: 2.5, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.08)', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexShrink: 0 }}>
