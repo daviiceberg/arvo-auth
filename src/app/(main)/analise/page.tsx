@@ -1270,7 +1270,7 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
             })}
           </TableBody>
         </Table>
-        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+        <Box sx={{ mt: 2, mx: -3, mb: -3, px: 3, py: 2, backgroundColor: 'rgba(0,0,0,0.03)', borderTop: 'none' }}>
           <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
             {[
               { label: 'Hospital / Clínica', value: p.hospital },
