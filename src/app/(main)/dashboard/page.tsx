@@ -494,7 +494,7 @@ export default function DashboardPage() {
                 label="Devolutivas"
                 sublabel="Aguard. complementação"
                 valueColor="#ea580c"
-                onClick={() => router.push('/fila')}
+                onClick={() => router.push('/fila?tab=2')}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, md: 2 }}>

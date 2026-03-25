@@ -1310,7 +1310,7 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
       <CardContent sx={{ p: 0 }}>
         <Box
           onClick={() => setCollapsed(v => !v)}
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 1.75, cursor: 'pointer', userSelect: 'none' }}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, cursor: 'pointer', userSelect: 'none' }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <EditIcon sx={{ fontSize: 15, color: '#b45309' }} />

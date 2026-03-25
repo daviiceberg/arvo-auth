@@ -252,7 +252,7 @@ function FilaInner() {
   const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas')
   const [prestadorFilter, setPrestadorFilter] = useState('Todos')
   const [iaFilter, setIaFilter] = useState('Todas')
-  const [tabValue, setTabValue] = useState(0)
+  const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10))
   const [page, setPage] = useState(0)
   const rowsPerPage = 10
 
