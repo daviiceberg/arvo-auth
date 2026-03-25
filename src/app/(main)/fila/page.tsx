@@ -38,6 +38,46 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
 import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido } from '@/data/pedidos'
 
+// ── Continuidade / 1ª Solicitação mock map ────────────────────────────
+const solicitacaoTipoMap: Record<string, 'continuidade' | 'primeira'> = {
+  'REQ-2026-04797': 'continuidade',
+  'REQ-2026-04801': 'continuidade',
+  'REQ-2026-04812': 'continuidade',
+  'REQ-2026-04820': 'primeira',
+  'REQ-2026-04831': 'continuidade',
+  'REQ-2026-04843': 'continuidade',
+  'REQ-2026-04855': 'primeira',
+  'REQ-2026-04790': 'continuidade',
+  'REQ-2026-04795': 'primeira',
+  'REQ-2026-04870': 'continuidade',
+  'REQ-2026-04882': 'continuidade',
+  'REQ-2026-04891': 'primeira',
+  'REQ-2026-04905': 'continuidade',
+  'REQ-2026-04868': 'primeira',
+}
+
+function SolicitacaoTipoChip({ id }: { id: string }) {
+  const tipo = solicitacaoTipoMap[id] ?? 'primeira'
+  if (tipo === 'continuidade') {
+    return (
+      <Chip
+        label="Continuidade"
+        size="small"
+        icon={<span style={{ fontSize: 10, marginLeft: 6, fontWeight: 900 }}>↻</span>}
+        sx={{ backgroundColor: 'rgba(22,163,74,0.1)', color: '#15803d', fontSize: 11, fontWeight: 700, height: 20 }}
+      />
+    )
+  }
+  return (
+    <Chip
+      label="1ª Solicitação"
+      size="small"
+      icon={<span style={{ fontSize: 9, marginLeft: 6, fontWeight: 900 }}>✦</span>}
+      sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#1d4ed8', fontSize: 11, fontWeight: 700, height: 20 }}
+    />
+  )
+}
+
 // ── SLA Chip ──────────────────────────────────────────────────────────
 function SLAChip({ status, texto }: { status: SLAStatus; texto: string }) {
   const colorMap: Record<SLAStatus, { bg: string; color: string }> = {
@@ -588,6 +628,9 @@ const parados12h = pedidos.filter(isParado12h).length
                         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                           {pedido.beneficiario.plano}
                         </Typography>
+                        <Box sx={{ mt: 0.5 }}>
+                          <SolicitacaoTipoChip id={pedido.id} />
+                        </Box>
                       </TableCell>
                       <TableCell>
                         <Typography variant="body2" sx={{ fontSize: 12 }}>

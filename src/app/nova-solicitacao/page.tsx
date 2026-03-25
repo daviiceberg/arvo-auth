@@ -348,7 +348,9 @@ function NovaSolicitacaoInner() {
   const searchParams = useSearchParams()
   const moduloParam = (searchParams.get('modulo') || '') as ModuloType | ''
 
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [uploadState, setUploadState] = useState<'idle' | 'loading' | 'done'>('idle')
+  const [dragOver, setDragOver] = useState(false)
   const [zoom, setZoom] = useState(100)
   const [rotation, setRotation] = useState(0)
   const [form, setForm] = useState<FormData>({
@@ -359,6 +361,7 @@ function NovaSolicitacaoInner() {
   const activeModulo = form.tipoSolicitacao
 
   const steps = [
+    { label: 'Upload' },
     { label: 'Dados do Beneficiário' },
     { label: 'Dados Clínicos' },
     { label: getStep3Label(activeModulo) },
@@ -377,6 +380,14 @@ function NovaSolicitacaoInner() {
     }
   }
 
+  const handleUpload = () => {
+    setUploadState('loading')
+    setTimeout(() => {
+      setUploadState('done')
+      setTimeout(() => setCurrentStep(1), 400)
+    }, 2000)
+  }
+
   const handleNext = () => {
     if (currentStep === 1 && !form.tipoSolicitacao) {
       alert('Por favor, selecione o tipo de solicitação antes de continuar.')
@@ -391,7 +402,93 @@ function NovaSolicitacaoInner() {
 
   const handleBack = () => {
     if (currentStep > 1) setCurrentStep((s) => s - 1)
+    else if (currentStep === 1) setCurrentStep(0)
   }
+
+  // ── Step 0: Upload ─────────────────────────────────────────────────
+  const renderStep0 = () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: 3, px: 4 }}>
+      <Box sx={{ textAlign: 'center', maxWidth: 520 }}>
+        <Typography variant="h5" fontWeight={800} sx={{ mb: 1 }}>
+          Nova Solicitação de Autorização
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+          Envie o pedido médico para que a IA preencha automaticamente os dados, ou preencha manualmente.
+        </Typography>
+      </Box>
+
+      {/* Drop zone */}
+      <Box
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => { e.preventDefault(); setDragOver(false); handleUpload() }}
+        onClick={() => uploadState === 'idle' && handleUpload()}
+        sx={{
+          width: '100%',
+          maxWidth: 480,
+          border: `2px dashed ${dragOver ? '#902B29' : 'rgba(0,0,0,0.2)'}`,
+          borderRadius: 3,
+          backgroundColor: dragOver ? 'rgba(144,43,41,0.04)' : uploadState === 'loading' ? 'rgba(37,99,235,0.03)' : '#fafafa',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1.5,
+          py: 5,
+          px: 3,
+          cursor: uploadState === 'idle' ? 'pointer' : 'default',
+          transition: 'all 0.15s ease',
+          '&:hover': uploadState === 'idle' ? { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' } : {},
+        }}
+      >
+        {uploadState === 'idle' && (
+          <>
+            <UploadFileIcon sx={{ fontSize: 48, color: 'rgba(0,0,0,0.25)' }} />
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body1" fontWeight={700} sx={{ mb: 0.5 }}>
+                Arraste o pedido médico aqui
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                ou clique para selecionar o arquivo
+              </Typography>
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+              PDF, JPG, PNG — até 10MB
+            </Typography>
+          </>
+        )}
+        {uploadState === 'loading' && (
+          <>
+            <Box sx={{ fontSize: 36 }}>🔍</Box>
+            <Typography variant="body1" fontWeight={700} sx={{ color: '#2563eb' }}>
+              Lendo documento com IA...
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Extraindo dados automaticamente
+            </Typography>
+          </>
+        )}
+        {uploadState === 'done' && (
+          <>
+            <CheckCircleOutlineIcon sx={{ fontSize: 44, color: '#16a34a' }} />
+            <Typography variant="body1" fontWeight={700} sx={{ color: '#16a34a' }}>
+              Documento processado!
+            </Typography>
+          </>
+        )}
+      </Box>
+
+      <Button
+        variant="text"
+        size="small"
+        endIcon={<ChevronRightIcon />}
+        onClick={() => { setForm({ ...initialForm, tipoSolicitacao: '' }); setCurrentStep(1) }}
+        sx={{ color: 'text.secondary', fontSize: 13 }}
+      >
+        Preencher manualmente sem upload
+      </Button>
+    </Box>
+  )
 
   // ── Step 1: Dados do Beneficiário ──────────────────────────────────
   const renderStep1 = () => (
@@ -979,7 +1076,7 @@ function NovaSolicitacaoInner() {
 
       {/* ── Stepper ── */}
       <Box sx={{ backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)', px: 4, py: 1.5, flexShrink: 0 }}>
-        <Stepper activeStep={currentStep - 1} alternativeLabel connector={null}
+        <Stepper activeStep={currentStep} alternativeLabel connector={null}
           sx={{
             maxWidth: 700, mx: 'auto',
             '& .MuiStepLabel-label': { fontSize: 11, mt: 0.5, fontFamily: '"Space Grotesk", sans-serif', fontWeight: 500 },
@@ -988,9 +1085,9 @@ function NovaSolicitacaoInner() {
           }}
         >
           {steps.map((step, i) => (
-            <Step key={step.label} completed={i < currentStep - 1}>
+            <Step key={step.label} completed={i < currentStep}>
               <StepLabel
-                StepIconComponent={() => <StepIcon active={i === currentStep - 1} completed={i < currentStep - 1} index={i} />}
+                StepIconComponent={() => <StepIcon active={i === currentStep} completed={i < currentStep} index={i} />}
               >
                 {step.label}
               </StepLabel>
@@ -1002,38 +1099,41 @@ function NovaSolicitacaoInner() {
       {/* ── Body ── */}
       <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-        {/* Left: document viewer */}
-        <Box sx={{
-          width: '45%',
-          flexShrink: 0,
-          backgroundColor: '#f3f4f6',
-          borderRight: '1px solid rgba(0,0,0,0.07)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
-          {/* Viewer toolbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, borderBottom: '1px solid rgba(0,0,0,0.07)', backgroundColor: '#fff', flexShrink: 0 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <IconButton size="small" onClick={() => setZoom(z => Math.max(50, z - 10))} disabled={zoom <= 50}><ZoomOutIcon fontSize="small" /></IconButton>
-              <Typography variant="caption" sx={{ fontSize: 11, minWidth: 36, textAlign: 'center' }}>{zoom}%</Typography>
-              <IconButton size="small" onClick={() => setZoom(z => Math.min(200, z + 10))} disabled={zoom >= 200}><ZoomInIcon fontSize="small" /></IconButton>
-              <IconButton size="small" onClick={() => setRotation(r => (r + 90) % 360)}><RotateRightIcon fontSize="small" /></IconButton>
+        {/* Left: document viewer — hidden on step 0 */}
+        {currentStep > 0 && (
+          <Box sx={{
+            width: '45%',
+            flexShrink: 0,
+            backgroundColor: '#f3f4f6',
+            borderRight: '1px solid rgba(0,0,0,0.07)',
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            {/* Viewer toolbar */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, borderBottom: '1px solid rgba(0,0,0,0.07)', backgroundColor: '#fff', flexShrink: 0 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <IconButton size="small" onClick={() => setZoom(z => Math.max(50, z - 10))} disabled={zoom <= 50}><ZoomOutIcon fontSize="small" /></IconButton>
+                <Typography variant="caption" sx={{ fontSize: 11, minWidth: 36, textAlign: 'center' }}>{zoom}%</Typography>
+                <IconButton size="small" onClick={() => setZoom(z => Math.min(200, z + 10))} disabled={zoom >= 200}><ZoomInIcon fontSize="small" /></IconButton>
+                <IconButton size="small" onClick={() => setRotation(r => (r + 90) % 360)}><RotateRightIcon fontSize="small" /></IconButton>
+              </Box>
+              <Button size="small" startIcon={<UploadFileIcon sx={{ fontSize: 14 }} />} sx={{ fontSize: 11 }}>
+                Novo Arquivo
+              </Button>
             </Box>
-            <Button size="small" startIcon={<UploadFileIcon sx={{ fontSize: 14 }} />} sx={{ fontSize: 11 }}>
-              Novo Arquivo
-            </Button>
-          </Box>
 
-          {/* Document */}
-          <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 3, display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-            <TissDocPreview zoom={zoom} rotation={rotation} />
+            {/* Document */}
+            <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', p: 3, display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+              <TissDocPreview zoom={zoom} rotation={rotation} />
+            </Box>
           </Box>
-        </Box>
+        )}
 
         {/* Right: form */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Form content */}
-          <Box sx={{ flex: 1, overflowY: 'auto', p: 4 }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', p: currentStep === 0 ? 0 : 4 }}>
+            {currentStep === 0 && renderStep0()}
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
             {currentStep === 3 && renderStep3()}
@@ -1049,26 +1149,28 @@ function NovaSolicitacaoInner() {
             flexShrink: 0,
           }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 11 }}>
-              Etapa {currentStep} de {steps.length}
+              {currentStep === 0 ? 'Etapa inicial' : `Etapa ${currentStep} de ${steps.length - 1}`}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5 }}>
               <Button
                 variant="outlined"
                 startIcon={<ChevronLeftIcon />}
                 onClick={handleBack}
-                disabled={currentStep === 1}
+                disabled={currentStep === 0}
                 sx={{ minHeight: 44 }}
               >
                 Voltar
               </Button>
-              <Button
-                variant="contained"
-                endIcon={currentStep < 4 ? <ChevronRightIcon /> : undefined}
-                onClick={handleNext}
-                sx={{ minHeight: 44, px: 3 }}
-              >
-                {currentStep < 4 ? 'Próxima Etapa' : 'Enviar Solicitação'}
-              </Button>
+              {currentStep > 0 && (
+                <Button
+                  variant="contained"
+                  endIcon={currentStep < 4 ? <ChevronRightIcon /> : undefined}
+                  onClick={handleNext}
+                  sx={{ minHeight: 44, px: 3 }}
+                >
+                  {currentStep < 4 ? 'Próxima Etapa' : 'Enviar Solicitação'}
+                </Button>
+              )}
             </Box>
           </Box>
         </Box>

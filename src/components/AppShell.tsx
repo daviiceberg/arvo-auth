@@ -38,6 +38,9 @@ import EmergencyIcon from '@mui/icons-material/Emergency'
 import BiotechIcon from '@mui/icons-material/Biotech'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
+import Snackbar from '@mui/material/Snackbar'
+import Alert from '@mui/material/Alert'
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 
@@ -78,6 +81,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [categoriasOpen, setCategoriasOpen] = useState(true)
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null)
   const notifOpen = Boolean(notifAnchor)
+  const [regional, setRegional] = useState<'Sul' | 'Sudeste' | 'Nordeste'>('Sul')
+  const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null)
+  const [regionalSnackbar, setRegionalSnackbar] = useState('')
 
   const handleUserMenuOpen = (e: React.MouseEvent<HTMLElement>) => setUserMenuAnchor(e.currentTarget)
   const handleUserMenuClose = () => setUserMenuAnchor(null)
@@ -395,11 +401,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <Box sx={{ flex: 1 }} />
 
             {/* Notifications */}
-            <Box sx={{ position: 'relative' }}>
+            <Box sx={{ position: 'relative', mr: 3 }}>
               <IconButton
                 aria-label="Notificações"
                 size="medium"
-                sx={{ mr: 0.5 }}
                 onClick={(e) => setNotifAnchor(notifAnchor ? null : e.currentTarget)}
               >
                 <Badge badgeContent={notifications.filter(n => !n.read).length} color="error">
@@ -474,6 +479,57 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 </Box>
               </Popover>
             </Box>
+
+            {/* Regional selector */}
+            <Box
+              onClick={(e) => setRegionalAnchor(e.currentTarget)}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                px: 1.5,
+                py: 0.5,
+                mr: 2,
+                border: '1px solid rgba(144,43,41,0.25)',
+                borderRadius: 1.5,
+                backgroundColor: 'rgba(144,43,41,0.04)',
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(144,43,41,0.08)' },
+                transition: 'background-color 0.12s ease',
+              }}
+            >
+              <LocationOnIcon sx={{ fontSize: 14, color: '#902B29' }} />
+              <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
+                <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>Regional:</Box>{' '}
+                <Box component="span" sx={{ fontWeight: 700, color: '#902B29' }}>{regional}</Box>
+              </Typography>
+              <KeyboardArrowDownIcon sx={{ fontSize: 14, color: '#902B29', ml: 0.25 }} />
+            </Box>
+            <Menu
+              anchorEl={regionalAnchor}
+              open={Boolean(regionalAnchor)}
+              onClose={() => setRegionalAnchor(null)}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              slotProps={{ paper: { sx: { mt: 0.5, minWidth: 140, borderRadius: 1.5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' } } }}
+            >
+              {(['Sul', 'Sudeste', 'Nordeste'] as const).map((r) => (
+                <MenuItem
+                  key={r}
+                  selected={regional === r}
+                  onClick={() => {
+                    setRegionalAnchor(null)
+                    if (r !== regional) {
+                      setRegional(r)
+                      setRegionalSnackbar(`Regional alterada para ${r}. Recarregando dados...`)
+                    }
+                  }}
+                  sx={{ fontSize: 13, fontWeight: regional === r ? 700 : 400 }}
+                >
+                  {r}
+                </MenuItem>
+              ))}
+            </Menu>
 
             {/* User section */}
             <Button
@@ -566,6 +622,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           {children}
         </Box>
       </Box>
+
+      {/* Regional change snackbar */}
+      <Snackbar
+        open={!!regionalSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setRegionalSnackbar('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="info" onClose={() => setRegionalSnackbar('')} sx={{ minWidth: 300 }}>
+          {regionalSnackbar}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

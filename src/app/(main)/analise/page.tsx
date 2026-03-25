@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
@@ -28,6 +28,8 @@ import InputLabel from '@mui/material/InputLabel'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import Collapse from '@mui/material/Collapse'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
@@ -215,6 +217,7 @@ function PageHeader({
             borderRadius: '8px',
             overflow: 'hidden',
             backgroundColor: '#fff',
+            mb: 0.75,
           }}
         >
           <IconButton
@@ -265,21 +268,33 @@ function PageHeader({
         </Box>
       </Box>
 
-      {/* Row 2: hospital + entry date + origem */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mt: 0.75 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {pedido.prestador.hospital}
-          </Typography>
+      {/* Row 2: hospital + entry date + origem | shortcuts hint (right) */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.75 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+              {pedido.prestador.hospital}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+              Entrada: {pedido.dataProtocolo}
+            </Typography>
+          </Box>
+          <OrigemLabel origem={pedido.origem} />
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
-          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            Entrada: {pedido.dataProtocolo}
-          </Typography>
+
+        {/* Keyboard shortcuts hint — aligned below navigator */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
+          {[['← →', 'Navegar'], ['A', 'Aprovar'], ['N', 'Negar'], ['P', 'Pendenciar'], ['?', 'Ajuda']].map(([key, label]) => (
+            <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 0.4 }}>
+              <Box sx={{ px: 0.6, py: 0.1, backgroundColor: 'rgba(0,0,0,0.07)', borderRadius: 0.75, fontFamily: 'monospace', fontSize: 10, fontWeight: 700, color: 'text.secondary', lineHeight: '16px' }}>{key}</Box>
+              <Typography sx={{ fontSize: 10, color: 'text.disabled' }}>{label}</Typography>
+            </Box>
+          ))}
         </Box>
-        <OrigemLabel origem={pedido.origem} />
       </Box>
     </Box>
   )
@@ -289,11 +304,11 @@ function PageHeader({
 function PendenciaBanner({ pedido }: { pedido: Pedido }) {
   if (pedido.status !== 'Devolutiva' || !pedido.pendenciaMotivos) return null
   return (
-    <Box sx={{ px: 3, pt: 2, flexShrink: 0 }}>
+    <Box>
       <Alert
         severity="warning"
         icon={<ErrorOutlineIcon fontSize="small" />}
-        sx={{ borderRadius: 2, alignItems: 'flex-start' }}
+        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(245,158,11,0.35)' }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Pedido em pendência — aguardando documentação complementar
@@ -315,11 +330,11 @@ function AlertasBanner({ pedido }: { pedido: Pedido }) {
   if (pedido.alertas.length === 0) return null
   const alertCount = pedido.alertas.length
   return (
-    <Box sx={{ px: 3, pt: 2, flexShrink: 0 }}>
+    <Box>
       <Alert
         severity={pedido.alertas.includes('Liminar Judicial') ? 'warning' : 'error'}
         icon={<WarningAmberIcon fontSize="small" />}
-        sx={{ borderRadius: 2 }}
+        sx={{ borderRadius: 2, border: pedido.alertas.includes('Liminar Judicial') ? '1px solid rgba(245,158,11,0.35)' : '1px solid rgba(212,24,61,0.3)' }}
       >
         <Typography variant="body2" fontWeight={600}>
           {alertCount} alerta{alertCount > 1 ? 's' : ''} identificado{alertCount > 1 ? 's' : ''} neste pedido.
@@ -896,10 +911,65 @@ function ObservacoesSection({ pedido }: { pedido: Pedido }) {
 }
 
 // ── Documentos ────────────────────────────────────────────────────────
+// ── IA extraction mock data ────────────────────────────────────────────
+type IACampoStatus = 'ok' | 'warning' | 'error'
+interface IAExtractionField { label: string; valor: string; status: IACampoStatus }
+
+function getIAExtractionFields(docNome: string, docTipo: string): IAExtractionField[] {
+  const tipo = (docNome + docTipo).toLowerCase()
+  if (tipo.includes('pedido') || tipo.includes('médico') || tipo.includes('solicitação')) {
+    return [
+      { label: 'Médico solicitante', valor: 'Identificado com CRM legível', status: 'ok' },
+      { label: 'CID principal', valor: 'Presente e compatível', status: 'ok' },
+      { label: 'Procedimento', valor: 'Código TUSS identificado', status: 'ok' },
+      { label: 'Data da solicitação', valor: 'Presente', status: 'ok' },
+      { label: 'Assinatura', valor: 'Presente', status: 'ok' },
+      { label: 'Carimbo médico', valor: 'Não identificado', status: 'warning' },
+    ]
+  }
+  if (tipo.includes('laudo') || tipo.includes('relatório')) {
+    return [
+      { label: 'Data do laudo', valor: 'Identificada', status: 'ok' },
+      { label: 'Hipótese diagnóstica', valor: 'Presente', status: 'ok' },
+      { label: 'Assinatura e CRM', valor: 'Legíveis', status: 'ok' },
+      { label: 'Carimbo médico', valor: 'Ausente', status: 'error' },
+      { label: 'Justificativa clínica', valor: 'Incompleta — faltam dados de evolução', status: 'warning' },
+    ]
+  }
+  if (tipo.includes('judicial') || tipo.includes('liminar') || tipo.includes('jurídico')) {
+    return [
+      { label: 'Número do processo', valor: 'Identificado', status: 'ok' },
+      { label: 'Vara/Tribunal', valor: 'Identificado', status: 'ok' },
+      { label: 'Data de emissão', valor: 'Presente', status: 'ok' },
+      { label: 'Assinatura digital', valor: 'Não verificável neste sistema', status: 'warning' },
+    ]
+  }
+  if (tipo.includes('exame') || tipo.includes('imagem') || tipo.includes('ressonância') || tipo.includes('tomografia')) {
+    return [
+      { label: 'Tipo de exame', valor: 'Identificado', status: 'ok' },
+      { label: 'Data de realização', valor: 'Presente', status: 'ok' },
+      { label: 'Laudo médico', valor: 'Presente', status: 'ok' },
+      { label: 'Conclusão diagnóstica', valor: 'Compatível com CID do pedido', status: 'ok' },
+    ]
+  }
+  return [
+    { label: 'Tipo de documento', valor: 'Identificado', status: 'ok' },
+    { label: 'Data do documento', valor: 'Presente', status: 'ok' },
+    { label: 'Autenticidade', valor: 'Não verificável automaticamente', status: 'warning' },
+  ]
+}
+
+function IACampoIcon({ status }: { status: IACampoStatus }) {
+  if (status === 'ok') return <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a', flexShrink: 0 }} />
+  if (status === 'warning') return <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309', flexShrink: 0 }} />
+  return <ErrorOutlineIcon sx={{ fontSize: 14, color: '#d4183d', flexShrink: 0 }} />
+}
+
 function DocumentosSection({ pedido }: { pedido: Pedido }) {
   const docs = pedido.documentos
   const [viewDoc, setViewDoc] = useState<string | null>(null)
   const [zoom, setZoom] = useState(100)
+  const [expandedIA, setExpandedIA] = useState<Record<number, boolean>>({ 0: true })
 
   return (
     <Card>
@@ -908,39 +978,86 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
           Documentos ({docs.length})
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {docs.map((doc) => (
-            <Box
-              key={doc.nome}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                p: 2,
-                border: '1px solid rgba(0,0,0,0.1)',
-                borderRadius: 2,
-                backgroundColor: 'rgba(0,0,0,0.01)',
-              }}
-            >
-              {docIcon(doc.tipo)}
-              <Box sx={{ flex: 1 }}>
-                <Typography variant="body2" fontWeight={600}>
-                  {doc.nome}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                  {doc.tipo} · Enviado em {doc.data}
-                </Typography>
-              </Box>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<VisibilityIcon fontSize="small" />}
-                aria-label={`Visualizar ${doc.nome}`}
-                onClick={() => { setViewDoc(doc.nome); setZoom(100) }}
+          {docs.map((doc, idx) => {
+            const iaFields = getIAExtractionFields(doc.nome, doc.tipo)
+            const iaOpen = !!expandedIA[idx]
+            return (
+              <Box
+                key={doc.nome}
+                sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden' }}
               >
-                Visualizar
-              </Button>
-            </Box>
-          ))}
+                {/* Doc row */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, backgroundColor: 'rgba(0,0,0,0.01)' }}>
+                  {docIcon(doc.tipo)}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body2" fontWeight={600}>{doc.nome}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                      {doc.tipo} · Enviado em {doc.data}
+                    </Typography>
+                  </Box>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<VisibilityIcon fontSize="small" />}
+                    aria-label={`Visualizar ${doc.nome}`}
+                    onClick={() => { setViewDoc(doc.nome); setZoom(100) }}
+                  >
+                    Visualizar
+                  </Button>
+                </Box>
+
+                {/* IA Extraction toggle */}
+                <Box
+                  onClick={() => setExpandedIA(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.75,
+                    px: 2,
+                    py: 0.75,
+                    borderTop: '1px solid rgba(0,0,0,0.07)',
+                    backgroundColor: iaOpen ? 'rgba(37,99,235,0.03)' : 'transparent',
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: 'rgba(37,99,235,0.05)' },
+                    transition: 'background-color 0.12s ease',
+                  }}
+                >
+                  <SmartToyIcon sx={{ fontSize: 13, color: '#2563eb' }} />
+                  <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#2563eb', flex: 1 }}>
+                    IA extraiu
+                  </Typography>
+                  <Box sx={{
+                    transform: iaOpen ? 'rotate(180deg)' : 'none',
+                    transition: 'transform 0.15s ease',
+                    display: 'flex',
+                    color: 'text.secondary',
+                  }}>
+                    <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                  </Box>
+                </Box>
+
+                {/* IA Extraction content */}
+                <Collapse in={iaOpen}>
+                  <Box sx={{ px: 2, pt: 1.5, pb: 2, backgroundColor: 'rgba(37,99,235,0.02)', borderTop: '1px solid rgba(37,99,235,0.08)' }}>
+                    <Typography sx={{ fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: 0.4, mb: 1.25 }}>
+                      Leitura do documento pela IA
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                      {iaFields.map((field) => (
+                        <Box key={field.label} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                          <IACampoIcon status={field.status} />
+                          <Typography sx={{ fontSize: 12, color: 'text.secondary', lineHeight: 1.4 }}>
+                            <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{field.label}:</Box>{' '}
+                            {field.valor}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                </Collapse>
+              </Box>
+            )
+          })}
         </Box>
       </CardContent>
 
@@ -1194,13 +1311,32 @@ function AnaliseInner() {
 
   const [aprovacaoMotivo, setAprovacaoMotivo] = useState('')
   const [aprovacaoJustificativa, setAprovacaoJustificativa] = useState('')
-  const [negacaoMotivo, setNegacaoMotivo] = useState('')
+  const [negacaoMotivoIdx, setNegacaoMotivoIdx] = useState<number>(-1)
   const [negacaoJustificativa, setNegacaoJustificativa] = useState('')
   const [pendenciarItens, setPendenciarItens] = useState<string[]>([])
   const [pendenciarJustificativa, setPendenciarJustificativa] = useState('')
   const [juntaMotivo, setJuntaMotivo] = useState('')
   const [juntaObs, setJuntaObs] = useState('')
   const [divergenciaMotivo, setDivergenciaMotivo] = useState('')
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false)
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const isAnyDialogOpen = showAprovarDialog || showNegarDialog || showPendenciarDialog || showJuntaDialog || showDivergenciaDialog || showShortcutsHelp
+    const handler = (e: KeyboardEvent) => {
+      const tag = (document.activeElement?.tagName || '').toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement)?.isContentEditable) return
+      if (e.key === '?') { setShowShortcutsHelp(true); return }
+      if (isAnyDialogOpen) return
+      if (e.key === 'ArrowRight' || e.key === 'j' || e.key === 'J') { if (currentIndex < total - 1) handleNavNext(); return }
+      if (e.key === 'ArrowLeft'  || e.key === 'k' || e.key === 'K') { if (currentIndex > 0) handleNavPrev(); return }
+      if (e.key === 'a' || e.key === 'A') { handleAprovarClick(); return }
+      if (e.key === 'n' || e.key === 'N') { handleNegarClick(); return }
+      if (e.key === 'p' || e.key === 'P') { setShowPendenciarDialog(true); return }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [showAprovarDialog, showNegarDialog, showPendenciarDialog, showJuntaDialog, showDivergenciaDialog, showShortcutsHelp, currentIndex, total])
 
   // Lists for selects/checkboxes
   const motivosAprovacao = [
@@ -1212,11 +1348,14 @@ function AnaliseInner() {
   ]
 
   const motivosNegacao = [
-    'Fora da cobertura contratual',
-    'Documentação insuficiente',
-    'Não atende critérios clínicos',
-    'Procedimento experimental / não contemplado no Rol',
-    'Carência não cumprida',
+    { label: 'Carência contratual', texto: 'Solicitação negada em razão de período de carência contratual não cumprido para o procedimento solicitado, conforme contrato do plano do beneficiário.' },
+    { label: 'Fora do Rol ANS', texto: 'O procedimento solicitado não consta no Rol de Procedimentos e Eventos em Saúde da ANS (RN 465/2021 e atualizações), não sendo de cobertura obrigatória.' },
+    { label: 'Documentação clínica incompleta', texto: 'Negativa por ausência ou incompletude da documentação clínica exigida para análise. O beneficiário poderá reapresentar o pedido com documentação completa.' },
+    { label: 'Método/procedimento não coberto', texto: 'O método ou procedimento solicitado não está contemplado na cobertura contratual vigente e/ou no Rol de Procedimentos da ANS.' },
+    { label: 'Prestador não credenciado para o procedimento', texto: 'O prestador indicado não possui credenciamento junto à operadora para a realização do procedimento solicitado na especialidade requerida.' },
+    { label: 'Quantidade acima do protocolo clínico', texto: 'A quantidade solicitada excede o limite estabelecido pelo protocolo clínico e/ou pelas Diretrizes de Utilização (DUT) aplicáveis para este procedimento.' },
+    { label: 'CID incompatível com o procedimento solicitado', texto: 'Há incompatibilidade clínica entre o CID informado e o procedimento solicitado, não havendo indicação reconhecida nos protocolos técnicos vigentes.' },
+    { label: 'Outro motivo', texto: '' },
   ]
 
   const motivosPendenciar = [
@@ -1250,13 +1389,9 @@ function AnaliseInner() {
   }
 
   const handleNegarClick = () => {
-    if (pedido.iaSugestao !== 'Negar') {
-      setPendingAction('negar')
-      setShowDivergenciaDialog(true)
-    } else {
-      setNegacaoJustificativa(`Justificativa: ${pedido.iaJustificativa}`)
-      setShowNegarDialog(true)
-    }
+    setNegacaoMotivoIdx(-1)
+    setNegacaoJustificativa('')
+    setShowNegarDialog(true)
   }
 
   const handleDivergenciaContinuar = () => {
@@ -1278,7 +1413,7 @@ function AnaliseInner() {
   }
 
   const confirmarNegacao = () => {
-    if (!negacaoMotivo) return
+    if (negacaoMotivoIdx === -1 || !negacaoJustificativa.trim()) return
     setShowNegarDialog(false)
     setSnackbar({ open: true, msg: `Pedido ${pedido.id} negado`, severity: 'error' })
   }
@@ -1305,13 +1440,12 @@ function AnaliseInner() {
         onPrev={handleNavPrev}
         onNext={handleNavNext}
       />
-      <PendenciaBanner pedido={pedido} />
-      <AlertasBanner pedido={pedido} />
-
       <Box sx={{ flex: 1, display: 'flex', gap: 2.5, px: 3, pt: 2, overflow: 'hidden' }}>
         {/* Left content — scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <PendenciaBanner pedido={pedido} />
+            <AlertasBanner pedido={pedido} />
             <BeneficiarioSection pedido={pedido} />
             <ProcedimentosSection pedido={pedido} />
             <HistoricoConsolidadoSection pedido={pedido} />
@@ -1382,33 +1516,85 @@ function AnaliseInner() {
       </Dialog>
 
       {/* Negar Dialog */}
-      <Dialog open={showNegarDialog} onClose={() => setShowNegarDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ fontWeight: 700 }}>Confirmar Reprovação</DialogTitle>
-        <DialogContent>
+      <Dialog open={showNegarDialog} onClose={() => setShowNegarDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Registrar Negativa</DialogTitle>
+        <DialogContent sx={{ pt: 0 }}>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Você está prestes a negar a solicitação <strong>{pedido.id}</strong>. Esta ação é irreversível.
+            Solicitação <strong>{pedido.id}</strong> · {pedido.beneficiario.nome}
           </Typography>
-          <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-            <InputLabel>Motivo Estruturado *</InputLabel>
-            <Select value={negacaoMotivo} label="Motivo Estruturado *" onChange={e => setNegacaoMotivo(e.target.value)}>
-              {motivosNegacao.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
-            </Select>
-          </FormControl>
+          {pedido.iaSugestao !== 'Negar' && (
+            <Alert severity="warning" sx={{ mb: 2, borderRadius: 1 }}>
+              A IA sugeriu <strong>{pedido.iaSugestao}</strong> para este caso. Ao registrar negativa, justifique o motivo da divergência no campo abaixo.
+            </Alert>
+          )}
+          <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5 }}>
+            Selecione o motivo da negativa *
+          </Typography>
+          <RadioGroup
+            value={negacaoMotivoIdx === -1 ? '' : String(negacaoMotivoIdx)}
+            onChange={(e) => {
+              const idx = Number(e.target.value)
+              setNegacaoMotivoIdx(idx)
+              setNegacaoJustificativa(motivosNegacao[idx].texto)
+            }}
+          >
+            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 2 }}>
+              {motivosNegacao.map((m, idx) => (
+                <Box
+                  key={idx}
+                  onClick={() => {
+                    setNegacaoMotivoIdx(idx)
+                    setNegacaoJustificativa(m.texto)
+                  }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    p: 1.25,
+                    border: negacaoMotivoIdx === idx
+                      ? '2px solid #d4183d'
+                      : '1px solid rgba(0,0,0,0.12)',
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                    backgroundColor: negacaoMotivoIdx === idx ? 'rgba(212,24,61,0.04)' : '#fff',
+                    transition: 'all 0.12s ease',
+                    '&:hover': { borderColor: '#d4183d', backgroundColor: 'rgba(212,24,61,0.02)' },
+                  }}
+                >
+                  <Radio
+                    value={String(idx)}
+                    size="small"
+                    checked={negacaoMotivoIdx === idx}
+                    onChange={() => {}}
+                    sx={{ p: 0, color: negacaoMotivoIdx === idx ? '#d4183d' : undefined, '&.Mui-checked': { color: '#d4183d' } }}
+                  />
+                  <Typography variant="body2" sx={{ fontSize: 12, fontWeight: negacaoMotivoIdx === idx ? 700 : 500, lineHeight: 1.3 }}>
+                    {m.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </RadioGroup>
           <TextField
-            label="Justificativa Técnica *"
-            multiline rows={3} fullWidth size="small"
+            label={`Justificativa técnica *${negacaoMotivoIdx === motivosNegacao.length - 1 ? '' : ' (editável)'}`}
+            multiline rows={4} fullWidth size="small"
+            placeholder="Descreva o motivo da negativa..."
             value={negacaoJustificativa}
             onChange={e => setNegacaoJustificativa(e.target.value)}
+            helperText={negacaoMotivoIdx >= 0 && negacaoMotivoIdx < motivosNegacao.length - 1
+              ? 'Texto preenchido automaticamente conforme o motivo. Edite se necessário.'
+              : undefined}
           />
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
           <Button onClick={() => setShowNegarDialog(false)}>Cancelar</Button>
           <Button
-            variant="contained" color="error"
-            disabled={!negacaoMotivo || !negacaoJustificativa.trim()}
+            variant="contained"
+            color="error"
+            disabled={negacaoMotivoIdx === -1 || !negacaoJustificativa.trim()}
             onClick={confirmarNegacao}
           >
-            Confirmar Reprovação
+            Confirmar Negativa
           </Button>
         </DialogActions>
       </Dialog>
@@ -1524,6 +1710,40 @@ function AnaliseInner() {
           >
             Continuar
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Shortcuts Help Dialog */}
+      <Dialog open={showShortcutsHelp} onClose={() => setShowShortcutsHelp(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ fontSize: 18 }}>⌨️</Box> Atalhos de Teclado
+        </DialogTitle>
+        <DialogContent>
+          {[
+            { keys: '← / K', desc: 'Pedido anterior' },
+            { keys: '→ / J', desc: 'Próximo pedido' },
+            { keys: 'A', desc: 'Aprovar pedido' },
+            { keys: 'N', desc: 'Negar pedido' },
+            { keys: 'P', desc: 'Pendenciar pedido' },
+            { keys: '?', desc: 'Mostrar esta ajuda' },
+          ].map(({ keys, desc }) => (
+            <Box key={keys} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+              <Typography variant="body2" color="text.secondary">{desc}</Typography>
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                {keys.split(' / ').map(k => (
+                  <Box key={k} sx={{ px: 1, py: 0.25, backgroundColor: 'rgba(0,0,0,0.07)', borderRadius: 1, fontFamily: 'monospace', fontSize: 12, fontWeight: 700 }}>
+                    {k}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          ))}
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+            Atalhos são desativados quando o foco está em campos de texto.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button variant="contained" onClick={() => setShowShortcutsHelp(false)}>Fechar</Button>
         </DialogActions>
       </Dialog>
     </Box>
