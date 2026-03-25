@@ -62,7 +62,10 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import Drawer from '@mui/material/Drawer'
 import EditIcon from '@mui/icons-material/Edit'
-import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste } from '@/data/pedidos'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste, Documento } from '@/data/pedidos'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 function statusColor(status: string): { bg: string; color: string } {
@@ -1442,25 +1445,132 @@ function IACampoIcon({ status }: { status: IACampoStatus }) {
   return <ErrorOutlineIcon sx={{ fontSize: 14, color: '#d4183d', flexShrink: 0 }} />
 }
 
+const TIPOS_DOCUMENTO = [
+  'Exame Laboratorial',
+  'Exame de Imagem',
+  'Laudo Médico',
+  'Relatório de Evolução',
+  'Documento Jurídico',
+  'Orçamento / Cotação',
+  'Pedido Médico',
+  'Outro',
+]
+
 function DocumentosSection({ pedido }: { pedido: Pedido }) {
-  const docs = pedido.documentos
+  const [localDocs, setLocalDocs] = useState<Documento[]>([])
   const [viewDoc, setViewDoc] = useState<string | null>(null)
   const [zoom, setZoom] = useState(100)
-  const [expandedIA, setExpandedIA] = useState<Record<number, boolean>>({ 0: true })
+  const [expandedIA, setExpandedIA] = useState<Record<string, boolean>>({ '0': true })
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addTipo, setAddTipo] = useState('')
+  const [addDescricao, setAddDescricao] = useState('')
+  const [addFile, setAddFile] = useState<File | null>(null)
+  const [addDragOver, setAddDragOver] = useState(false)
+  const [addError, setAddError] = useState('')
+  const [processingId, setProcessingId] = useState<string | null>(null)
+  const [toast, setToast] = useState('')
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+
+  const allDocs = [...pedido.documentos, ...localDocs]
+
+  const handleAddConfirm = () => {
+    if (!addTipo) { setAddError('Selecione o tipo do documento.'); return }
+    if (!addFile) { setAddError('Selecione um arquivo.'); return }
+    setAddError('')
+    const newId = `DOC-LOCAL-${Date.now()}`
+    const newDoc: Documento = {
+      id: newId,
+      nome: addFile.name,
+      tipo: addTipo,
+      tamanho: addFile.size > 1024 * 1024
+        ? `${(addFile.size / 1024 / 1024).toFixed(1)} MB`
+        : `${Math.round(addFile.size / 1024)} KB`,
+      enviadoEm: new Date().toLocaleDateString('pt-BR'),
+      obrigatorio: false,
+      status: 'enviado',
+    }
+    setLocalDocs(prev => [...prev, newDoc])
+    setShowAddModal(false)
+    setAddTipo('')
+    setAddDescricao('')
+    setAddFile(null)
+    setToast('Documento adicionado com sucesso')
+    setProcessingId(newId)
+    setTimeout(() => setProcessingId(null), 2500)
+  }
+
+  const handleAddModalClose = () => {
+    setShowAddModal(false)
+    setAddTipo('')
+    setAddDescricao('')
+    setAddFile(null)
+    setAddError('')
+  }
 
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
-          Documentos ({docs.length})
-        </Typography>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+            Documentos ({allDocs.length})
+          </Typography>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+            onClick={() => setShowAddModal(true)}
+            sx={{ fontSize: 12, py: 0.4 }}
+          >
+            Adicionar documento
+          </Button>
+        </Box>
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {docs.map((doc, idx) => {
-            const iaFields = getIAExtractionFields(doc.nome, doc.tipo)
-            const iaOpen = !!expandedIA[idx]
+          {allDocs.map((doc, idx) => {
+            const docKey = doc.id
+            const iaOpen = !!expandedIA[docKey]
+
+            // Documento pendente — visual diferenciado
+            if (doc.status === 'pendente') {
+              return (
+                <Box
+                  key={docKey}
+                  sx={{ border: '1px solid rgba(245,158,11,0.4)', borderRadius: 2, overflow: 'hidden', backgroundColor: 'rgba(255,251,235,0.6)' }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
+                    <WarningAmberIcon sx={{ fontSize: 20, color: '#f59e0b', flexShrink: 0 }} />
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" fontWeight={600}>{doc.nome}</Typography>
+                        <Chip label="Documento pendente" size="small" sx={{ fontSize: 11, fontWeight: 700, backgroundColor: 'rgba(245,158,11,0.15)', color: '#b45309', height: 20 }} />
+                      </Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                        {doc.obrigatorio ? 'Obrigatório' : 'Opcional'} · Não enviado pelo solicitante
+                      </Typography>
+                    </Box>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+                      onClick={() => setShowAddModal(true)}
+                      sx={{ fontSize: 12, borderColor: '#f59e0b', color: '#b45309', '&:hover': { borderColor: '#b45309', backgroundColor: 'rgba(245,158,11,0.06)' } }}
+                    >
+                      Adicionar documento
+                    </Button>
+                  </Box>
+                </Box>
+              )
+            }
+
+            // Documento enviado — visual padrão
+            const iaFields = processingId === docKey
+              ? null
+              : getIAExtractionFields(doc.nome, doc.tipo)
+
             return (
               <Box
-                key={doc.nome}
+                key={docKey}
                 sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden' }}
               >
                 {/* Doc row */}
@@ -1469,7 +1579,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" fontWeight={600}>{doc.nome}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                      {doc.tipo} · Enviado em {doc.data}
+                      {doc.tipo}{doc.tamanho ? ` · ${doc.tamanho}` : ''}{doc.enviadoEm ? ` · Enviado em ${doc.enviadoEm}` : ''}
                     </Typography>
                   </Box>
                   <Button
@@ -1485,13 +1595,10 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
 
                 {/* IA Extraction toggle */}
                 <Box
-                  onClick={() => setExpandedIA(prev => ({ ...prev, [idx]: !prev[idx] }))}
+                  onClick={() => setExpandedIA(prev => ({ ...prev, [docKey]: !prev[docKey] }))}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.75,
-                    px: 2,
-                    py: 0.75,
+                    display: 'flex', alignItems: 'center', gap: 0.75,
+                    px: 2, py: 0.75,
                     borderTop: '1px solid rgba(0,0,0,0.07)',
                     backgroundColor: iaOpen ? 'rgba(37,99,235,0.03)' : 'transparent',
                     cursor: 'pointer',
@@ -1501,35 +1608,37 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
                 >
                   <SmartToyIcon sx={{ fontSize: 13, color: '#2563eb' }} />
                   <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#2563eb', flex: 1 }}>
-                    IA extraiu
+                    {processingId === docKey ? 'IA processando...' : 'IA extraiu'}
                   </Typography>
-                  <Box sx={{
-                    transform: iaOpen ? 'rotate(180deg)' : 'none',
-                    transition: 'transform 0.15s ease',
-                    display: 'flex',
-                    color: 'text.secondary',
-                  }}>
+                  <Box sx={{ transform: iaOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease', display: 'flex', color: 'text.secondary' }}>
                     <ExpandMoreIcon sx={{ fontSize: 16 }} />
                   </Box>
                 </Box>
 
-                {/* IA Extraction content */}
                 <Collapse in={iaOpen}>
                   <Box sx={{ px: 2, pt: 1.5, pb: 2, backgroundColor: 'rgba(37,99,235,0.02)', borderTop: '1px solid rgba(37,99,235,0.08)' }}>
-                    <Typography sx={{ fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: 0.4, mb: 1.25 }}>
-                      Leitura do documento pela IA
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                      {iaFields.map((field) => (
-                        <Box key={field.label} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                          <IACampoIcon status={field.status} />
-                          <Typography sx={{ fontSize: 12, color: 'text.secondary', lineHeight: 1.4 }}>
-                            <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{field.label}:</Box>{' '}
-                            {field.valor}
-                          </Typography>
+                    {processingId === docKey ? (
+                      <Typography sx={{ fontSize: 12, color: '#2563eb', fontStyle: 'italic' }}>
+                        Analisando documento... aguarde.
+                      </Typography>
+                    ) : (
+                      <>
+                        <Typography sx={{ fontSize: 11, fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: 0.4, mb: 1.25 }}>
+                          Leitura do documento pela IA
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                          {(iaFields ?? []).map((field) => (
+                            <Box key={field.label} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                              <IACampoIcon status={field.status} />
+                              <Typography sx={{ fontSize: 12, color: 'text.secondary', lineHeight: 1.4 }}>
+                                <Box component="span" sx={{ fontWeight: 600, color: 'text.primary' }}>{field.label}:</Box>{' '}
+                                {field.valor}
+                              </Typography>
+                            </Box>
+                          ))}
                         </Box>
-                      ))}
-                    </Box>
+                      </>
+                    )}
                   </Box>
                 </Collapse>
               </Box>
@@ -1537,6 +1646,113 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
           })}
         </Box>
       </CardContent>
+
+      {/* Modal Adicionar Documento */}
+      <Dialog
+        open={showAddModal}
+        onClose={handleAddModalClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{ sx: { borderRadius: 2 } }}
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <AttachFileIcon sx={{ fontSize: 18, color: '#902B29' }} />
+            <Typography fontWeight={700} sx={{ fontSize: 15 }}>Adicionar Documento</Typography>
+          </Box>
+          <IconButton size="small" onClick={handleAddModalClose}><CloseIcon fontSize="small" /></IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 1 }}>
+          {addError && <Alert severity="error" sx={{ mb: 2, fontSize: 13 }}>{addError}</Alert>}
+
+          {/* Tipo */}
+          <Typography variant="caption" sx={{ fontWeight: 600, fontSize: 12, display: 'block', mb: 0.75 }}>
+            Tipo do documento <span style={{ color: '#C62828' }}>*</span>
+          </Typography>
+          <FormControl fullWidth size="small" sx={{ mb: 2.5 }}>
+            <Select value={addTipo} displayEmpty onChange={(e) => setAddTipo(e.target.value)}>
+              <MenuItem value="" disabled><em>Selecione o tipo...</em></MenuItem>
+              {TIPOS_DOCUMENTO.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+            </Select>
+          </FormControl>
+
+          {/* Drop zone */}
+          <Typography variant="caption" sx={{ fontWeight: 600, fontSize: 12, display: 'block', mb: 0.75 }}>
+            Arquivo <span style={{ color: '#C62828' }}>*</span>
+          </Typography>
+          <Box
+            onDragOver={(e) => { e.preventDefault(); setAddDragOver(true) }}
+            onDragLeave={() => setAddDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault(); setAddDragOver(false)
+              const f = e.dataTransfer.files[0]
+              if (f) setAddFile(f)
+            }}
+            onClick={() => fileInputRef.current?.click()}
+            sx={{
+              border: `2px dashed ${addDragOver ? '#902B29' : addFile ? '#16a34a' : 'rgba(0,0,0,0.2)'}`,
+              borderRadius: 2,
+              backgroundColor: addDragOver ? 'rgba(144,43,41,0.04)' : addFile ? 'rgba(22,163,74,0.04)' : '#fafafa',
+              py: 3, px: 2,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+              mb: 2.5,
+              '&:hover': { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' },
+            }}
+          >
+            <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) setAddFile(f) }} />
+            {addFile ? (
+              <>
+                <CheckCircleOutlineIcon sx={{ fontSize: 32, color: '#16a34a' }} />
+                <Typography variant="body2" fontWeight={600} sx={{ color: '#15803d' }}>{addFile.name}</Typography>
+                <Typography variant="caption" color="text.secondary">Clique para trocar</Typography>
+              </>
+            ) : (
+              <>
+                <UploadFileIcon sx={{ fontSize: 32, color: 'rgba(0,0,0,0.3)' }} />
+                <Typography variant="body2" fontWeight={600}>Arraste o arquivo aqui</Typography>
+                <Typography variant="caption" color="text.secondary">ou clique para selecionar · PDF, JPG, PNG — até 10MB</Typography>
+              </>
+            )}
+          </Box>
+
+          {/* Descrição */}
+          <Typography variant="caption" sx={{ fontWeight: 600, fontSize: 12, display: 'block', mb: 0.75 }}>
+            Descrição (opcional)
+          </Typography>
+          <TextField
+            fullWidth size="small" multiline rows={2}
+            placeholder="Descreva o conteúdo do documento..."
+            value={addDescricao}
+            onChange={(e) => setAddDescricao(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+
+          <Alert severity="info" icon={false} sx={{ fontSize: 12, py: 0.75 }}>
+            O documento será vinculado a esta guia e ficará disponível para o analista responsável.
+          </Alert>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button variant="outlined" onClick={handleAddModalClose}>Cancelar</Button>
+          <Button variant="contained" startIcon={<AttachFileIcon />} onClick={handleAddConfirm}>
+            Adicionar Documento
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Toast */}
+      <Snackbar
+        open={!!toast}
+        autoHideDuration={4000}
+        onClose={() => setToast('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert severity="success" onClose={() => setToast('')} sx={{ minWidth: 280 }}>
+          {toast}
+        </Alert>
+      </Snackbar>
 
       {/* Document Lightbox */}
       <Dialog

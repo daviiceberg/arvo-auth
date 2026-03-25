@@ -75,11 +75,21 @@ export type Pedido = {
   iaJustificativa: string
   iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[]
   observacoes: string
-  documentos: { nome: string; tipo: string; data: string }[]
+  documentos: Documento[]
   pendenciaMotivos?: string[]
   pendenciaResponsavel?: string
   pendenciaData?: string
   ajustes?: Ajuste[]
+}
+
+export interface Documento {
+  id: string
+  nome: string
+  tipo: string
+  tamanho?: string
+  enviadoEm?: string
+  obrigatorio: boolean
+  status: 'enviado' | 'pendente'
 }
 
 export const pedidos: Pedido[] = [
@@ -149,9 +159,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Criança com TEA grau 2. Pais solicitam manutenção do protocolo intensivo conforme recomendação do neuropediatra. Liminar em vigor desde janeiro/2026.',
     documentos: [
-      { nome: 'Laudo-Neuropsicologico-2026.pdf', tipo: 'Laudo Médico', data: '10/01/2026' },
-      { nome: 'Liminar-Judicial-0012345.pdf', tipo: 'Documento Jurídico', data: '15/01/2026' },
-      { nome: 'Pedido-Medico-ABA.pdf', tipo: 'Pedido Médico', data: '20/03/2026' },
+      { id: 'DOC-001', nome: 'Laudo-Neuropsicologico-2026.pdf', tipo: 'Laudo Médico', tamanho: '2.1 MB', enviadoEm: '10/01/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-002', nome: 'Liminar-Judicial-0012345.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '15/01/2026', obrigatorio: false, status: 'enviado' },
+      { id: 'DOC-003', nome: 'Pedido-Medico-ABA.pdf', tipo: 'Pedido Médico', tamanho: '180 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -220,10 +230,10 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Paciente em 4º ciclo de quimioterapia adjuvante. NIP aberta em fevereiro/2026 por uso off-label. Advogado responsável: Dr. Paulo Mendes (OAB/SP 123456).',
     documentos: [
-      { nome: 'Laudo-Oncologico-Completo.pdf', tipo: 'Laudo Médico', data: '15/03/2026' },
-      { nome: 'Protocolo-FOLFOX-ASCO.pdf', tipo: 'Protocolo Clínico', data: '01/01/2026' },
-      { nome: 'NIP-2026-0234.pdf', tipo: 'Notificação', data: '10/02/2026' },
-      { nome: 'Liminar-Judicial-0098765.pdf', tipo: 'Documento Jurídico', data: '20/02/2026' },
+      { id: 'DOC-011', nome: 'Laudo-Oncologico-Completo.pdf', tipo: 'Laudo Médico', tamanho: '3.8 MB', enviadoEm: '15/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-012', nome: 'Protocolo-FOLFOX-ASCO.pdf', tipo: 'Protocolo Clínico', tamanho: '780 KB', enviadoEm: '01/01/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-013', nome: 'NIP-2026-0234.pdf', tipo: 'Notificação', tamanho: '210 KB', enviadoEm: '10/02/2026', obrigatorio: false, status: 'enviado' },
+      { id: 'DOC-014', nome: 'Liminar-Judicial-0098765.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '20/02/2026', obrigatorio: false, status: 'enviado' },
     ],
   },
   {
@@ -280,8 +290,8 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Renovação trimestral. Mãe relata progresso significativo em comunicação e interação social. Médico solicita aumento de frequência para 6x/semana.',
     documentos: [
-      { nome: 'Laudo-TEA-Pediatra.pdf', tipo: 'Laudo Médico', data: '05/03/2026' },
-      { nome: 'Relatorio-Progresso-Q1.pdf', tipo: 'Relatório Terapêutico', data: '18/03/2026' },
+      { id: 'DOC-021', nome: 'Laudo-TEA-Pediatra.pdf', tipo: 'Laudo Médico', tamanho: '1.4 MB', enviadoEm: '05/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-022', nome: 'Relatorio-Progresso-Q1.pdf', tipo: 'Relatório Terapêutico', tamanho: '890 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
     ],
     ajustes: [
       {
@@ -361,12 +371,14 @@ export const pedidos: Pedido[] = [
       { texto: 'Prestador com credenciamento suspenso', status: 'error' },
       { texto: 'Alta utilização nos últimos 12 meses', status: 'warning' },
       { texto: 'Relatório de imagem (RNM) anexado', status: 'ok' },
+      { texto: 'Cotação de fornecedores pendente (exigência OPME)', status: 'warning' },
     ],
     observacoes: 'Paciente refere dor incapacitante VAS 8/10. Fisioterapia realizada por 8 meses sem melhora. RNM de 10/02/2026 confirma herniação. Conferir situação do credenciamento do hospital antes de liberar.',
     documentos: [
-      { nome: 'RNM-Coluna-Lombar-2026.pdf', tipo: 'Exame de Imagem', data: '10/02/2026' },
-      { nome: 'Relatorio-Fisioterapia.pdf', tipo: 'Relatório Clínico', data: '01/03/2026' },
-      { nome: 'Orcamento-OPME-XYZ.pdf', tipo: 'Orçamento OPME', data: '15/03/2026' },
+      { id: 'DOC-031', nome: 'RNM-Coluna-Lombar-2026.pdf', tipo: 'Exame de Imagem', tamanho: '12.4 MB', enviadoEm: '10/02/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-032', nome: 'Relatorio-Fisioterapia.pdf', tipo: 'Relatório Clínico', tamanho: '420 KB', enviadoEm: '01/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-033', nome: 'Orcamento-OPME-XYZ.pdf', tipo: 'Orçamento / Cotação', tamanho: '890 KB', enviadoEm: '15/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-PENDENTE-001', nome: 'Cotação de Fornecedores (3 cópias)', tipo: 'Orçamento / Cotação', tamanho: undefined, enviadoEm: undefined, obrigatorio: true, status: 'pendente' },
     ],
     ajustes: [
       {
@@ -437,8 +449,8 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Devolvido em 20/03/2026 por falta do relatório de progresso Q4/2025. Família foi notificada por e-mail e tem prazo até 27/03/2026 para envio.',
     documentos: [
-      { nome: 'Pedido-Medico-ABA-Manutencao.pdf', tipo: 'Pedido Médico', data: '18/03/2026' },
-      { nome: 'Laudo-Psiquiatra-Infantil.pdf', tipo: 'Laudo Médico', data: '01/02/2026' },
+      { id: 'DOC-041', nome: 'Pedido-Medico-ABA-Manutencao.pdf', tipo: 'Pedido Médico', tamanho: '165 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-042', nome: 'Laudo-Psiquiatra-Infantil.pdf', tipo: 'Laudo Médico', tamanho: '1.1 MB', enviadoEm: '01/02/2026', obrigatorio: true, status: 'enviado' },
     ],
     pendenciaMotivos: [
       'Relatório de progresso do terapeuta (Q4/2025) ausente',
@@ -501,7 +513,7 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Solicitação de rotina. Paciente relatou episódio de cefaleia em trovão em 15/03/2026. Neurologia solicita exclusão de hemorragia subaracnóidea.',
     documentos: [
-      { nome: 'Pedido-Medico-RNM.pdf', tipo: 'Pedido Médico', data: '22/03/2026' },
+      { id: 'DOC-051', nome: 'Pedido-Medico-RNM.pdf', tipo: 'Pedido Médico', tamanho: '145 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -559,8 +571,8 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'NIP aberta em 18/03/2026 solicitando ecocardiograma e teste ergométrico. Prazo para resposta: 01/04/2026. Paciente tem histórico de IAM em 2019.',
     documentos: [
-      { nome: 'Laudo-Cardiologista.pdf', tipo: 'Laudo Médico', data: '10/03/2026' },
-      { nome: 'Cinecoronariografia-2026.pdf', tipo: 'Exame de Imagem', data: '05/03/2026' },
+      { id: 'DOC-061', nome: 'Laudo-Cardiologista.pdf', tipo: 'Laudo Médico', tamanho: '920 KB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-062', nome: 'Cinecoronariografia-2026.pdf', tipo: 'Exame de Imagem', tamanho: '8.2 MB', enviadoEm: '05/03/2026', obrigatorio: true, status: 'enviado' },
     ],
     pendenciaMotivos: [
       'Ecocardiograma pré-operatório não apresentado',
@@ -624,9 +636,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Paciente admitido via pronto-socorro às 06h. Hemograma com leucocitose (14.200). Raio-X com consolidação em lobo inferior direito. Iniciado Amoxicilina + Clavulanato EV.',
     documentos: [
-      { nome: 'Boletim-Entrada-Pronto-Socorro.pdf', tipo: 'Admissão Hospitalar', data: '24/03/2026' },
-      { nome: 'Raio-X-Torax.pdf', tipo: 'Exame de Imagem', data: '24/03/2026' },
-      { nome: 'Hemograma-Completo.pdf', tipo: 'Exame Laboratorial', data: '24/03/2026' },
+      { id: 'DOC-071', nome: 'Boletim-Entrada-Pronto-Socorro.pdf', tipo: 'Documento Hospitalar', tamanho: '310 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-072', nome: 'Raio-X-Torax.pdf', tipo: 'Exame de Imagem', tamanho: '4.1 MB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-073', nome: 'Hemograma-Completo.pdf', tipo: 'Exame Laboratorial', tamanho: '190 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -683,8 +695,8 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Admissão de emergência às 03h22. Sem leito disponível na rede credenciada. Conforme RN 259, cobertura obrigatória em emergência. UTI com suporte de ventilação mecânica invasiva.',
     documentos: [
-      { nome: 'Relatorio-Admissao-UTI.pdf', tipo: 'Admissão UTI', data: '24/03/2026' },
-      { nome: 'Gasometria-Arterial.pdf', tipo: 'Exame Laboratorial', data: '24/03/2026' },
+      { id: 'DOC-081', nome: 'Relatorio-Admissao-UTI.pdf', tipo: 'Documento Hospitalar', tamanho: '450 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-082', nome: 'Gasometria-Arterial.pdf', tipo: 'Exame Laboratorial', tamanho: '95 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -741,9 +753,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Paciente em 6º ciclo de pembrolizumabe. Boa tolerância até o momento. Liminar obtida em outubro/2025 para cobertura do tratamento completo.',
     documentos: [
-      { nome: 'Laudo-PD-L1-CPS18.pdf', tipo: 'Exame Patológico', data: '10/03/2026' },
-      { nome: 'Liminar-Pembrolizumabe.pdf', tipo: 'Documento Jurídico', data: '15/10/2025' },
-      { nome: 'Prescricao-Oncologica.pdf', tipo: 'Pedido Médico', data: '20/03/2026' },
+      { id: 'DOC-091', nome: 'Laudo-PD-L1-CPS18.pdf', tipo: 'Laudo Médico', tamanho: '2.6 MB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-092', nome: 'Liminar-Pembrolizumabe.pdf', tipo: 'Documento Jurídico', tamanho: '290 KB', enviadoEm: '15/10/2025', obrigatorio: false, status: 'enviado' },
+      { id: 'DOC-093', nome: 'Prescricao-Oncologica.pdf', tipo: 'Pedido Médico', tamanho: '175 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -800,9 +812,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Alta hospitalar em 20/03/2026 após fratura de fêmur. Paciente não deambula. Úlcera por pressão em sacral necessitando curativo diário. Família presente para suporte.',
     documentos: [
-      { nome: 'Sumario-Alta-Hospitalar.pdf', tipo: 'Documento Hospitalar', data: '20/03/2026' },
-      { nome: 'Plano-Cuidados-Home-Care.pdf', tipo: 'Plano de Cuidados', data: '22/03/2026' },
-      { nome: 'Prescricao-Geriatrica.pdf', tipo: 'Pedido Médico', data: '22/03/2026' },
+      { id: 'DOC-101', nome: 'Sumario-Alta-Hospitalar.pdf', tipo: 'Documento Hospitalar', tamanho: '380 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-102', nome: 'Plano-Cuidados-Home-Care.pdf', tipo: 'Relatório Clínico', tamanho: '240 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-103', nome: 'Prescricao-Geriatrica.pdf', tipo: 'Pedido Médico', tamanho: '155 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -870,9 +882,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Primigesta, 38 semanas. USG de 20/03/2026 confirma DCP. Carência ativa no plano Essencial, mas parto tem cobertura obrigatória independente de carência.',
     documentos: [
-      { nome: 'USG-Pelve-38semanas.pdf', tipo: 'Exame de Imagem', data: '20/03/2026' },
-      { nome: 'Cartao-Pre-Natal.pdf', tipo: 'Documento Clínico', data: '20/03/2026' },
-      { nome: 'Pedido-Internacao-Maternidade.pdf', tipo: 'Pedido Médico', data: '22/03/2026' },
+      { id: 'DOC-111', nome: 'USG-Pelve-38semanas.pdf', tipo: 'Exame de Imagem', tamanho: '3.4 MB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-112', nome: 'Cartao-Pre-Natal.pdf', tipo: 'Documento Clínico', tamanho: '520 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-113', nome: 'Pedido-Internacao-Maternidade.pdf', tipo: 'Pedido Médico', tamanho: '160 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -929,9 +941,9 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Paciente com coxartrose bilateral grau IV. Oxford Hip Score 14/48 (grave). Radiografia panorâmica confirmando perda articular total. Exames pré-op em andamento.',
     documentos: [
-      { nome: 'Radiografia-Quadril-Bilateral.pdf', tipo: 'Exame de Imagem', data: '01/03/2026' },
-      { nome: 'Laudo-Ortopedico.pdf', tipo: 'Laudo Médico', data: '10/03/2026' },
-      { nome: 'Orcamento-OPME-Quadril.pdf', tipo: 'Orçamento OPME', data: '18/03/2026' },
+      { id: 'DOC-121', nome: 'Radiografia-Quadril-Bilateral.pdf', tipo: 'Exame de Imagem', tamanho: '5.8 MB', enviadoEm: '01/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-122', nome: 'Laudo-Ortopedico.pdf', tipo: 'Laudo Médico', tamanho: '780 KB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-123', nome: 'Orcamento-OPME-Quadril.pdf', tipo: 'Orçamento / Cotação', tamanho: '640 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
     ],
   },
   {
@@ -988,7 +1000,7 @@ export const pedidos: Pedido[] = [
     ],
     observacoes: 'Pendência aberta em 21/03/2026. Prestador notificado por sistema interno. Prazo de resposta: 28/03/2026. SLA violado aguardando documentação complementar.',
     documentos: [
-      { nome: 'Pedido-Medico-QT-Ciclo3.pdf', tipo: 'Pedido Médico', data: '20/03/2026' },
+      { id: 'DOC-131', nome: 'Pedido-Medico-QT-Ciclo3.pdf', tipo: 'Pedido Médico', tamanho: '185 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
     ],
     pendenciaMotivos: [
       'Laudo oncológico do ciclo anterior (ciclo 2) não anexado',
