@@ -118,7 +118,235 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const isHelpActive = pathname === '/ajuda'
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'background.default' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'background.default' }}>
+
+      {/* ── Topbar — full width ──────────────────────────────────────── */}
+      <AppBar
+        position="sticky"
+        elevation={0}
+        sx={{
+          backgroundColor: '#ffffff',
+          borderBottom: '1px solid rgba(0,0,0,0.07)',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
+        <Toolbar sx={{ minHeight: '60px !important', px: 3 }}>
+          {/* Logo on the left */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
+            <img src="/logo-arvo.svg" alt="Arvo Auth" style={{ width: 110, height: 28, display: 'block' }} />
+          </Box>
+
+          {/* Spacer */}
+          <Box sx={{ flex: 1 }} />
+
+            {/* Notifications */}
+            <Box sx={{ position: 'relative', mr: 3 }}>
+              <IconButton
+                aria-label="Notificações"
+                size="medium"
+                onClick={(e) => setNotifAnchor(notifAnchor ? null : e.currentTarget)}
+              >
+                <Badge badgeContent={notifications.filter(n => !n.read).length} color="error">
+                  <NotificationsOutlinedIcon sx={{ fontSize: 22 }} />
+                </Badge>
+              </IconButton>
+              <Popover
+                open={notifOpen}
+                anchorEl={notifAnchor}
+                onClose={() => setNotifAnchor(null)}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                slotProps={{
+                  paper: {
+                    sx: { mt: 0.5, width: 360, borderRadius: 2, boxShadow: '0 8px 32px rgba(0,0,0,0.14)', overflow: 'hidden' },
+                  },
+                }}
+              >
+                {/* Popover header */}
+                <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" fontWeight={700}>Notificações</Typography>
+                    <Box sx={{ minWidth: 20, height: 20, borderRadius: '50%', backgroundColor: 'error.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{notifications.filter(n => !n.read).length}</Typography>
+                    </Box>
+                  </Box>
+                  <Button variant="text" size="small" sx={{ fontSize: 12, color: 'primary.main', minHeight: 'auto', p: 0 }}>
+                    Marcar todas como lidas
+                  </Button>
+                </Box>
+                {/* Notification items */}
+                {notifications.map((n, i) => (
+                  <Box
+                    key={n.id}
+                    onClick={() => { setNotifAnchor(null); router.push(`/analise?id=${n.id}`) }}
+                    sx={{
+                      px: 2, py: 1.75,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 1.5,
+                      borderTop: i > 0 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                      backgroundColor: n.read ? 'transparent' : 'rgba(144,43,41,0.025)',
+                      '&:hover': { backgroundColor: 'rgba(144,43,41,0.04)' },
+                      transition: 'background-color 150ms ease',
+                    }}
+                  >
+                    <Box sx={{ mt: 0.75, width: 8, height: 8, borderRadius: '50%', backgroundColor: n.read ? 'transparent' : 'primary.main', flexShrink: 0 }} />
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={n.read ? 400 : 600} sx={{ fontSize: 13, lineHeight: 1.3 }}>
+                        {n.title}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, lineHeight: 1.4, display: 'block', mt: 0.25 }}>
+                        {n.message}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, mt: 0.5, display: 'block' }}>
+                        {n.time}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+                {/* Footer */}
+                <Box sx={{ borderTop: '1px solid rgba(0,0,0,0.07)', px: 2, py: 1.25, textAlign: 'center' }}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => { setNotifAnchor(null); router.push('/notificacoes') }}
+                    sx={{ fontSize: 12, color: 'primary.main', fontWeight: 600 }}
+                  >
+                    Ver todas as notificações
+                  </Button>
+                </Box>
+              </Popover>
+            </Box>
+
+            {/* Regional selector */}
+            <Box
+              onClick={(e) => setRegionalAnchor(e.currentTarget)}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                px: 1.5,
+                py: 0.5,
+                mr: 2,
+                border: '1px solid rgba(144,43,41,0.25)',
+                borderRadius: 1.5,
+                backgroundColor: 'rgba(144,43,41,0.04)',
+                cursor: 'pointer',
+                '&:hover': { backgroundColor: 'rgba(144,43,41,0.08)' },
+                transition: 'background-color 0.12s ease',
+              }}
+            >
+              <LocationOnIcon sx={{ fontSize: 14, color: '#902B29' }} />
+              <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
+                <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>Regional:</Box>{' '}
+                <Box component="span" sx={{ fontWeight: 700, color: '#902B29' }}>{regional}</Box>
+              </Typography>
+              <KeyboardArrowDownIcon sx={{ fontSize: 14, color: '#902B29', ml: 0.25 }} />
+            </Box>
+            <Menu
+              anchorEl={regionalAnchor}
+              open={Boolean(regionalAnchor)}
+              onClose={() => setRegionalAnchor(null)}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              slotProps={{ paper: { sx: { mt: 0.5, minWidth: 140, borderRadius: 1.5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' } } }}
+            >
+              {(['Sul', 'Sudeste', 'Nordeste'] as const).map((r) => (
+                <MenuItem
+                  key={r}
+                  selected={regional === r}
+                  onClick={() => {
+                    setRegionalAnchor(null)
+                    if (r !== regional) {
+                      setRegional(r)
+                      setRegionalSnackbar(`Regional alterada para ${r}. Recarregando dados...`)
+                    }
+                  }}
+                  sx={{ fontSize: 13, fontWeight: regional === r ? 700 : 400 }}
+                >
+                  {r}
+                </MenuItem>
+              ))}
+            </Menu>
+
+            {/* User section */}
+            <Button
+              onClick={handleUserMenuOpen}
+              aria-label="Menu do usuário"
+              aria-haspopup="true"
+              aria-expanded={Boolean(userMenuAnchor)}
+              disableRipple={false}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                ml: 1,
+                px: 1,
+                py: 0.5,
+                borderRadius: 2,
+                textTransform: 'none',
+                color: 'text.primary',
+                backgroundColor: 'transparent',
+                '&:hover': { backgroundColor: 'rgba(144,43,41,0.05)' },
+                minHeight: 44,
+              }}
+            >
+              <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: 13, fontWeight: 700 }}>
+                AS
+              </Avatar>
+              <Box sx={{ textAlign: 'left' }}>
+                <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, lineHeight: 1.2 }}>
+                  Ana Paula Santos
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, lineHeight: 1 }}>
+                  Autorizadora
+                </Typography>
+              </Box>
+              <KeyboardArrowDownIcon
+                sx={{
+                  fontSize: 18,
+                  color: 'text.secondary',
+                  transition: 'transform 150ms ease',
+                  transform: Boolean(userMenuAnchor) ? 'rotate(180deg)' : 'rotate(0deg)',
+                }}
+              />
+            </Button>
+
+            {/* User dropdown */}
+            <Menu
+              anchorEl={userMenuAnchor}
+              open={Boolean(userMenuAnchor)}
+              onClose={handleUserMenuClose}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              slotProps={{
+                paper: {
+                  sx: { mt: 0.5, minWidth: 200, borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.12)' },
+                },
+              }}
+            >
+              <MenuItem
+                onClick={() => { handleUserMenuClose(); router.push('/meu-perfil') }}
+                sx={{ gap: 1.5, minHeight: 44, borderRadius: 1, mx: 0.5 }}
+              >
+                <PersonOutlineIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                <Typography variant="body2">Meu Perfil</Typography>
+              </MenuItem>
+              <Divider sx={{ my: 0.5 }} />
+              <MenuItem
+                onClick={() => { handleUserMenuClose(); router.push('/login') }}
+                sx={{ gap: 1.5, minHeight: 44, color: 'error.main', borderRadius: 1, mx: 0.5 }}
+              >
+                <LogoutIcon fontSize="small" />
+                <Typography variant="body2">Sair</Typography>
+              </MenuItem>
+            </Menu>
+        </Toolbar>
+      </AppBar>
+
+      {/* ── Sidebar + content row ────────────────────────────────────── */}
+      <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
       {/* ── Sidebar ─────────────────────────────────────────────────── */}
       <Drawer
@@ -133,15 +361,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             border: 'none',
             display: 'flex',
             flexDirection: 'column',
+            top: 60,
+            height: 'calc(100vh - 60px)',
           },
         }}
       >
-        {/* Logo — sem borda direita */}
-        <Box sx={{ px: 3, height: 60, display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(0,0,0,0.07)', flexShrink: 0 }}>
-          <img src="/logo-arvo.svg" alt="Arvo Auth" style={{ width: 110, height: 28, display: 'block' }} />
-        </Box>
-
-        {/* Conteúdo abaixo da logo — com borda direita */}
+        {/* Conteúdo da sidebar — com borda direita */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, borderRight: '1px solid rgba(0,0,0,0.07)' }}>
 
         {/* Main Nav */}
@@ -383,245 +608,15 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </Box>{/* fim wrapper com borderRight */}
       </Drawer>
 
-      {/* ── Main area ───────────────────────────────────────────────── */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-
-        {/* Topbar */}
-        <AppBar
-          position="sticky"
-          elevation={0}
-          sx={{
-            backgroundColor: '#ffffff',
-            borderBottom: '1px solid rgba(0,0,0,0.07)',
-            zIndex: (theme) => theme.zIndex.drawer - 1,
-          }}
-        >
-          <Toolbar sx={{ minHeight: '60px !important', px: 3 }}>
-            {/* Spacer pushes user controls to the right */}
-            <Box sx={{ flex: 1 }} />
-
-            {/* Notifications */}
-            <Box sx={{ position: 'relative', mr: 3 }}>
-              <IconButton
-                aria-label="Notificações"
-                size="medium"
-                onClick={(e) => setNotifAnchor(notifAnchor ? null : e.currentTarget)}
-              >
-                <Badge badgeContent={notifications.filter(n => !n.read).length} color="error">
-                  <NotificationsOutlinedIcon sx={{ fontSize: 22 }} />
-                </Badge>
-              </IconButton>
-              <Popover
-                open={notifOpen}
-                anchorEl={notifAnchor}
-                onClose={() => setNotifAnchor(null)}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                slotProps={{
-                  paper: {
-                    sx: { mt: 0.5, width: 360, borderRadius: 2, boxShadow: '0 8px 32px rgba(0,0,0,0.14)', overflow: 'hidden' },
-                  },
-                }}
-              >
-                {/* Popover header */}
-                <Box sx={{ px: 2, py: 1.5, borderBottom: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2" fontWeight={700}>Notificações</Typography>
-                    <Box sx={{ minWidth: 20, height: 20, borderRadius: '50%', backgroundColor: 'error.main', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#fff' }}>{notifications.filter(n => !n.read).length}</Typography>
-                    </Box>
-                  </Box>
-                  <Button variant="text" size="small" sx={{ fontSize: 12, color: 'primary.main', minHeight: 'auto', p: 0 }}>
-                    Marcar todas como lidas
-                  </Button>
-                </Box>
-                {/* Notification items */}
-                {notifications.map((n, i) => (
-                  <Box
-                    key={n.id}
-                    onClick={() => { setNotifAnchor(null); router.push(`/analise?id=${n.id}`) }}
-                    sx={{
-                      px: 2, py: 1.75,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 1.5,
-                      borderTop: i > 0 ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                      backgroundColor: n.read ? 'transparent' : 'rgba(144,43,41,0.025)',
-                      '&:hover': { backgroundColor: 'rgba(144,43,41,0.04)' },
-                      transition: 'background-color 150ms ease',
-                    }}
-                  >
-                    <Box sx={{ mt: 0.75, width: 8, height: 8, borderRadius: '50%', backgroundColor: n.read ? 'transparent' : 'primary.main', flexShrink: 0 }} />
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={n.read ? 400 : 600} sx={{ fontSize: 13, lineHeight: 1.3 }}>
-                        {n.title}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, lineHeight: 1.4, display: 'block', mt: 0.25 }}>
-                        {n.message}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, mt: 0.5, display: 'block' }}>
-                        {n.time}
-                      </Typography>
-                    </Box>
-                  </Box>
-                ))}
-                {/* Footer */}
-                <Box sx={{ borderTop: '1px solid rgba(0,0,0,0.07)', px: 2, py: 1.25, textAlign: 'center' }}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => { setNotifAnchor(null); router.push('/notificacoes') }}
-                    sx={{ fontSize: 12, color: 'primary.main', fontWeight: 600 }}
-                  >
-                    Ver todas as notificações
-                  </Button>
-                </Box>
-              </Popover>
-            </Box>
-
-            {/* Regional selector */}
-            <Box
-              onClick={(e) => setRegionalAnchor(e.currentTarget)}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-                px: 1.5,
-                py: 0.5,
-                mr: 2,
-                border: '1px solid rgba(144,43,41,0.25)',
-                borderRadius: 1.5,
-                backgroundColor: 'rgba(144,43,41,0.04)',
-                cursor: 'pointer',
-                '&:hover': { backgroundColor: 'rgba(144,43,41,0.08)' },
-                transition: 'background-color 0.12s ease',
-              }}
-            >
-              <LocationOnIcon sx={{ fontSize: 14, color: '#902B29' }} />
-              <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
-                <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>Regional:</Box>{' '}
-                <Box component="span" sx={{ fontWeight: 700, color: '#902B29' }}>{regional}</Box>
-              </Typography>
-              <KeyboardArrowDownIcon sx={{ fontSize: 14, color: '#902B29', ml: 0.25 }} />
-            </Box>
-            <Menu
-              anchorEl={regionalAnchor}
-              open={Boolean(regionalAnchor)}
-              onClose={() => setRegionalAnchor(null)}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              slotProps={{ paper: { sx: { mt: 0.5, minWidth: 140, borderRadius: 1.5, boxShadow: '0 4px 16px rgba(0,0,0,0.12)' } } }}
-            >
-              {(['Sul', 'Sudeste', 'Nordeste'] as const).map((r) => (
-                <MenuItem
-                  key={r}
-                  selected={regional === r}
-                  onClick={() => {
-                    setRegionalAnchor(null)
-                    if (r !== regional) {
-                      setRegional(r)
-                      setRegionalSnackbar(`Regional alterada para ${r}. Recarregando dados...`)
-                    }
-                  }}
-                  sx={{ fontSize: 13, fontWeight: regional === r ? 700 : 400 }}
-                >
-                  {r}
-                </MenuItem>
-              ))}
-            </Menu>
-
-            {/* User section */}
-            <Button
-              onClick={handleUserMenuOpen}
-              aria-label="Menu do usuário"
-              aria-haspopup="true"
-              aria-expanded={Boolean(userMenuAnchor)}
-              disableRipple={false}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                ml: 1,
-                px: 1,
-                py: 0.5,
-                borderRadius: 2,
-                textTransform: 'none',
-                color: 'text.primary',
-                backgroundColor: 'transparent',
-                '&:hover': { backgroundColor: 'rgba(144,43,41,0.05)' },
-                minHeight: 44,
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 36,
-                  height: 36,
-                  bgcolor: 'primary.main',
-                  fontSize: 13,
-                  fontWeight: 700,
-                }}
-              >
-                AS
-              </Avatar>
-              <Box sx={{ textAlign: 'left' }}>
-                <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, lineHeight: 1.2 }}>
-                  Ana Paula Santos
-                </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, lineHeight: 1 }}>
-                  Autorizadora
-                </Typography>
-              </Box>
-              <KeyboardArrowDownIcon
-                sx={{
-                  fontSize: 18,
-                  color: 'text.secondary',
-                  transition: 'transform 150ms ease',
-                  transform: Boolean(userMenuAnchor) ? 'rotate(180deg)' : 'rotate(0deg)',
-                }}
-              />
-            </Button>
-
-            {/* User dropdown */}
-            <Menu
-              anchorEl={userMenuAnchor}
-              open={Boolean(userMenuAnchor)}
-              onClose={handleUserMenuClose}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              slotProps={{
-                paper: {
-                  sx: { mt: 0.5, minWidth: 200, borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.12)' },
-                },
-              }}
-            >
-              <MenuItem
-                onClick={() => { handleUserMenuClose(); router.push('/meu-perfil') }}
-                sx={{ gap: 1.5, minHeight: 44, borderRadius: 1, mx: 0.5 }}
-              >
-                <PersonOutlineIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography variant="body2">Meu Perfil</Typography>
-              </MenuItem>
-              <Divider sx={{ my: 0.5 }} />
-              <MenuItem
-                onClick={() => { handleUserMenuClose(); router.push('/login') }}
-                sx={{ gap: 1.5, minHeight: 44, color: 'error.main', borderRadius: 1, mx: 0.5 }}
-              >
-                <LogoutIcon fontSize="small" />
-                <Typography variant="body2">Sair</Typography>
-              </MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
-
-        {/* Page content */}
-        <Box
-          component="main"
-          sx={{ flex: 1, overflowY: 'auto', backgroundColor: 'background.default' }}
-        >
-          {children}
-        </Box>
+      {/* ── Main content ─────────────────────────────────────────────── */}
+      <Box
+        component="main"
+        sx={{ flex: 1, overflowY: 'auto', backgroundColor: 'background.default' }}
+      >
+        {children}
       </Box>
+
+      </Box>{/* fim row sidebar + content */}
 
       {/* Regional change snackbar */}
       <Snackbar
