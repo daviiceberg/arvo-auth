@@ -1307,7 +1307,7 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
 
   return (
     <Card sx={{ border: '1px solid rgba(245,158,11,0.35) !important', backgroundColor: 'rgba(255,251,235,0.6)' }}>
-      <CardContent sx={{ p: 0 }}>
+      <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
         <Box
           onClick={() => setCollapsed(v => !v)}
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, cursor: 'pointer', userSelect: 'none' }}
