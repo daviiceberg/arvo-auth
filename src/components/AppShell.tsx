@@ -541,10 +541,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </Collapse>
         </Box>
 
-        <Divider sx={{ mx: 1.5, mt: 1 }} />
-
         {/* Links Úteis */}
-        <Box sx={{ px: 1.5, pt: 1, flexShrink: 0 }}>
+        <Box sx={{ px: 1.5, pt: 1, pb: 2, flexShrink: 0 }}>
           <Typography
             variant="caption"
             sx={{ px: 1.5, py: 0.75, display: 'block', color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.6, fontSize: 12 }}
