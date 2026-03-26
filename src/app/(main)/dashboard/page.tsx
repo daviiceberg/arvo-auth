@@ -759,14 +759,11 @@ export default function DashboardPage() {
                     {pedidos.slice(0, 7).map((pedido) => (
                       <TableRow
                         key={pedido.id}
-                        sx={{ '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' } }}
+                        onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                        sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' } }}
                       >
                         <TableCell sx={{ pl: 0.5 }}>
-                          <Typography
-                            variant="body2"
-                            fontWeight={700}
-                            sx={{ color: 'primary.main', fontSize: 12 }}
-                          >
+                          <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
                             {pedido.id}
                           </Typography>
                         </TableCell>
@@ -788,15 +785,8 @@ export default function DashboardPage() {
                             {pedido.dataProtocolo.split(' ')[0]}
                           </Typography>
                         </TableCell>
-                        <TableCell>
-                          <Button
-                            size="small"
-                            onClick={() => router.push(`/analise?id=${pedido.id}`)}
-                            endIcon={<ChevronRightIcon sx={{ fontSize: 14 }} />}
-                            sx={{ fontSize: 11, py: 0.25, px: 1, minHeight: 26, color: 'primary.main' }}
-                          >
-                            Analisar
-                          </Button>
+                        <TableCell align="right">
+                          <ChevronRightIcon sx={{ fontSize: 16, color: 'text.disabled', verticalAlign: 'middle' }} />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -908,37 +898,6 @@ export default function DashboardPage() {
         </Grid>
       </Grid>
 
-      {/* IA Banner */}
-      {!loading && (
-        <Box
-          sx={{
-            mt: 2.5,
-            p: 2,
-            borderRadius: 2,
-            backgroundColor: 'rgba(144,43,41,0.04)',
-            border: '1px solid rgba(144,43,41,0.12)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-          }}
-        >
-          <SmartToyIcon sx={{ color: 'primary.main', fontSize: 20, flexShrink: 0 }} />
-          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.primary' }}>
-            <strong>Assistente de Decisão IA ativo</strong>
-            {' · '}
-            A IA analisa cada pedido e emite uma sugestão (Aprovar / Negar / Junta Médica). A decisão final é sempre do autorizador. {dashboardMetrics.emAnalise} pedidos aguardam revisão.
-          </Typography>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => router.push('/fila')}
-            sx={{ ml: 'auto', flexShrink: 0, fontSize: 12, minHeight: 32 }}
-            aria-label="Ver fila de análise"
-          >
-            Ver fila
-          </Button>
-        </Box>
-      )}
     </Box>
   )
 }

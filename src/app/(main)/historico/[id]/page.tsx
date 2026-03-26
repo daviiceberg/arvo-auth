@@ -244,21 +244,24 @@ function sinaisAtencaoColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 
 
 // ── BeneficiarioSection ───────────────────────────────────────────────
 function BeneficiarioSection({ entry }: { entry: HistoricoEntry }) {
+  const router = useRouter()
   const sexo = entry.sexo ?? 'M'
   const idade = entry.idade ?? 45
   const carencia = entry.carencia ?? false
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
           Beneficiário
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3, flexWrap: 'wrap' }}>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+
+        {/* Row 1: nome + chips | botão */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2 }}>
+          <Box>
             <Typography variant="h5" fontWeight={800} sx={{ mb: 0.75 }}>
               {entry.beneficiario}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
                 label={`${idade} anos`}
                 size="small"
@@ -274,45 +277,45 @@ function BeneficiarioSection({ entry }: { entry: HistoricoEntry }) {
                 sx={{
                   backgroundColor: sexo === 'M' ? 'rgba(29,78,216,0.08)' : 'rgba(190,24,93,0.08)',
                   color: sexo === 'M' ? '#1d4ed8' : '#be185d',
-                  fontWeight: 600,
-                  height: 22,
-                  fontSize: 12,
+                  fontWeight: 600, height: 22, fontSize: 12,
                 }}
               />
             </Box>
-            <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', mb: 1 }}>
-              <Typography variant="body2" color="text.secondary">
-                Carteirinha: <strong>{entry.carteirinha}</strong>
+          </Box>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiario)}`)}
+            sx={{ fontSize: 12, py: 0.5, flexShrink: 0, color: 'primary.main', borderColor: 'rgba(144,43,41,0.35)', whiteSpace: 'nowrap' }}
+          >
+            Ver todas as guias deste beneficiário →
+          </Button>
+        </Box>
+
+        {/* Row 2: dados em grid horizontal */}
+        <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap', pt: 2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+          {[
+            { label: 'Carteirinha', value: entry.carteirinha },
+            { label: 'CPF', value: entry.cpf ?? '—' },
+            { label: 'Nascimento', value: entry.dataNascimento ?? '—' },
+            { label: 'Plano', value: entry.plano },
+          ].map(f => (
+            <Box key={f.label}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+                {f.label}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                CPF: <strong>{entry.cpf ?? '—'}</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Nascimento: <strong>{entry.dataNascimento ?? '—'}</strong>
+              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                {f.value}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              <Typography variant="body2" color="text.secondary">
-                Plano: <strong>{entry.plano}</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">·</Typography>
-              <Typography variant="body2" color="text.secondary">Carência:</Typography>
-              {carencia ? (
-                <Chip
-                  icon={<WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
-                  label="Em carência"
-                  size="small"
-                  sx={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#b45309', fontWeight: 700, height: 22, fontSize: 12 }}
-                />
-              ) : (
-                <Chip
-                  icon={<CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />}
-                  label="Sem carência"
-                  size="small"
-                  sx={{ backgroundColor: 'rgba(22,163,74,0.1)', color: '#16a34a', fontWeight: 700, height: 22, fontSize: 12 }}
-                />
-              )}
-            </Box>
+          ))}
+          <Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+              Carência
+            </Typography>
+            <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, color: carencia ? '#b45309' : '#16a34a' }}>
+              {carencia ? 'Em carência' : 'Sem carência'}
+            </Typography>
           </Box>
         </Box>
       </CardContent>
@@ -346,7 +349,7 @@ function ProcedimentosSection({ entry }: { entry: HistoricoEntry }) {
             {procs.map((proc, idx) => (
               <TableRow
                 key={proc.codigo + idx}
-                sx={{ '& td': { borderBottom: idx < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none' }, '&:not(:first-of-type) td': { pt: 2 } }}
+                sx={{ cursor: 'default', '& td': { borderBottom: idx < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none' }, '&:not(:first-of-type) td': { pt: 2 }, '&:hover': { backgroundColor: 'transparent' } }}
               >
                 <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>{proc.tuss}</TableCell>
                 <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>{proc.descricao}</TableCell>
@@ -357,7 +360,7 @@ function ProcedimentosSection({ entry }: { entry: HistoricoEntry }) {
                   {proc.dataInicio} → {proc.dataFim}
                 </TableCell>
                 <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
                     {proc.cid && (
                       <Chip
                         label={`CID ${proc.cid}`}
