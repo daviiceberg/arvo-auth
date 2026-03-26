@@ -899,6 +899,17 @@ export default function HistoricoDetalhePage() {
     if (currentIndex < total - 1) router.push('/historico/' + sortedEntries[currentIndex + 1].id)
   }
 
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return
+      if (e.key === 'ArrowLeft') handlePrev()
+      if (e.key === 'ArrowRight') handleNext()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [currentIndex])
+
   const handleDownloadPDF = () => {
     const a = document.createElement('a')
     a.href = '/exemplo-pedido.png'

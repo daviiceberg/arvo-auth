@@ -2446,46 +2446,16 @@ function AnaliseInner() {
       <Box sx={{ flex: 1, display: 'flex', gap: 2.5, px: 3, pt: 2, overflow: 'hidden' }}>
         {/* Left content — scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
-          {/* Anchor nav */}
-          <Box
-            sx={{
-              position: 'sticky', top: 0, zIndex: 10,
-              backgroundColor: 'rgba(249,250,251,0.97)',
-              backdropFilter: 'blur(4px)',
-              display: 'flex', gap: 0.25, alignItems: 'center',
-              py: 0.5, mb: 1.5,
-              borderBottom: '1px solid rgba(0,0,0,0.07)',
-              mx: -0.5,
-            }}
-          >
-            {[
-              { id: 'sec-beneficiario', label: 'Beneficiário' },
-              { id: 'sec-procedimentos', label: 'Procedimentos' },
-              { id: 'sec-historico', label: 'Histórico' },
-              { id: 'sec-documentos', label: 'Documentos' },
-            ].map(({ id, label }) => (
-              <Button
-                key={id}
-                size="small"
-                variant="text"
-                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                sx={{ fontSize: 11, py: 0.2, px: 1, color: 'text.secondary', minHeight: 22, fontWeight: 600, '&:hover': { color: 'primary.main', backgroundColor: 'rgba(144,43,41,0.05)' } }}
-              >
-                {label}
-              </Button>
-            ))}
-          </Box>
-
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <PendenciaBanner pedido={pedido} />
             <AlertasBanner pedido={pedido} />
             <GuiasSimultaneasAlert pedido={pedido} />
-            <Box id="sec-beneficiario"><BeneficiarioSection pedido={pedido} /></Box>
-            <Box id="sec-procedimentos"><ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} /></Box>
+            <BeneficiarioSection pedido={pedido} />
+            <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
             <AjustesRegistradosSection ajustes={allAjustes} />
-            <Box id="sec-historico"><HistoricoConsolidadoSection pedido={pedido} /></Box>
+            <HistoricoConsolidadoSection pedido={pedido} />
             <ObservacoesSection pedido={pedido} />
-            <Box id="sec-documentos"><DocumentosSection pedido={pedido} /></Box>
+            <DocumentosSection pedido={pedido} />
           </Box>
         </Box>
 
