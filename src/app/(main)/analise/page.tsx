@@ -61,6 +61,7 @@ import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import Drawer from '@mui/material/Drawer'
+import CircularProgress from '@mui/material/CircularProgress'
 import EditIcon from '@mui/icons-material/Edit'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -70,11 +71,11 @@ import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste, Documento } from '@/
 // ── Helpers ──────────────────────────────────────────────────────────
 function statusColor(status: string): { bg: string; color: string } {
   switch (status) {
-    case 'Em Análise': return { bg: 'rgba(245,158,11,0.12)', color: '#b45309' }
+    case 'Em Análise': return { bg: 'rgba(245,158,11,0.18)', color: '#92400e' }
     case 'Aprovado': return { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' }
     case 'Negado': return { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' }
     case 'Pendente': return { bg: 'rgba(37,99,235,0.08)', color: '#2563eb' }
-    case 'Devolutiva': return { bg: 'rgba(124,58,237,0.1)', color: '#7c3aed' }
+    case 'Devolutiva': return { bg: 'rgba(124,58,237,0.18)', color: '#5b21b6' }
     default: return { bg: 'rgba(0,0,0,0.06)', color: '#6b7280' }
   }
 }
@@ -352,13 +353,38 @@ function AlertasBanner({ pedido }: { pedido: Pedido }) {
   )
 }
 
+// ── Simultaneous Guias Alert ──────────────────────────────────────────
+function GuiasSimultaneasAlert({ pedido }: { pedido: Pedido }) {
+  const outros = pedidos.filter(
+    p => p.id !== pedido.id &&
+    p.beneficiario.carteirinha === pedido.beneficiario.carteirinha &&
+    (p.status === 'Em Análise' || p.status === 'Devolutiva')
+  )
+  if (outros.length === 0) return null
+  return (
+    <Alert
+      severity="warning"
+      icon={<WarningAmberIcon fontSize="small" />}
+      sx={{ borderRadius: 2, border: '1px solid rgba(245,158,11,0.35)' }}
+    >
+      <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
+        {outros.length} guia{outros.length > 1 ? 's' : ''} simultânea{outros.length > 1 ? 's' : ''} em aberto para este beneficiário
+      </Typography>
+      <Typography variant="caption">
+        {outros.map(o => `${o.id} (${o.status})`).join(' · ')}
+      </Typography>
+    </Alert>
+  )
+}
+
 // ── Beneficiário ──────────────────────────────────────────────────────
 function BeneficiarioSection({ pedido }: { pedido: Pedido }) {
   const b = pedido.beneficiario
+  const router = useRouter()
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
           Beneficiário
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3, flexWrap: 'wrap' }}>
@@ -422,6 +448,16 @@ function BeneficiarioSection({ pedido }: { pedido: Pedido }) {
                 />
               )}
             </Box>
+            <Box sx={{ mt: 1.5 }}>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => router.push(`/fila?beneficiario=${encodeURIComponent(b.nome)}`)}
+                sx={{ fontSize: 12, py: 0.4, color: 'primary.main', borderColor: 'rgba(144,43,41,0.35)' }}
+              >
+                Ver todas as guias deste beneficiário →
+              </Button>
+            </Box>
           </Box>
         </Box>
       </CardContent>
@@ -438,6 +474,7 @@ interface HistoricoConsolidado {
   procedimentosRelacionados: string
   internacoes: { count: number; periodo: string; detalhes?: string }
   cidRecorrente: { cid: string; count: number; descricao: string } | null
+  sessoesDoMes?: { utilizadas: number; autorizadas: number; tipo: string }[]
   autorizacoesAnteriores: Array<{
     id: string; procedimento: string; codigo: string; cid: string
     data: string; decisao: 'aprovado' | 'negado' | 'ajustado'; motivo: string; destaque?: boolean
@@ -481,6 +518,10 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
     procedimentosRelacionados: 'Múltiplos procedimentos de reabilitação, exames de imagem e consultas especializadas recorrentes.',
     internacoes: { count: 2, periodo: 'últimos 12 meses', detalhes: 'Jan/2026 — Clínica Médica (3 dias); Out/2025 — Ortopedia (2 dias)' },
     cidRecorrente: { cid: 'M79.3', count: 4, descricao: 'Fibromialgia' },
+    sessoesDoMes: [
+      { utilizadas: 24, autorizadas: 24, tipo: 'Fisioterapia' },
+      { utilizadas: 8, autorizadas: 12, tipo: 'Psicologia' },
+    ],
     autorizacoesAnteriores: [
       { id: 'REQ-2026-03801', procedimento: 'Sessão de Fisioterapia', codigo: '50000470', cid: 'M79.3', data: 'Mar/2026', decisao: 'aprovado', motivo: 'Indicação clínica adequada', destaque: true },
       { id: 'REQ-2026-02654', procedimento: 'RNM de Coluna Lombar', codigo: '40901010', cid: 'M51.1', data: 'Fev/2026', decisao: 'aprovado', motivo: 'Solicitação médica com justificativa' },
@@ -572,7 +613,7 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
           <HistoryIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
             Histórico Consolidado
           </Typography>
           <Box sx={{ flex: 1 }} />
@@ -693,6 +734,34 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
             )}
           </Box>
         </Box>
+
+        {/* Sessões do Mês */}
+        {h.sessoesDoMes && h.sessoesDoMes.length > 0 && (
+          <Box sx={{ mb: 2.5 }}>
+            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
+              Sessões Mensais
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {h.sessoesDoMes.map((s) => {
+                const pct = Math.min((s.utilizadas / s.autorizadas) * 100, 100)
+                const barColor = pct >= 100 ? '#d4183d' : pct >= 80 ? '#f59e0b' : '#16a34a'
+                return (
+                  <Box key={s.tipo} sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
+                      <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
+                      <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: barColor }}>
+                        {s.utilizadas}/{s.autorizadas} sessões
+                      </Typography>
+                    </Box>
+                    <Box sx={{ height: 6, borderRadius: 3, backgroundColor: 'rgba(0,0,0,0.08)' }}>
+                      <Box sx={{ height: '100%', width: `${pct}%`, borderRadius: 3, backgroundColor: barColor, transition: 'width 400ms ease' }} />
+                    </Box>
+                  </Box>
+                )
+              })}
+            </Box>
+          </Box>
+        )}
 
         <Divider sx={{ mb: 2.5 }} />
 
@@ -863,12 +932,13 @@ interface AjusteDrawerProps {
   open: boolean
   pedidoId: string
   pedidoStatus: string
+  existingAjustes?: Ajuste[]
   proc: { codigo: string; descricao: string; qty: number; prestador: string } | null
   onClose: () => void
   onConfirm: (ajuste: Omit<Ajuste, 'id'>) => void
 }
 
-function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm }: AjusteDrawerProps) {
+function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, existingAjustes = [] }: AjusteDrawerProps) {
   const [campo, setCampo] = useState<'quantidade' | 'prestador' | 'codigo' | ''>('')
   const [novaQty, setNovaQty] = useState('')
   const [novoPrestador, setNovoPrestador] = useState('')
@@ -891,15 +961,33 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm }
     : qtyNum === (proc?.qty ?? 0) ? 'equal'
     : 'above'
 
-  // Reset when proc changes or drawer closes
+  // Reset (or pre-fill from existing ajuste) when proc changes or drawer opens
   useEffect(() => {
     if (!open) return
-    setCampo('')
-    setNovaQty('')
-    setNovoPrestador('')
-    setNovoCNES('')
-    setNovoCodigo('')
-    setNovaDesc('')
+    // Find most recent ajuste for this proc
+    const lastQtyAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'quantidade').slice(-1)[0]
+    const lastPrestAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'prestador').slice(-1)[0]
+    const lastCodeAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'codigo').slice(-1)[0]
+    if (lastQtyAjuste) {
+      setCampo('quantidade')
+      setNovaQty(lastQtyAjuste.valorNovo)
+    } else if (lastPrestAjuste) {
+      setCampo('prestador')
+      setNovoPrestador(lastPrestAjuste.valorNovo.replace(/ \(CNES: .+\)$/, ''))
+      const cnesMatch = lastPrestAjuste.valorNovo.match(/CNES: (.+)\)$/)
+      setNovoCNES(cnesMatch?.[1] ?? '')
+    } else if (lastCodeAjuste) {
+      setCampo('codigo')
+      setNovoCodigo(lastCodeAjuste.valorNovo.split(' — ')[0] ?? '')
+      setNovaDesc(lastCodeAjuste.valorNovo.split(' — ')[1] ?? '')
+    } else {
+      setCampo('')
+      setNovaQty('')
+      setNovoPrestador('')
+      setNovoCNES('')
+      setNovoCodigo('')
+      setNovaDesc('')
+    }
     setMotivo('')
     setFundamentacao('')
     setErrors({})
@@ -1169,7 +1257,7 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
           Procedimentos ({procs.length})
         </Typography>
         <Table size="small">
@@ -1181,7 +1269,10 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
               const hasAnyAjuste = allAjustes.some(a => a.procedimentoCodigo === proc.codigo)
 
               return (
-                <TableRow key={proc.codigo}>
+                <TableRow
+                  key={proc.codigo}
+                  sx={{ '& td': { borderBottom: procs.indexOf(proc) < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none' }, '&:not(:first-of-type) td': { pt: 2 } }}
+                >
                   <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
                     {ajusteCodigo ? (
                       <Box>
@@ -1226,6 +1317,21 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                           sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12, height: 20 }}
                         />
                       )}
+                      {(() => {
+                        const lastDigit = parseInt(proc.codigo.slice(-1))
+                        const credOk = lastDigit % 2 === 0
+                        return (
+                          <Chip
+                            label={credOk ? 'Credenciado' : 'Não credenciado'}
+                            size="small"
+                            sx={{
+                              backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
+                              color: credOk ? '#16a34a' : '#d4183d',
+                              fontWeight: 700, fontSize: 11, height: 20,
+                            }}
+                          />
+                        )
+                      })()}
                       {hasAnyAjuste && !isGuiaFinalizada && (
                         <Chip
                           icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
@@ -1379,7 +1485,7 @@ function ObservacoesSection({ pedido }: { pedido: Pedido }) {
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 1.5, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 1.5, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
           Observações do Solicitante
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
@@ -1456,6 +1562,17 @@ const TIPOS_DOCUMENTO = [
   'Outro',
 ]
 
+const DOC_TIPOS_SOLICITACAO = [
+  'Laudo Médico Atualizado',
+  'Pedido Médico Complementar',
+  'Exame Laboratorial',
+  'Exame de Imagem',
+  'Relatório de Evolução',
+  'Orçamento / Cotação',
+  'Declaração do Beneficiário',
+  'Outro',
+]
+
 function DocumentosSection({ pedido }: { pedido: Pedido }) {
   const [localDocs, setLocalDocs] = useState<Documento[]>([])
   const [viewDoc, setViewDoc] = useState<string | null>(null)
@@ -1470,6 +1587,10 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
   const [processingId, setProcessingId] = useState<string | null>(null)
   const [toast, setToast] = useState('')
   const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [showSolicitarModal, setShowSolicitarModal] = useState(false)
+  const [solicitarDocs, setSolicitarDocs] = useState<string[]>([])
+  const [solicitarMensagem, setSolicitarMensagem] = useState('')
+  const [solicitarPrazo, setSolicitarPrazo] = useState('5')
 
   const allDocs = [...pedido.documentos, ...localDocs]
 
@@ -1512,18 +1633,30 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
       <CardContent sx={{ p: 3 }}>
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
             Documentos ({allDocs.length})
           </Typography>
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
-            onClick={() => setShowAddModal(true)}
-            sx={{ fontSize: 12, py: 0.4 }}
-          >
-            Adicionar documento
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+              onClick={() => setShowAddModal(true)}
+              sx={{ fontSize: 12, py: 0.4 }}
+            >
+              Adicionar
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              color="warning"
+              startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
+              onClick={() => setShowSolicitarModal(true)}
+              sx={{ fontSize: 12, py: 0.4 }}
+            >
+              Solicitar complementar
+            </Button>
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -1577,7 +1710,17 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2, backgroundColor: 'rgba(0,0,0,0.01)' }}>
                   {docIcon(doc.tipo)}
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" fontWeight={600}>{doc.nome}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                      <Typography variant="body2" fontWeight={600}>{doc.nome}</Typography>
+                      {(doc.tipo === 'Laudo Médico' || doc.nome.toLowerCase().includes('laudo')) && (
+                        <Chip
+                          icon={<WarningAmberIcon sx={{ fontSize: 11, ml: '4px !important' }} />}
+                          label="Validade: 6 meses"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#b45309', fontWeight: 700, fontSize: 11, height: 20 }}
+                        />
+                      )}
+                    </Box>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                       {doc.tipo}{doc.tamanho ? ` · ${doc.tamanho}` : ''}{doc.enviadoEm ? ` · Enviado em ${doc.enviadoEm}` : ''}
                     </Typography>
@@ -1742,6 +1885,75 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
         </DialogActions>
       </Dialog>
 
+      {/* Solicitar Documentação Complementar Modal */}
+      <Dialog open={showSolicitarModal} onClose={() => setShowSolicitarModal(false)} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
+          <Typography fontWeight={700} sx={{ fontSize: 15 }}>Solicitar Documentação Complementar</Typography>
+          <IconButton size="small" onClick={() => setShowSolicitarModal(false)}><CloseIcon fontSize="small" /></IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, fontSize: 12 }}>
+            Selecione os documentos necessários. O beneficiário será notificado e o pedido ficará em pendência até o envio.
+          </Typography>
+          <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5, display: 'block', mb: 1 }}>
+            Documentos necessários *
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 2.5 }}>
+            {DOC_TIPOS_SOLICITACAO.map(tipo => (
+              <FormControlLabel
+                key={tipo}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={solicitarDocs.includes(tipo)}
+                    onChange={(e) => setSolicitarDocs(prev =>
+                      e.target.checked ? [...prev, tipo] : prev.filter(d => d !== tipo)
+                    )}
+                    sx={{ py: 0.4, '&.Mui-checked': { color: 'primary.main' } }}
+                  />
+                }
+                label={<Typography sx={{ fontSize: 13 }}>{tipo}</Typography>}
+              />
+            ))}
+          </Box>
+          <FormControl size="small" fullWidth sx={{ mb: 2 }}>
+            <InputLabel>Prazo para envio</InputLabel>
+            <Select value={solicitarPrazo} label="Prazo para envio" onChange={e => setSolicitarPrazo(e.target.value)}>
+              {['3', '5', '7', '10', '15'].map(d => (
+                <MenuItem key={d} value={d}>{d} dias úteis</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            size="small"
+            multiline
+            rows={3}
+            label="Mensagem ao beneficiário (opcional)"
+            placeholder="Ex: Para prosseguirmos com a análise, precisamos dos documentos acima dentro do prazo indicado."
+            value={solicitarMensagem}
+            onChange={e => setSolicitarMensagem(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button variant="outlined" onClick={() => setShowSolicitarModal(false)}>Cancelar</Button>
+          <Button
+            variant="contained"
+            color="warning"
+            disabled={solicitarDocs.length === 0}
+            onClick={() => {
+              setShowSolicitarModal(false)
+              setSolicitarDocs([])
+              setSolicitarMensagem('')
+              setToast('Solicitação enviada — pedido pendenciado aguardando documentação')
+            }}
+            sx={{ backgroundColor: '#b45309', '&:hover': { backgroundColor: '#92400e' } }}
+          >
+            Pendenciar e Notificar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Toast */}
       <Snackbar
         open={!!toast}
@@ -1839,6 +2051,19 @@ interface SidebarProps {
 function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick }: SidebarProps) {
   const { iaSugestao, iaJustificativa, iaChecklist } = pedido
   const sc = iaSugestaoColor(iaSugestao)
+  const [loadingAprovar, setLoadingAprovar] = useState(false)
+  const [loadingNegar, setLoadingNegar] = useState(false)
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedido.status)
+
+  const handleAprovarWithLoading = () => {
+    setLoadingAprovar(true)
+    setTimeout(() => { setLoadingAprovar(false); onAprovarClick() }, 600)
+  }
+
+  const handleNegarWithLoading = () => {
+    setLoadingNegar(true)
+    setTimeout(() => { setLoadingNegar(false); onNegarClick() }, 600)
+  }
 
   return (
     <Card
@@ -1905,12 +2130,12 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
                   <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />
                 )}
                 <Typography
-                  variant="caption"
+                  variant="body2"
                   sx={{
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: item.status !== 'ok' ? 600 : 500,
                     color: item.status === 'error' ? '#d4183d' : item.status === 'warning' ? '#b45309' : 'text.primary',
-                    lineHeight: 1.4,
+                    lineHeight: 1.45,
                   }}
                 >
                   {item.texto}
@@ -1952,25 +2177,35 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
         <Button
           variant="contained"
           fullWidth
-          onClick={onAprovarClick}
+          disabled={loadingAprovar || isGuiaFinalizada}
+          onClick={handleAprovarWithLoading}
+          startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
           sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
         >
-          Aprovar
+          {loadingAprovar ? 'Processando...' : 'Aprovar'}
         </Button>
         <Button
           variant="contained"
           color="error"
           fullWidth
-          onClick={onNegarClick}
+          disabled={loadingNegar || isGuiaFinalizada}
+          onClick={handleNegarWithLoading}
+          startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
           sx={{ minHeight: 40 }}
         >
-          Negar
+          {loadingNegar ? 'Processando...' : 'Negar'}
         </Button>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" fullWidth onClick={onPendenciarClick} sx={{ minHeight: 36, fontSize: 12 }}>
+          <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
             Pendenciar
           </Button>
-          <Button variant="outlined" fullWidth onClick={onJuntaClick} sx={{ minHeight: 36, fontSize: 12 }}>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={onJuntaClick}
+            disabled={isGuiaFinalizada}
+            sx={{ minHeight: 36, fontSize: 12, borderColor: '#2563eb', color: '#2563eb', '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' } }}
+          >
             Junta Médica
           </Button>
         </Box>
@@ -2167,15 +2402,46 @@ function AnaliseInner() {
       <Box sx={{ flex: 1, display: 'flex', gap: 2.5, px: 3, pt: 2, overflow: 'hidden' }}>
         {/* Left content — scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
+          {/* Anchor nav */}
+          <Box
+            sx={{
+              position: 'sticky', top: 0, zIndex: 10,
+              backgroundColor: 'rgba(249,250,251,0.97)',
+              backdropFilter: 'blur(4px)',
+              display: 'flex', gap: 0.25, alignItems: 'center',
+              py: 0.5, mb: 1.5,
+              borderBottom: '1px solid rgba(0,0,0,0.07)',
+              mx: -0.5,
+            }}
+          >
+            {[
+              { id: 'sec-beneficiario', label: 'Beneficiário' },
+              { id: 'sec-procedimentos', label: 'Procedimentos' },
+              { id: 'sec-historico', label: 'Histórico' },
+              { id: 'sec-documentos', label: 'Documentos' },
+            ].map(({ id, label }) => (
+              <Button
+                key={id}
+                size="small"
+                variant="text"
+                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                sx={{ fontSize: 11, py: 0.2, px: 1, color: 'text.secondary', minHeight: 22, fontWeight: 600, '&:hover': { color: 'primary.main', backgroundColor: 'rgba(144,43,41,0.05)' } }}
+              >
+                {label}
+              </Button>
+            ))}
+          </Box>
+
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <PendenciaBanner pedido={pedido} />
             <AlertasBanner pedido={pedido} />
-            <BeneficiarioSection pedido={pedido} />
-            <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
+            <GuiasSimultaneasAlert pedido={pedido} />
+            <Box id="sec-beneficiario"><BeneficiarioSection pedido={pedido} /></Box>
+            <Box id="sec-procedimentos"><ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} /></Box>
             <AjustesRegistradosSection ajustes={allAjustes} />
-            <HistoricoConsolidadoSection pedido={pedido} />
+            <Box id="sec-historico"><HistoricoConsolidadoSection pedido={pedido} /></Box>
             <ObservacoesSection pedido={pedido} />
-            <DocumentosSection pedido={pedido} />
+            <Box id="sec-documentos"><DocumentosSection pedido={pedido} /></Box>
           </Box>
         </Box>
 
@@ -2213,6 +2479,7 @@ function AnaliseInner() {
         pedidoId={pedido.id}
         pedidoStatus={pedido.status}
         proc={ajusteDrawerProc}
+        existingAjustes={allAjustes}
         onClose={() => setAjusteDrawerOpen(false)}
         onConfirm={handleAjusteConfirm}
       />

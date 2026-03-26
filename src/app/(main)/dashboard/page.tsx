@@ -752,14 +752,14 @@ export default function DashboardPage() {
                       <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Beneficiário</TableCell>
                       <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Procedimento</TableCell>
                       <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Data</TableCell>
+                      <TableCell sx={{ width: 90 }} />
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {pedidos.slice(0, 7).map((pedido) => (
                       <TableRow
                         key={pedido.id}
-                        onClick={() => router.push(`/analise?id=${pedido.id}`)}
-                        sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' } }}
+                        sx={{ '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' } }}
                       >
                         <TableCell sx={{ pl: 0.5 }}>
                           <Typography
@@ -787,6 +787,16 @@ export default function DashboardPage() {
                           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
                             {pedido.dataProtocolo.split(' ')[0]}
                           </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            size="small"
+                            onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                            endIcon={<ChevronRightIcon sx={{ fontSize: 14 }} />}
+                            sx={{ fontSize: 11, py: 0.25, px: 1, minHeight: 26, color: 'primary.main' }}
+                          >
+                            Analisar
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}

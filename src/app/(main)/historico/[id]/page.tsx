@@ -1178,10 +1178,11 @@ export default function HistoricoDetalhePage() {
               <Box sx={{ px: 2.5, py: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Button
                   variant="outlined"
+                  color="inherit"
                   fullWidth
-                  startIcon={<DownloadIcon />}
+                  startIcon={<DownloadIcon sx={{ fontSize: 18, color: 'text.secondary' }} />}
                   onClick={handleDownloadPDF}
-                  sx={{ fontWeight: 600, justifyContent: 'flex-start', px: 2 }}
+                  sx={{ fontWeight: 600, justifyContent: 'flex-start', px: 2, borderColor: 'rgba(0,0,0,0.2)', color: 'text.primary' }}
                 >
                   Baixar PDF da Autorização
                 </Button>

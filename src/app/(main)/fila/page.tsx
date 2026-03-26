@@ -247,14 +247,31 @@ function FilaInner() {
   const initialCategoria = searchParams.get('categoria') || 'Todas'
 
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(searchParams.get('beneficiario') || '')
   const [categoriaFilter, setCategoriaFilter] = useState(initialCategoria)
   const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas')
   const [prestadorFilter, setPrestadorFilter] = useState('Todos')
   const [iaFilter, setIaFilter] = useState('Todas')
   const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10))
   const [page, setPage] = useState(0)
+  const [lastViewedId, setLastViewedId] = useState<string | null>(null)
   const rowsPerPage = 10
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+
+  // Restore scroll position on return from analise
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? sessionStorage.getItem('fila_scroll') : null
+    const savedId = typeof window !== 'undefined' ? sessionStorage.getItem('fila_last_id') : null
+    if (saved && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = parseInt(saved, 10)
+    }
+    if (savedId) {
+      setLastViewedId(savedId)
+      setTimeout(() => setLastViewedId(null), 2500)
+    }
+    sessionStorage.removeItem('fila_scroll')
+    sessionStorage.removeItem('fila_last_id')
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800)
@@ -287,12 +304,14 @@ function FilaInner() {
   })
 
   const filtered = filteredByTab.filter((p) => {
+    const q = search.toLowerCase().trim()
+    const words = q.split(/\s+/).filter(Boolean)
     const matchSearch =
-      search === '' ||
-      p.id.toLowerCase().includes(search.toLowerCase()) ||
-      p.beneficiario.nome.toLowerCase().includes(search.toLowerCase()) ||
-      p.beneficiario.carteirinha.includes(search) ||
-      (p.procedimentos[0]?.descricao || '').toLowerCase().includes(search.toLowerCase())
+      q === '' ||
+      p.id.toLowerCase().includes(q) ||
+      p.beneficiario.carteirinha.includes(q) ||
+      (p.procedimentos[0]?.descricao || '').toLowerCase().includes(q) ||
+      words.every(w => p.beneficiario.nome.toLowerCase().includes(w))
     const matchCat = categoriaFilter === 'Todas' || p.categoria === categoriaFilter
     const matchSla =
       slaFilter === 'Todas' ||
@@ -312,7 +331,7 @@ function FilaInner() {
 const parados12h = pedidos.filter(isParado12h).length
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box ref={scrollContainerRef} sx={{ p: 3, height: '100%', overflowY: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4" fontWeight={700}>
@@ -573,7 +592,7 @@ const parados12h = pedidos.filter(isParado12h).length
                   {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 130 }}>Categoria</TableCell>}
                   <TableCell sx={{ minWidth: 180, maxWidth: 180 }}>Procedimento</TableCell>
                   <TableCell sx={{ minWidth: 100 }}>Protocolo</TableCell>
-                  <TableCell sx={{ minWidth: 100 }}>Tempo em Fila</TableCell>
+                  <TableCell sx={{ minWidth: 100, whiteSpace: 'nowrap' }}>Tempo em Fila</TableCell>
                   <TableCell sx={{ minWidth: 110 }}>SLA</TableCell>
                   <TableCell sx={{ minWidth: 130 }}>IA</TableCell>
                   <TableCell sx={{ minWidth: 90 }}>Ações</TableCell>
@@ -582,22 +601,58 @@ const parados12h = pedidos.filter(isParado12h).length
               <TableBody>
                 {pagedItems.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={12} align="center" sx={{ py: 6 }}>
-                      <Typography color="text.secondary" variant="body2">
-                        Nenhum pedido encontrado com os filtros aplicados.
-                      </Typography>
+                    <TableCell colSpan={12} sx={{ py: 6, border: 0 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                        <Box sx={{ width: 48, height: 48, borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <SearchIcon sx={{ fontSize: 24, color: 'text.disabled' }} />
+                        </Box>
+                        <Typography variant="body2" fontWeight={600} color="text.secondary">
+                          Nenhum pedido encontrado
+                        </Typography>
+                        <Typography variant="caption" color="text.disabled">
+                          {hasFilters ? 'Tente ajustar ou limpar os filtros aplicados.' : 'A fila está vazia no momento.'}
+                        </Typography>
+                        {hasFilters && (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            color="inherit"
+                            sx={{ mt: 0.5, fontSize: 12, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary' }}
+                            onClick={() => {
+                              setSearch('')
+                              setCategoriaFilter('Todas')
+                              setSlaFilter('Todas')
+                              setPrestadorFilter('Todos')
+                              setIaFilter('Todas')
+                              setPage(0)
+                            }}
+                          >
+                            Limpar filtros
+                          </Button>
+                        )}
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ) : (
                   pagedItems.map((pedido) => (
                     <TableRow
                       key={pedido.id}
-                      onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                      onClick={() => {
+                        if (scrollContainerRef.current) {
+                          sessionStorage.setItem('fila_scroll', String(scrollContainerRef.current.scrollTop))
+                        }
+                        sessionStorage.setItem('fila_last_id', pedido.id)
+                        router.push(`/analise?id=${pedido.id}`)
+                      }}
                       aria-label={`Pedido ${pedido.id}`}
                       sx={{
                         cursor: 'pointer',
-                        transition: 'background-color 0.15s ease',
+                        transition: 'background-color 0.25s ease',
                         '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
+                        ...(pedido.id === lastViewedId && {
+                          backgroundColor: 'rgba(144,43,41,0.06) !important',
+                          outline: '1px solid rgba(144,43,41,0.2)',
+                        }),
                         ...(pedido.status === 'Devolutiva' && {
                           borderLeft: '3px solid #f59e0b',
                         }),

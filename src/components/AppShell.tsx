@@ -38,6 +38,7 @@ import EmergencyIcon from '@mui/icons-material/Emergency'
 import BiotechIcon from '@mui/icons-material/Biotech'
 import ContentCutIcon from '@mui/icons-material/ContentCut'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import CheckIcon from '@mui/icons-material/Check'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
@@ -84,6 +85,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [regional, setRegional] = useState<'Sul' | 'Sudeste' | 'Nordeste'>('Sul')
   const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null)
   const [regionalSnackbar, setRegionalSnackbar] = useState('')
+  const [ajudaDrawerOpen, setAjudaDrawerOpen] = useState(false)
 
   const handleUserMenuOpen = (e: React.MouseEvent<HTMLElement>) => setUserMenuAnchor(e.currentTarget)
   const handleUserMenuClose = () => setUserMenuAnchor(null)
@@ -263,9 +265,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                       setRegionalSnackbar(`Regional alterada para ${r}. Recarregando dados...`)
                     }
                   }}
-                  sx={{ fontSize: 13, fontWeight: regional === r ? 700 : 400 }}
+                  sx={{ fontSize: 13, fontWeight: regional === r ? 700 : 400, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}
                 >
                   {r}
+                  {regional === r && <CheckIcon sx={{ fontSize: 14, color: 'primary.main' }} />}
                 </MenuItem>
               ))}
             </Menu>
@@ -518,12 +521,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     <Box sx={{ color: cat.color, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                       {cat.icon}
                     </Box>
-                    <Typography
-                      variant="caption"
-                      sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                    >
-                      {cat.label}
-                    </Typography>
+                    <Tooltip title={cat.label} placement="right" disableHoverListener={cat.label.length < 20}>
+                      <Typography
+                        variant="caption"
+                        sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      >
+                        {cat.label}
+                      </Typography>
+                    </Tooltip>
                   </Box>
                   <Chip
                     label={cat.count}
@@ -581,27 +586,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {/* Help — bottom of sidebar */}
         <Box sx={{ px: 1.5, py: 1.5, borderTop: '1px solid rgba(0,0,0,0.07)', flexShrink: 0 }}>
           <ListItemButton
-            onClick={() => router.push('/ajuda')}
+            onClick={() => setAjudaDrawerOpen(true)}
             sx={{
               minHeight: 44,
               borderRadius: '6px !important',
               px: 1.5,
-              ...(isHelpActive && {
-                backgroundColor: '#902B29 !important',
-                color: '#ffffff !important',
-                '& .MuiListItemIcon-root': { color: '#ffffff !important' },
-                '& .MuiListItemText-primary': { color: '#ffffff !important' },
-              }),
-              ...(!isHelpActive && {
-                '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
-              }),
+              '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
             }}
             aria-label="Ajuda"
           >
-            <ListItemIcon sx={{ minWidth: 32, color: isHelpActive ? '#fff' : 'text.secondary' }}>
+            <ListItemIcon sx={{ minWidth: 32, color: 'text.secondary' }}>
               <HelpOutlineIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Ajuda" primaryTypographyProps={{ fontSize: 13, fontWeight: isHelpActive ? 700 : 500 }} />
+            <ListItemText primary="Ajuda" primaryTypographyProps={{ fontSize: 13, fontWeight: 500 }} />
           </ListItemButton>
         </Box>
 
@@ -617,6 +614,82 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </Box>
 
       </Box>{/* fim row sidebar + content */}
+
+      {/* Ajuda Drawer */}
+      <Drawer
+        anchor="right"
+        open={ajudaDrawerOpen}
+        onClose={() => setAjudaDrawerOpen(false)}
+        PaperProps={{ sx: { width: 400, p: 0 } }}
+        ModalProps={{ sx: { zIndex: 1300 } }}
+      >
+        <Box sx={{ px: 3, pt: 2.5, pb: 2, borderBottom: '1px solid rgba(0,0,0,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <HelpOutlineIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+            <Typography fontWeight={700} sx={{ fontSize: 16 }}>Central de Ajuda</Typography>
+          </Box>
+          <IconButton size="small" onClick={() => setAjudaDrawerOpen(false)}>
+            <KeyboardArrowDownIcon sx={{ fontSize: 18, transform: 'rotate(-90deg)' }} />
+          </IconButton>
+        </Box>
+        <Box sx={{ overflowY: 'auto', px: 3, py: 2.5, display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {/* Atalhos de teclado */}
+          <Box>
+            <Typography variant="caption" fontWeight={700} sx={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5, color: 'text.secondary', display: 'block', mb: 1.5 }}>
+              Atalhos de Teclado — Tela de Análise
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+              {[
+                ['← →  /  J K', 'Navegar entre guias'],
+                ['A', 'Aprovar guia'],
+                ['N', 'Negar guia'],
+                ['P', 'Pendenciar guia'],
+                ['?', 'Abrir esta ajuda'],
+              ].map(([key, label]) => (
+                <Box key={key} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>{label}</Typography>
+                  <Box sx={{ px: 1, py: 0.25, backgroundColor: 'rgba(0,0,0,0.07)', borderRadius: 1, fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: 'text.secondary' }}>{key}</Box>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          <Divider />
+
+          {/* Links rápidos */}
+          <Box>
+            <Typography variant="caption" fontWeight={700} sx={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5, color: 'text.secondary', display: 'block', mb: 1.5 }}>
+              Links Rápidos
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+              {[
+                { label: 'FAQ — Perguntas Frequentes', path: '/ajuda' },
+                { label: 'Manual do Autorizador', path: '/ajuda' },
+                { label: 'DUTs e Protocolos ANS', path: '/ajuda' },
+                { label: 'Contato com Suporte', path: '/ajuda' },
+              ].map(({ label, path }) => (
+                <Button
+                  key={label}
+                  variant="text"
+                  fullWidth
+                  endIcon={<OpenInNewIcon sx={{ fontSize: 14 }} />}
+                  onClick={() => { setAjudaDrawerOpen(false); router.push(path) }}
+                  sx={{ fontSize: 13, justifyContent: 'space-between', px: 0, color: 'primary.main', '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' } }}
+                >
+                  {label}
+                </Button>
+              ))}
+            </Box>
+          </Box>
+
+          <Divider />
+
+          {/* Versão */}
+          <Typography variant="caption" color="text.disabled" sx={{ fontSize: 11 }}>
+            Arvo Auth v2.1.0 · Suporte: suporte@arvo.com.br
+          </Typography>
+        </Box>
+      </Drawer>
 
       {/* Regional change snackbar */}
       <Snackbar

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
@@ -88,7 +88,19 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
   )
   const [senhaErro, setSenhaErro] = useState('')
 
-  // Reset form when dialog opens/closes
+  // Sync state when dialog reopens with different user
+  useEffect(() => {
+    if (open) {
+      setNome(user?.nome ?? '')
+      setEmail(user?.email ?? '')
+      setSenha('')
+      setRole(user?.role ?? 'autorizador')
+      setStatus(user?.status ?? 'ativo')
+      setPerms(user?.permissions ?? { ...defaultPermissions.autorizador })
+      setSenhaErro('')
+    }
+  }, [open, user])
+
   const handleRoleChange = (newRole: UserRole) => {
     setRole(newRole)
     setPerms({ ...defaultPermissions[newRole] })

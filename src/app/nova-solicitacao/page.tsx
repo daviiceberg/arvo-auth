@@ -121,6 +121,8 @@ interface FormData {
   medicoSolicitante: string
   crm: string
   indicacaoClinica: string
+  prestador: string
+  cnpjPrestador: string
   // Internação
   tipoAcomodacao: string
   qtdDiarias: string
@@ -196,6 +198,8 @@ const initialForm: FormData = {
   medicoSolicitante: 'Dr. João Oliveira',
   crm: 'CRM/SP 123456',
   indicacaoClinica: 'Paciente com gonartrose primária bilateral com indicação funcional e dor intensa ao deambular e repouso, sem resposta ao tratamento conservador.',
+  prestador: '',
+  cnpjPrestador: '',
   tipoAcomodacao: 'Apartamento',
   qtdDiarias: '3',
   dataInternacao: '',
@@ -429,8 +433,8 @@ function NovaSolicitacaoInner() {
 
   const steps = [
     { label: 'Upload' },
-    { label: 'Dados do Beneficiário' },
-    { label: 'Dados Clínicos' },
+    { label: 'Beneficiário' },
+    { label: 'Clínico' },
     { label: getStep3Label(activeModulo) },
     { label: 'Documentos' },
     { label: 'Revisão' },
@@ -510,7 +514,10 @@ function NovaSolicitacaoInner() {
           maxWidth: 480,
           border: `2px dashed ${dragOver ? '#902B29' : 'rgba(0,0,0,0.2)'}`,
           borderRadius: 3,
-          backgroundColor: dragOver ? 'rgba(144,43,41,0.04)' : uploadState === 'loading' ? 'rgba(37,99,235,0.03)' : '#fafafa',
+          backgroundColor: dragOver ? 'rgba(144,43,41,0.07)' : uploadState === 'loading' ? 'rgba(37,99,235,0.03)' : '#fafafa',
+          boxShadow: dragOver ? '0 0 0 4px rgba(144,43,41,0.12)' : 'none',
+          transform: dragOver ? 'scale(1.01)' : 'scale(1)',
+          transition: 'all 0.15s ease',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -519,7 +526,6 @@ function NovaSolicitacaoInner() {
           py: 5,
           px: 3,
           cursor: uploadState === 'idle' ? 'pointer' : 'default',
-          transition: 'all 0.15s ease',
           '&:hover': uploadState === 'idle' ? { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' } : {},
         }}
       >
@@ -662,6 +668,19 @@ function NovaSolicitacaoInner() {
             value={form.indicacaoClinica} onChange={set('indicacaoClinica')}
             sx={inputSx(true)}
           />
+        </Grid>
+      </Grid>
+
+      <Divider sx={{ my: 3 }} />
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>Prestador / Clínica</Typography>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <FieldLabel>Nome do Prestador / Clínica</FieldLabel>
+          <TextField fullWidth size="small" placeholder="Ex: Hospital Santa Cruz" value={form.prestador} onChange={set('prestador')} />
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <FieldLabel>CNPJ do Prestador</FieldLabel>
+          <TextField fullWidth size="small" placeholder="00.000.000/0001-00" value={form.cnpjPrestador} onChange={set('cnpjPrestador')} />
         </Grid>
       </Grid>
     </Box>
@@ -1482,7 +1501,7 @@ function NovaSolicitacaoInner() {
                   onClick={handleNext}
                   sx={{ minHeight: 44, px: 3 }}
                 >
-                  {currentStep < 5 ? 'Próxima Etapa' : 'Enviar Solicitação'}
+                  {currentStep < steps.length - 1 ? 'Próxima Etapa' : 'Enviar Solicitação'}
                 </Button>
               )}
             </Box>
