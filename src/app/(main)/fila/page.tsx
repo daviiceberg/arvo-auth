@@ -582,26 +582,24 @@ const parados12h = pedidos.filter(isParado12h).length
           <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0 }}>
             <Table aria-label="Tabela da fila operacional" size="small">
               <TableHead>
-                <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' } }}>
-                  <TableCell align="center" sx={{ width: 40 }}>Prio.</TableCell>
+                <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary', px: 1.5 } }}>
+                  <TableCell align="center" sx={{ width: 44 }}>Prio.</TableCell>
                   <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
-                  <TableCell sx={{ minWidth: 80 }}>Tipo</TableCell>
-                  <TableCell sx={{ minWidth: 120 }}>Origem</TableCell>
-                  <TableCell sx={{ minWidth: 160 }}>Beneficiário</TableCell>
-                  <TableCell sx={{ minWidth: 160 }}>Prestador</TableCell>
-                  {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 130 }}>Categoria</TableCell>}
-                  <TableCell sx={{ minWidth: 180, maxWidth: 180 }}>Procedimento</TableCell>
-                  <TableCell sx={{ minWidth: 100 }}>Protocolo</TableCell>
-                  <TableCell sx={{ minWidth: 100, whiteSpace: 'nowrap' }}>Tempo em Fila</TableCell>
-                  <TableCell sx={{ minWidth: 110 }}>SLA</TableCell>
-                  <TableCell sx={{ minWidth: 130 }}>IA</TableCell>
-                  <TableCell sx={{ minWidth: 90 }}>Ações</TableCell>
+                  <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
+                  <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
+                  <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
+                  {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 155 }}>Categoria</TableCell>}
+                  <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento</TableCell>
+                  <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
+                  <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
+                  <TableCell sx={{ minWidth: 110 }}>IA</TableCell>
+                  <TableCell sx={{ minWidth: 115 }}>Ações</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {pagedItems.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={12} sx={{ py: 6, border: 0 }}>
+                    <TableCell colSpan={11} sx={{ py: 6, border: 0 }}>
                       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                         <Box sx={{ width: 48, height: 48, borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <SearchIcon sx={{ fontSize: 24, color: 'text.disabled' }} />
@@ -658,36 +656,33 @@ const parados12h = pedidos.filter(isParado12h).length
                         }),
                       }}
                     >
-                      <TableCell align="center">
+                      <TableCell align="center" sx={{ px: 1.5 }}>
                         <PrioDot prio={pedido.prioridade} />
                       </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          sx={{ color: 'primary.main', fontSize: 12 }}
-                        >
+                      <TableCell sx={{ px: 1.5 }}>
+                        <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
                           {pedido.id}
                         </Typography>
+                        <Typography variant="caption" color="text.disabled" sx={{ fontSize: 11, whiteSpace: 'nowrap' }}>
+                          {`${pedido.dataProtocolo.slice(0, 5)} · ${pedido.dataProtocolo.split(' ')[1]}`}
+                        </Typography>
                       </TableCell>
-                      <TableCell>
-                        <TipoGuiaChip tipo={pedido.tipoGuia} />
-                      </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <OrigemChip origem={pedido.origem} />
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
                           {pedido.beneficiario.nome}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                           {pedido.beneficiario.plano}
                         </Typography>
-                        <Box sx={{ mt: 0.5 }}>
+                        <Box sx={{ mt: 0.5, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
                           <SolicitacaoTipoChip id={pedido.id} />
+                          <TipoGuiaChip tipo={pedido.tipoGuia} />
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <Typography variant="body2" sx={{ fontSize: 12 }}>
                           {pedido.prestador.hospital}
                         </Typography>
@@ -695,40 +690,18 @@ const parados12h = pedidos.filter(isParado12h).length
                           {pedido.prestador.medico}
                         </Typography>
                       </TableCell>
-                      {categoriaFilter === 'Todas' && <TableCell>
+                      {categoriaFilter === 'Todas' && <TableCell sx={{ px: 1.5 }}>
                         <CategoriaChip categoria={pedido.categoria} />
                       </TableCell>}
-                      <TableCell sx={{ maxWidth: 180 }}>
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          sx={{ fontSize: 12, fontFamily: 'monospace' }}
-                        >
+                      <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
+                        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
                           {pedido.procedimentos[0]?.tuss || '—'}
                         </Typography>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{
-                            fontSize: 12,
-                            display: 'block',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {pedido.procedimentos[0]?.descricao || '—'}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                          {pedido.dataProtocolo.split(' ')[0]}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                          {pedido.dataProtocolo.split(' ')[1]}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                           <AccessTimeIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
                           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
@@ -736,19 +709,19 @@ const parados12h = pedidos.filter(isParado12h).length
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <SLAChip status={pedido.slaStatus} texto={pedido.slaTexto} />
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: 1.5 }}>
                         <IASugestaoChip sugestao={pedido.iaSugestao} />
                       </TableCell>
-                      <TableCell onClick={(e) => e.stopPropagation()}>
+                      <TableCell sx={{ px: 1.5 }} onClick={(e) => e.stopPropagation()}>
                         <Button
                           size="small"
                           variant="contained"
                           onClick={() => router.push(`/analise?id=${pedido.id}`)}
                           aria-label={`Analisar pedido ${pedido.id}`}
-                          sx={{ minHeight: 32, fontSize: 12, px: 1.5 }}
+                          sx={{ minHeight: 28, fontSize: 12, px: 1.5 }}
                         >
                           Analisar
                         </Button>

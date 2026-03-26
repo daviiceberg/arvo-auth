@@ -51,9 +51,13 @@ const catColorMap: Record<string, { bg: string; color: string }> = {
   'SADT':                    { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a' },
 }
 
+const TRUNCATE_CATS = ['Exames Alta Complexidade', 'Cirurgias Eletivas', 'Terapias Especiais', 'Urgência/Emergência']
 function CategoriaChip({ categoria }: { categoria: string }) {
   const { bg, color } = catColorMap[categoria] || { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' }
-  return <Chip label={categoria} size="small" sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 600, height: 22 }} />
+  const needsTruncate = TRUNCATE_CATS.includes(categoria)
+  const label = needsTruncate ? categoria.slice(0, 13) + '…' : categoria
+  const chip = <Chip label={label} size="small" sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 600, height: 22 }} />
+  return needsTruncate ? <Tooltip title={categoria} placement="top">{chip}</Tooltip> : chip
 }
 
 // ── Chips ──────────────────────────────────────────────────────────────
@@ -102,6 +106,7 @@ export default function HistoricoPage() {
   const [origemFilter, setOrigemFilter] = useState<'Todas' | 'ia_automatica' | 'analista'>('Todas')
   const [acaoFilter, setAcaoFilter] = useState<'Todas' | DecisaoAcao>('Todas')
   const [categoriaFilter, setCategoriaFilter] = useState('Todas')
+  const [divergenciaFilter, setDivergenciaFilter] = useState<'Todas' | 'divergiu'>('Todas')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [page, setPage] = useState(0)
   const rowsPerPage = 10
@@ -118,7 +123,8 @@ export default function HistoricoPage() {
       const matchOrigem = origemFilter === 'Todas' || e.origem === origemFilter
       const matchAcao = acaoFilter === 'Todas' || e.acao === acaoFilter
       const matchCat = categoriaFilter === 'Todas' || e.categoria === categoriaFilter
-      return matchSearch && matchOrigem && matchAcao && matchCat
+      const matchDiv = divergenciaFilter === 'Todas' || (divergenciaFilter === 'divergiu' && e.divergencia)
+      return matchSearch && matchOrigem && matchAcao && matchCat && matchDiv
     })
     .sort((a, b) => {
       const da = new Date(a.dataDecisao.split('/').reverse().join('-')).getTime()
@@ -127,9 +133,9 @@ export default function HistoricoPage() {
     })
 
   const paged = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  const hasFilters = search !== '' || origemFilter !== 'Todas' || acaoFilter !== 'Todas' || categoriaFilter !== 'Todas'
+  const hasFilters = search !== '' || origemFilter !== 'Todas' || acaoFilter !== 'Todas' || categoriaFilter !== 'Todas' || divergenciaFilter !== 'Todas'
 
-  const clearFilters = () => { setSearch(''); setOrigemFilter('Todas'); setAcaoFilter('Todas'); setCategoriaFilter('Todas') }
+  const clearFilters = () => { setSearch(''); setOrigemFilter('Todas'); setAcaoFilter('Todas'); setCategoriaFilter('Todas'); setDivergenciaFilter('Todas') }
 
   // Summary counts
   const totalIA = historicoEntries.filter(e => e.origem === 'ia_automatica').length
@@ -211,6 +217,13 @@ export default function HistoricoPage() {
                 {categorias.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
               </Select>
             </FormControl>
+            <FormControl size="small" sx={{ minWidth: 160 }}>
+              <InputLabel>Divergência IA</InputLabel>
+              <Select value={divergenciaFilter} label="Divergência IA" onChange={(e) => { setDivergenciaFilter(e.target.value as typeof divergenciaFilter); setPage(0) }}>
+                <MenuItem value="Todas">Todas</MenuItem>
+                <MenuItem value="divergiu">Apenas divergências</MenuItem>
+              </Select>
+            </FormControl>
             {hasFilters && (
               <Button size="small" startIcon={<FilterListOffIcon />} onClick={clearFilters} color="inherit" sx={{ fontSize: 12 }}>
                 Limpar filtros
@@ -224,17 +237,16 @@ export default function HistoricoPage() {
       <Card>
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' } }}>
-              <TableCell>ID</TableCell>
-              <TableCell>Beneficiário</TableCell>
-              <TableCell>Categoria</TableCell>
-              <TableCell sx={{ maxWidth: 220 }}>Procedimento</TableCell>
-              <TableCell>Decisão</TableCell>
-              <TableCell>Origem / Responsável</TableCell>
-              <TableCell>Sugestão IA</TableCell>
-              <TableCell>Divergência</TableCell>
+            <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary', px: 1.5 } }}>
+              <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
+              <TableCell sx={{ minWidth: 180 }}>Beneficiário</TableCell>
+              <TableCell sx={{ minWidth: 175 }}>Categoria</TableCell>
+              <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
+              <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
+              <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
+              <TableCell sx={{ minWidth: 130 }}>IA</TableCell>
               <TableCell
-                sx={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
+                sx={{ minWidth: 135, cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                 onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -242,13 +254,13 @@ export default function HistoricoPage() {
                   {sortDir === 'desc' ? <ArrowDownwardIcon sx={{ fontSize: 14 }} /> : sortDir === 'asc' ? <ArrowUpwardIcon sx={{ fontSize: 14 }} /> : <UnfoldMoreIcon sx={{ fontSize: 14 }} />}
                 </Box>
               </TableCell>
-              <TableCell />
+              <TableCell sx={{ minWidth: 125 }} />
             </TableRow>
           </TableHead>
           <TableBody>
             {paged.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                <TableCell colSpan={9} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
                   Nenhuma decisão encontrada para os filtros selecionados.
                 </TableCell>
               </TableRow>
@@ -265,25 +277,27 @@ export default function HistoricoPage() {
                 }}
                 onClick={() => router.push('/historico/' + entry.id)}
               >
-                <TableCell>
+                <TableCell sx={{ px: 1.5 }}>
                   <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, fontFamily: 'monospace', color: 'primary.main' }}>
                     {entry.id}
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ px: 1.5 }}>
                   <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 600 }}>{entry.beneficiario}</Typography>
-                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>{entry.carteirinha}</Typography>
+                  <Typography variant="caption" sx={{ fontSize: 11, color: 'text.disabled', fontFamily: 'monospace' }}>
+                    …{entry.carteirinha.slice(-8)}
+                  </Typography>
                 </TableCell>
-                <TableCell><CategoriaChip categoria={entry.categoria} /></TableCell>
-                <TableCell sx={{ maxWidth: 220 }}>
+                <TableCell sx={{ px: 1.5 }}><CategoriaChip categoria={entry.categoria} /></TableCell>
+                <TableCell sx={{ maxWidth: 210, px: 1.5 }}>
                   <Tooltip title={entry.procedimento} placement="top">
-                    <Typography variant="body2" sx={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 220 }}>
+                    <Typography variant="body2" sx={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 210 }}>
                       {entry.procedimento}
                     </Typography>
                   </Tooltip>
                 </TableCell>
-                <TableCell><AcaoChip acao={entry.acao} /></TableCell>
-                <TableCell>
+                <TableCell sx={{ px: 1.5 }}><AcaoChip acao={entry.acao} /></TableCell>
+                <TableCell sx={{ px: 1.5 }}>
                   <OrigemChip origem={entry.origem} />
                   {entry.origem === 'analista' && (
                     <Typography variant="caption" sx={{ display: 'block', fontSize: 12, color: 'text.secondary', mt: 0.5 }}>
@@ -291,7 +305,7 @@ export default function HistoricoPage() {
                     </Typography>
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ px: 1.5 }}>
                   <Chip
                     label={entry.iaSugestao}
                     size="small"
@@ -301,17 +315,22 @@ export default function HistoricoPage() {
                       color: entry.iaSugestao === 'Aprovar' ? '#16a34a' : entry.iaSugestao === 'Negar' ? '#d4183d' : '#b45309',
                     }}
                   />
+                  {entry.divergencia ? (
+                    <Typography variant="caption" sx={{ display: 'block', fontSize: 11, color: '#b45309', fontWeight: 600, mt: 0.4 }}>
+                      ⚠ Divergiu
+                    </Typography>
+                  ) : (
+                    <Typography variant="caption" sx={{ display: 'block', fontSize: 11, color: '#16a34a', fontWeight: 600, mt: 0.4 }}>
+                      ✓ Alinhado
+                    </Typography>
+                  )}
                 </TableCell>
-                <TableCell>
-                  {entry.divergencia
-                    ? <Chip icon={<WarningAmberIcon sx={{ fontSize: 12, color: '#b45309 !important' }} />} label="Sim" size="small" sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontSize: 12, fontWeight: 700, height: 20 }} />
-                    : <Chip icon={<CheckCircleIcon sx={{ fontSize: 12, color: '#16a34a !important' }} />} label="Não" size="small" sx={{ backgroundColor: 'rgba(22,163,74,0.08)', color: '#16a34a', fontSize: 12, fontWeight: 700, height: 20 }} />
-                  }
+                <TableCell sx={{ px: 1.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                    {`${entry.dataDecisao.slice(0, 5)}/${entry.dataDecisao.slice(8, 10)} · ${entry.dataDecisao.split(' ')[1]}`}
+                  </Typography>
                 </TableCell>
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontSize: 12 }}>{entry.dataDecisao}</Typography>
-                </TableCell>
-                <TableCell>
+                <TableCell sx={{ px: 1.5 }}>
                   <Button size="small" variant="outlined" sx={{ fontSize: 12, py: 0.25, px: 1.5, minHeight: 28 }}
                     onClick={(e) => { e.stopPropagation(); router.push('/historico/' + entry.id) }}>
                     Ver detalhes
