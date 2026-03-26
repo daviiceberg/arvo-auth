@@ -177,22 +177,26 @@ function CategoriaBarChart() {
             </Typography>
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
               <Box sx={{ display: 'flex', gap: 0.25, height: 14, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
-                <Box
-                  sx={{
-                    width: `${(d.aprovados / maxBar) * 100}%`,
-                    backgroundColor: '#16a34a',
-                    transition: 'width 600ms ease',
-                  }}
-                  title={`Aprovados: ${d.aprovados}`}
-                />
-                <Box
-                  sx={{
-                    width: `${(d.pendentes / maxBar) * 100}%`,
-                    backgroundColor: '#902B29',
-                    transition: 'width 600ms ease',
-                  }}
-                  title={`Em análise: ${d.pendentes}`}
-                />
+                {d.aprovados > 0 && (
+                  <Box
+                    sx={{
+                      width: `${(d.aprovados / maxBar) * 100}%`,
+                      backgroundColor: '#16a34a',
+                      transition: 'width 600ms ease',
+                    }}
+                    title={`Aprovados: ${d.aprovados}`}
+                  />
+                )}
+                {d.pendentes > 0 && (
+                  <Box
+                    sx={{
+                      width: `${(d.pendentes / maxBar) * 100}%`,
+                      backgroundColor: '#902B29',
+                      transition: 'width 600ms ease',
+                    }}
+                    title={`Em análise: ${d.pendentes}`}
+                  />
+                )}
               </Box>
             </Box>
             <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: d.color, width: 20, textAlign: 'right', flexShrink: 0 }}>
