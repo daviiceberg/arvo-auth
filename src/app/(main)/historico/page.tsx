@@ -289,12 +289,10 @@ export default function HistoricoPage() {
                   </Typography>
                 </TableCell>
                 <TableCell sx={{ px: 1.5 }}><CategoriaChip categoria={entry.categoria} /></TableCell>
-                <TableCell sx={{ maxWidth: 210, px: 1.5 }}>
-                  <Tooltip title={entry.procedimento} placement="top">
-                    <Typography variant="body2" sx={{ fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 210 }}>
-                      {entry.procedimento}
-                    </Typography>
-                  </Tooltip>
+                <TableCell sx={{ maxWidth: 280, px: 1.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>
+                    {entry.procedimento}
+                  </Typography>
                 </TableCell>
                 <TableCell sx={{ px: 1.5 }}><AcaoChip acao={entry.acao} /></TableCell>
                 <TableCell sx={{ px: 1.5 }}>

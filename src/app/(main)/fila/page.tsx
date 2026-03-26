@@ -697,7 +697,7 @@ const parados12h = pedidos.filter(isParado12h).length
                         <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
                           {pedido.procedimentos[0]?.tuss || '—'}
                         </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>
                           {pedido.procedimentos[0]?.descricao || '—'}
                         </Typography>
                       </TableCell>
