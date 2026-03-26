@@ -150,10 +150,8 @@ export default function AjudaPage() {
         </Box>
       </Box>
 
-      <Divider sx={{ my: 3 }} />
-
       {/* Card 1 — FAQ */}
-      <Card sx={{ mb: 3 }}>
+      <Card sx={{ mb: 3, mt: 3 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="body1" fontWeight={700} sx={{ fontSize: 15, mb: 2 }}>
             Perguntas Frequentes

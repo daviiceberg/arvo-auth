@@ -93,14 +93,13 @@ export default function MeuPerfilPage() {
             </Box>
           </Box>
 
-          <Divider sx={{ my: 2 }} />
-
           {/* Form grid */}
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
               gap: 2.5,
+              mt: 2.5,
             }}
           >
             <TextField
@@ -188,14 +187,13 @@ export default function MeuPerfilPage() {
             </Box>
           </Box>
 
-          <Divider sx={{ my: 2 }} />
-
           {/* Password form grid */}
           <Box
             sx={{
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
               gap: 2.5,
+              mt: 2.5,
             }}
           >
             <TextField
