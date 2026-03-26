@@ -1971,44 +1971,70 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
         open={!!viewDoc}
         onClose={() => { setViewDoc(null); setZoom(100) }}
         maxWidth={false}
+        aria-labelledby="doc-viewer-title"
         PaperProps={{
           sx: {
-            width: 820, maxWidth: '95vw',
+            width: 860, maxWidth: '95vw',
             height: '90vh', maxHeight: '90vh',
-            backgroundColor: '#101828',
+            backgroundColor: '#fff',
             borderRadius: 2,
             display: 'flex', flexDirection: 'column',
             overflow: 'hidden',
             m: 0,
+            border: '1px solid rgba(0,0,0,0.08)',
           }
         }}
       >
         {/* Toolbar */}
         <Box sx={{
-          height: 56, flexShrink: 0,
-          backgroundColor: '#1e2939',
-          borderBottom: '1px solid #364153',
+          height: 52, flexShrink: 0,
+          backgroundColor: '#fff',
+          borderBottom: '1px solid rgba(0,0,0,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          px: 2.5
+          px: 2,
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <DescriptionOutlinedIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
-            <Typography sx={{ color: '#f1f5f9', fontSize: 14, fontWeight: 500 }}>{viewDoc}</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <DescriptionOutlinedIcon sx={{ color: 'text.secondary', fontSize: 17 }} />
+            <Typography id="doc-viewer-title" sx={{ fontSize: 13, fontWeight: 600, color: 'text.primary', maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {viewDoc}
+            </Typography>
+            <Typography sx={{ fontSize: 11, color: 'text.disabled', ml: 0.5 }}>— Esc para fechar</Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <IconButton size="small" onClick={() => setZoom(z => Math.max(50, z - 10))} disabled={zoom <= 50} sx={{ color: '#94a3b8' }}>
-              <ZoomOutIcon fontSize="small" />
-            </IconButton>
-            <Box sx={{ px: 1.5, py: 0.25, backgroundColor: '#364153', borderRadius: 1 }}>
-              <Typography sx={{ color: '#f1f5f9', fontSize: 12 }}>{zoom}%</Typography>
+            <Tooltip title="Reduzir zoom">
+              <span>
+                <IconButton
+                  size="small"
+                  aria-label="Reduzir zoom"
+                  onClick={() => setZoom(z => Math.max(50, z - 10))}
+                  disabled={zoom <= 50}
+                  sx={{ color: 'text.secondary' }}
+                >
+                  <ZoomOutIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Box
+              aria-live="polite"
+              aria-label={`Zoom: ${zoom}%`}
+              sx={{ px: 1.25, py: 0.25, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 1, minWidth: 42, textAlign: 'center' }}
+            >
+              <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'text.secondary' }}>{zoom}%</Typography>
             </Box>
-            <IconButton size="small" onClick={() => setZoom(z => Math.min(200, z + 10))} disabled={zoom >= 200} sx={{ color: '#94a3b8' }}>
-              <ZoomInIcon fontSize="small" />
-            </IconButton>
-            <Divider orientation="vertical" flexItem sx={{ bgcolor: '#4a5565', mx: 1 }} />
-            <Button size="small" startIcon={<PrintIcon sx={{ fontSize: 14 }} />} onClick={() => window.print()} sx={{ color: '#94a3b8', fontSize: 12, textTransform: 'none' }}>
-              Imprimir
-            </Button>
+            <Tooltip title="Ampliar zoom">
+              <span>
+                <IconButton
+                  size="small"
+                  aria-label="Ampliar zoom"
+                  onClick={() => setZoom(z => Math.min(200, z + 10))}
+                  disabled={zoom >= 200}
+                  sx={{ color: 'text.secondary' }}
+                >
+                  <ZoomInIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Divider orientation="vertical" flexItem sx={{ mx: 1, height: 20, alignSelf: 'center' }} />
             <Button
               size="small"
               startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
@@ -2018,20 +2044,38 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
                 a.download = viewDoc || 'documento'
                 a.click()
               }}
-              sx={{ color: '#94a3b8', fontSize: 12, textTransform: 'none' }}
+              sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', textTransform: 'none', '&:hover': { color: 'text.primary', backgroundColor: 'rgba(0,0,0,0.04)' } }}
             >
               Baixar
             </Button>
-            <Divider orientation="vertical" flexItem sx={{ bgcolor: '#4a5565', mx: 1 }} />
-            <IconButton size="small" onClick={() => { setViewDoc(null); setZoom(100) }} sx={{ color: '#94a3b8' }}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
+            <Divider orientation="vertical" flexItem sx={{ mx: 0.5, height: 20, alignSelf: 'center' }} />
+            <Tooltip title="Fechar (Esc)">
+              <IconButton
+                size="small"
+                aria-label="Fechar visualizador"
+                onClick={() => { setViewDoc(null); setZoom(100) }}
+                sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary', backgroundColor: 'rgba(0,0,0,0.06)' } }}
+              >
+                <CloseIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
         {/* Document area */}
-        <Box sx={{ flex: 1, overflowY: 'auto', backgroundColor: '#101828', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', py: 3, px: 2 }}>
-          <Box sx={{ backgroundColor: '#fff', boxShadow: '0 4px 32px rgba(0,0,0,0.5)', width: `${zoom}%`, maxWidth: 757 }}>
-            <img src="/exemplo-pedido.png" alt={viewDoc || 'Documento'} style={{ width: '100%', height: 'auto', display: 'block' }} />
+        <Box sx={{ flex: 1, overflowY: 'auto', backgroundColor: 'rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', py: 3, px: 3 }}>
+          <Box sx={{
+            backgroundColor: '#fff',
+            boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
+            width: `${zoom}%`,
+            maxWidth: 757,
+            borderRadius: 1,
+            overflow: 'hidden',
+          }}>
+            <img
+              src="/exemplo-pedido.png"
+              alt={`Visualização do documento: ${viewDoc}`}
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
           </Box>
         </Box>
       </Dialog>

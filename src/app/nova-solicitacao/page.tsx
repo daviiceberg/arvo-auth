@@ -1482,7 +1482,7 @@ function NovaSolicitacaoInner() {
             flexShrink: 0,
           }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 11 }}>
-              {currentStep === 0 ? 'Etapa inicial' : `Etapa ${currentStep} de ${steps.length - 1}`}
+              {`Etapa ${currentStep + 1} de ${steps.length}`}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5 }}>
               <Button
