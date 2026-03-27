@@ -14,7 +14,6 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Divider from '@mui/material/Divider'
 import Alert from '@mui/material/Alert'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
@@ -157,8 +156,8 @@ const maxBar = Math.max(...barData.map((d) => d.total), 1)
 function CategoriaBarChart() {
   const [hovered, setHovered] = useState<string | null>(null)
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
         {barData.map((d) => (
           <Box
             key={d.label}
@@ -176,7 +175,7 @@ function CategoriaBarChart() {
               {d.label}
             </Typography>
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-              <Box sx={{ display: 'flex', gap: 0.25, height: 14, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
+              <Box sx={{ display: 'flex', gap: 0.25, height: 16, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
                 {d.aprovados > 0 && (
                   <Box
                     sx={{
@@ -205,13 +204,13 @@ function CategoriaBarChart() {
           </Box>
         ))}
       </Box>
-      <Box sx={{ display: 'flex', gap: 2, mt: 2, pl: '84px' }}>
+      <Box sx={{ display: 'flex', gap: 2, mt: 1.5, pl: '84px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: '#16a34a' }} />
+          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#16a34a' }} />
           <Typography variant="caption" sx={{ fontSize: 12 }}>Aprovados</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: '#902B29' }} />
+          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#902B29' }} />
           <Typography variant="caption" sx={{ fontSize: 12 }}>Em Análise</Typography>
         </Box>
       </Box>
@@ -259,11 +258,11 @@ function TrendChart() {
       </Box>
       <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: '#16a34a' }} />
+          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#16a34a' }} />
           <Typography variant="caption" sx={{ fontSize: 12 }}>Aprovações</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: 1, backgroundColor: '#d4183d' }} />
+          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#d4183d' }} />
           <Typography variant="caption" sx={{ fontSize: 12 }}>Negações</Typography>
         </Box>
       </Box>
@@ -296,32 +295,34 @@ function DonutChart() {
   })
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-evenly' }}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
       {/* Donut centrado */}
-      <svg width="160" height="160" viewBox="0 0 140 140">
-        {slices.map((s) => (
-          <circle
-            key={s.label}
-            cx={cx}
-            cy={cy}
-            r={r}
-            fill="none"
-            stroke={s.color}
-            strokeWidth="16"
-            strokeDasharray={`${s.dashLen} ${circumference - s.dashLen}`}
-            strokeDashoffset={s.offset}
-            transform={`rotate(-90 ${cx} ${cy})`}
-          />
-        ))}
-        <text x={cx} y={cy - 6} textAnchor="middle" fontSize="22" fontWeight="800" fill="#1a1a1a">
-          {total}
-        </text>
-        <text x={cx} y={cy + 11} textAnchor="middle" fontSize="10" fill="#5a6070">
-          pedidos
-        </text>
-      </svg>
+      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="160" height="160" viewBox="0 0 140 140">
+          {slices.map((s) => (
+            <circle
+              key={s.label}
+              cx={cx}
+              cy={cy}
+              r={r}
+              fill="none"
+              stroke={s.color}
+              strokeWidth="16"
+              strokeDasharray={`${s.dashLen} ${circumference - s.dashLen}`}
+              strokeDashoffset={s.offset}
+              transform={`rotate(-90 ${cx} ${cy})`}
+            />
+          ))}
+          <text x={cx} y={cy - 6} textAnchor="middle" fontSize="22" fontWeight="800" fill="#1a1a1a">
+            {total}
+          </text>
+          <text x={cx} y={cy + 11} textAnchor="middle" fontSize="10" fill="#5a6070">
+            pedidos
+          </text>
+        </svg>
+      </Box>
       {/* Legenda em grade 2 colunas */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 16px', width: '100%' }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px', width: '100%' }}>
         {donutData.map((d) => (
           <Box key={d.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: d.color, flexShrink: 0 }} />
@@ -520,13 +521,13 @@ export default function DashboardPage() {
         <Alert
           severity="error"
           icon={<TimerOffIcon fontSize="small" />}
-          sx={{ mb: 2.5, borderRadius: 2, alignItems: 'center', '& .MuiAlert-action': { alignItems: 'center', pt: 0, mr: 0, pr: 0 } }}
+          sx={{ mb: 2.5, borderRadius: 2, alignItems: 'center', border: '1px solid rgba(212,24,61,0.22)', '& .MuiAlert-action': { alignItems: 'center', pt: 0, mr: 0, pr: 0 } }}
           action={
             <Button
               variant="contained"
               size="small"
               onClick={() => router.push('/fila?sla=Violado')}
-              sx={{ backgroundColor: '#fff', color: '#d4183d', fontWeight: 700, px: 2, border: '1px solid #d4183d', '&:hover': { backgroundColor: 'rgba(255,255,255,0.9)' }, whiteSpace: 'nowrap' }}
+              sx={{ backgroundColor: '#902B29', color: '#fff', fontWeight: 700, px: 2, '&:hover': { backgroundColor: '#7a2321' }, whiteSpace: 'nowrap' }}
             >
               Ver fila
             </Button>
@@ -542,99 +543,95 @@ export default function DashboardPage() {
       )}
 
       {/* Row 2 — Charts: Bar por categoria + Donut + SLA */}
-      <Grid container spacing={2} sx={{ mb: 2.5 }}>
-        <Grid size={{ xs: 12, md: 5 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
+
+        {/* Distribuição por Categoria — flex 5 */}
+        <Card sx={{ flex: 5, display: 'flex', flexDirection: 'column' }}>
+          <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
+            <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700, mb: 2 }}>
+              Distribuição por Categoria
+            </Typography>
+            {loading ? (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <Skeleton key={i} variant="rectangular" height={18} sx={{ borderRadius: 1 }} />
+                ))}
+              </Box>
+            ) : (
+              <CategoriaBarChart />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Status Geral — flex 3 */}
+        <Card sx={{ flex: 3, display: 'flex', flexDirection: 'column' }}>
+          <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
+            <Typography variant="h6" gutterBottom sx={{ fontSize: 14, fontWeight: 700 }}>
+              Status Geral
+            </Typography>
+            {loading ? (
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Skeleton variant="circular" width={110} height={110} />
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} variant="text" height={14} />)}
+                </Box>
+              </Box>
+            ) : (
+              <DonutChart />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Status SLA + Sugestões IA — flex 4 */}
+        <Box sx={{ flex: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700, flexShrink: 0, mb: 2 }}>
-                Distribuição por Categoria
-              </Typography>
+            <CardContent sx={{ p: 3, flex: 1, '&:last-child': { pb: 3 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <SpeedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
+                  Status SLA
+                </Typography>
+              </Box>
               {loading ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  {Array.from({ length: 7 }).map((_, i) => (
-                    <Skeleton key={i} variant="rectangular" height={18} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
+              ) : (
+                <SlaWidget />
+              )}
+            </CardContent>
+          </Card>
+
+          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ p: 3, flex: 1, '&:last-child': { pb: 3 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                <SmartToyIcon sx={{ fontSize: 18, color: 'primary.main' }} />
+                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
+                  Sugestões da IA
+                </Typography>
+              </Box>
+              {loading ? (
+                <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 1 }} />
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  {[
+                    { label: 'Aprovar', count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a' },
+                    { label: 'Negar', count: dashboardMetrics.iaSugestaoNegar, color: '#d4183d' },
+                    { label: 'Junta Médica', count: dashboardMetrics.iaSugestaoJunta, color: '#b45309' },
+                  ].map((s) => (
+                    <Box key={s.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: s.color, flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ flex: 1, fontSize: 12, color: 'text.secondary' }}>{s.label}</Typography>
+                      <Typography variant="caption" sx={{ fontWeight: 700, fontSize: 13, color: s.color }}>{s.count}</Typography>
+                    </Box>
                   ))}
+                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, mt: 0.5 }}>
+                    Sugestões para pedidos em análise
+                  </Typography>
                 </Box>
-              ) : (
-                <CategoriaBarChart />
               )}
             </CardContent>
           </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 3 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Typography variant="h6" gutterBottom sx={{ fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
-                Status Geral
-              </Typography>
-              {loading ? (
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Skeleton variant="circular" width={110} height={110} />
-                  <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                    {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} variant="text" height={14} />)}
-                  </Box>
-                </Box>
-              ) : (
-                <DonutChart />
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, height: '100%' }}>
-            {/* SLA Status */}
-            <Card sx={{ flex: 1, minHeight: 0 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <SpeedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                  <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                    Status SLA
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
-                ) : (
-                  <SlaWidget />
-                )}
-              </CardContent>
-            </Card>
-
-            {/* IA — sugestões */}
-            <Card sx={{ flex: 1 }}>
-              <CardContent sx={{ p: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <SmartToyIcon sx={{ fontSize: 18, color: 'primary.main' }} />
-                  <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                    Sugestões da IA
-                  </Typography>
-                </Box>
-                {loading ? (
-                  <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 1 }} />
-                ) : (
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {[
-                      { label: 'Aprovar', count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a' },
-                      { label: 'Negar', count: dashboardMetrics.iaSugestaoNegar, color: '#d4183d' },
-                      { label: 'Junta Médica', count: dashboardMetrics.iaSugestaoJunta, color: '#b45309' },
-                    ].map((s) => (
-                      <Box key={s.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '2px', backgroundColor: s.color, flexShrink: 0 }} />
-                        <Typography variant="caption" sx={{ flex: 1, fontSize: 12, color: 'text.secondary' }}>{s.label}</Typography>
-                        <Typography variant="caption" sx={{ fontWeight: 700, fontSize: 13, color: s.color }}>{s.count}</Typography>
-                      </Box>
-                    ))}
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, mt: 0.5 }}>
-                      Sugestões para pedidos em análise
-                    </Typography>
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          </Box>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
 
       {/* Row 3 — Trend + Alertas Ativos */}
       <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'stretch' }}>
@@ -678,7 +675,7 @@ export default function DashboardPage() {
                   {dashboardMetrics.alertasAtivos.map((alerta) => (
                     <Box
                       key={alerta.tipo}
-                      onClick={() => router.push('/fila')}
+                      onClick={() => router.push(`/fila?alerta=${encodeURIComponent(alerta.tipo)}`)}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',

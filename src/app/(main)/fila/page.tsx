@@ -250,6 +250,7 @@ function FilaInner() {
   const [search, setSearch] = useState(searchParams.get('beneficiario') || '')
   const [categoriaFilter, setCategoriaFilter] = useState(initialCategoria)
   const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas')
+  const [alertaFilter, setAlertaFilter] = useState(searchParams.get('alerta') || 'Todos')
   const [prestadorFilter, setPrestadorFilter] = useState('Todos')
   const [iaFilter, setIaFilter] = useState('Todas')
   const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10))
@@ -282,12 +283,14 @@ function FilaInner() {
   useEffect(() => {
     setCategoriaFilter(searchParams.get('categoria') || 'Todas')
     setSlaFilter(searchParams.get('sla') || 'Todas')
+    setAlertaFilter(searchParams.get('alerta') || 'Todos')
   }, [searchParams])
 
   const hasFilters =
     search !== '' ||
     categoriaFilter !== 'Todas' ||
     slaFilter !== 'Todas' ||
+    alertaFilter !== 'Todos' ||
     prestadorFilter !== 'Todos' ||
     iaFilter !== 'Todas'
 
@@ -321,7 +324,8 @@ function FilaInner() {
     const matchPrest =
       prestadorFilter === 'Todos' || p.prestador.hospital === prestadorFilter
     const matchIA = iaFilter === 'Todas' || p.iaSugestao === iaFilter
-    return matchSearch && matchCat && matchSla && matchPrest && matchIA
+    const matchAlerta = alertaFilter === 'Todos' || p.alertas.includes(alertaFilter)
+    return matchSearch && matchCat && matchSla && matchPrest && matchIA && matchAlerta
   })
 
   const pagedItems = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
