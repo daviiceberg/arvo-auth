@@ -290,7 +290,8 @@ function FilaInner() {
   const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas')
   const [alertaFilter, setAlertaFilter] = useState(searchParams.get('alerta') || 'Todos')
   const [prestadorFilter, setPrestadorFilter] = useState('Todos')
-  const [iaFilter, setIaFilter] = useState('Todas')
+  const [iaFilter, setIaFilter] = useState(searchParams.get('ia') || 'Todas')
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'Todos')
   const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10))
   const [devolutivasSubFilter, setDevolutivasSubFilter] = useState<'all' | 'aguardando' | 'retorno'>('all')
   const [page, setPage] = useState(0)
@@ -323,6 +324,8 @@ function FilaInner() {
     setCategoriaFilter(searchParams.get('categoria') || 'Todas')
     setSlaFilter(searchParams.get('sla') || 'Todas')
     setAlertaFilter(searchParams.get('alerta') || 'Todos')
+    setIaFilter(searchParams.get('ia') || 'Todas')
+    setStatusFilter(searchParams.get('status') || 'Todos')
   }, [searchParams])
 
   const hasFilters =
@@ -331,7 +334,8 @@ function FilaInner() {
     slaFilter !== 'Todas' ||
     alertaFilter !== 'Todos' ||
     prestadorFilter !== 'Todos' ||
-    iaFilter !== 'Todas'
+    iaFilter !== 'Todas' ||
+    statusFilter !== 'Todos'
 
   const isParado12h = (p: (typeof pedidos)[number]) => {
     const t = parseInt(p.tempoFila)
@@ -369,7 +373,11 @@ function FilaInner() {
       prestadorFilter === 'Todos' || p.prestador.hospital === prestadorFilter
     const matchIA = iaFilter === 'Todas' || p.iaSugestao === iaFilter
     const matchAlerta = alertaFilter === 'Todos' || p.alertas.includes(alertaFilter)
-    return matchSearch && matchCat && matchSla && matchPrest && matchIA && matchAlerta
+    const matchStatus =
+      statusFilter === 'Todos' ||
+      (statusFilter === 'retorno_recebido' && (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO')) ||
+      (statusFilter === 'aguardando' && (p.subStatus === 'PENDENTE_AGUARDANDO' || p.subStatus === 'JUNTA_AGUARDANDO'))
+    return matchSearch && matchCat && matchSla && matchPrest && matchIA && matchAlerta && matchStatus
   })
 
   const pagedItems = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

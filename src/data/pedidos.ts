@@ -1023,70 +1023,7 @@ export const pedidos: Pedido[] = [
   },
 ]
 
-export const dashboardMetrics = {
-  total: 21,
-  emAnalise: 8,
-  aprovados: 7,
-  negados: 3,
-  devolutivas: 3,
-  valorTotal: 'R$ 487.350,00',
-  valorAprovado: 'R$ 312.800,00',
-  valorNegado: 'R$ 89.200,00',
-  taxaAprovacao: 71,
-  taxaNegacao: 14,
-  slaViolados: 5,
-  slaOk: 13,
-  slaWarning: 4,
-  iaSugestaoAprovar: 9,
-  iaSugestaoNegar: 2,
-  iaSugestaoJunta: 1,
-  urgencias: 5,
-  monthlyTrend: [
-    { mes: 'Out', aprovados: 142, negados: 28 },
-    { mes: 'Nov', aprovados: 158, negados: 31 },
-    { mes: 'Dez', aprovados: 134, negados: 24 },
-    { mes: 'Jan', aprovados: 167, negados: 38 },
-    { mes: 'Fev', aprovados: 149, negados: 29 },
-    { mes: 'Mar', aprovados: 7, negados: 3 },
-  ],
-  topMotivosNegativa: [
-    { motivo: 'Fora do rol ANS', count: 8, color: '#d4183d' },
-    { motivo: 'Prestador não credenciado', count: 5, color: '#f59e0b' },
-    { motivo: 'Documentação clínica insuficiente', count: 4, color: '#b45309' },
-    { motivo: 'Carência contratual', count: 3, color: '#7c3aed' },
-    { motivo: 'Procedimento não indicado', count: 2, color: '#0891b2' },
-  ],
-  porCategoria: (() => {
-    const catColors: Record<string, string> = {
-      'Internação': '#902B29',
-      'Urgência/Emergência': '#d4183d',
-      'Oncologia': '#7c3aed',
-      'Terapias Especiais': '#2563eb',
-      'OPME': '#b45309',
-      'Exames Alta Complexidade': '#0891b2',
-      'Cirurgias Eletivas': '#059669',
-      'Home Care': '#16a34a',
-      'SADT': '#16a34a',
-    }
-    const catOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care', 'SADT']
-    const counts: Record<string, { total: number; pendentes: number }> = {}
-    for (const p of pedidos) {
-      if (!counts[p.categoria]) counts[p.categoria] = { total: 0, pendentes: 0 }
-      counts[p.categoria].total++
-      if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) counts[p.categoria].pendentes++
-    }
-    return catOrder
-      .filter(cat => counts[cat]?.total > 0)
-      .map(cat => ({ categoria: cat as Categoria, total: counts[cat].total, pendentes: counts[cat].pendentes, color: catColors[cat] }))
-  })(),
-  ultimasSolicitacoes: pedidos.slice(0, 5),
-  alertasAtivos: [
-    { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' },
-    { tipo: 'High-User', count: 3, color: '#f59e0b' },
-    { tipo: 'NIP Ativa', count: 2, color: '#b45309' },
-    { tipo: 'Prestador Não Credenciado', count: 2, color: '#7c3aed' },
-  ],
-}
+// dashboardMetrics is defined at the bottom of this file (after historicoEntries) so it can be computed from both arrays.
 
 // ── Histórico ──────────────────────────────────────────────────────────
 
@@ -1960,3 +1897,104 @@ export const historicoEntries: HistoricoEntry[] = [
     ],
   },
 ]
+
+// ── Dashboard Metrics (computed from real data) ─────────────────────────
+export const dashboardMetrics = (() => {
+  const _emAnalise = pedidos.filter(p => p.status === 'Em Análise').length
+  const _devolutivas = pedidos.filter(p => p.status === 'Devolutiva').length
+  const _urgencias = pedidos.filter(p => p.tipoGuia === 'Urgente' || p.tipoGuia === 'Emergência').length
+  const _aprovados = historicoEntries.filter(h => h.acao === 'Aprovado').length
+  const _negados = historicoEntries.filter(h => h.acao === 'Negado').length
+  const _taxaBase = _aprovados + _negados
+  // Irregularidades: total de alertas nos pedidos ativos
+  const _totalAlertasAtivos = pedidos.reduce((s, p) => s + p.alertas.length, 0)
+  const _pedidosComAlerta = pedidos.filter(p => p.alertas.length > 0).length
+  // Devolutivas por sub-estado
+  const _devolutivasAguardando = pedidos.filter(p => p.subStatus === 'PENDENTE_AGUARDANDO').length
+  const _devolutivasRetorno = pedidos.filter(p => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO').length
+  const _retornosRecebidos = pedidos.filter(p => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO').length
+  // Taxa de detecção da IA: % de negativas no histórico onde IA sugeriu Negar ou Junta antes do operador
+  const _criticosHist = historicoEntries.filter(h => h.acao === 'Negado')
+  const _iaSinalizouCriticos = _criticosHist.filter(h => h.iaSugestao === 'Negar' || h.iaSugestao === 'Junta Médica').length
+  const _taxaDeteccaoIA = _criticosHist.length > 0 ? Math.round((_iaSinalizouCriticos / _criticosHist.length) * 100) : 0
+  const _slaViolados = pedidos.filter(p => p.slaStatus === 'violated').length
+  // Aprovadas sem alertas (genuinamente limpas)
+  const _aprovadosHist = historicoEntries.filter(h => h.acao === 'Aprovado')
+  const _aprovadosSemAlerta = _aprovadosHist.length > 0
+    ? Math.round((_aprovadosHist.filter(h => !h.alertas || h.alertas.length === 0).length / _aprovadosHist.length) * 100)
+    : 0
+  const catColors: Record<string, string> = {
+    'Internação': '#902B29',
+    'Urgência/Emergência': '#d4183d',
+    'Oncologia': '#7c3aed',
+    'Terapias Especiais': '#2563eb',
+    'OPME': '#b45309',
+    'Exames Alta Complexidade': '#0891b2',
+    'Cirurgias Eletivas': '#059669',
+    'Home Care': '#16a34a',
+    'SADT': '#16a34a',
+  }
+  const catOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care', 'SADT']
+  const counts: Record<string, { total: number; pendentes: number }> = {}
+  for (const p of pedidos) {
+    if (!counts[p.categoria]) counts[p.categoria] = { total: 0, pendentes: 0 }
+    counts[p.categoria].total++
+    if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) counts[p.categoria].pendentes++
+  }
+  const porCategoria = catOrder
+    .filter(cat => counts[cat]?.total > 0)
+    .map(cat => ({ categoria: cat as Categoria, total: counts[cat].total, pendentes: counts[cat].pendentes, color: catColors[cat] }))
+
+  return {
+    total: pedidos.length + historicoEntries.length,
+    emAnalise: _emAnalise,
+    aprovados: _aprovados,
+    negados: _negados,
+    devolutivas: _devolutivas,
+    devolutivasTotal: _devolutivas + historicoEntries.filter(h => h.acao === 'Devolutiva').length,
+    devolutivasAguardando: _devolutivasAguardando,
+    devolutivasRetorno: _devolutivasRetorno,
+    totalAlertasAtivos: _totalAlertasAtivos,
+    pedidosComAlerta: _pedidosComAlerta,
+    taxaDeteccaoIA: _taxaDeteccaoIA,
+    iaSinalizouCriticos: _iaSinalizouCriticos,
+    totalCriticosHist: _criticosHist.length,
+    aprovadosSemAlerta: _aprovadosSemAlerta,
+    valorTotal: 'R$ 487.350,00',
+    valorAprovado: 'R$ 312.800,00',
+    valorNegado: 'R$ 89.200,00',
+    taxaAprovacao: _taxaBase > 0 ? Math.round((_aprovados / _taxaBase) * 100) : 0,
+    taxaNegacao: _taxaBase > 0 ? Math.round((_negados / _taxaBase) * 100) : 0,
+    slaViolados: _slaViolados,
+    slaOk: pedidos.filter(p => p.slaStatus === 'ok').length,
+    slaWarning: pedidos.filter(p => p.slaStatus === 'warning').length,
+    iaSugestaoAprovar: pedidos.filter(p => p.iaSugestao === 'Aprovar').length,
+    iaSugestaoNegar: pedidos.filter(p => p.iaSugestao === 'Negar').length,
+    iaSugestaoJunta: pedidos.filter(p => p.iaSugestao === 'Junta Médica').length,
+    urgencias: _urgencias,
+    monthlyTrend: [
+      { mes: 'Out', aprovados: 142, negados: 28 },
+      { mes: 'Nov', aprovados: 158, negados: 31 },
+      { mes: 'Dez', aprovados: 134, negados: 24 },
+      { mes: 'Jan', aprovados: 167, negados: 38 },
+      { mes: 'Fev', aprovados: 149, negados: 29 },
+      { mes: 'Mar', aprovados: _aprovados, negados: _negados },
+    ],
+    topMotivosNegativa: [
+      { motivo: 'Fora do rol ANS', count: 8, color: '#d4183d' },
+      { motivo: 'Prestador não credenciado', count: 5, color: '#f59e0b' },
+      { motivo: 'Documentação clínica insuficiente', count: 4, color: '#b45309' },
+      { motivo: 'Carência contratual', count: 3, color: '#7c3aed' },
+      { motivo: 'Procedimento não indicado', count: 2, color: '#0891b2' },
+    ],
+    porCategoria,
+    ultimasSolicitacoes: pedidos.slice(0, 5),
+    retornosRecebidos: _retornosRecebidos,
+    alertasAtivos: [
+      { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' },             // jurídico — maior risco
+      { tipo: 'NIP Ativa', count: 2, color: '#b45309' },                    // notificação regulatória
+      { tipo: 'SLA Violado', count: _slaViolados, color: '#d4183d' },       // prazo vencido
+      { tipo: 'Retornos recebidos', count: _retornosRecebidos, color: '#7c3aed' }, // retomada imediata
+    ],
+  }
+})()

@@ -15,14 +15,14 @@ import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Alert from '@mui/material/Alert'
-import AssignmentIcon from '@mui/icons-material/Assignment'
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CancelIcon from '@mui/icons-material/Cancel'
+import Divider from '@mui/material/Divider'
 import ReplayIcon from '@mui/icons-material/Replay'
+import SecurityIcon from '@mui/icons-material/Security'
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
 import AddIcon from '@mui/icons-material/Add'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted'
+import SavingsIcon from '@mui/icons-material/Savings'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import EmergencyIcon from '@mui/icons-material/Emergency'
 import BiotechIcon from '@mui/icons-material/Biotech'
@@ -38,7 +38,12 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp'
 import TrendingDownIcon from '@mui/icons-material/TrendingDown'
 import SpeedIcon from '@mui/icons-material/Speed'
 import GavelIcon from '@mui/icons-material/Gavel'
-import { dashboardMetrics, pedidos } from '@/data/pedidos'
+import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn'
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import { dashboardMetrics, pedidos, type Pedido } from '@/data/pedidos'
+import { classificarUrgencia } from '@/lib/urgencia'
 
 // ── Status color map ──────────────────────────────────────────────────
 const statusColorMap: Record<string, { bg: string; color: string }> = {
@@ -66,14 +71,15 @@ interface KpiCardProps {
   iconBg: string
   value: string | number
   label: string
-  sublabel?: string
+  sublabel?: React.ReactNode
+  sublabelColor?: string
   valueColor?: string
   trend?: 'up' | 'down' | 'neutral'
   trendLabel?: string
   onClick?: () => void
 }
 
-function KpiCard({ icon, iconBg, value, label, sublabel, valueColor, trend, trendLabel, onClick }: KpiCardProps) {
+function KpiCard({ icon, iconBg, value, label, sublabel, sublabelColor, valueColor, trend, trendLabel, onClick }: KpiCardProps) {
   return (
     <Card
       onClick={onClick}
@@ -84,15 +90,15 @@ function KpiCard({ icon, iconBg, value, label, sublabel, valueColor, trend, tren
         '&:hover': onClick ? { boxShadow: '0 4px 16px rgba(0,0,0,0.12)', transform: 'translateY(-1px)' } : {},
       }}
     >
-      <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-        {/* Top row: label/sublabel left — icon right */}
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1.5 }}>
+      <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 }, display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box' }}>
+        {/* Top row: label+sublabel left — icon right */}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0 }}>
           <Box>
-            <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.3 }}>
+            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
               {label}
             </Typography>
             {sublabel && (
-              <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', opacity: 0.75, lineHeight: 1.2, display: 'block', mt: 0.25 }}>
+              <Typography variant="caption" sx={{ fontSize: 12, color: sublabelColor || 'text.secondary', lineHeight: 1.2, display: 'block', mt: 0.25, fontWeight: sublabelColor ? 600 : 400 }}>
                 {sublabel}
               </Typography>
             )}
@@ -112,8 +118,8 @@ function KpiCard({ icon, iconBg, value, label, sublabel, valueColor, trend, tren
             {icon}
           </Box>
         </Box>
-        {/* Big number + trend */}
-        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.75 }}>
+        {/* Big number pinned to bottom */}
+        <Box sx={{ mt: 'auto', pt: 1, display: 'flex', alignItems: 'baseline', gap: 0.75 }}>
           <Typography
             variant="h5"
             sx={{ fontWeight: 800, lineHeight: 1, color: valueColor || 'text.primary', fontSize: 26 }}
@@ -147,10 +153,12 @@ const barData = dashboardMetrics.porCategoria.map((c) => ({
     .replace('Terapias Especiais', 'Terapias'),
   total: c.total,
   color: c.color,
+  categoria: c.categoria,
 }))
 const maxBar = Math.max(...barData.map((d) => d.total), 1)
 
 function CategoriaBarChart() {
+  const router = useRouter()
   const [hovered, setHovered] = useState<string | null>(null)
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -158,6 +166,11 @@ function CategoriaBarChart() {
         {barData.map((d) => (
           <Box
             key={d.label}
+            role="button"
+            tabIndex={0}
+            onClick={() => router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`) } }}
+            aria-label={`Ver ${d.total} pedidos de ${d.categoria}`}
             onMouseEnter={() => setHovered(d.label)}
             onMouseLeave={() => setHovered(null)}
             sx={{
@@ -165,7 +178,14 @@ function CategoriaBarChart() {
               alignItems: 'center',
               gap: 1.5,
               opacity: hovered && hovered !== d.label ? 0.5 : 1,
-              transition: 'opacity 150ms ease',
+              transition: 'opacity 150ms ease, background-color 150ms ease',
+              cursor: 'pointer',
+              borderRadius: 1,
+              px: 0.5,
+              py: 0.25,
+              mx: -0.5,
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
+              '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 2 },
             }}
           >
             <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', width: 68, flexShrink: 0, textAlign: 'right' }}>
@@ -177,15 +197,15 @@ function CategoriaBarChart() {
                   width: `${(d.total / maxBar) * 100}%`,
                   height: '100%',
                   backgroundColor: d.color,
-                  opacity: 0.8,
                   transition: 'width 600ms ease',
                 }}
                 title={`${d.label}: ${d.total} pedidos`}
               />
             </Box>
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: d.color, width: 20, textAlign: 'right', flexShrink: 0 }}>
+            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', width: 20, textAlign: 'right', flexShrink: 0 }}>
               {d.total}
             </Typography>
+            <ChevronRightIcon sx={{ fontSize: 12, color: 'text.secondary', flexShrink: 0 }} />
           </Box>
         ))}
       </Box>
@@ -245,23 +265,30 @@ function TrendChart() {
   )
 }
 
-// ── Donut Chart ───────────────────────────────────────────────────────
-const donutData = [
-  { label: 'Em Análise', value: dashboardMetrics.emAnalise, color: '#f59e0b' },
-  { label: 'Aprovadas', value: dashboardMetrics.aprovados, color: '#16a34a' },
-  { label: 'Negadas', value: dashboardMetrics.negados, color: '#d4183d' },
-  { label: 'Devolutivas', value: dashboardMetrics.devolutivas, color: '#ea580c' },
+// ── Urgência segments (computed from real pedidos) ────────────────────
+const _urgenciaCounts = pedidos.reduce<Record<string, number>>((acc, p) => {
+  const nivel = classificarUrgencia(p)
+  acc[nivel] = (acc[nivel] ?? 0) + 1
+  return acc
+}, {})
+
+const urgenciaSegments = [
+  { label: 'Críticos',     key: 'critico',       color: '#E24B4A', count: _urgenciaCounts.critico      ?? 0, url: '/fila?sla=Violado' },
+  { label: 'Atenção',      key: 'atencao',        color: '#EF9F27', count: _urgenciaCounts.atencao       ?? 0, url: '/fila?sla=Aten%C3%A7%C3%A3o' },
+  { label: 'Em andamento', key: 'em_andamento',   color: '#639922', count: _urgenciaCounts.em_andamento  ?? 0, url: '/fila?sla=No%20prazo' },
+  { label: 'Aguardando',   key: 'aguardando',     color: '#378ADD', count: _urgenciaCounts.aguardando    ?? 0, url: '/fila?status=aguardando' },
 ]
 
 function DonutChart() {
-  const total = donutData.reduce((s, d) => s + d.value, 0)
+  const router = useRouter()
+  const total = urgenciaSegments.reduce((s, d) => s + d.count, 0)
   const r = 56
   const cx = 70
   const cy = 70
   const circumference = 2 * Math.PI * r
   let cumulative = 0
-  const slices = donutData.filter((d) => d.value > 0).map((d) => {
-    const pct = d.value / total
+  const slices = urgenciaSegments.filter((d) => d.count > 0).map((d) => {
+    const pct = d.count / total
     const offset = circumference * (1 - cumulative)
     const dashLen = circumference * pct
     cumulative += pct
@@ -270,9 +297,8 @@ function DonutChart() {
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
-      {/* Donut centrado */}
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="160" height="160" viewBox="0 0 140 140">
+        <svg width="160" height="160" viewBox="0 0 140 140" role="img" aria-label={`Urgência: ${urgenciaSegments.map(d => `${d.label} ${d.count}`).join(', ')}`}>
           {slices.map((s) => (
             <circle
               key={s.label}
@@ -290,21 +316,29 @@ function DonutChart() {
           <text x={cx} y={cy - 6} textAnchor="middle" fontSize="22" fontWeight="800" fill="#1a1a1a">
             {total}
           </text>
-          <text x={cx} y={cy + 11} textAnchor="middle" fontSize="10" fill="#5a6070">
-            pedidos
+          <text x={cx} y={cy + 12} textAnchor="middle" fontSize="12" fill="#5a6070">
+            pedidos ativos
           </text>
         </svg>
       </Box>
-      {/* Legenda em grade 2 colunas */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px', width: '100%' }}>
-        {donutData.map((d) => (
-          <Box key={d.label} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+      {/* Legenda — 4 itens clicáveis */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px', width: '100%', mt: 1.5 }}>
+        {urgenciaSegments.map((d) => (
+          <Box
+            key={d.key}
+            role="button"
+            tabIndex={0}
+            onClick={() => router.push(d.url)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(d.url) } }}
+            aria-label={`Ver ${d.count} pedidos ${d.label}`}
+            sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'pointer', borderRadius: 1, p: 0.25, '&:hover': { backgroundColor: `${d.color}12` }, '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 1 } }}
+          >
             <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: d.color, flexShrink: 0 }} />
             <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', flex: 1 }} noWrap>
               {d.label}
             </Typography>
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, flexShrink: 0, ml: 1.5 }}>
-              {d.value}
+            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', flexShrink: 0 }}>
+              {d.count}
             </Typography>
           </Box>
         ))}
@@ -343,7 +377,7 @@ function SlaWidget() {
         <Box sx={{ width: `${pctWarn}%`, backgroundColor: '#f59e0b' }} />
         <Box sx={{ width: `${pctViol}%`, backgroundColor: '#d4183d', borderRadius: '0 4px 4px 0' }} />
       </Box>
-      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 0.75, display: 'block' }}>
+      <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280', mt: 0.75, display: 'block' }}>
         {total} pedidos ativos · {dashboardMetrics.slaViolados} violações de prazo
       </Typography>
     </Box>
@@ -394,7 +428,7 @@ export default function DashboardPage() {
             Gestão Inteligente de Pedidos
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Visão geral das solicitações — terça-feira, 24 de março de 2026
+            Visão geral das solicitações — segunda-feira, 30 de março de 2026
           </Typography>
         </Box>
         <Button
@@ -408,121 +442,160 @@ export default function DashboardPage() {
         </Button>
       </Box>
 
-      {/* Row 1 — 6 KPI Cards */}
+      {/* Row 1 — 5 KPI Cards */}
       <Grid container spacing={1.5} sx={{ mb: 2.5 }}>
         {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Grid key={i} size={{ xs: 12, sm: 6, md: 2 }}>
+          Array.from({ length: 5 }).map((_, i) => (
+            <Grid key={i} size={{ xs: 12, sm: 6, md: 'grow' }}>
               <CardSkeleton />
             </Grid>
           ))
         ) : (
           <>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            {/* Card 1 — Aguardam decisão */}
+            <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<AssignmentIcon sx={{ fontSize: 20, color: '#2563eb' }} />}
-                iconBg="rgba(37,99,235,0.1)"
-                value={dashboardMetrics.total}
-                label="Total de Pedidos"
-                sublabel="Mês atual"
+                icon={<FormatListBulletedIcon sx={{ fontSize: 20, color: '#902B29' }} />}
+                iconBg="rgba(144,43,41,0.1)"
+                value={pedidos.length}
+                label="Aguardam Decisão"
+                sublabel={<><Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>{dashboardMetrics.slaViolados} violados</Box>{` · ${dashboardMetrics.slaWarning} atenção · ${dashboardMetrics.slaOk} no prazo`}</>}
                 onClick={() => router.push('/fila')}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            {/* Card 2 — Irregularidades detectadas */}
+            <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<HourglassEmptyIcon sx={{ fontSize: 20, color: '#b45309' }} />}
+                icon={<WarningAmberIcon sx={{ fontSize: 20, color: '#b45309' }} />}
                 iconBg="rgba(245,158,11,0.12)"
-                value={dashboardMetrics.emAnalise}
-                label="Em Análise"
-                sublabel={`${dashboardMetrics.urgencias} urgentes`}
+                value={dashboardMetrics.totalAlertasAtivos}
+                label="Irregularidades Detectadas"
+                sublabel={`${dashboardMetrics.alertasAtivos.slice(0, 2).map(a => `${a.count} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`).join(' · ')}`}
                 valueColor="#b45309"
-                trend="up"
-                trendLabel="+3"
-                onClick={() => router.push('/fila')}
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            {/* Card 3 — Economia gerada */}
+            <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<CheckCircleIcon sx={{ fontSize: 20, color: '#16a34a' }} />}
+                icon={<SavingsIcon sx={{ fontSize: 20, color: '#16a34a' }} />}
                 iconBg="rgba(22,163,74,0.1)"
-                value={dashboardMetrics.aprovados}
-                label="Aprovadas"
-                sublabel={`Taxa: ${dashboardMetrics.taxaAprovacao}%`}
+                value={dashboardMetrics.valorNegado}
+                label="Economia Gerada"
+                sublabel={`${dashboardMetrics.negados} negativas · taxa ${dashboardMetrics.taxaNegacao}%`}
                 valueColor="#16a34a"
-                trend="up"
-                trendLabel="+2"
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+            {/* Card 4 — Efetividade da IA */}
+            <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<CancelIcon sx={{ fontSize: 20, color: '#d4183d' }} />}
-                iconBg="rgba(212,24,61,0.1)"
-                value={dashboardMetrics.negados}
-                label="Negadas"
-                sublabel={`Taxa: ${dashboardMetrics.taxaNegacao}%`}
-                valueColor="#d4183d"
-                trend="down"
-                trendLabel="-1"
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <KpiCard
-                icon={<ReplayIcon sx={{ fontSize: 20, color: '#ea580c' }} />}
-                iconBg="rgba(234,88,12,0.1)"
-                value={dashboardMetrics.devolutivas}
-                label="Devolutivas"
-                sublabel="Aguard. complementação"
-                valueColor="#ea580c"
-                onClick={() => router.push('/fila?tab=2')}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <KpiCard
-                icon={<AttachMoneyIcon sx={{ fontSize: 20, color: '#7c3aed' }} />}
+                icon={<SmartToyIcon sx={{ fontSize: 20, color: '#7c3aed' }} />}
                 iconBg="rgba(124,58,237,0.1)"
-                value={dashboardMetrics.valorTotal}
-                label="Valor Total Estimado"
-                sublabel={`Aprovado: ${dashboardMetrics.valorAprovado}`}
+                value={`${dashboardMetrics.taxaDeteccaoIA}%`}
+                label="Efetividade da IA"
+                sublabel={`IA antecipou ${dashboardMetrics.iaSinalizouCriticos} de ${dashboardMetrics.totalCriticosHist} negativas`}
                 valueColor="#7c3aed"
+              />
+            </Grid>
+            {/* Card 5 — Valor em risco */}
+            <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
+              <KpiCard
+                icon={<AttachMoneyIcon sx={{ fontSize: 20, color: '#2563eb' }} />}
+                iconBg="rgba(37,99,235,0.1)"
+                value={dashboardMetrics.valorTotal}
+                label="Valor em Risco"
+                sublabel={`inclui ${dashboardMetrics.pedidosComAlerta} pedidos com alerta`}
+                valueColor="#2563eb"
               />
             </Grid>
           </>
         )}
       </Grid>
 
-      {/* Row 1.5 — Alertas críticos banner */}
-      {!loading && dashboardMetrics.slaViolados > 0 && (
-        <Alert
-          severity="error"
-          icon={<TimerOffIcon fontSize="small" />}
-          sx={{ mb: 2.5, borderRadius: 2, alignItems: 'center', border: '1px solid rgba(212,24,61,0.22)', '& .MuiAlert-action': { alignItems: 'center', pt: 0, mr: 0, pr: 0 } }}
-          action={
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => router.push('/fila?sla=Violado')}
-              sx={{ backgroundColor: '#902B29', color: '#fff', fontWeight: 700, px: 2, '&:hover': { backgroundColor: '#7a2321' }, whiteSpace: 'nowrap' }}
-            >
-              Ver fila
-            </Button>
-          }
-        >
-          <Typography variant="body2" fontWeight={700}>
-            {dashboardMetrics.slaViolados} pedidos com SLA violado
-          </Typography>
-          <Typography variant="caption" sx={{ fontSize: 12 }}>
-            Inclui {dashboardMetrics.alertasAtivos.find(a => a.tipo === 'Liminar Judicial')?.count ?? 0} liminares judiciais e {dashboardMetrics.alertasAtivos.find(a => a.tipo === 'NIP Ativa')?.count ?? 0} NIP ativas que requerem atenção imediata.
-          </Typography>
-        </Alert>
-      )}
+      {/* Alertas Ativos — card branco com itens lado a lado */}
+      {!loading && dashboardMetrics.alertasAtivos.length > 0 && (() => {
+        const getAlertaUrl = (tipo: string) => {
+          if (tipo === 'SLA Violado') return '/fila?sla=Violado'
+          if (tipo === 'Retornos recebidos') return '/fila?status=retorno_recebido'
+          return `/fila?alerta=${encodeURIComponent(tipo)}`
+        }
+        const alertaIcon = (tipo: string, color: string) => {
+          if (tipo === 'Liminar Judicial') return <GavelIcon sx={{ fontSize: 16, color }} />
+          if (tipo === 'SLA Violado') return <TimerOffIcon sx={{ fontSize: 16, color }} />
+          if (tipo === 'Retornos recebidos') return <AssignmentReturnIcon sx={{ fontSize: 16, color }} />
+          return <WarningAmberIcon sx={{ fontSize: 16, color }} />
+        }
+        return (
+          <Card sx={{ mb: 2.5 }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', flex: 1 }}>
+                  Alertas que requerem atenção
+                </Typography>
+                <Chip
+                  label={`${dashboardMetrics.alertasAtivos.reduce((s, a) => s + a.count, 0)} no total`}
+                  size="small"
+                  sx={{ height: 20, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.08)', color: '#d4183d', '& .MuiChip-label': { px: 1 } }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+                {dashboardMetrics.alertasAtivos.map((alerta) => {
+                  const url = getAlertaUrl(alerta.tipo)
+                  return (
+                    <Box
+                      key={alerta.tipo}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => router.push(url)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(url) } }}
+                      aria-label={`Ver ${alerta.count} pedidos: ${alerta.tipo}`}
+                      sx={{
+                        flex: 1,
+                        minWidth: 160,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        p: 1.5,
+                        borderRadius: 2,
+                        border: `1px solid ${alerta.color}22`,
+                        backgroundColor: `${alerta.color}07`,
+                        cursor: 'pointer',
+                        transition: 'background-color 150ms ease',
+                        '&:hover': { backgroundColor: `${alerta.color}12` },
+                        '&:focus-visible': { outline: `2px solid ${alerta.color}`, outlineOffset: 2 },
+                      }}
+                    >
+                      <Box sx={{ color: alerta.color, flexShrink: 0 }}>{alertaIcon(alerta.tipo, alerta.color)}</Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="caption" sx={{ fontSize: 12, color: alerta.color, fontWeight: 700, lineHeight: 1.2, display: 'block' }} noWrap>
+                          {alerta.tipo}
+                        </Typography>
+                        <Typography variant="h6" fontWeight={800} sx={{ fontSize: 20, color: alerta.color, lineHeight: 1.1 }}>
+                          {alerta.count}
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="caption"
+                        sx={{ fontSize: 12, color: alerta.color, display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0, fontWeight: 600 }}
+                      >
+                        Ver pedidos <ChevronRightIcon sx={{ fontSize: 14 }} />
+                      </Typography>
+                    </Box>
+                  )
+                })}
+              </Box>
+            </CardContent>
+          </Card>
+        )
+      })()}
 
       {/* Row 2 — Charts: Bar por categoria + Donut + SLA */}
       <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
 
         {/* Distribuição por Categoria — flex 5 */}
         <Card sx={{ flex: 5, display: 'flex', flexDirection: 'column' }}>
-          <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-            <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700, mb: 2 }}>
+          <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
+            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}>
               Distribuição por Categoria
             </Typography>
             {loading ? (
@@ -539,10 +612,15 @@ export default function DashboardPage() {
 
         {/* Status Geral — flex 3 */}
         <Card sx={{ flex: 3, display: 'flex', flexDirection: 'column' }}>
-          <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-            <Typography variant="h6" gutterBottom sx={{ fontSize: 14, fontWeight: 700 }}>
-              Status Geral
-            </Typography>
+          <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
+            <Box sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+                Status Geral
+              </Typography>
+              <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                composição por urgência
+              </Typography>
+            </Box>
             {loading ? (
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Skeleton variant="circular" width={110} height={110} />
@@ -556,49 +634,64 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Status SLA + Sugestões IA — flex 4 */}
-        <Box sx={{ flex: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* Sugestões IA — flex 4 */}
+        <Box sx={{ flex: 4, display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, '&:last-child': { pb: 3 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <SpeedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                  Status SLA
+            <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+                  Sugestão da IA
                 </Typography>
+                <Box
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => router.push('/fila')}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/fila') } }}
+                  sx={{ cursor: 'pointer', '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: 2, borderRadius: '4px' } }}
+                >
+                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                    Ver todos ›
+                  </Typography>
+                </Box>
               </Box>
               {loading ? (
-                <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
+                <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 1 }} />
               ) : (
-                <SlaWidget />
-              )}
-            </CardContent>
-          </Card>
-
-          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, '&:last-child': { pb: 3 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                <SmartToyIcon sx={{ fontSize: 18, color: 'primary.main' }} />
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                  Sugestões da IA
-                </Typography>
-              </Box>
-              {loading ? (
-                <Skeleton variant="rectangular" height={60} sx={{ borderRadius: 1 }} />
-              ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {[
-                    { label: 'Aprovar', count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a' },
-                    { label: 'Negar', count: dashboardMetrics.iaSugestaoNegar, color: '#d4183d' },
-                    { label: 'Junta Médica', count: dashboardMetrics.iaSugestaoJunta, color: '#b45309' },
-                  ].map((s) => (
-                    <Box key={s.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: s.color, flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ flex: 1, fontSize: 12, color: 'text.secondary' }}>{s.label}</Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 700, fontSize: 13, color: s.color }}>{s.count}</Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
+                  {([
+                    { label: 'Negar',       count: dashboardMetrics.iaSugestaoNegar,   color: '#d4183d', textColor: '#d4183d', bg: 'rgba(212,24,61,0.08)',  hoverBg: 'rgba(212,24,61,0.13)',  icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />, ia: 'Negar' },
+                    { label: 'Junta Médica',count: dashboardMetrics.iaSugestaoJunta,   color: '#b45309', textColor: '#b45309', bg: 'rgba(180,83,9,0.08)',   hoverBg: 'rgba(180,83,9,0.13)',   icon: <GroupsOutlinedIcon      sx={{ fontSize: 16, color: '#b45309' }} />, ia: 'Junta Médica' },
+                    { label: 'Aprovar',     count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a', textColor: '#166534', bg: 'rgba(22,163,74,0.08)',  hoverBg: 'rgba(22,163,74,0.13)',  icon: <CheckCircleOutlineIcon  sx={{ fontSize: 16, color: '#16a34a' }} />, ia: 'Aprovar' },
+                  ] as Array<{ label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string }>).map((s) => (
+                    <Box
+                      key={s.label}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => router.push(`/fila?ia=${encodeURIComponent(s.ia)}`)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?ia=${encodeURIComponent(s.ia)}`) } }}
+                      aria-label={`Ver ${s.count} pedidos com sugestão da IA: ${s.label}`}
+                      sx={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        borderRadius: 2, p: '10px 12px', cursor: 'pointer', flex: 1,
+                        backgroundColor: s.bg,
+                        transition: 'background-color 150ms ease',
+                        '&:hover': { backgroundColor: s.hoverBg },
+                        '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: 1 },
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {s.icon}
+                        <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: s.textColor }}>
+                          {s.label}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, color: s.textColor, lineHeight: 1 }}>
+                        {s.count}
+                      </Typography>
                     </Box>
                   ))}
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, mt: 0.5 }}>
-                    Sugestões para pedidos em análise
+                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 'auto', pt: 0.5, display: 'block' }}>
+                    Pedidos ativos em análise
                   </Typography>
                 </Box>
               )}
@@ -607,12 +700,12 @@ export default function DashboardPage() {
         </Box>
       </Box>
 
-      {/* Row 3 — Trend + Alertas Ativos */}
+      {/* Row 3 — Trend + Aprovadas (card de auditoria) */}
       <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Typography variant="h6" gutterBottom sx={{ fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
+              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', flexShrink: 0, mb: 1 }}>
                 Volume Mensal — Aprovações vs Negações
               </Typography>
               {loading ? (
@@ -626,66 +719,46 @@ export default function DashboardPage() {
           </Card>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent sx={{ p: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                <WarningAmberIcon sx={{ fontSize: 18, color: '#f59e0b' }} />
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                  Alertas Ativos
+        <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+                  Negativas fundamentadas
                 </Typography>
-                <Chip
-                  label={dashboardMetrics.alertasAtivos.reduce((s, a) => s + a.count, 0)}
-                  size="small"
-                  sx={{ height: 20, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d', ml: 'auto' }}
-                />
+                <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>Mês atual</Typography>
               </Box>
               {loading ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} variant="rectangular" height={40} sx={{ borderRadius: 1 }} />)}
-                </Box>
+                <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
               ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {dashboardMetrics.alertasAtivos.map((alerta) => (
-                    <Box
-                      key={alerta.tipo}
-                      onClick={() => router.push(`/fila?alerta=${encodeURIComponent(alerta.tipo)}`)}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        p: 1.5,
-                        borderRadius: 2,
-                        border: `1px solid ${alerta.color}22`,
-                        backgroundColor: `${alerta.color}08`,
-                        cursor: 'pointer',
-                        transition: 'background-color 150ms ease',
-                        '&:hover': { backgroundColor: `${alerta.color}12` },
-                      }}
-                    >
-                      {alerta.tipo === 'Liminar Judicial' ? (
-                        <GavelIcon sx={{ fontSize: 16, color: alerta.color, flexShrink: 0 }} />
-                      ) : (
-                        <WarningAmberIcon sx={{ fontSize: 16, color: alerta.color, flexShrink: 0 }} />
-                      )}
-                      <Typography variant="body2" fontWeight={600} sx={{ flex: 1, fontSize: 12 }}>
-                        {alerta.tipo}
-                      </Typography>
-                      <Chip
-                        label={alerta.count}
-                        size="small"
-                        sx={{
-                          height: 22,
-                          fontSize: 12,
-                          fontWeight: 700,
-                          backgroundColor: `${alerta.color}18`,
-                          color: alerta.color,
-                          '& .MuiChip-label': { px: 1 },
-                        }}
-                      />
-                      <ChevronRightIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    </Box>
-                  ))}
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography variant="h3" fontWeight={800} sx={{ fontSize: 40, color: '#902B29', lineHeight: 1 }}>
+                      {dashboardMetrics.negados}
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.75 }}>
+                      negativas emitidas
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                      Economia estimada: {dashboardMetrics.valorNegado}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 1.25,
+                      borderRadius: 1.5,
+                      backgroundColor: 'rgba(144,43,41,0.05)',
+                      border: '1px solid rgba(144,43,41,0.15)',
+                    }}
+                  >
+                    <Typography variant="caption" sx={{ fontSize: 12, color: '#902B29', fontWeight: 600, display: 'block' }}>
+                      {dashboardMetrics.iaSinalizouCriticos} de {dashboardMetrics.totalCriticosHist} com alerta da IA identificado
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>
+                      IA antecipou {dashboardMetrics.taxaDeteccaoIA}% das negativas do período
+                    </Typography>
+                  </Box>
                 </Box>
               )}
             </CardContent>
@@ -698,76 +771,109 @@ export default function DashboardPage() {
         <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700 }}>
-                  Últimas Solicitações
-                </Typography>
-                <Button
-                  size="small"
-                  endIcon={<ChevronRightIcon fontSize="small" />}
-                  onClick={() => router.push('/fila')}
-                  sx={{ fontSize: 12, color: 'primary.main' }}
-                  aria-label="Ver todas as solicitações"
-                >
-                  Ver todas
-                </Button>
-              </Box>
-              {loading ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                  {Array.from({ length: 7 }).map((_, i) => (
-                    <Skeleton key={i} variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
-                  ))}
-                </Box>
-              ) : (
-                <Table size="small" aria-label="Últimas solicitações">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ pl: 0.5, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>ID</TableCell>
-                      <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Status</TableCell>
-                      <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Beneficiário</TableCell>
-                      <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Procedimento</TableCell>
-                      <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Data</TableCell>
-                      <TableCell sx={{ width: 90 }} />
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {pedidos.slice(0, 7).map((pedido) => (
-                      <TableRow
-                        key={pedido.id}
-                        onClick={() => router.push(`/analise?id=${pedido.id}`)}
-                        sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' } }}
-                      >
-                        <TableCell sx={{ pl: 0.5 }}>
-                          <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
-                            {pedido.id}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <StatusChip status={pedido.status} />
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="caption" fontWeight={600} noWrap sx={{ fontSize: 12 }}>
-                            {pedido.beneficiario.nome}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: 12, maxWidth: 140, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {pedido.procedimentos[0]?.descricao || '—'}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                            {pedido.dataProtocolo.split(' ')[0]}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                          <ChevronRightIcon sx={{ fontSize: 16, color: 'text.disabled', verticalAlign: 'middle' }} />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+              {(() => {
+                const criticalAlerts = ['Liminar Judicial', 'NIP Ativa']
+                const urgencyScore = (p: Pedido) => {
+                  const hasCritical = p.alertas.some(a => criticalAlerts.includes(a))
+                  const hasAnyAlert = p.alertas.length > 0
+                  if (p.slaStatus === 'violated' && hasCritical) return 0
+                  if (p.slaStatus === 'violated') return 1
+                  if (p.slaStatus === 'warning' && hasAnyAlert) return 2
+                  if (p.slaStatus === 'warning') return 3
+                  if (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO') return 4
+                  return 5
+                }
+                const urgentFirst = [...pedidos].sort((a, b) => {
+                  const diff = urgencyScore(a) - urgencyScore(b)
+                  if (diff !== 0) return diff
+                  return a.dataProtocolo.localeCompare(b.dataProtocolo)
+                }).slice(0, 7)
+                const slaColorMap: Record<string, { bg: string; color: string }> = {
+                  ok: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
+                  warning: { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
+                  violated: { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
+                }
+                return (<>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+                      Requerem atenção agora
+                    </Typography>
+                    <Button
+                      size="small"
+                      endIcon={<ChevronRightIcon fontSize="small" />}
+                      onClick={() => router.push('/fila')}
+                      sx={{ fontSize: 12, color: 'primary.main' }}
+                      aria-label="Ver todas as solicitações"
+                    >
+                      Ver todas
+                    </Button>
+                  </Box>
+                  {loading ? (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                      {Array.from({ length: 7 }).map((_, i) => (
+                        <Skeleton key={i} variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Table size="small" aria-label="Pedidos que requerem atenção">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ pl: 0.5, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>ID</TableCell>
+                          <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Status</TableCell>
+                          <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Beneficiário</TableCell>
+                          <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>SLA</TableCell>
+                          <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Data</TableCell>
+                          <TableCell sx={{ width: 32 }} />
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {urgentFirst.map((pedido) => {
+                          const slaStyle = slaColorMap[pedido.slaStatus] || slaColorMap.ok
+                          return (
+                            <TableRow
+                              key={pedido.id}
+                              tabIndex={0}
+                              onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/analise?id=${pedido.id}`) } }}
+                              aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiario.nome}`}
+                              sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' }, '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 } }}
+                            >
+                              <TableCell sx={{ pl: 0.5 }}>
+                                <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
+                                  {pedido.id}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <StatusChip status={pedido.status} />
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="caption" fontWeight={600} noWrap sx={{ fontSize: 12 }}>
+                                  {pedido.beneficiario.nome}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={pedido.slaTexto}
+                                  size="small"
+                                  sx={{ backgroundColor: slaStyle.bg, color: slaStyle.color, fontSize: 11, fontWeight: 700, height: 20 }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                                  {pedido.dataProtocolo.split(' ')[0]}
+                                </Typography>
+                              </TableCell>
+                              <TableCell align="right">
+                                <ChevronRightIcon sx={{ fontSize: 16, color: 'text.secondary', verticalAlign: 'middle' }} />
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  )}
+                </>)
+              })()}
             </CardContent>
           </Card>
         </Grid>
@@ -777,7 +883,7 @@ export default function DashboardPage() {
             {/* Motivos de Pendência */}
             <Card sx={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700, mb: 2, flexShrink: 0 }}>
+                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 2, flexShrink: 0 }}>
                   Principais Motivos de Negativa
                 </Typography>
                 {loading ? (
@@ -798,7 +904,7 @@ export default function DashboardPage() {
                               <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600 }} noWrap>
                                 {motivo.motivo}
                               </Typography>
-                              <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: motivo.color, ml: 1, flexShrink: 0 }}>
+                              <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', ml: 1, flexShrink: 0 }}>
                                 {motivo.count}
                               </Typography>
                             </Box>
@@ -825,7 +931,7 @@ export default function DashboardPage() {
             {/* Categorias rápido */}
             <Card>
               <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-                <Typography variant="h6" sx={{ fontSize: 14, fontWeight: 700, mb: 1.5 }}>
+                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}>
                   Por Categoria
                 </Typography>
                 {loading ? (
@@ -837,7 +943,11 @@ export default function DashboardPage() {
                     {dashboardMetrics.porCategoria.map((cat) => (
                       <Box
                         key={cat.categoria}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`) } }}
+                        aria-label={`Filtrar por categoria ${cat.categoria}: ${cat.total} pedidos`}
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
@@ -850,6 +960,7 @@ export default function DashboardPage() {
                           cursor: 'pointer',
                           transition: 'background-color 150ms ease',
                           '&:hover': { backgroundColor: `${cat.color}15` },
+                          '&:focus-visible': { outline: `2px solid ${cat.color}`, outlineOffset: 2 },
                         }}
                       >
                         <Box sx={{ color: cat.color, display: 'flex', alignItems: 'center' }}>
@@ -861,7 +972,7 @@ export default function DashboardPage() {
                         <Chip
                           label={cat.total}
                           size="small"
-                          sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: `${cat.color}15`, color: cat.color, '& .MuiChip-label': { px: 0.5 } }}
+                          sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: `${cat.color}20`, color: 'text.primary', '& .MuiChip-label': { px: 0.5 } }}
                         />
                       </Box>
                     ))}
