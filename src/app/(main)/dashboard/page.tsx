@@ -145,8 +145,6 @@ const barData = dashboardMetrics.porCategoria.map((c) => ({
     .replace('Exames Alta Complexidade', 'Exames')
     .replace('Cirurgias Eletivas', 'Cirurgias')
     .replace('Terapias Especiais', 'Terapias'),
-  pendentes: c.pendentes,
-  aprovados: c.total - c.pendentes,
   total: c.total,
   color: c.color,
 }))
@@ -173,45 +171,23 @@ function CategoriaBarChart() {
             <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', width: 68, flexShrink: 0, textAlign: 'right' }}>
               {d.label}
             </Typography>
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-              <Box sx={{ display: 'flex', gap: 0.25, height: 16, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
-                {d.aprovados > 0 && (
-                  <Box
-                    sx={{
-                      width: `${(d.aprovados / maxBar) * 100}%`,
-                      backgroundColor: '#16a34a',
-                      transition: 'width 600ms ease',
-                    }}
-                    title={`Aprovados: ${d.aprovados}`}
-                  />
-                )}
-                {d.pendentes > 0 && (
-                  <Box
-                    sx={{
-                      width: `${(d.pendentes / maxBar) * 100}%`,
-                      backgroundColor: '#902B29',
-                      transition: 'width 600ms ease',
-                    }}
-                    title={`Em análise: ${d.pendentes}`}
-                  />
-                )}
-              </Box>
+            <Box sx={{ flex: 1, height: 16, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
+              <Box
+                sx={{
+                  width: `${(d.total / maxBar) * 100}%`,
+                  height: '100%',
+                  backgroundColor: d.color,
+                  opacity: 0.8,
+                  transition: 'width 600ms ease',
+                }}
+                title={`${d.label}: ${d.total} pedidos`}
+              />
             </Box>
             <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: d.color, width: 20, textAlign: 'right', flexShrink: 0 }}>
               {d.total}
             </Typography>
           </Box>
         ))}
-      </Box>
-      <Box sx={{ display: 'flex', gap: 2, mt: 1.5, pl: '84px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#16a34a' }} />
-          <Typography variant="caption" sx={{ fontSize: 12 }}>Aprovados</Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#902B29' }} />
-          <Typography variant="caption" sx={{ fontSize: 12 }}>Em Análise</Typography>
-        </Box>
       </Box>
     </Box>
   )
