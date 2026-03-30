@@ -40,6 +40,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CheckIcon from '@mui/icons-material/Check'
 import CircularProgress from '@mui/material/CircularProgress'
+import LinearProgress from '@mui/material/LinearProgress'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
@@ -436,6 +437,7 @@ function NovaSolicitacaoInner() {
 
   const [currentStep, setCurrentStep] = useState(0)
   const [uploadState, setUploadState] = useState<'idle' | 'loading' | 'done'>('idle')
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [dragOver, setDragOver] = useState(false)
   const [zoom, setZoom] = useState(100)
   const [rotation, setRotation] = useState(0)
@@ -495,10 +497,29 @@ function NovaSolicitacaoInner() {
 
   const handleUpload = () => {
     setUploadState('loading')
+    setUploadProgress(0)
+    // Simulate progress: fast start, decelerate near end
+    const milestones = [8, 20, 35, 50, 63, 74, 83, 89, 94, 98]
+    milestones.forEach((target, i) => {
+      setTimeout(() => setUploadProgress(target), (i + 1) * 180)
+    })
     setTimeout(() => {
+      setUploadProgress(100)
       setUploadState('done')
       setTimeout(() => setCurrentStep(1), 400)
-    }, 2000)
+    }, 2200)
+  }
+
+  const handleNovaSolicitacao = () => {
+    setModalAberto(false)
+    setResposta(null)
+    setSubmitting(false)
+    setCurrentStep(0)
+    setUploadState('idle')
+    setUploadProgress(0)
+    setForm({ ...initialForm, tipoSolicitacao: moduloParam || '' })
+    setDocsObrigatorios([])
+    setDocsAdicionais([])
   }
 
   const handleNext = () => {
@@ -612,13 +633,28 @@ function NovaSolicitacaoInner() {
         )}
         {uploadState === 'loading' && (
           <>
-            <Box sx={{ fontSize: 36 }}>🔍</Box>
+            <CircularProgress size={40} thickness={3} sx={{ color: '#2563eb' }} />
             <Typography variant="body1" fontWeight={700} sx={{ color: '#2563eb' }}>
               Lendo documento com IA...
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Extraindo dados automaticamente
             </Typography>
+            <Box sx={{ width: '100%', mt: 1 }}>
+              <LinearProgress
+                variant="determinate"
+                value={uploadProgress}
+                sx={{
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: 'rgba(37,99,235,0.12)',
+                  '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: '#2563eb' },
+                }}
+              />
+              <Typography variant="caption" sx={{ display: 'block', textAlign: 'right', mt: 0.5, color: 'text.secondary' }}>
+                {uploadProgress}%
+              </Typography>
+            </Box>
           </>
         )}
         {uploadState === 'done' && (
@@ -1680,7 +1716,7 @@ function NovaSolicitacaoInner() {
         <DialogActions sx={{ px: 3, pb: 3, pt: 1, gap: 1 }}>
           {resposta?.tipoDecisao === 'automatica' ? (
             <>
-              <Button variant="outlined" onClick={() => router.push('/nova-solicitacao')} sx={{ minHeight: 40 }}>
+              <Button variant="outlined" onClick={handleNovaSolicitacao} sx={{ minHeight: 40 }}>
                 Nova solicitação
               </Button>
               <Button variant="contained" onClick={() => router.push(`/historico?id=${resposta?.id}`)} sx={{ minHeight: 40 }}>
