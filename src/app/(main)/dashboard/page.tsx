@@ -503,7 +503,7 @@ export default function DashboardPage() {
                 iconBg="rgba(37,99,235,0.1)"
                 value={dashboardMetrics.valorTotal}
                 label="Valor em Risco"
-                sublabel={`inclui ${dashboardMetrics.pedidosComAlerta} pedidos com alerta`}
+                sublabel={`${pedidos.length} pedidos aguardam decisão`}
                 valueColor="#2563eb"
               />
             </Grid>
