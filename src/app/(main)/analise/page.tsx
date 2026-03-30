@@ -426,7 +426,7 @@ function BeneficiarioSection({ pedido }: { pedido: Pedido }) {
         </Box>
 
         {/* Row 2: dados em grid horizontal */}
-        <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap', pt: 2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {[
             { label: 'Carteirinha', value: b.carteirinha },
             { label: 'CPF', value: b.cpf },
@@ -434,7 +434,7 @@ function BeneficiarioSection({ pedido }: { pedido: Pedido }) {
             { label: 'Plano', value: b.plano },
           ].map(f => (
             <Box key={f.label}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
                 {f.label}
               </Typography>
               <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
@@ -443,7 +443,7 @@ function BeneficiarioSection({ pedido }: { pedido: Pedido }) {
             </Box>
           ))}
           <Box>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
               Carência
             </Typography>
             <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, color: b.carencia ? '#b45309' : '#16a34a' }}>
@@ -1370,24 +1370,22 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
             })}
           </TableBody>
         </Table>
-        <Box sx={{ mt: 2, mx: -3, mb: -3, px: 3, py: 2, backgroundColor: 'rgba(0,0,0,0.03)', borderTop: 'none' }}>
-          <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-            {[
-              { label: 'Hospital / Clínica', value: p.hospital },
-              { label: 'Médico Solicitante', value: p.medico },
-              { label: 'CRM', value: p.crm },
-              { label: 'Especialidade', value: p.especialidade },
-            ].map((f) => (
-              <Box key={f.label}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 12 }}>
-                  {f.label}
-                </Typography>
-                <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
-                  {f.value}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
+        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          {[
+            { label: 'Hospital / Clínica', value: p.hospital },
+            { label: 'Médico Solicitante', value: p.medico },
+            { label: 'CRM', value: p.crm },
+            { label: 'Especialidade', value: p.especialidade },
+          ].map((f) => (
+            <Box key={f.label}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                {f.label}
+              </Typography>
+              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                {f.value}
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </CardContent>
     </Card>
@@ -2443,9 +2441,9 @@ function AnaliseInner() {
             <GuiasSimultaneasAlert pedido={pedido} />
             <BeneficiarioSection pedido={pedido} />
             <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
+            <ObservacoesSection pedido={pedido} />
             <AjustesRegistradosSection ajustes={allAjustes} />
             <HistoricoConsolidadoSection pedido={pedido} />
-            <ObservacoesSection pedido={pedido} />
             <DocumentosSection pedido={pedido} />
           </Box>
         </Box>

@@ -293,7 +293,7 @@ function BeneficiarioSection({ entry }: { entry: HistoricoEntry }) {
         </Box>
 
         {/* Row 2: dados em grid horizontal */}
-        <Box sx={{ display: 'flex', gap: 6, flexWrap: 'wrap', pt: 2, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {[
             { label: 'Carteirinha', value: entry.carteirinha },
             { label: 'CPF', value: entry.cpf ?? '—' },
@@ -301,7 +301,7 @@ function BeneficiarioSection({ entry }: { entry: HistoricoEntry }) {
             { label: 'Plano', value: entry.plano },
           ].map(f => (
             <Box key={f.label}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
                 {f.label}
               </Typography>
               <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
@@ -310,7 +310,7 @@ function BeneficiarioSection({ entry }: { entry: HistoricoEntry }) {
             </Box>
           ))}
           <Box>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, mb: 0.25 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
               Carência
             </Typography>
             <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, color: carencia ? '#b45309' : '#16a34a' }}>
@@ -379,24 +379,22 @@ function ProcedimentosSection({ entry }: { entry: HistoricoEntry }) {
             ))}
           </TableBody>
         </Table>
-        <Box sx={{ mt: 2, mx: -3, mb: -3, px: 3, py: 2, backgroundColor: 'rgba(0,0,0,0.03)' }}>
-          <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-            {[
-              { label: 'Prestador', value: entry.prestador },
-              { label: 'Médico Solicitante', value: entry.medicoSolicitante },
-              { label: 'Tipo de Guia', value: entry.tipoGuia },
-              { label: 'Categoria', value: entry.categoria },
-            ].map((f) => (
-              <Box key={f.label}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 12 }}>
-                  {f.label}
-                </Typography>
-                <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
-                  {f.value}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
+        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          {[
+            { label: 'Prestador', value: entry.prestador },
+            { label: 'Médico Solicitante', value: entry.medicoSolicitante },
+            { label: 'Tipo de Guia', value: entry.tipoGuia },
+            { label: 'Categoria', value: entry.categoria },
+          ].map((f) => (
+            <Box key={f.label}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                {f.label}
+              </Typography>
+              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                {f.value}
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </CardContent>
     </Card>
@@ -1009,8 +1007,8 @@ export default function HistoricoDetalhePage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <BeneficiarioSection entry={entry} />
             <ProcedimentosSection entry={entry} />
-            <HistoricoConsolidadoSection entry={entry} />
             <ObservacoesSection entry={entry} />
+            <HistoricoConsolidadoSection entry={entry} />
             <DocumentosSection entry={entry} />
           </Box>
         </Box>
