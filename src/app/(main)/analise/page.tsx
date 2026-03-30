@@ -2441,8 +2441,8 @@ function AnaliseInner() {
             <GuiasSimultaneasAlert pedido={pedido} />
             <BeneficiarioSection pedido={pedido} />
             <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
-            <ObservacoesSection pedido={pedido} />
             <AjustesRegistradosSection ajustes={allAjustes} />
+            <ObservacoesSection pedido={pedido} />
             <HistoricoConsolidadoSection pedido={pedido} />
             <DocumentosSection pedido={pedido} />
           </Box>
