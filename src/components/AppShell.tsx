@@ -50,7 +50,7 @@ const SIDEBAR_WIDTH = 240
 
 const navItems = [
   { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, path: '/dashboard' },
-  { label: 'Fila Operacional', icon: <FormatListBulletedIcon fontSize="small" />, path: '/fila', badge: 21 },
+  { label: 'Fila Operacional', icon: <FormatListBulletedIcon fontSize="small" />, path: '/fila', badge: pedidos.length },
   { label: 'Histórico', icon: <HistoryIcon fontSize="small" />, path: '/historico' },
 ]
 
