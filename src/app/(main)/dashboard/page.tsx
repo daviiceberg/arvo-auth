@@ -47,7 +47,6 @@ const statusColorMap: Record<string, { bg: string; color: string }> = {
   'Negado': { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
   'Pendente': { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
   'Devolutiva': { bg: 'rgba(234,88,12,0.1)', color: '#ea580c' },
-  'Cancelado': { bg: 'rgba(107,114,128,0.1)', color: '#6b7280' },
 }
 
 function StatusChip({ status }: { status: string }) {
@@ -276,7 +275,6 @@ const donutData = [
   { label: 'Aprovadas', value: dashboardMetrics.aprovados, color: '#16a34a' },
   { label: 'Negadas', value: dashboardMetrics.negados, color: '#d4183d' },
   { label: 'Devolutivas', value: dashboardMetrics.devolutivas, color: '#ea580c' },
-  { label: 'Canceladas', value: dashboardMetrics.cancelados, color: '#9ca3af' },
 ]
 
 function DonutChart() {
@@ -329,7 +327,7 @@ function DonutChart() {
             <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', flex: 1 }} noWrap>
               {d.label}
             </Typography>
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, flexShrink: 0, ml: 1.5 }}>
               {d.value}
             </Typography>
           </Box>

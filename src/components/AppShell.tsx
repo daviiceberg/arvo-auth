@@ -44,6 +44,7 @@ import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import { pedidos } from '@/data/pedidos'
 
 const SIDEBAR_WIDTH = 240
 
@@ -64,16 +65,39 @@ const linksUteis = [
   { label: 'Padrão TISS 2026', href: 'https://www.gov.br/ans/pt-br/assuntos/prestadores/padrao-para-troca-de-informacao-de-saude-suplementar-2013-tiss/padrao-tiss-janeiro-2026' },
 ]
 
-const categorias = [
-  { label: 'Internação', count: 4, color: '#902B29', icon: <LocalHospitalIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Urgência/Emergência', count: 3, color: '#d4183d', icon: <EmergencyIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Oncologia', count: 2, color: '#7c3aed', icon: <BiotechIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Terapias Especiais', count: 4, color: '#f59e0b', icon: <PsychologyIcon sx={{ fontSize: 14 }} /> },
-  { label: 'OPME', count: 2, color: '#b45309', icon: <DevicesOtherIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Exames Alta Complexidade', count: 3, color: '#0891b2', icon: <ScienceIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Cirurgias Eletivas', count: 2, color: '#059669', icon: <ContentCutIcon sx={{ fontSize: 14 }} /> },
-  { label: 'Home Care', count: 1, color: '#16a34a', icon: <HomeIcon sx={{ fontSize: 14 }} /> },
-]
+const catIconMap: Record<string, React.ReactNode> = {
+  'Internação': <LocalHospitalIcon sx={{ fontSize: 14 }} />,
+  'Urgência/Emergência': <EmergencyIcon sx={{ fontSize: 14 }} />,
+  'Oncologia': <BiotechIcon sx={{ fontSize: 14 }} />,
+  'Terapias Especiais': <PsychologyIcon sx={{ fontSize: 14 }} />,
+  'OPME': <DevicesOtherIcon sx={{ fontSize: 14 }} />,
+  'Exames Alta Complexidade': <ScienceIcon sx={{ fontSize: 14 }} />,
+  'Cirurgias Eletivas': <ContentCutIcon sx={{ fontSize: 14 }} />,
+  'Home Care': <HomeIcon sx={{ fontSize: 14 }} />,
+}
+const catColorMap: Record<string, string> = {
+  'Internação': '#902B29',
+  'Urgência/Emergência': '#d4183d',
+  'Oncologia': '#7c3aed',
+  'Terapias Especiais': '#f59e0b',
+  'OPME': '#b45309',
+  'Exames Alta Complexidade': '#0891b2',
+  'Cirurgias Eletivas': '#059669',
+  'Home Care': '#16a34a',
+}
+const categoriaOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care']
+const categoriaCounts: Record<string, number> = {}
+for (const p of pedidos) {
+  categoriaCounts[p.categoria] = (categoriaCounts[p.categoria] ?? 0) + 1
+}
+const categorias = categoriaOrder
+  .filter(cat => (categoriaCounts[cat] ?? 0) > 0)
+  .map(cat => ({
+    label: cat,
+    count: categoriaCounts[cat],
+    color: catColorMap[cat] ?? '#5a6070',
+    icon: catIconMap[cat] ?? <LocalHospitalIcon sx={{ fontSize: 14 }} />,
+  }))
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

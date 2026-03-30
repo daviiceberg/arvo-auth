@@ -66,6 +66,8 @@ import EditIcon from '@mui/icons-material/Edit'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import HourglassTopIcon from '@mui/icons-material/HourglassTop'
+import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
 import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste, Documento } from '@/data/pedidos'
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -306,30 +308,147 @@ function PageHeader({
   )
 }
 
-// ── Alerts banner ─────────────────────────────────────────────────────
+// ── Pendência / Junta Médica banner ───────────────────────────────────
 function PendenciaBanner({ pedido }: { pedido: Pedido }) {
-  if (pedido.status !== 'Devolutiva' || !pedido.pendenciaMotivos) return null
-  return (
-    <Box>
+  const [parecerExpanded, setParecerExpanded] = useState(false)
+
+  const sub = pedido.subStatus
+
+  // Legacy Devolutiva without subStatus
+  if (pedido.status === 'Devolutiva' && !sub && pedido.pendenciaMotivos) {
+    return (
+      <Box>
+        <Alert
+          severity="warning"
+          icon={<ErrorOutlineIcon fontSize="small" />}
+          sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(245,158,11,0.35)' }}
+        >
+          <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
+            Pedido em pendência — aguardando documentação complementar
+          </Typography>
+          <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
+            Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}
+          </Typography>
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {pedido.pendenciaMotivos.map((m) => (
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+            ))}
+          </Box>
+        </Alert>
+      </Box>
+    )
+  }
+
+  if (sub === 'PENDENTE_AGUARDANDO') {
+    return (
       <Alert
         severity="warning"
-        icon={<ErrorOutlineIcon fontSize="small" />}
+        icon={<HourglassTopIcon fontSize="small" />}
         sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(245,158,11,0.35)' }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
-          Pedido em pendência — aguardando documentação complementar
+          Aguardando retorno — documentação complementar solicitada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-          Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}
+        <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
+          Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}. Aguardando envio dos documentos pelo beneficiário/prestador.
         </Typography>
-        <Box component="ul" sx={{ m: 0, pl: 2 }}>
-          {pedido.pendenciaMotivos.map((m) => (
-            <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
-          ))}
-        </Box>
+        {pedido.pendenciaMotivos && (
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {pedido.pendenciaMotivos.map((m) => (
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+            ))}
+          </Box>
+        )}
       </Alert>
-    </Box>
-  )
+    )
+  }
+
+  if (sub === 'PENDENTE_RETORNO_RECEBIDO') {
+    return (
+      <Alert
+        severity="info"
+        icon={<MoveToInboxIcon fontSize="small" />}
+        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(37,99,235,0.3)', backgroundColor: 'rgba(37,99,235,0.05)' }}
+      >
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
+          Retorno recebido — documentação complementar enviada
+        </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
+          A documentação solicitada foi recebida. Revise os itens abaixo e prossiga com a decisão.
+        </Typography>
+        {pedido.pendenciaMotivos && (
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {pedido.pendenciaMotivos.map((m) => (
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+            ))}
+          </Box>
+        )}
+      </Alert>
+    )
+  }
+
+  if (sub === 'JUNTA_AGUARDANDO') {
+    return (
+      <Alert
+        severity="info"
+        icon={<GavelIcon fontSize="small" />}
+        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(37,99,235,0.3)', backgroundColor: 'rgba(37,99,235,0.04)' }}
+      >
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
+          Aguardando parecer da Junta Médica
+        </Typography>
+        <Typography variant="caption">
+          Este pedido foi encaminhado para avaliação pela Junta Médica. A decisão final ficará disponível após o recebimento do parecer. Ações de aprovação e negação estão temporariamente desabilitadas.
+        </Typography>
+      </Alert>
+    )
+  }
+
+  if (sub === 'JUNTA_PARECER_RECEBIDO') {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Alert
+          severity="success"
+          icon={<GavelIcon fontSize="small" />}
+          sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(22,163,74,0.3)', backgroundColor: 'rgba(22,163,74,0.04)' }}
+        >
+          <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
+            Parecer da Junta Médica recebido
+          </Typography>
+          <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
+            O parecer foi emitido e está disponível para consulta. Prossiga com a decisão com base na recomendação da junta.
+          </Typography>
+          <Box
+            component="span"
+            onClick={() => setParecerExpanded(v => !v)}
+            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', color: '#16a34a', fontWeight: 600, fontSize: 12 }}
+          >
+            <ExpandMoreIcon sx={{ fontSize: 16, transition: 'transform 0.2s', transform: parecerExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            {parecerExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
+          </Box>
+        </Alert>
+        <Collapse in={parecerExpanded}>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              border: '1px solid rgba(22,163,74,0.25)',
+              backgroundColor: 'rgba(22,163,74,0.03)',
+            }}
+          >
+            <Typography variant="caption" fontWeight={700} sx={{ textTransform: 'uppercase', letterSpacing: 0.5, color: '#16a34a', display: 'block', mb: 1 }}>
+              Parecer da Junta Médica
+            </Typography>
+            <Typography variant="body2" sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}>
+              {pedido.juntaParecer}
+            </Typography>
+          </Box>
+        </Collapse>
+      </Box>
+    )
+  }
+
+  return null
 }
 
 function AlertasBanner({ pedido }: { pedido: Pedido }) {
@@ -1034,7 +1153,7 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
     })
   }
 
-  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedidoStatus)
+  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedidoStatus)
 
   return (
     <Drawer
@@ -1243,7 +1362,7 @@ interface ProcedimentosSectionProps {
 function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: ProcedimentosSectionProps) {
   const procs = pedido.procedimentos
   const p = pedido.prestador
-  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedido.status)
+  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedido.status)
 
   return (
     <Card>
@@ -2086,7 +2205,8 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
   const sc = iaSugestaoColor(iaSugestao)
   const [loadingAprovar, setLoadingAprovar] = useState(false)
   const [loadingNegar, setLoadingNegar] = useState(false)
-  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Cancelado'].includes(pedido.status)
+  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedido.status)
+  const isJuntaAguardando = pedido.subStatus === 'JUNTA_AGUARDANDO'
 
   const handleAprovarWithLoading = () => {
     setLoadingAprovar(true)
@@ -2207,27 +2327,35 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
       {/* Action buttons */}
       <Divider />
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Button
-          variant="contained"
-          fullWidth
-          disabled={loadingAprovar || isGuiaFinalizada}
-          onClick={handleAprovarWithLoading}
-          startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
-          sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
-        >
-          {loadingAprovar ? 'Processando...' : 'Aprovar'}
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          fullWidth
-          disabled={loadingNegar || isGuiaFinalizada}
-          onClick={handleNegarWithLoading}
-          startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
-          sx={{ minHeight: 40 }}
-        >
-          {loadingNegar ? 'Processando...' : 'Negar'}
-        </Button>
+        <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+          <span style={{ width: '100%' }}>
+            <Button
+              variant="contained"
+              fullWidth
+              disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
+              onClick={handleAprovarWithLoading}
+              startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
+              sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
+            >
+              {loadingAprovar ? 'Processando...' : 'Aprovar'}
+            </Button>
+          </span>
+        </Tooltip>
+        <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+          <span style={{ width: '100%' }}>
+            <Button
+              variant="contained"
+              color="error"
+              fullWidth
+              disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
+              onClick={handleNegarWithLoading}
+              startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
+              sx={{ minHeight: 40 }}
+            >
+              {loadingNegar ? 'Processando...' : 'Negar'}
+            </Button>
+          </span>
+        </Tooltip>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
             Pendenciar

@@ -1,4 +1,9 @@
-export type StatusGuia = 'Em Análise' | 'Aprovado' | 'Negado' | 'Pendente' | 'Devolutiva' | 'Cancelado'
+export type StatusGuia = 'Em Análise' | 'Aprovado' | 'Negado' | 'Pendente' | 'Devolutiva'
+export type SubStatus =
+  | 'PENDENTE_AGUARDANDO'
+  | 'PENDENTE_RETORNO_RECEBIDO'
+  | 'JUNTA_AGUARDANDO'
+  | 'JUNTA_PARECER_RECEBIDO'
 export type TipoGuia = 'Eleitiva' | 'Urgente' | 'Emergência'
 export type OrigemPedido = 'app' | 'whatsapp' | 'email' | 'prestador'
 export type NivelAuditoria = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI'
@@ -79,6 +84,8 @@ export type Pedido = {
   pendenciaMotivos?: string[]
   pendenciaResponsavel?: string
   pendenciaData?: string
+  subStatus?: SubStatus
+  juntaParecer?: string
   ajustes?: Ajuste[]
 }
 
@@ -235,6 +242,8 @@ export const pedidos: Pedido[] = [
       { id: 'DOC-013', nome: 'NIP-2026-0234.pdf', tipo: 'Notificação', tamanho: '210 KB', enviadoEm: '10/02/2026', obrigatorio: false, status: 'enviado' },
       { id: 'DOC-014', nome: 'Liminar-Judicial-0098765.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '20/02/2026', obrigatorio: false, status: 'enviado' },
     ],
+    subStatus: 'JUNTA_PARECER_RECEBIDO',
+    juntaParecer: 'Após análise coletiva realizada em 28/03/2026, a Junta Médica recomenda aprovação do protocolo FOLFOX para adenocarcinoma de cólon estágio III (C18.9). O uso off-label de Oxaliplatina é respaldado pela diretriz ASCO 2024 e pelo histórico de resposta terapêutica documentado. Condições: monitorização quinzenal da função renal e hepática, avaliação de toxicidade ao 2º ciclo. A liminar judicial em vigor corrobora a indicação. Responsável pelo parecer: Dr. Henrique Mello — Oncologista Sênior (CRM 11234-SP).',
   },
   {
     id: 'REQ-2026-04812',
@@ -307,6 +316,7 @@ export const pedidos: Pedido[] = [
         timestamp: '2026-03-24T10:52:00',
       },
     ],
+    subStatus: 'JUNTA_AGUARDANDO',
   },
   {
     id: 'REQ-2026-04820',
@@ -458,6 +468,7 @@ export const pedidos: Pedido[] = [
     ],
     pendenciaResponsavel: 'Carlos Eduardo Ramos',
     pendenciaData: '20/03/2026',
+    subStatus: 'PENDENTE_AGUARDANDO',
   },
   {
     id: 'REQ-2026-04843',
@@ -581,6 +592,7 @@ export const pedidos: Pedido[] = [
     ],
     pendenciaResponsavel: 'Juliana Costa',
     pendenciaData: '18/03/2026',
+    subStatus: 'PENDENTE_RETORNO_RECEBIDO',
   },
   {
     id: 'REQ-2026-04790',
@@ -1017,7 +1029,6 @@ export const dashboardMetrics = {
   aprovados: 7,
   negados: 3,
   devolutivas: 3,
-  cancelados: 0,
   valorTotal: 'R$ 487.350,00',
   valorAprovado: 'R$ 312.800,00',
   valorNegado: 'R$ 89.200,00',
@@ -1045,16 +1056,29 @@ export const dashboardMetrics = {
     { motivo: 'Carência contratual', count: 3, color: '#7c3aed' },
     { motivo: 'Procedimento não indicado', count: 2, color: '#0891b2' },
   ],
-  porCategoria: [
-    { categoria: 'Internação', total: 4, pendentes: 2, color: '#902B29' },
-    { categoria: 'Urgência/Emergência', total: 3, pendentes: 1, color: '#d4183d' },
-    { categoria: 'Oncologia', total: 2, pendentes: 2, color: '#7c3aed' },
-    { categoria: 'Terapias Especiais', total: 4, pendentes: 3, color: '#2563eb' },
-    { categoria: 'OPME', total: 2, pendentes: 1, color: '#b45309' },
-    { categoria: 'Exames Alta Complexidade', total: 3, pendentes: 2, color: '#0891b2' },
-    { categoria: 'Cirurgias Eletivas', total: 2, pendentes: 1, color: '#059669' },
-    { categoria: 'Home Care', total: 1, pendentes: 0, color: '#16a34a' },
-  ],
+  porCategoria: (() => {
+    const catColors: Record<string, string> = {
+      'Internação': '#902B29',
+      'Urgência/Emergência': '#d4183d',
+      'Oncologia': '#7c3aed',
+      'Terapias Especiais': '#2563eb',
+      'OPME': '#b45309',
+      'Exames Alta Complexidade': '#0891b2',
+      'Cirurgias Eletivas': '#059669',
+      'Home Care': '#16a34a',
+      'SADT': '#16a34a',
+    }
+    const catOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care', 'SADT']
+    const counts: Record<string, { total: number; pendentes: number }> = {}
+    for (const p of pedidos) {
+      if (!counts[p.categoria]) counts[p.categoria] = { total: 0, pendentes: 0 }
+      counts[p.categoria].total++
+      if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) counts[p.categoria].pendentes++
+    }
+    return catOrder
+      .filter(cat => counts[cat]?.total > 0)
+      .map(cat => ({ categoria: cat as Categoria, total: counts[cat].total, pendentes: counts[cat].pendentes, color: catColors[cat] }))
+  })(),
   ultimasSolicitacoes: pedidos.slice(0, 5),
   alertasAtivos: [
     { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' },

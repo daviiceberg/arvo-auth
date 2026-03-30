@@ -36,7 +36,10 @@ import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
-import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido } from '@/data/pedidos'
+import HourglassTopIcon from '@mui/icons-material/HourglassTop'
+import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
+import GavelIcon from '@mui/icons-material/Gavel'
+import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido, type SubStatus } from '@/data/pedidos'
 
 // ── Continuidade / 1ª Solicitação mock map ────────────────────────────
 const solicitacaoTipoMap: Record<string, 'continuidade' | 'primeira'> = {
@@ -110,6 +113,41 @@ function IASugestaoChip({ sugestao }: { sugestao: IASugestao }) {
       size="small"
       sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 700, height: 22 }}
     />
+  )
+}
+
+// ── SubStatus label (stacks above the Analisar button) ────────────────
+const subStatusConfig: Record<SubStatus, { label: string; color: string; pulsing: boolean }> = {
+  PENDENTE_AGUARDANDO:      { label: 'Aguardando',       color: '#b45309', pulsing: true  },
+  PENDENTE_RETORNO_RECEBIDO:{ label: 'Retorno recebido', color: '#b45309', pulsing: false },
+  JUNTA_AGUARDANDO:         { label: 'Ag. Junta Médica', color: '#2563eb', pulsing: true  },
+  JUNTA_PARECER_RECEBIDO:   { label: 'Parecer recebido', color: '#2563eb', pulsing: false },
+}
+
+function RowStatusLabel({ subStatus }: { subStatus: SubStatus }) {
+  const cfg = subStatusConfig[subStatus]
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+      <Box
+        sx={{
+          width: 6,
+          height: 6,
+          borderRadius: '50%',
+          backgroundColor: cfg.color,
+          flexShrink: 0,
+          ...(cfg.pulsing && {
+            '@keyframes subStatusPulse': {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0.2 },
+            },
+            animation: 'subStatusPulse 1.6s ease-in-out infinite',
+          }),
+        }}
+      />
+      <Typography sx={{ fontSize: 10, fontWeight: 700, color: cfg.color, lineHeight: 1, letterSpacing: 0.2, whiteSpace: 'nowrap' }}>
+        {cfg.label}
+      </Typography>
+    </Box>
   )
 }
 
@@ -254,6 +292,7 @@ function FilaInner() {
   const [prestadorFilter, setPrestadorFilter] = useState('Todos')
   const [iaFilter, setIaFilter] = useState('Todas')
   const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10))
+  const [devolutivasSubFilter, setDevolutivasSubFilter] = useState<'all' | 'aguardando' | 'retorno'>('all')
   const [page, setPage] = useState(0)
   const [lastViewedId, setLastViewedId] = useState<string | null>(null)
   const rowsPerPage = 10
@@ -301,7 +340,12 @@ function FilaInner() {
 
   const filteredByTab = pedidos.filter((p) => {
     if (tabValue === 1) return p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência'
-    if (tabValue === 2) return p.status === 'Devolutiva'
+    if (tabValue === 2) {
+      if (p.status !== 'Devolutiva') return false
+      if (devolutivasSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO'
+      if (devolutivasSubFilter === 'retorno') return p.subStatus === 'PENDENTE_RETORNO_RECEBIDO'
+      return true
+    }
     if (tabValue === 3) return isParado12h(p)
     return true
   })
@@ -332,7 +376,9 @@ function FilaInner() {
 
   const urgEmergCount = pedidos.filter((p) => p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência').length
   const devolutivasCount = pedidos.filter((p) => p.status === 'Devolutiva').length
-const parados12h = pedidos.filter(isParado12h).length
+  const devolutivasAguardando = pedidos.filter((p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_AGUARDANDO').length
+  const devolutivasRetorno = pedidos.filter((p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_RETORNO_RECEBIDO').length
+  const parados12h = pedidos.filter(isParado12h).length
 
   return (
     <Box ref={scrollContainerRef} sx={{ p: 3, height: '100%', overflowY: 'auto' }}>
@@ -470,6 +516,41 @@ const parados12h = pedidos.filter(isParado12h).length
             />
           </Tabs>
         </Box>
+
+        {/* Devolutivas sub-filter chips */}
+        {tabValue === 2 && (
+          <Box sx={{ px: 2, py: 1.25, display: 'flex', alignItems: 'center', gap: 1, borderBottom: '1px solid rgba(0,0,0,0.06)', backgroundColor: 'rgba(245,158,11,0.03)' }}>
+            <Typography variant="caption" sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5, mr: 0.5 }}>
+              Filtrar:
+            </Typography>
+            {([
+              { key: 'all', label: `Todas (${devolutivasCount})`, icon: null },
+              { key: 'aguardando', label: `Aguardando (${devolutivasAguardando})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
+              { key: 'retorno', label: `Retorno recebido (${devolutivasRetorno})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
+            ] as const).map(({ key, label, icon }) => (
+              <Chip
+                key={key}
+                label={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    {icon}
+                    {label}
+                  </Box>
+                }
+                size="small"
+                onClick={() => { setDevolutivasSubFilter(key); setPage(0) }}
+                sx={{
+                  height: 24,
+                  fontSize: 12,
+                  fontWeight: devolutivasSubFilter === key ? 700 : 500,
+                  backgroundColor: devolutivasSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
+                  color: devolutivasSubFilter === key ? '#b45309' : 'text.secondary',
+                  border: devolutivasSubFilter === key ? '1px solid rgba(245,158,11,0.4)' : '1px solid transparent',
+                  cursor: 'pointer',
+                }}
+              />
+            ))}
+          </Box>
+        )}
 
         {/* Filter bar */}
         <Box
@@ -658,6 +739,16 @@ const parados12h = pedidos.filter(isParado12h).length
                         ...(pedido.status === 'Devolutiva' && {
                           borderLeft: '3px solid #f59e0b',
                         }),
+                        ...(pedido.subStatus === 'PENDENTE_RETORNO_RECEBIDO' && {
+                          backgroundColor: 'rgba(245,158,11,0.06) !important',
+                        }),
+                        ...(pedido.subStatus === 'JUNTA_PARECER_RECEBIDO' && {
+                          backgroundColor: 'rgba(37,99,235,0.05) !important',
+                          borderLeft: '3px solid #2563eb',
+                        }),
+                        ...(pedido.subStatus === 'JUNTA_AGUARDANDO' && {
+                          borderLeft: '3px solid rgba(37,99,235,0.5)',
+                        }),
                       }}
                     >
                       <TableCell align="center" sx={{ px: 1.5 }}>
@@ -720,15 +811,22 @@ const parados12h = pedidos.filter(isParado12h).length
                         <IASugestaoChip sugestao={pedido.iaSugestao} />
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }} onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          onClick={() => router.push(`/analise?id=${pedido.id}`)}
-                          aria-label={`Analisar pedido ${pedido.id}`}
-                          sx={{ minHeight: 28, fontSize: 12, px: 1.5 }}
-                        >
-                          Analisar
-                        </Button>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                            aria-label={`Analisar pedido ${pedido.id}`}
+                            sx={{ minHeight: 28, fontSize: 12, px: 1.5 }}
+                          >
+                            Analisar
+                          </Button>
+                          {pedido.subStatus && (
+                            <Box sx={{ mt: 0.75 }}>
+                              <RowStatusLabel subStatus={pedido.subStatus} />
+                            </Box>
+                          )}
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))
