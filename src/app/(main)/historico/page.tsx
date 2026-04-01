@@ -36,6 +36,7 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import FilterListOffIcon from '@mui/icons-material/FilterListOff'
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
 import ScienceIcon from '@mui/icons-material/Science'
+import CallSplitIcon from '@mui/icons-material/CallSplit'
 import { historicoEntries, type DecisaoAcao, type DecisaoOrigem } from '@/data/pedidos'
 
 // ── Categoria Chip ────────────────────────────────────────────────────
@@ -63,9 +64,10 @@ function CategoriaChip({ categoria }: { categoria: string }) {
 // ── Chips ──────────────────────────────────────────────────────────────
 function AcaoChip({ acao }: { acao: DecisaoAcao }) {
   const map: Record<DecisaoAcao, { bg: string; color: string; icon: React.ReactNode; label: string }> = {
-    Aprovado:  { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a', icon: <CheckCircleIcon sx={{ fontSize: 13 }} />, label: 'Aprovado' },
-    Negado:    { bg: 'rgba(212,24,61,0.1)',    color: '#d4183d', icon: <CancelIcon      sx={{ fontSize: 13 }} />, label: 'Negado' },
-    Devolutiva:{ bg: 'rgba(245,158,11,0.12)',  color: '#b45309', icon: <ReplayIcon      sx={{ fontSize: 13 }} />, label: 'Devolutiva' },
+    Aprovado:          { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a', icon: <CheckCircleIcon sx={{ fontSize: 13 }} />, label: 'Aprovado' },
+    Negado:            { bg: 'rgba(212,24,61,0.1)',    color: '#d4183d', icon: <CancelIcon      sx={{ fontSize: 13 }} />, label: 'Negado' },
+    'Aprovado Parcial':{ bg: 'rgba(217,119,6,0.12)',   color: '#b45309', icon: <CallSplitIcon   sx={{ fontSize: 13 }} />, label: 'Parcial' },
+    Devolutiva:        { bg: 'rgba(245,158,11,0.12)',  color: '#92400e', icon: <ReplayIcon      sx={{ fontSize: 13 }} />, label: 'Devolutiva' },
   }
   const { bg, color, icon, label } = map[acao]
   return (
@@ -208,6 +210,7 @@ export default function HistoricoPage() {
                 <MenuItem value="Todas">Todas</MenuItem>
                 <MenuItem value="Aprovado">Aprovado</MenuItem>
                 <MenuItem value="Negado">Negado</MenuItem>
+                <MenuItem value="Aprovado Parcial">Aprovado Parcialmente</MenuItem>
                 <MenuItem value="Devolutiva">Devolutiva</MenuItem>
               </Select>
             </FormControl>

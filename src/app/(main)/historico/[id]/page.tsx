@@ -59,6 +59,7 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn'
 import ZoomOutIcon from '@mui/icons-material/ZoomOut'
 import PrintIcon from '@mui/icons-material/Print'
 import EditIcon from '@mui/icons-material/Edit'
+import CallSplitIcon from '@mui/icons-material/CallSplit'
 import { historicoEntries, type DecisaoAcao, type HistoricoEntry, type Ajuste } from '@/data/pedidos'
 
 // ── Sorted list (same default order as list page) ─────────────────────
@@ -81,18 +82,19 @@ const catColorMap: Record<string, { bg: string; color: string }> = {
 }
 
 // ── Acao chip ─────────────────────────────────────────────────────────
-const acaoConfig: Record<DecisaoAcao, { bg: string; color: string; icon: React.ReactNode }> = {
-  Aprovado:   { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a', icon: <CheckCircleIcon sx={{ fontSize: 13 }} /> },
-  Negado:     { bg: 'rgba(212,24,61,0.1)',    color: '#d4183d', icon: <CancelIcon sx={{ fontSize: 13 }} /> },
-  Devolutiva: { bg: 'rgba(245,158,11,0.12)', color: '#b45309', icon: <ReplayIcon sx={{ fontSize: 13 }} /> },
+const acaoConfig: Record<DecisaoAcao, { bg: string; color: string; icon: React.ReactNode; label: string }> = {
+  Aprovado:          { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a', icon: <CheckCircleIcon sx={{ fontSize: 13 }} />,  label: 'Aprovado' },
+  Negado:            { bg: 'rgba(212,24,61,0.1)',    color: '#d4183d', icon: <CancelIcon sx={{ fontSize: 13 }} />,       label: 'Negado' },
+  'Aprovado Parcial':{ bg: 'rgba(217,119,6,0.12)',   color: '#b45309', icon: <CallSplitIcon sx={{ fontSize: 13 }} />,    label: 'Parcial' },
+  Devolutiva:        { bg: 'rgba(245,158,11,0.12)',  color: '#92400e', icon: <ReplayIcon sx={{ fontSize: 13 }} />,       label: 'Devolutiva' },
 }
 
 function AcaoChip({ acao }: { acao: DecisaoAcao }) {
-  const { bg, color, icon } = acaoConfig[acao]
+  const { bg, color, icon, label } = acaoConfig[acao]
   return (
     <Chip
       icon={<Box sx={{ color, display: 'flex', '& svg': { color: `${color} !important` } }}>{icon}</Box>}
-      label={acao} size="small"
+      label={label} size="small"
       sx={{ backgroundColor: bg, color, fontSize: 12, fontWeight: 700, height: 22 }}
     />
   )
@@ -375,6 +377,32 @@ function ProcedimentosSection({ entry }: { entry: HistoricoEntry }) {
                     />
                   </Box>
                 </TableCell>
+                {entry.acao === 'Aprovado Parcial' && (
+                  <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
+                    {proc.decisao === 'aprovado' ? (
+                      <Chip
+                        icon={<CheckCircleIcon sx={{ fontSize: 12, ml: '4px !important', color: '#16a34a !important' }} />}
+                        label="Aprovado"
+                        size="small"
+                        sx={{ backgroundColor: 'rgba(22,163,74,0.1)', color: '#16a34a', fontWeight: 700, fontSize: 11, height: 20 }}
+                      />
+                    ) : proc.decisao === 'negado' ? (
+                      <Box>
+                        <Chip
+                          icon={<CancelIcon sx={{ fontSize: 12, ml: '4px !important', color: '#d4183d !important' }} />}
+                          label="Negado"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d', fontWeight: 700, fontSize: 11, height: 20, mb: 0.5 }}
+                        />
+                        {proc.motivoDecisao && (
+                          <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}>
+                            {proc.motivoDecisao}
+                          </Typography>
+                        )}
+                      </Box>
+                    ) : null}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

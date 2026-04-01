@@ -62,6 +62,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import Drawer from '@mui/material/Drawer'
 import CircularProgress from '@mui/material/CircularProgress'
+import ButtonGroup from '@mui/material/ButtonGroup'
 import EditIcon from '@mui/icons-material/Edit'
 import AttachFileIcon from '@mui/icons-material/AttachFile'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -1419,23 +1420,51 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
 }
 
 // ── Procedimentos ─────────────────────────────────────────────────────
+type ProcDecisao = 'aprovado' | 'negado' | 'pendente'
+
 interface ProcedimentosSectionProps {
   pedido: Pedido
   allAjustes: Ajuste[]
   onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string }) => void
+  procDecisoes: Record<string, ProcDecisao>
+  onProcDecisaoChange: (codigo: string, decisao: ProcDecisao) => void
 }
 
-function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: ProcedimentosSectionProps) {
+function ProcedimentosSection({ pedido, allAjustes, onAjustarClick, procDecisoes, onProcDecisaoChange }: ProcedimentosSectionProps) {
   const procs = pedido.procedimentos
   const p = pedido.prestador
-  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedido.status)
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(pedido.status)
+  const showPerProcControls = procs.length > 1 && !isGuiaFinalizada
+
+  // Compute consolidated status badge
+  const decisoes = procs.map(pr => procDecisoes[pr.codigo] ?? 'pendente')
+  const nAprovado = decisoes.filter(d => d === 'aprovado').length
+  const nNegado = decisoes.filter(d => d === 'negado').length
+  const anyPendente = decisoes.some(d => d === 'pendente')
+
+  let badgeLabel = 'Aguardando decisão'
+  let badgeBg = 'rgba(0,0,0,0.06)'
+  let badgeColor = '#6b7280'
+  if (!anyPendente && nAprovado === procs.length) { badgeLabel = 'Aprovação Total'; badgeBg = 'rgba(22,163,74,0.1)'; badgeColor = '#16a34a' }
+  else if (!anyPendente && nNegado === procs.length) { badgeLabel = 'Negativa Total'; badgeBg = 'rgba(212,24,61,0.1)'; badgeColor = '#d4183d' }
+  else if (!anyPendente && nAprovado > 0 && nNegado > 0) { badgeLabel = 'Aprovação Parcial'; badgeBg = 'rgba(217,119,6,0.12)'; badgeColor = '#b45309' }
+  else if (anyPendente && (nAprovado > 0 || nNegado > 0)) { badgeLabel = 'Decisão incompleta'; badgeBg = 'rgba(234,88,12,0.1)'; badgeColor = '#ea580c' }
 
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
-          Procedimentos ({procs.length})
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6" fontWeight={700} sx={{ fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+            Procedimentos ({procs.length})
+          </Typography>
+          {showPerProcControls && (
+            <Chip
+              label={badgeLabel}
+              size="small"
+              sx={{ backgroundColor: badgeBg, color: badgeColor, fontWeight: 700, fontSize: 12, height: 22 }}
+            />
+          )}
+        </Box>
         <Table size="small">
           <TableBody>
             {procs.map((proc) => {
@@ -1519,36 +1548,68 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                     </Box>
                   </TableCell>
                   <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
-                    {USER_PERFIL !== 'Auditor' && (
-                      isGuiaFinalizada ? (
-                        <Tooltip title="Guia já finalizada — edição não permitida">
-                          <span>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              disabled
-                              startIcon={<EditIcon sx={{ fontSize: 12 }} />}
-                              sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', py: 0.25, px: 1 }}
-                            >
-                              Ajustar
-                            </Button>
-                          </span>
-                        </Tooltip>
-                      ) : (
-                        <Button
-                          size="small"
-                          variant="outlined"
-                          startIcon={<EditIcon sx={{ fontSize: 12 }} />}
-                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital })}
-                          sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#b45309', color: '#b45309', backgroundColor: 'rgba(180,83,9,0.04)' } }}
-                        >
-                          Ajustar
-                        </Button>
-                      )
-                    )}
-                    {USER_PERFIL === 'Auditor' && (
-                      <Chip label="Somente leitura" size="small" sx={{ fontSize: 11, height: 20, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary' }} />
-                    )}
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'flex-end' }}>
+                      {USER_PERFIL !== 'Auditor' && (
+                        isGuiaFinalizada ? (
+                          <Tooltip title="Guia já finalizada — edição não permitida">
+                            <span>
+                              <Button
+                                size="small"
+                                variant="outlined"
+                                disabled
+                                startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                                sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', py: 0.25, px: 1 }}
+                              >
+                                Ajustar
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                            onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital })}
+                            sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#b45309', color: '#b45309', backgroundColor: 'rgba(180,83,9,0.04)' } }}
+                          >
+                            Ajustar
+                          </Button>
+                        )
+                      )}
+                      {USER_PERFIL === 'Auditor' && (
+                        <Chip label="Somente leitura" size="small" sx={{ fontSize: 11, height: 20, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary' }} />
+                      )}
+                      {/* Per-procedure decision controls */}
+                      {showPerProcControls && (
+                        <ButtonGroup size="small" variant="outlined" sx={{ height: 26 }}>
+                          {(['aprovado', 'pendente', 'negado'] as ProcDecisao[]).map((opt) => {
+                            const selected = (procDecisoes[proc.codigo] ?? 'pendente') === opt
+                            const optColor = opt === 'aprovado' ? '#16a34a' : opt === 'negado' ? '#d4183d' : '#6b7280'
+                            const optBg = opt === 'aprovado' ? 'rgba(22,163,74,0.08)' : opt === 'negado' ? 'rgba(212,24,61,0.08)' : 'rgba(0,0,0,0.04)'
+                            const optLabel = opt === 'aprovado' ? '✓' : opt === 'negado' ? '✗' : '–'
+                            return (
+                              <Tooltip key={opt} title={opt === 'aprovado' ? 'Aprovar' : opt === 'negado' ? 'Negar' : 'Pendente'}>
+                                <Button
+                                  onClick={() => onProcDecisaoChange(proc.codigo, opt)}
+                                  sx={{
+                                    fontSize: 13,
+                                    fontWeight: 700,
+                                    px: 1,
+                                    minWidth: 32,
+                                    borderColor: selected ? optColor : 'rgba(0,0,0,0.2)',
+                                    color: selected ? optColor : 'text.disabled',
+                                    backgroundColor: selected ? optBg : 'transparent',
+                                    '&:hover': { borderColor: optColor, color: optColor, backgroundColor: optBg },
+                                  }}
+                                >
+                                  {optLabel}
+                                </Button>
+                              </Tooltip>
+                            )
+                          })}
+                        </ButtonGroup>
+                      )}
+                    </Box>
                   </TableCell>
                 </TableRow>
               )
@@ -2304,9 +2365,11 @@ interface SidebarProps {
   onNegarClick: () => void
   onPendenciarClick: () => void
   onJuntaClick: () => void
+  procDecisoes: Record<string, ProcDecisao>
+  onConfirmarDecisaoClick: () => void
 }
 
-function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick }: SidebarProps) {
+function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick, procDecisoes, onConfirmarDecisaoClick }: SidebarProps) {
   const { iaChecklist } = pedido
   const parecerRecebido = pedido.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!pedido.juntaRecomendacao
   const iaSugestao = parecerRecebido ? pedido.juntaRecomendacao! : pedido.iaSugestao
@@ -2314,8 +2377,24 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
   const sc = iaSugestaoColor(iaSugestao)
   const [loadingAprovar, setLoadingAprovar] = useState(false)
   const [loadingNegar, setLoadingNegar] = useState(false)
-  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedido.status)
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(pedido.status)
   const isJuntaAguardando = pedido.subStatus === 'JUNTA_AGUARDANDO'
+
+  // Multi-procedure flow
+  const isMultiProc = pedido.procedimentos.length > 1
+  const decisoes = pedido.procedimentos.map(pr => procDecisoes[pr.codigo] ?? 'pendente')
+  const nAprovado = decisoes.filter(d => d === 'aprovado').length
+  const nNegado = decisoes.filter(d => d === 'negado').length
+  const anyPendente = decisoes.some(d => d === 'pendente')
+  const allAprovado = nAprovado === pedido.procedimentos.length
+  const allNegado = nNegado === pedido.procedimentos.length
+  const confirmarBtnColor = allAprovado ? '#16a34a' : allNegado ? '#d4183d' : '#b45309'
+  const confirmarBtnHover = allAprovado ? '#15803d' : allNegado ? '#b91c1c' : '#92400e'
+  const confirmarPreview = allAprovado
+    ? 'Todos os procedimentos serão aprovados'
+    : allNegado
+    ? 'Todos os procedimentos serão negados'
+    : `${nAprovado} procedimento(s) aprovado(s) · ${nNegado} negado(s)`
 
   const pillLabel: Record<string, string> = {
     'Aprovar': 'Critérios atendidos',
@@ -2483,35 +2562,62 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
           </Typography>
         </Box>
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
-            <span style={{ width: '100%' }}>
-              <Button
-                variant="contained"
-                fullWidth
-                disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
-                onClick={handleAprovarWithLoading}
-                startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
-                sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
+          {isMultiProc ? (
+            <>
+              <Tooltip
+                title={anyPendente ? 'Defina a decisão para todos os procedimentos antes de confirmar' : ''}
+                placement="top"
+                disableHoverListener={!anyPendente}
               >
-                {loadingAprovar ? 'Processando...' : 'Aprovar'}
-              </Button>
-            </span>
-          </Tooltip>
-          <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
-            <span style={{ width: '100%' }}>
-              <Button
-                variant="contained"
-                color="error"
-                fullWidth
-                disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
-                onClick={handleNegarWithLoading}
-                startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
-                sx={{ minHeight: 40 }}
-              >
-                {loadingNegar ? 'Processando...' : 'Negar'}
-              </Button>
-            </span>
-          </Tooltip>
+                <span style={{ width: '100%' }}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    disabled={anyPendente || isGuiaFinalizada || isJuntaAguardando}
+                    onClick={onConfirmarDecisaoClick}
+                    sx={{ minHeight: 40, backgroundColor: confirmarBtnColor, '&:hover': { backgroundColor: confirmarBtnHover }, '&.Mui-disabled': { backgroundColor: 'rgba(0,0,0,0.12)' } }}
+                  >
+                    Confirmar Decisão
+                  </Button>
+                </span>
+              </Tooltip>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, textAlign: 'center', px: 0.5 }}>
+                {anyPendente ? 'Defina a decisão para cada procedimento' : confirmarPreview}
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+                <span style={{ width: '100%' }}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
+                    onClick={handleAprovarWithLoading}
+                    startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
+                  >
+                    {loadingAprovar ? 'Processando...' : 'Aprovar'}
+                  </Button>
+                </span>
+              </Tooltip>
+              <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+                <span style={{ width: '100%' }}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    fullWidth
+                    disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
+                    onClick={handleNegarWithLoading}
+                    startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    sx={{ minHeight: 40 }}
+                  >
+                    {loadingNegar ? 'Processando...' : 'Negar'}
+                  </Button>
+                </span>
+              </Tooltip>
+            </>
+          )}
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
               Pendenciar
@@ -2570,13 +2676,26 @@ function AnaliseInner() {
     setSnackbar({ open: true, msg: `✓ Ajuste registrado — ${campoLabel}`, severity: 'warning' })
   }
 
+  // Per-procedure decision state (only used when procs.length > 1)
+  const [procDecisoes, setProcDecisoes] = useState<Record<string, ProcDecisao>>(() =>
+    Object.fromEntries(pedido.procedimentos.map(p => [p.codigo, 'pendente' as ProcDecisao]))
+  )
+  const handleProcDecisaoChange = (codigo: string, decisao: ProcDecisao) => {
+    setProcDecisoes(prev => ({ ...prev, [codigo]: decisao }))
+  }
+
   // Dialog state
   const [showAprovarDialog, setShowAprovarDialog] = useState(false)
   const [showNegarDialog, setShowNegarDialog] = useState(false)
   const [showPendenciarDialog, setShowPendenciarDialog] = useState(false)
   const [showJuntaDialog, setShowJuntaDialog] = useState(false)
   const [showDivergenciaDialog, setShowDivergenciaDialog] = useState(false)
+  const [showParcialDialog, setShowParcialDialog] = useState(false)
   const [pendingAction, setPendingAction] = useState<'autorizar' | 'negar' | null>(null)
+
+  // Partial approval dialog state
+  const [parcialNegMotivoMap, setParcialNegMotivoMap] = useState<Record<string, number>>({})
+  const [parcialNegJustMap, setParcialNegJustMap] = useState<Record<string, string>>({})
 
   const [aprovacaoMotivo, setAprovacaoMotivo] = useState('')
   const [aprovacaoJustificativa, setAprovacaoJustificativa] = useState('')
@@ -2591,7 +2710,7 @@ function AnaliseInner() {
 
   // Keyboard shortcuts
   useEffect(() => {
-    const isAnyDialogOpen = showAprovarDialog || showNegarDialog || showPendenciarDialog || showJuntaDialog || showDivergenciaDialog || showShortcutsHelp || showAjusteAprovarConfirm || ajusteDrawerOpen
+    const isAnyDialogOpen = showAprovarDialog || showNegarDialog || showPendenciarDialog || showJuntaDialog || showDivergenciaDialog || showParcialDialog || showShortcutsHelp || showAjusteAprovarConfirm || ajusteDrawerOpen
     const handler = (e: KeyboardEvent) => {
       const tag = (document.activeElement?.tagName || '').toLowerCase()
       if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement)?.isContentEditable) return
@@ -2707,6 +2826,35 @@ function AnaliseInner() {
     setSnackbar({ open: true, msg: 'Encaminhado para Junta Médica', severity: 'info' })
   }
 
+  const handleConfirmarDecisaoClick = () => {
+    // Pre-populate justificativas for negados from IA text
+    const initJust: Record<string, string> = {}
+    pedido.procedimentos.forEach(pr => {
+      if ((procDecisoes[pr.codigo] ?? 'pendente') === 'negado') {
+        initJust[pr.codigo] = initJust[pr.codigo] ?? ''
+      }
+    })
+    setParcialNegJustMap(initJust)
+    setParcialNegMotivoMap({})
+    setShowParcialDialog(true)
+  }
+
+  const confirmarDecisaoParcial = () => {
+    const negados = pedido.procedimentos.filter(pr => (procDecisoes[pr.codigo] ?? 'pendente') === 'negado')
+    const allValid = negados.every(pr => parcialNegMotivoMap[pr.codigo] !== undefined && parcialNegJustMap[pr.codigo]?.trim())
+    if (!allValid) return
+    setShowParcialDialog(false)
+    const nAprovado = pedido.procedimentos.filter(pr => procDecisoes[pr.codigo] === 'aprovado').length
+    const nNegado = negados.length
+    if (nNegado === 0) {
+      setSnackbar({ open: true, msg: `Pedido ${pedido.id} aprovado com sucesso`, severity: 'success' })
+    } else if (nAprovado === 0) {
+      setSnackbar({ open: true, msg: `Pedido ${pedido.id} negado`, severity: 'error' })
+    } else {
+      setSnackbar({ open: true, msg: `Pedido ${pedido.id} — Aprovação Parcial registrada (${nAprovado} aprovado(s), ${nNegado} negado(s))`, severity: 'warning' })
+    }
+  }
+
   return (
     <Box sx={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'background.default' }}>
       <PageHeader
@@ -2725,7 +2873,7 @@ function AnaliseInner() {
             <AlertasBanner pedido={pedido} />
             <GuiasSimultaneasAlert pedido={pedido} />
             <BeneficiarioSection pedido={pedido} />
-            <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} />
+            <ProcedimentosSection pedido={pedido} allAjustes={allAjustes} onAjustarClick={handleAjustarClick} procDecisoes={procDecisoes} onProcDecisaoChange={handleProcDecisaoChange} />
             <AjustesRegistradosSection ajustes={allAjustes} />
             <ObservacoesSection pedido={pedido} />
             <HistoricoConsolidadoSection pedido={pedido} />
@@ -2741,6 +2889,8 @@ function AnaliseInner() {
             onNegarClick={handleNegarClick}
             onPendenciarClick={() => setShowPendenciarDialog(true)}
             onJuntaClick={() => setShowJuntaDialog(true)}
+            procDecisoes={procDecisoes}
+            onConfirmarDecisaoClick={handleConfirmarDecisaoClick}
           />
         </Box>
       </Box>
@@ -3030,6 +3180,129 @@ function AnaliseInner() {
             onClick={handleDivergenciaContinuar}
           >
             Continuar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Aprovação Parcial Dialog */}
+      <Dialog open={showParcialDialog} onClose={() => setShowParcialDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>
+          Confirmar Decisão — {pedido.id}
+        </DialogTitle>
+        <DialogContent sx={{ pt: 0 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: 13 }}>
+            Revise a decisão por procedimento. Para cada procedimento negado, informe o motivo e a justificativa técnica.
+          </Typography>
+
+          {/* Procedure table */}
+          <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden', mb: 2 }}>
+            {/* Header */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: '110px 1fr 120px', gap: 0, backgroundColor: 'rgba(0,0,0,0.03)', borderBottom: '1px solid rgba(0,0,0,0.08)', px: 2, py: 1 }}>
+              <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4 }}>Código</Typography>
+              <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4 }}>Procedimento</Typography>
+              <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4 }}>Decisão</Typography>
+            </Box>
+            {pedido.procedimentos.map((proc, idx) => {
+              const dec = procDecisoes[proc.codigo] ?? 'pendente'
+              const isNegado = dec === 'negado'
+              const motivoIdx = parcialNegMotivoMap[proc.codigo] ?? -1
+              const justificativa = parcialNegJustMap[proc.codigo] ?? ''
+              return (
+                <Box
+                  key={proc.codigo}
+                  sx={{ borderTop: idx > 0 ? '1px solid rgba(0,0,0,0.07)' : 'none', px: 2, py: 1.5, backgroundColor: isNegado ? 'rgba(212,24,61,0.02)' : 'transparent' }}
+                >
+                  <Box sx={{ display: 'grid', gridTemplateColumns: '110px 1fr 120px', gap: 0, alignItems: 'center' }}>
+                    <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: 'text.secondary' }}>{proc.tuss}</Typography>
+                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>{proc.descricao}</Typography>
+                    <Box>
+                      {dec === 'aprovado' ? (
+                        <Chip
+                          icon={<CheckIcon sx={{ fontSize: 13, ml: '4px !important', color: '#16a34a !important' }} />}
+                          label="Aprovado"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(22,163,74,0.1)', color: '#16a34a', fontWeight: 700, fontSize: 12, height: 22 }}
+                        />
+                      ) : (
+                        <Chip
+                          icon={<CloseIcon sx={{ fontSize: 13, ml: '4px !important', color: '#d4183d !important' }} />}
+                          label="Negado"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d', fontWeight: 700, fontSize: 12, height: 22 }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                  {/* Fields for negated procedures */}
+                  {isNegado && (
+                    <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Motivo da negativa *</InputLabel>
+                        <Select
+                          value={motivoIdx === -1 ? '' : String(motivoIdx)}
+                          label="Motivo da negativa *"
+                          onChange={(e) => {
+                            const idx2 = Number(e.target.value)
+                            setParcialNegMotivoMap(prev => ({ ...prev, [proc.codigo]: idx2 }))
+                            setParcialNegJustMap(prev => ({ ...prev, [proc.codigo]: motivosNegacao[idx2].texto }))
+                          }}
+                        >
+                          {motivosNegacao.map((m, i) => (
+                            <MenuItem key={i} value={String(i)}>{m.label}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        label="Justificativa técnica *"
+                        multiline
+                        rows={2}
+                        fullWidth
+                        size="small"
+                        value={justificativa}
+                        onChange={(e) => setParcialNegJustMap(prev => ({ ...prev, [proc.codigo]: e.target.value }))}
+                        placeholder="Descreva o motivo da negativa para este procedimento..."
+                        helperText={motivoIdx >= 0 && motivoIdx < motivosNegacao.length - 1 ? 'Texto preenchido automaticamente. Edite se necessário.' : undefined}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              )
+            })}
+          </Box>
+
+          {/* Summary badge */}
+          {(() => {
+            const nAprov = pedido.procedimentos.filter(pr => procDecisoes[pr.codigo] === 'aprovado').length
+            const nNeg = pedido.procedimentos.filter(pr => procDecisoes[pr.codigo] === 'negado').length
+            const label = nAprov === pedido.procedimentos.length ? 'Aprovação Total' : nNeg === pedido.procedimentos.length ? 'Negativa Total' : 'Aprovação Parcial'
+            const bg = nAprov === pedido.procedimentos.length ? 'rgba(22,163,74,0.08)' : nNeg === pedido.procedimentos.length ? 'rgba(212,24,61,0.08)' : 'rgba(217,119,6,0.1)'
+            const color = nAprov === pedido.procedimentos.length ? '#16a34a' : nNeg === pedido.procedimentos.length ? '#d4183d' : '#b45309'
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>Status da solicitação:</Typography>
+                <Chip label={label} size="small" sx={{ backgroundColor: bg, color, fontWeight: 700, fontSize: 12, height: 22 }} />
+              </Box>
+            )
+          })()}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button onClick={() => setShowParcialDialog(false)}>Cancelar</Button>
+          <Button
+            variant="contained"
+            disabled={pedido.procedimentos
+              .filter(pr => (procDecisoes[pr.codigo] ?? 'pendente') === 'negado')
+              .some(pr => parcialNegMotivoMap[pr.codigo] === undefined || !parcialNegJustMap[pr.codigo]?.trim())}
+            onClick={confirmarDecisaoParcial}
+            sx={{
+              fontWeight: 600,
+              backgroundColor: (() => {
+                const nA = pedido.procedimentos.filter(pr => procDecisoes[pr.codigo] === 'aprovado').length
+                const nN = pedido.procedimentos.filter(pr => procDecisoes[pr.codigo] === 'negado').length
+                return nA === pedido.procedimentos.length ? '#16a34a' : nN === pedido.procedimentos.length ? undefined : '#b45309'
+              })(),
+            }}
+          >
+            Confirmar
           </Button>
         </DialogActions>
       </Dialog>

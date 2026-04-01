@@ -1,4 +1,4 @@
-export type StatusGuia = 'Em Análise' | 'Aprovado' | 'Negado' | 'Pendente' | 'Devolutiva'
+export type StatusGuia = 'Em Análise' | 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Pendente' | 'Devolutiva'
 export type SubStatus =
   | 'PENDENTE_AGUARDANDO'
   | 'PENDENTE_RETORNO_RECEBIDO'
@@ -1034,7 +1034,7 @@ export const pedidos: Pedido[] = [
 
 // ── Histórico ──────────────────────────────────────────────────────────
 
-export type DecisaoAcao = 'Aprovado' | 'Negado' | 'Devolutiva'
+export type DecisaoAcao = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva'
 export type DecisaoOrigem = 'ia_automatica' | 'analista'
 
 export interface JuntaMedica {
@@ -1082,6 +1082,8 @@ export interface HistoricoEntry {
     dataFim: string
     cid: string
     nivelAud: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI'
+    decisao?: 'aprovado' | 'negado'
+    motivoDecisao?: string
   }[]
   alertas?: string[]
   iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[]
@@ -1901,6 +1903,70 @@ export const historicoEntries: HistoricoEntry[] = [
     ],
     documentos: [
       { nome: 'Laudo Médico — HIS-2026-0022.pdf', tipo: 'Laudo Médico', data: '08/03/2026 08:30' },
+    ],
+  },
+  // ── Aprovação Parcial — Terapias Especiais ─────────────────────────
+  {
+    id: 'HIS-2026-0042',
+    beneficiario: 'Carlos Eduardo Lima',
+    carteirinha: '0081234500049012',
+    plano: 'Unimed — Premium Familiar',
+    categoria: 'Terapias Especiais',
+    procedimento: 'Sessão Terapia ABA + Sessão Fonoaudiologia',
+    cid: 'F84.0 — Autismo infantil',
+    prestador: 'Clínica Integrar Desenvolvimento',
+    medicoSolicitante: 'Dra. Fernanda Lopes — CRM/SP 71234',
+    tipoGuia: 'Eleitiva',
+    dataProtocolo: '01/04/2026 10:15',
+    dataDecisao: '01/04/2026 14:30',
+    acao: 'Aprovado Parcial',
+    origem: 'analista',
+    analista: 'Ana Paula Santos',
+    motivoDecisao: 'ABA aprovado por critérios atendidos (RN 539/2022). Fonoaudiologia negada por documentação clínica incompleta — relatório de evolução ausente.',
+    iaSugestao: 'Aprovar',
+    divergencia: true,
+    divergenciaMotivo: 'Decisão parcial: ABA aprovado conforme RN 539/2022, Fonoaudiologia negada por ausência de relatório de evolução terapêutica.',
+    tempoAnaliseMin: 35,
+    sexo: 'M',
+    idade: 7,
+    cpf: '123.456.789-01',
+    dataNascimento: '14/02/2019',
+    carencia: false,
+    procedimentosDetalhados: [
+      {
+        codigo: '50000470',
+        tuss: '50000470',
+        descricao: 'Sessão Terapia ABA',
+        qty: 20,
+        qtyAutorizada: 20,
+        dataInicio: '01/04/2026',
+        dataFim: '30/04/2026',
+        cid: 'F84.0',
+        nivelAud: 'AMBULATORIAL',
+        decisao: 'aprovado',
+      },
+      {
+        codigo: '50000370',
+        tuss: '50000370',
+        descricao: 'Sessão Fonoaudiologia',
+        qty: 8,
+        qtyAutorizada: undefined,
+        dataInicio: '01/04/2026',
+        dataFim: '30/04/2026',
+        cid: 'F84.0',
+        nivelAud: 'AMBULATORIAL',
+        decisao: 'negado',
+        motivoDecisao: 'Documentação clínica incompleta',
+      },
+    ],
+    alertas: [],
+    iaChecklist: [
+      { texto: 'Médico credenciado na rede', status: 'ok' },
+      { texto: 'Procedimento consta no Rol ANS', status: 'ok' },
+      { texto: 'Decisão parcialmente alinhada com a IA', status: 'warning' },
+    ],
+    documentos: [
+      { nome: 'Laudo Neuropsicológico — HIS-2026-0042.pdf', tipo: 'Laudo Médico', data: '01/04/2026 10:15' },
     ],
   },
 ]
