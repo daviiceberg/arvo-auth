@@ -2411,7 +2411,7 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                   {/* RN 539/2022 info item for F84 CIDs */}
                   {isF84 && (
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, p: 1, borderRadius: 1.5, backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, p: 1, borderRadius: 1.5, backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)', mb: 0.75 }}>
                       <InfoOutlinedIcon sx={{ fontSize: 15, color: '#2563eb', flexShrink: 0, mt: 0.15 }} />
                       <Box>
                         <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: '#1d4ed8', lineHeight: 1.4 }}>
