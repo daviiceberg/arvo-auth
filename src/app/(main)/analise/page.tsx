@@ -2522,48 +2522,51 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
                         <Box component="span" sx={{ fontWeight: 700 }}>{proc.tuss}</Box>
                         <Box component="span" sx={{ color: 'text.secondary' }}> · {proc.descricao}</Box>
                       </Typography>
-                      {proc.cid && (
-                        <Chip label={`CID ${proc.cid}`} size="small" sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 11, height: 18, mb: 1, display: 'block', width: 'fit-content' }} />
-                      )}
                       <Box sx={{ display: 'flex', gap: 0.75 }}>
-                        <Button
-                          size="small"
-                          fullWidth
-                          variant={isAprovado ? 'contained' : 'outlined'}
-                          startIcon={isAprovado ? <CheckCircleOutlineIcon sx={{ fontSize: 14 }} /> : undefined}
-                          onClick={() => onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado')}
-                          disabled={isGuiaFinalizada}
-                          sx={{
-                            minHeight: 36, fontSize: 12, fontWeight: 600,
-                            ...(isAprovado
-                              ? { backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }
-                              : isNegado
-                              ? { borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', '&:hover': { borderColor: 'rgba(0,0,0,0.15)', backgroundColor: 'transparent' } }
-                              : { borderColor: '#16a34a', color: '#16a34a', '&:hover': { backgroundColor: 'rgba(22,163,74,0.06)', borderColor: '#16a34a' } }
-                            ),
-                          }}
-                        >
-                          Aprovar
-                        </Button>
-                        <Button
-                          size="small"
-                          fullWidth
-                          variant={isNegado ? 'contained' : 'outlined'}
-                          startIcon={isNegado ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
-                          onClick={() => onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado')}
-                          disabled={isGuiaFinalizada}
-                          sx={{
-                            minHeight: 36, fontSize: 12, fontWeight: 600,
-                            ...(isNegado
-                              ? { backgroundColor: '#d4183d', '&:hover': { backgroundColor: '#b91c1c' } }
-                              : isAprovado
-                              ? { borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', '&:hover': { borderColor: 'rgba(0,0,0,0.15)', backgroundColor: 'transparent' } }
-                              : { borderColor: '#d4183d', color: '#d4183d', '&:hover': { backgroundColor: 'rgba(212,24,61,0.06)', borderColor: '#d4183d' } }
-                            ),
-                          }}
-                        >
-                          Negar
-                        </Button>
+                        <Tooltip title={isNegado ? `Trocar para Aprovar — ${proc.descricao}` : ''} placement="top" disableHoverListener={!isNegado}>
+                          <Button
+                            size="small"
+                            fullWidth
+                            variant={isAprovado ? 'contained' : 'outlined'}
+                            startIcon={isAprovado ? <CheckCircleOutlineIcon sx={{ fontSize: 14 }} /> : undefined}
+                            onClick={() => onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado')}
+                            disabled={isGuiaFinalizada}
+                            aria-label={isAprovado ? `Desfazer aprovação de ${proc.descricao}` : `Aprovar ${proc.descricao}`}
+                            sx={{
+                              minHeight: 32, fontSize: 12, fontWeight: 600,
+                              ...(isAprovado
+                                ? { backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }
+                                : isNegado
+                                ? { borderColor: 'rgba(0,0,0,0.2)', color: 'text.disabled', '&:hover': { borderColor: '#16a34a', color: '#16a34a', backgroundColor: 'rgba(22,163,74,0.04)' } }
+                                : { borderColor: '#16a34a', color: '#16a34a', '&:hover': { backgroundColor: 'rgba(22,163,74,0.06)', borderColor: '#16a34a' } }
+                              ),
+                            }}
+                          >
+                            Aprovar
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title={isAprovado ? `Trocar para Negar — ${proc.descricao}` : ''} placement="top" disableHoverListener={!isAprovado}>
+                          <Button
+                            size="small"
+                            fullWidth
+                            variant={isNegado ? 'contained' : 'outlined'}
+                            startIcon={isNegado ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
+                            onClick={() => onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado')}
+                            disabled={isGuiaFinalizada}
+                            aria-label={isNegado ? `Desfazer negativa de ${proc.descricao}` : `Negar ${proc.descricao}`}
+                            sx={{
+                              minHeight: 32, fontSize: 12, fontWeight: 600,
+                              ...(isNegado
+                                ? { backgroundColor: '#d4183d', '&:hover': { backgroundColor: '#b91c1c' } }
+                                : isAprovado
+                                ? { borderColor: 'rgba(0,0,0,0.2)', color: 'text.disabled', '&:hover': { borderColor: '#d4183d', color: '#d4183d', backgroundColor: 'rgba(212,24,61,0.04)' } }
+                                : { borderColor: '#d4183d', color: '#d4183d', '&:hover': { backgroundColor: 'rgba(212,24,61,0.06)', borderColor: '#d4183d' } }
+                              ),
+                            }}
+                          >
+                            Negar
+                          </Button>
+                        </Tooltip>
                       </Box>
                     </Box>
                   )
