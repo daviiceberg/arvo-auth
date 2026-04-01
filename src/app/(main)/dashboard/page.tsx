@@ -553,7 +553,7 @@ export default function DashboardPage() {
                         minWidth: 160,
                         display: 'flex',
                         flexDirection: 'row',
-                        alignItems: 'center',
+                        alignItems: 'flex-start',
                         gap: 1.5,
                         p: 1.5,
                         borderRadius: 2,

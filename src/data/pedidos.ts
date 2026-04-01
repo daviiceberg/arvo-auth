@@ -86,6 +86,7 @@ export type Pedido = {
   pendenciaData?: string
   subStatus?: SubStatus
   juntaParecer?: string
+  juntaRecomendacao?: 'Aprovar' | 'Negar'
   ajustes?: Ajuste[]
 }
 
@@ -244,6 +245,7 @@ export const pedidos: Pedido[] = [
     ],
     subStatus: 'JUNTA_PARECER_RECEBIDO',
     juntaParecer: 'Após análise coletiva realizada em 28/03/2026, a Junta Médica recomenda aprovação do protocolo FOLFOX para adenocarcinoma de cólon estágio III (C18.9). O uso off-label de Oxaliplatina é respaldado pela diretriz ASCO 2024 e pelo histórico de resposta terapêutica documentado. Condições: monitorização quinzenal da função renal e hepática, avaliação de toxicidade ao 2º ciclo. A liminar judicial em vigor corrobora a indicação. Responsável pelo parecer: Dr. Henrique Mello — Oncologista Sênior (CRM 11234-SP).',
+    juntaRecomendacao: 'Aprovar',
   },
   {
     id: 'REQ-2026-04812',
@@ -287,9 +289,9 @@ export const pedidos: Pedido[] = [
       },
     ],
     alertas: [],
-    iaSugestao: 'Aprovar',
+    iaSugestao: 'Junta Médica',
     iaJustificativa:
-      'Criança de 6 anos com diagnóstico de TEA grau 1. Laudos em ordem e dentro da validade. A quantidade solicitada (24 sessões) excede marginalmente o protocolo padrão (20 sessões); recomenda-se autorizar 20 sessões com reavaliação ao final do ciclo. Histórico positivo de resposta terapêutica.',
+      'Criança de 6 anos com diagnóstico de TEA grau 1. Laudos em ordem e dentro da validade. A quantidade solicitada (24 sessões) excede marginalmente o protocolo padrão (20 sessões). A divergência na frequência semanal requer avaliação especializada por Junta Médica antes da decisão final.',
     iaChecklist: [
       { texto: 'Diagnóstico TEA confirmado com laudo', status: 'ok' },
       { texto: 'CID F84.0 compatível com procedimento', status: 'ok' },

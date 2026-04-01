@@ -2201,7 +2201,10 @@ interface SidebarProps {
 }
 
 function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick }: SidebarProps) {
-  const { iaSugestao, iaJustificativa, iaChecklist } = pedido
+  const { iaChecklist } = pedido
+  const parecerRecebido = pedido.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!pedido.juntaRecomendacao
+  const iaSugestao = parecerRecebido ? pedido.juntaRecomendacao! : pedido.iaSugestao
+  const iaJustificativa = parecerRecebido ? pedido.juntaParecer! : pedido.iaJustificativa
   const sc = iaSugestaoColor(iaSugestao)
   const [loadingAprovar, setLoadingAprovar] = useState(false)
   const [loadingNegar, setLoadingNegar] = useState(false)
@@ -2255,7 +2258,7 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
           }}
         >
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 12 }}>
-            Recomendação da IA
+            {parecerRecebido ? 'Recomendação com base no parecer da Junta Médica' : 'Recomendação da IA'}
           </Typography>
           <Chip
             label={iaSugestao}
