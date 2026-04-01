@@ -1016,7 +1016,7 @@ export default function HistoricoDetalhePage() {
         {/* Right column — always fully visible, own scroll if needed */}
         <Box sx={{ width: 400, flexShrink: 0, overflowY: 'auto', pb: 2 }}>
           <Card sx={{ overflow: 'visible' }}>
-            <CardContent sx={{ p: 0 }}>
+            <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
 
               {/* Decision header */}
               <Box sx={{ px: 2.5, pt: 2.5, pb: 2 }}>
