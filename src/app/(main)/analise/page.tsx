@@ -1284,7 +1284,7 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
               </Alert>
               <TextField
                 size="small"
-                label="Novo código TISS *"
+                label="Novo código TUSS *"
                 value={novoCodigo}
                 onChange={e => { setNovoCodigo(e.target.value); setErrors(v => ({ ...v, novoCodigo: '' })) }}
                 placeholder="Código TISS"
