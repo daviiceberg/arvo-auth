@@ -1584,7 +1584,7 @@ export const historicoEntries: HistoricoEntry[] = [
     tipoGuia: 'Eleitiva',
     dataProtocolo: '15/03/2026 10:00',
     dataDecisao: '16/03/2026 09:45',
-    acao: 'Devolutiva',
+    acao: 'Negado',
     origem: 'analista',
     analista: 'Ana Paula Santos',
     motivoDecisao: 'Solicitação de contraste não justificada na indicação clínica. Necessário relatório específico do ortopedista descrevendo suspeita de lesão que exige contraste.',
