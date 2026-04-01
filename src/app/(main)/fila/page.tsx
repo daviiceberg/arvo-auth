@@ -683,7 +683,7 @@ function FilaInner() {
                   <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
                   <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
                   {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 155 }}>Categoria</TableCell>}
-                  <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento</TableCell>
+                  <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
                   <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
                   <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
                   <TableCell sx={{ minWidth: 110 }}>Sugestão IA</TableCell>
@@ -798,12 +798,25 @@ function FilaInner() {
                         <CategoriaChip categoria={pedido.categoria} />
                       </TableCell>}
                       <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
-                        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
-                          {pedido.procedimentos[0]?.tuss || '—'}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>
-                          {pedido.procedimentos[0]?.descricao || '—'}
-                        </Typography>
+                        {pedido.procedimentos.length > 1 ? (
+                          <>
+                            <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12 }}>
+                              {pedido.procedimentos.length} procedimentos
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                              Clique para ver detalhes
+                            </Typography>
+                          </>
+                        ) : (
+                          <>
+                            <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
+                              {pedido.procedimentos[0]?.tuss || '—'}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>
+                              {pedido.procedimentos[0]?.descricao || '—'}
+                            </Typography>
+                          </>
+                        )}
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
