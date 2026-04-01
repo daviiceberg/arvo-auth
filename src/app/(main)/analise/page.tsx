@@ -68,6 +68,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste, Documento } from '@/data/pedidos'
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -584,7 +585,7 @@ interface HistoricoConsolidado {
   procedimentosRelacionados: string
   internacoes: { count: number; periodo: string; detalhes?: string }
   cidRecorrente: { cid: string; count: number; descricao: string } | null
-  sessoesDoMes?: { utilizadas: number; autorizadas: number; tipo: string }[]
+  sessoesDoMes?: { utilizadas: number; autorizadas: number; tipo: string; cidF84?: boolean; dut?: string }[]
   autorizacoesAnteriores: Array<{
     id: string; procedimento: string; codigo: string; cid: string
     data: string; decisao: 'aprovado' | 'negado' | 'ajustado'; motivo: string; destaque?: boolean
@@ -629,8 +630,8 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
     internacoes: { count: 2, periodo: 'últimos 12 meses', detalhes: 'Jan/2026 — Clínica Médica (3 dias); Out/2025 — Ortopedia (2 dias)' },
     cidRecorrente: { cid: 'M79.3', count: 4, descricao: 'Fibromialgia' },
     sessoesDoMes: [
-      { utilizadas: 24, autorizadas: 24, tipo: 'Fisioterapia' },
-      { utilizadas: 8, autorizadas: 12, tipo: 'Psicologia' },
+      { utilizadas: 20, autorizadas: 20, tipo: 'ABA / Análise do Comportamento', cidF84: true, dut: 'DUT 6 — Terapias do Espectro Autista' },
+      { utilizadas: 8, autorizadas: 8, tipo: 'Fonoaudiologia', cidF84: true, dut: 'DUT 6 — Terapias do Espectro Autista' },
     ],
     autorizacoesAnteriores: [
       { id: 'REQ-2026-03801', procedimento: 'Sessão de Fisioterapia', codigo: '50000470', cid: 'M79.3', data: 'Mar/2026', decisao: 'aprovado', motivo: 'Indicação clínica adequada', destaque: true },
@@ -853,12 +854,38 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {h.sessoesDoMes.map((s) => {
+                if (s.cidF84) {
+                  return (
+                    <Box key={s.tipo} sx={{ p: 1.5, border: '1px solid rgba(37,99,235,0.25)', borderRadius: 2, backgroundColor: 'rgba(37,99,235,0.04)' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                          <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
+                          {s.dut && (
+                            <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563eb', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} />
+                          )}
+                        </Box>
+                        <Chip label="Ilimitado (RN 539)" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563eb', fontWeight: 700, '& .MuiChip-label': { px: 0.75 } }} />
+                      </Box>
+                      <Typography variant="caption" sx={{ fontSize: 11, color: '#2563eb', fontWeight: 500 }}>
+                        {s.utilizadas} sessões utilizadas · Sem limite contratual — RN 539/2022
+                      </Typography>
+                      <Box sx={{ height: 6, borderRadius: 3, backgroundColor: 'rgba(37,99,235,0.15)', mt: 0.75 }}>
+                        <Box sx={{ height: '100%', width: '100%', borderRadius: 3, backgroundColor: '#2563eb', opacity: 0.5 }} />
+                      </Box>
+                    </Box>
+                  )
+                }
                 const pct = Math.min((s.utilizadas / s.autorizadas) * 100, 100)
                 const barColor = pct >= 100 ? '#d4183d' : pct >= 80 ? '#f59e0b' : '#16a34a'
                 return (
                   <Box key={s.tipo} sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.75 }}>
-                      <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                        <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
+                        {s.dut && (
+                          <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} />
+                        )}
+                      </Box>
                       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: barColor }}>
                         {s.utilizadas}/{s.autorizadas} sessões
                       </Typography>
@@ -931,26 +958,46 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
         )}
 
         {/* Sinais de Atenção */}
-        {h.sinaisAtencao.length > 0 && (
-          <>
-            <Divider sx={{ mb: 2.5 }} />
-            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1.5 }}>
-              Sinais de Atenção
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
-              {h.sinaisAtencao.map((sinal) => (
-                <Alert key={sinal.id} severity={sinaisAtencaoColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
-                  <Typography variant="caption" fontWeight={700} display="block">
-                    {sinal.mensagem}
-                  </Typography>
-                  {sinal.detalhes && (
-                    <Typography variant="caption">{sinal.detalhes}</Typography>
-                  )}
-                </Alert>
-              ))}
-            </Box>
-          </>
-        )}
+        {(() => {
+          const isF84 = pedido.procedimentos.some(p => p.cid?.startsWith('F84'))
+          const isTerapias = pedido.categoria === 'Terapias Especiais'
+          const SUPRIMIDOS_F84 = ['alto volume', 'limite de sessões', 'quantidade acima', 'alta utilização']
+          const filteredSinais = (isTerapias && isF84)
+            ? h.sinaisAtencao.filter(s => !SUPRIMIDOS_F84.some(k => s.mensagem.toLowerCase().includes(k)))
+            : h.sinaisAtencao
+          const hasHighUseF84 = isTerapias && isF84 && h.sinaisAtencao.some(s => SUPRIMIDOS_F84.some(k => s.mensagem.toLowerCase().includes(k)))
+          if (filteredSinais.length === 0 && !hasHighUseF84) return null
+          return (
+            <>
+              <Divider sx={{ mb: 2.5 }} />
+              <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1.5 }}>
+                Sinais de Atenção
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
+                {hasHighUseF84 && (
+                  <Alert severity="info" icon={<InfoOutlinedIcon fontSize="small" />} sx={{ borderRadius: 1.5, py: 0.5 }}>
+                    <Typography variant="caption" fontWeight={700} display="block">
+                      Alta frequência de sessões identificada
+                    </Typography>
+                    <Typography variant="caption">
+                      Para CID F84, RN 539/2022 garante cobertura ilimitada — volume elevado não é fundamento para negativa.
+                    </Typography>
+                  </Alert>
+                )}
+                {filteredSinais.map((sinal) => (
+                  <Alert key={sinal.id} severity={sinaisAtencaoColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
+                    <Typography variant="caption" fontWeight={700} display="block">
+                      {sinal.mensagem}
+                    </Typography>
+                    {sinal.detalhes && (
+                      <Typography variant="caption">{sinal.detalhes}</Typography>
+                    )}
+                  </Alert>
+                ))}
+              </Box>
+            </>
+          )
+        })()}
 
         <Divider sx={{ mb: 2.5 }} />
 
@@ -959,6 +1006,25 @@ function HistoricoConsolidadoSection({ pedido }: { pedido: Pedido }) {
           Elegibilidade e Regras
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
+          {/* Etapa da Autorização — only for Terapias Especiais */}
+          {pedido.categoria === 'Terapias Especiais' && pedido.etapaAutorizacao && (
+            <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
+                Etapa da Autorização
+              </Typography>
+              <Chip
+                label={pedido.etapaAutorizacao === 'primeira_solicitacao' ? 'Primeira Solicitação' : 'Continuidade'}
+                size="small"
+                sx={{
+                  backgroundColor: pedido.etapaAutorizacao === 'primeira_solicitacao' ? 'rgba(22,163,74,0.1)' : 'rgba(37,99,235,0.1)',
+                  color: pedido.etapaAutorizacao === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
+                  fontWeight: 700,
+                  height: 22,
+                  fontSize: 12,
+                }}
+              />
+            </Box>
+          )}
           {/* Status elegibilidade */}
           <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
@@ -1767,6 +1833,46 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
           </Box>
         </Box>
 
+        {/* Terapias Especiais — missing mandatory doc warning */}
+        {pedido.categoria === 'Terapias Especiais' && (() => {
+          const isContinuidade = pedido.etapaAutorizacao === 'continuidade'
+          const mandatoryDocName = isContinuidade ? 'Relatório de Evolução Terapêutica' : 'Plano Terapêutico'
+          const mandatoryDocKeywords = isContinuidade
+            ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
+            : ['plano terapêutico', 'plano terapeutico', 'plano_terapeutico']
+          const hasDoc = allDocs.some(d =>
+            mandatoryDocKeywords.some(kw => d.nome.toLowerCase().includes(kw) || d.tipo.toLowerCase().includes(kw))
+          )
+          if (hasDoc) return null
+          return (
+            <Box
+              sx={{ border: '1px solid rgba(245,158,11,0.4)', borderRadius: 2, backgroundColor: 'rgba(255,251,235,0.7)', p: 2, display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}
+            >
+              <WarningAmberIcon sx={{ fontSize: 20, color: '#f59e0b', flexShrink: 0, mt: 0.1 }} />
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: '#b45309' }}>
+                  Documento obrigatório ausente: {mandatoryDocName}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mt: 0.25 }}>
+                  {isContinuidade
+                    ? 'Solicitações de continuidade exigem relatório de evolução terapêutica emitido pelo profissional executante.'
+                    : 'Primeiras solicitações de terapia exigem plano terapêutico detalhado emitido pelo profissional responsável.'}
+                </Typography>
+              </Box>
+              <Button
+                size="small"
+                variant="outlined"
+                color="warning"
+                startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
+                onClick={() => setShowSolicitarModal(true)}
+                sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
+              >
+                Solicitar complementar
+              </Button>
+            </Box>
+          )
+        })()}
+
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {allDocs.map((doc, idx) => {
             const docKey = doc.id
@@ -2278,35 +2384,71 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
           </Box>
 
           {/* Checklist */}
-          <Box>
-            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
-              Checklist
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-              {iaChecklist.map((item) => (
-                <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                  {item.status === 'ok' ? (
-                    <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />
-                  ) : item.status === 'warning' ? (
-                    <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />
-                  ) : (
-                    <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />
+          {(() => {
+            const isTerapias = pedido.categoria === 'Terapias Especiais'
+            const isF84 = isTerapias && pedido.procedimentos.some(p => p.cid?.startsWith('F84'))
+            const isContinuidade = pedido.etapaAutorizacao === 'continuidade'
+
+            // Extra checklist items for Terapias continuidade
+            const extraContinuidadeItems: Array<{ texto: string; sub?: string; status: 'ok' | 'warning' | 'error' }> = isTerapias && isContinuidade ? [
+              {
+                texto: 'Relatório de evolução terapêutica anexado',
+                status: pedido.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
+              },
+              {
+                texto: 'Relatório emitido pelo profissional executante',
+                status: pedido.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'warning',
+              },
+            ] : []
+
+            const allItems = [...iaChecklist, ...extraContinuidadeItems]
+
+            return (
+              <Box>
+                <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
+                  Checklist {isTerapias && isContinuidade && <Typography component="span" variant="caption" sx={{ fontSize: 11, textTransform: 'none', color: '#2563eb', fontWeight: 600 }}>— Continuidade</Typography>}
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                  {/* RN 539/2022 info item for F84 CIDs */}
+                  {isF84 && (
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, p: 1, borderRadius: 1.5, backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)' }}>
+                      <InfoOutlinedIcon sx={{ fontSize: 15, color: '#2563eb', flexShrink: 0, mt: 0.15 }} />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: '#1d4ed8', lineHeight: 1.4 }}>
+                          RN 539/2022 — sessões ilimitadas aplicáveis para CID F84
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontSize: 11, color: '#2563eb', lineHeight: 1.4, display: 'block', mt: 0.25 }}>
+                          Operadora não pode negar por limite de sessões nem por escolha de método terapêutico. Espaço de negativa restrito a questões administrativas.
+                        </Typography>
+                      </Box>
+                    </Box>
                   )}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: 13,
-                      fontWeight: item.status !== 'ok' ? 600 : 500,
-                      color: item.status === 'error' ? '#d4183d' : item.status === 'warning' ? '#b45309' : 'text.primary',
-                      lineHeight: 1.45,
-                    }}
-                  >
-                    {item.texto}
-                  </Typography>
+                  {allItems.map((item) => (
+                    <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                      {item.status === 'ok' ? (
+                        <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />
+                      ) : item.status === 'warning' ? (
+                        <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />
+                      ) : (
+                        <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />
+                      )}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: 13,
+                          fontWeight: item.status !== 'ok' ? 600 : 500,
+                          color: item.status === 'error' ? '#d4183d' : item.status === 'warning' ? '#b45309' : 'text.primary',
+                          lineHeight: 1.45,
+                        }}
+                      >
+                        {item.texto}
+                      </Typography>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
-          </Box>
+              </Box>
+            )
+          })()}
 
           {/* Alertas especiais */}
           {pedido.alertas.includes('Liminar Judicial') && (

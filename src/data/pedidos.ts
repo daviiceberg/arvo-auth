@@ -87,6 +87,7 @@ export type Pedido = {
   subStatus?: SubStatus
   juntaParecer?: string
   juntaRecomendacao?: 'Aprovar' | 'Negar'
+  etapaAutorizacao?: 'primeira_solicitacao' | 'continuidade'
   ajustes?: Ajuste[]
 }
 
@@ -170,7 +171,9 @@ export const pedidos: Pedido[] = [
       { id: 'DOC-001', nome: 'Laudo-Neuropsicologico-2026.pdf', tipo: 'Laudo Médico', tamanho: '2.1 MB', enviadoEm: '10/01/2026', obrigatorio: true, status: 'enviado' },
       { id: 'DOC-002', nome: 'Liminar-Judicial-0012345.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '15/01/2026', obrigatorio: false, status: 'enviado' },
       { id: 'DOC-003', nome: 'Pedido-Medico-ABA.pdf', tipo: 'Pedido Médico', tamanho: '180 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-004', nome: 'Relatorio-Evolucao-Q1-2026.pdf', tipo: 'Relatório de Evolução', tamanho: '890 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
     ],
+    etapaAutorizacao: 'continuidade',
   },
   {
     id: 'REQ-2026-04801',
@@ -319,6 +322,7 @@ export const pedidos: Pedido[] = [
       },
     ],
     subStatus: 'JUNTA_AGUARDANDO',
+    etapaAutorizacao: 'continuidade',
   },
   {
     id: 'REQ-2026-04820',
@@ -464,6 +468,7 @@ export const pedidos: Pedido[] = [
       { id: 'DOC-041', nome: 'Pedido-Medico-ABA-Manutencao.pdf', tipo: 'Pedido Médico', tamanho: '165 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
       { id: 'DOC-042', nome: 'Laudo-Psiquiatra-Infantil.pdf', tipo: 'Laudo Médico', tamanho: '1.1 MB', enviadoEm: '01/02/2026', obrigatorio: true, status: 'enviado' },
     ],
+    etapaAutorizacao: 'continuidade',
     pendenciaMotivos: [
       'Relatório de progresso do terapeuta (Q4/2025) ausente',
       'Carta de encaminhamento médica sem assinatura reconhecida',
