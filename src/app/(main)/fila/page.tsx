@@ -187,7 +187,7 @@ function TipoGuiaChip({ tipo }: { tipo: string }) {
 
 // ── Origem Chip ───────────────────────────────────────────────────────
 const origemMap: Record<OrigemPedido, { label: string; bg: string; color: string; icon: React.ReactNode }> = {
-  app:       { label: 'App Athena', bg: 'rgba(37,99,235,0.08)',   color: '#2563eb', icon: <PhoneAndroidIcon style={{ fontSize: 11 }} /> },
+  app:       { label: 'App', bg: 'rgba(37,99,235,0.08)',   color: '#2563eb', icon: <PhoneAndroidIcon style={{ fontSize: 11 }} /> },
   whatsapp:  { label: 'WhatsApp',   bg: 'rgba(22,163,74,0.08)',   color: '#16a34a', icon: <WhatsAppIcon style={{ fontSize: 11 }} /> },
   email:     { label: 'E-mail',     bg: 'rgba(8,145,178,0.08)',   color: '#0891b2', icon: <EmailOutlinedIcon style={{ fontSize: 11 }} /> },
   prestador: { label: 'Prestador',  bg: 'rgba(144,43,41,0.08)',   color: '#902B29', icon: <LocalHospitalOutlinedIcon style={{ fontSize: 11 }} /> },

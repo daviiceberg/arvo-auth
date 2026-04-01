@@ -10,8 +10,8 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Autorizador Athena',
-  description: 'Sistema de Autorização de Procedimentos — Athena Saúde',
+  title: 'Autorizador',
+  description: 'Sistema de Autorização de Procedimentos',
 }
 
 export default function RootLayout({

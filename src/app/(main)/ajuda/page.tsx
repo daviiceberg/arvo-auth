@@ -38,9 +38,9 @@ const faqs = [
       'O sistema monitora automaticamente os prazos da ANS para cada tipo de solicitação. Os status são: "No prazo" (verde), "Atenção" (amarelo — menos de 30% do prazo restante) e "Violado" (vermelho). Solicitações de Urgência/Emergência têm prazos reduzidos e aparecem em destaque na fila.',
   },
   {
-    question: 'O que é a sugestão de decisão da IA Athena?',
+    question: 'O que é a sugestão de decisão da IA?',
     answer:
-      'O sistema de IA da Athena analisa cada solicitação considerando o histórico do beneficiário, cobertura contratual, documentação anexada e protocolos clínicos do Rol da ANS. A sugestão (Aprovar, Negar ou Junta Médica) é informativa — a decisão final é sempre do autorizador.',
+      'O sistema de IA analisa cada solicitação considerando o histórico do beneficiário, cobertura contratual, documentação anexada e protocolos clínicos do Rol da ANS. A sugestão (Aprovar, Negar ou Junta Médica) é informativa — a decisão final é sempre do autorizador.',
   },
   {
     question: 'Posso discordar da sugestão da IA?',
@@ -145,7 +145,7 @@ export default function AjudaPage() {
             Central de Ajuda
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
-            Tire suas dúvidas e encontre respostas sobre o sistema Athena
+            Tire suas dúvidas e encontre respostas sobre o sistema
           </Typography>
         </Box>
       </Box>

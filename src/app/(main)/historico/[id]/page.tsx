@@ -920,7 +920,7 @@ export default function HistoricoDetalhePage() {
 
   const handleNotify = () => {
     setNotifyOpen(false)
-    const labels = { app: 'App Athena', whatsapp: 'WhatsApp', email: 'E-mail' }
+    const labels = { app: 'App', whatsapp: 'WhatsApp', email: 'E-mail' }
     setSnackbar({ open: true, message: `Decisão informada ao beneficiário via ${labels[notifyCanal]}.` })
   }
 
@@ -1283,7 +1283,7 @@ export default function HistoricoDetalhePage() {
               <MenuItem value="app">
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <PhoneAndroidIcon sx={{ fontSize: 16, color: '#2563eb' }} />
-                  App Athena
+                  App
                 </Box>
               </MenuItem>
               <MenuItem value="whatsapp">

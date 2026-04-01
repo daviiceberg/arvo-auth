@@ -117,7 +117,7 @@ function divergenceMessage(iaSugestao: IASugestao): string {
 
 // ── Origem Label ──────────────────────────────────────────────────────
 const origemConfig: Record<OrigemPedido, { label: string; color: string; icon: React.ReactNode }> = {
-  app:       { label: 'App Athena', color: '#2563eb', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
+  app:       { label: 'App', color: '#2563eb', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
   whatsapp:  { label: 'WhatsApp',   color: '#16a34a', icon: <WhatsAppIcon sx={{ fontSize: 13 }} /> },
   email:     { label: 'E-mail',     color: '#0891b2', icon: <EmailOutlinedIcon sx={{ fontSize: 13 }} /> },
   prestador: { label: 'Prestador',  color: '#902B29', icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} /> },

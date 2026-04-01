@@ -149,7 +149,7 @@ export default function DocsPage() {
             Documentação Técnica de Produto
           </Typography>
           <Typography variant="caption" sx={{ color: '#9ca3af' }}>
-            Athena Saúde · v1.0 · Março 2026
+            v1.0 · Março 2026
           </Typography>
         </Box>
 

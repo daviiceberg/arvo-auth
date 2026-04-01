@@ -43,7 +43,7 @@ export default function LoginPage() {
               Arvo Auth
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Athena Saúde
+              Saúde
             </Typography>
           </Box>
 

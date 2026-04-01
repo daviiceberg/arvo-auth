@@ -21,7 +21,7 @@ export default function MeuPerfilPage() {
   // Personal info state
   const [nome, setNome] = useState('Ana Paula Santos')
   const [perfil, setPerfil] = useState('Autorizador')
-  const [operadora, setOperadora] = useState('Athena Saúde')
+  const [operadora, setOperadora] = useState('Operadora')
 
   // Security state
   const [senhaAtual, setSenhaAtual] = useState('')
@@ -136,7 +136,7 @@ export default function MeuPerfilPage() {
                 value={operadora}
                 onChange={(e) => setOperadora(e.target.value)}
               >
-                <MenuItem value="Athena Saúde">Athena Saúde</MenuItem>
+                <MenuItem value="Operadora">Operadora</MenuItem>
                 <MenuItem value="Unimed">Unimed</MenuItem>
                 <MenuItem value="SulAmérica Saúde">SulAmérica Saúde</MenuItem>
                 <MenuItem value="Bradesco Saúde">Bradesco Saúde</MenuItem>

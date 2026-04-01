@@ -120,7 +120,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '15/04/2018',
       idade: 8,
       sexo: 'F',
-      plano: 'Athena Premium Familiar',
+      plano: 'Premium Familiar',
       carencia: false,
     },
     prestador: {
@@ -191,7 +191,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '03/07/1968',
       idade: 57,
       sexo: 'M',
-      plano: 'Athena Premium Familiar',
+      plano: 'Premium Familiar',
       carencia: false,
     },
     prestador: {
@@ -266,7 +266,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '22/08/2019',
       idade: 6,
       sexo: 'F',
-      plano: 'Athena Premium Familiar',
+      plano: 'Premium Familiar',
       carencia: false,
     },
     prestador: {
@@ -339,7 +339,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '14/11/1957',
       idade: 68,
       sexo: 'M',
-      plano: 'Athena Gold',
+      plano: 'Gold',
       carencia: false,
     },
     prestador: {
@@ -426,7 +426,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '10/06/2016',
       idade: 9,
       sexo: 'M',
-      plano: 'Athena Premium Familiar',
+      plano: 'Premium Familiar',
       carencia: false,
     },
     prestador: {
@@ -491,7 +491,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '07/03/1997',
       idade: 29,
       sexo: 'F',
-      plano: 'Athena Premium',
+      plano: 'Premium',
       carencia: false,
     },
     prestador: {
@@ -548,7 +548,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '29/01/1972',
       idade: 54,
       sexo: 'M',
-      plano: 'Athena Gold',
+      plano: 'Gold',
       carencia: false,
     },
     prestador: {
@@ -615,7 +615,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '21/05/1984',
       idade: 41,
       sexo: 'M',
-      plano: 'Athena Gold',
+      plano: 'Gold',
       carencia: false,
     },
     prestador: {
@@ -674,7 +674,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '11/09/1989',
       idade: 36,
       sexo: 'F',
-      plano: 'Athena Premium',
+      plano: 'Premium',
       carencia: false,
     },
     prestador: {
@@ -732,7 +732,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '03/04/1955',
       idade: 70,
       sexo: 'F',
-      plano: 'Athena Gold',
+      plano: 'Gold',
       carencia: false,
     },
     prestador: {
@@ -791,7 +791,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '30/12/1941',
       idade: 84,
       sexo: 'F',
-      plano: 'Athena Sênior',
+      plano: 'Sênior',
       carencia: false,
     },
     prestador: {
@@ -850,7 +850,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '17/07/1993',
       idade: 32,
       sexo: 'F',
-      plano: 'Athena Essencial',
+      plano: 'Essencial',
       carencia: true,
     },
     prestador: {
@@ -920,7 +920,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '25/02/1978',
       idade: 48,
       sexo: 'M',
-      plano: 'Athena Premium',
+      plano: 'Premium',
       carencia: false,
     },
     prestador: {
@@ -979,7 +979,7 @@ export const pedidos: Pedido[] = [
       dataNascimento: '03/07/1978',
       idade: 47,
       sexo: 'F',
-      plano: 'Athena Premium',
+      plano: 'Premium',
       carencia: false,
     },
     prestador: {
