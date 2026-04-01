@@ -659,10 +659,10 @@ export default function DashboardPage() {
               ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
                   {([
-                    { label: 'Negar',       count: dashboardMetrics.iaSugestaoNegar,   color: '#d4183d', textColor: '#d4183d', bg: 'rgba(212,24,61,0.08)',  hoverBg: 'rgba(212,24,61,0.13)',  icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />, ia: 'Negar' },
-                    { label: 'Junta Médica',count: dashboardMetrics.iaSugestaoJunta,   color: '#b45309', textColor: '#b45309', bg: 'rgba(180,83,9,0.08)',   hoverBg: 'rgba(180,83,9,0.13)',   icon: <GroupsOutlinedIcon      sx={{ fontSize: 16, color: '#b45309' }} />, ia: 'Junta Médica' },
-                    { label: 'Aprovar',     count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a', textColor: '#166534', bg: 'rgba(22,163,74,0.08)',  hoverBg: 'rgba(22,163,74,0.13)',  icon: <CheckCircleOutlineIcon  sx={{ fontSize: 16, color: '#16a34a' }} />, ia: 'Aprovar' },
-                  ] as Array<{ label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string }>).map((s) => (
+                    { label: 'Negar',       count: dashboardMetrics.iaSugestaoNegar,   color: '#d4183d', textColor: '#d4183d', bg: 'rgba(212,24,61,0.08)',  hoverBg: 'rgba(212,24,61,0.13)',  icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />, ia: 'Negar',        microcopy: 'com bloqueio identificado' },
+                    { label: 'Junta Médica',count: dashboardMetrics.iaSugestaoJunta,   color: '#b45309', textColor: '#b45309', bg: 'rgba(180,83,9,0.08)',   hoverBg: 'rgba(180,83,9,0.13)',   icon: <GroupsOutlinedIcon      sx={{ fontSize: 16, color: '#b45309' }} />, ia: 'Junta Médica', microcopy: 'para revisão clínica' },
+                    { label: 'Aprovar',     count: dashboardMetrics.iaSugestaoAprovar, color: '#16a34a', textColor: '#166534', bg: 'rgba(22,163,74,0.08)',  hoverBg: 'rgba(22,163,74,0.13)',  icon: <CheckCircleOutlineIcon  sx={{ fontSize: 16, color: '#16a34a' }} />, ia: 'Aprovar',      microcopy: 'com critérios atendidos' },
+                  ] as Array<{ label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string; microcopy: string }>).map((s) => (
                     <Box
                       key={s.label}
                       role="button"
@@ -685,9 +685,14 @@ export default function DashboardPage() {
                           {s.label}
                         </Typography>
                       </Box>
-                      <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, color: s.textColor, lineHeight: 1 }}>
-                        {s.count}
-                      </Typography>
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, color: s.textColor, lineHeight: 1 }}>
+                          {s.count}
+                        </Typography>
+                        <Typography variant="caption" sx={{ fontSize: 11, color: s.textColor, opacity: 0.7, lineHeight: 1.2, display: 'block' }}>
+                          {s.count === 1 ? 'pedido' : 'pedidos'} {s.microcopy}
+                        </Typography>
+                      </Box>
                     </Box>
                   ))}
                   <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 'auto', pt: 0.5, display: 'block' }}>

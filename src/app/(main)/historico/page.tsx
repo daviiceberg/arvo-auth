@@ -158,11 +158,11 @@ export default function HistoricoPage() {
       {/* Summary KPI strip */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         {[
-          { label: 'Total de Decisões', value: historicoEntries.length, color: 'text.primary', icon: <ScienceIcon sx={{ fontSize: 18, color: '#902B29' }} />, bg: 'rgba(144,43,41,0.1)' },
+          { label: 'Total de Solicitações', value: historicoEntries.length, color: 'text.primary', icon: <ScienceIcon sx={{ fontSize: 18, color: '#902B29' }} />, bg: 'rgba(144,43,41,0.1)' },
           { label: 'Processadas por IA', value: totalIA, color: '#2563eb', icon: <SmartToyIcon sx={{ fontSize: 18, color: '#2563eb' }} />, bg: 'rgba(37,99,235,0.1)' },
           { label: 'Decididas por Analista', value: totalAnalista, color: 'text.primary', icon: <PersonIcon sx={{ fontSize: 18, color: '#5a6070' }} />, bg: 'rgba(0,0,0,0.07)' },
           { label: 'Taxa de Aprovação', value: `${Math.round((totalAprovados / historicoEntries.length) * 100)}%`, color: '#16a34a', icon: <CheckCircleIcon sx={{ fontSize: 18, color: '#16a34a' }} />, bg: 'rgba(22,163,74,0.1)' },
-          { label: 'Divergências IA/Analista', value: totalDivergencias, color: '#b45309', icon: <WarningAmberIcon sx={{ fontSize: 18, color: '#b45309' }} />, bg: 'rgba(245,158,11,0.12)' },
+          { label: 'Analista divergiu da sugestão', value: totalDivergencias, color: '#b45309', icon: <WarningAmberIcon sx={{ fontSize: 18, color: '#b45309' }} />, bg: 'rgba(245,158,11,0.12)' },
         ].map((kpi) => (
           <Card key={kpi.label} sx={{ flex: 1, minWidth: 140 }}>
             <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 }, transition: 'box-shadow 0.15s ease' }}>
@@ -244,7 +244,7 @@ export default function HistoricoPage() {
               <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
               <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
               <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
-              <TableCell sx={{ minWidth: 130 }}>IA</TableCell>
+              <TableCell sx={{ minWidth: 130 }}>Sugestão IA</TableCell>
               <TableCell
                 sx={{ minWidth: 135, cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                 onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
@@ -304,15 +304,20 @@ export default function HistoricoPage() {
                   )}
                 </TableCell>
                 <TableCell sx={{ px: 1.5 }}>
-                  <Chip
-                    label={entry.iaSugestao}
-                    size="small"
-                    sx={{
-                      fontSize: 12, fontWeight: 700, height: 20,
-                      backgroundColor: entry.iaSugestao === 'Aprovar' ? 'rgba(22,163,74,0.1)' : entry.iaSugestao === 'Negar' ? 'rgba(212,24,61,0.1)' : 'rgba(245,158,11,0.12)',
-                      color: entry.iaSugestao === 'Aprovar' ? '#16a34a' : entry.iaSugestao === 'Negar' ? '#d4183d' : '#b45309',
-                    }}
-                  />
+                  {entry.origem === 'ia_automatica' ? (
+                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.disabled' }}>—</Typography>
+                  ) : (
+                    <Chip
+                      label={entry.iaSugestao}
+                      size="small"
+                      variant="outlined"
+                      sx={{
+                        fontSize: 12, fontWeight: 600, height: 20,
+                        borderColor: entry.iaSugestao === 'Aprovar' ? '#16a34a' : entry.iaSugestao === 'Negar' ? '#d4183d' : '#b45309',
+                        color: entry.iaSugestao === 'Aprovar' ? '#16a34a' : entry.iaSugestao === 'Negar' ? '#d4183d' : '#b45309',
+                      }}
+                    />
+                  )}
                   {entry.divergencia ? (
                     <Typography variant="caption" sx={{ display: 'block', fontSize: 11, color: '#b45309', fontWeight: 600, mt: 0.4 }}>
                       ⚠ Divergiu

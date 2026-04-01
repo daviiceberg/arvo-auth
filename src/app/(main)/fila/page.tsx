@@ -39,6 +39,7 @@ import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
 import GavelIcon from '@mui/icons-material/Gavel'
+import Tooltip from '@mui/material/Tooltip'
 import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido, type SubStatus } from '@/data/pedidos'
 
 // ── Continuidade / 1ª Solicitação mock map ────────────────────────────
@@ -685,7 +686,7 @@ function FilaInner() {
                   <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento</TableCell>
                   <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
                   <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
-                  <TableCell sx={{ minWidth: 110 }}>IA</TableCell>
+                  <TableCell sx={{ minWidth: 110 }}>Sugestão IA</TableCell>
                   <TableCell sx={{ minWidth: 115 }}>Ações</TableCell>
                 </TableRow>
               </TableHead>
@@ -816,7 +817,9 @@ function FilaInner() {
                         <SLAChip status={pedido.slaStatus} texto={pedido.slaTexto} />
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }}>
-                        <IASugestaoChip sugestao={pedido.iaSugestao} />
+                        <Tooltip title="Ponto de vista da análise da IA — a decisão final é do analista" placement="top">
+                          <span><IASugestaoChip sugestao={pedido.iaSugestao} /></span>
+                        </Tooltip>
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }} onClick={(e) => e.stopPropagation()}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>

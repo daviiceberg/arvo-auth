@@ -2211,6 +2211,12 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
   const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedido.status)
   const isJuntaAguardando = pedido.subStatus === 'JUNTA_AGUARDANDO'
 
+  const pillLabel: Record<string, string> = {
+    'Aprovar': 'Critérios atendidos',
+    'Negar': 'Bloqueios identificados',
+    'Junta Médica': 'Análise clínica necessária',
+  }
+
   const handleAprovarWithLoading = () => {
     setLoadingAprovar(true)
     setTimeout(() => { setLoadingAprovar(false); onAprovarClick() }, 600)
@@ -2222,159 +2228,164 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
   }
 
   return (
-    <Card
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
-      <Box
+    <>
+      <Card
         sx={{
-          px: 2.5,
-          py: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.07)',
           display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          backgroundColor: 'rgba(144,43,41,0.03)',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        <SmartToyIcon sx={{ color: 'primary.main', fontSize: 20 }} />
-        <Typography variant="body2" fontWeight={700} color="primary.main">
-          Assistente de Decisão
-        </Typography>
-      </Box>
-
-      <Box sx={{ p: 2.5, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {/* Recommendation */}
+        {/* Header */}
         <Box
           sx={{
-            p: 1.5,
-            borderRadius: 2,
-            backgroundColor: sc.bg,
-            border: `1px solid ${sc.color}33`,
+            px: 2.5,
+            py: 2,
+            borderBottom: '1px solid rgba(0,0,0,0.07)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            backgroundColor: 'rgba(144,43,41,0.03)',
           }}
         >
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 12 }}>
-            {parecerRecebido ? 'Recomendação com base no parecer da Junta Médica' : 'Recomendação da IA'}
-          </Typography>
-          <Chip
-            label={iaSugestao}
-            size="small"
-            sx={{ backgroundColor: sc.bg, color: sc.color, fontWeight: 700, mb: 1 }}
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 12, lineHeight: 1.5 }}>
-            {iaJustificativa}
+          <SmartToyIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+          <Typography variant="body2" fontWeight={700} color="primary.main">
+            Análise da IA
           </Typography>
         </Box>
 
-        {/* Checklist */}
-        <Box>
-          <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
-            Checklist
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-            {iaChecklist.map((item) => (
-              <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                {item.status === 'ok' ? (
-                  <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />
-                ) : item.status === 'warning' ? (
-                  <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />
-                ) : (
-                  <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />
-                )}
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: 13,
-                    fontWeight: item.status !== 'ok' ? 600 : 500,
-                    color: item.status === 'error' ? '#d4183d' : item.status === 'warning' ? '#b45309' : 'text.primary',
-                    lineHeight: 1.45,
-                  }}
-                >
-                  {item.texto}
-                </Typography>
-              </Box>
-            ))}
+        <Box sx={{ p: 2.5, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* Ponto de vista */}
+          <Box
+            sx={{
+              p: 1.5,
+              borderRadius: 2,
+              backgroundColor: sc.bg,
+              border: `1px solid ${sc.color}33`,
+            }}
+          >
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 12 }}>
+              {parecerRecebido ? 'Ponto de vista com base no parecer da Junta Médica' : 'Ponto de vista da IA'}
+            </Typography>
+            <Chip
+              label={pillLabel[iaSugestao] ?? iaSugestao}
+              size="small"
+              sx={{ backgroundColor: sc.bg, color: sc.color, fontWeight: 700, mb: 1 }}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 12, lineHeight: 1.5 }}>
+              {iaJustificativa}
+            </Typography>
+          </Box>
+
+          {/* Checklist */}
+          <Box>
+            <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
+              Checklist
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+              {iaChecklist.map((item) => (
+                <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                  {item.status === 'ok' ? (
+                    <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />
+                  ) : item.status === 'warning' ? (
+                    <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />
+                  ) : (
+                    <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />
+                  )}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: item.status !== 'ok' ? 600 : 500,
+                      color: item.status === 'error' ? '#d4183d' : item.status === 'warning' ? '#b45309' : 'text.primary',
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {item.texto}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+
+          {/* Alertas especiais */}
+          {pedido.alertas.includes('Liminar Judicial') && (
+            <Alert severity="warning" icon={<GavelIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
+              <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
+                Liminar Judicial Ativa
+              </Typography>
+              <Typography variant="caption">
+                A autorização pode ser mandatória por determinação judicial. Consulte o jurídico antes de negar.
+              </Typography>
+            </Alert>
+          )}
+
+          {pedido.alertas.includes('Fora do Rol ANS') && (
+            <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
+              <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
+                Fora do Rol ANS
+              </Typography>
+              <Typography variant="caption">
+                Procedimento fora da cobertura obrigatória. Avaliação crítica necessária.
+              </Typography>
+            </Alert>
+          )}
+        </Box>
+      </Card>
+
+      {/* Decisão do analista */}
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="caption" fontWeight={600} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5, display: 'block', mb: 1 }}>
+          Decisão do analista
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+            <span style={{ width: '100%' }}>
+              <Button
+                variant="contained"
+                fullWidth
+                disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
+                onClick={handleAprovarWithLoading}
+                startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
+              >
+                {loadingAprovar ? 'Processando...' : 'Aprovar'}
+              </Button>
+            </span>
+          </Tooltip>
+          <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+            <span style={{ width: '100%' }}>
+              <Button
+                variant="contained"
+                color="error"
+                fullWidth
+                disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
+                onClick={handleNegarWithLoading}
+                startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                sx={{ minHeight: 40 }}
+              >
+                {loadingNegar ? 'Processando...' : 'Negar'}
+              </Button>
+            </span>
+          </Tooltip>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
+              Pendenciar
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={onJuntaClick}
+              disabled={isGuiaFinalizada}
+              sx={{ minHeight: 36, fontSize: 12, borderColor: '#2563eb', color: '#2563eb', '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' } }}
+            >
+              Junta Médica
+            </Button>
           </Box>
         </Box>
-
-        {/* Alertas especiais */}
-        {pedido.alertas.includes('Liminar Judicial') && (
-          <Alert severity="warning" icon={<GavelIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
-            <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
-              Liminar Judicial Ativa
-            </Typography>
-            <Typography variant="caption">
-              A autorização pode ser mandatória por determinação judicial. Consulte o jurídico antes de negar.
-            </Typography>
-          </Alert>
-        )}
-
-        {pedido.alertas.includes('Fora do Rol ANS') && (
-          <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
-            <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
-              Fora do Rol ANS
-            </Typography>
-            <Typography variant="caption">
-              Procedimento fora da cobertura obrigatória. Avaliação crítica necessária.
-            </Typography>
-          </Alert>
-        )}
-
-        <Box sx={{ flex: 1 }} />
       </Box>
-
-      {/* Action buttons */}
-      <Divider />
-      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
-          <span style={{ width: '100%' }}>
-            <Button
-              variant="contained"
-              fullWidth
-              disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
-              onClick={handleAprovarWithLoading}
-              startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
-              sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
-            >
-              {loadingAprovar ? 'Processando...' : 'Aprovar'}
-            </Button>
-          </span>
-        </Tooltip>
-        <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
-          <span style={{ width: '100%' }}>
-            <Button
-              variant="contained"
-              color="error"
-              fullWidth
-              disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
-              onClick={handleNegarWithLoading}
-              startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
-              sx={{ minHeight: 40 }}
-            >
-              {loadingNegar ? 'Processando...' : 'Negar'}
-            </Button>
-          </span>
-        </Tooltip>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
-            Pendenciar
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={onJuntaClick}
-            disabled={isGuiaFinalizada}
-            sx={{ minHeight: 36, fontSize: 12, borderColor: '#2563eb', color: '#2563eb', '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' } }}
-          >
-            Junta Médica
-          </Button>
-        </Box>
-      </Box>
-    </Card>
+    </>
+  )
   )
 }
 
