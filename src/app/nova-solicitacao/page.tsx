@@ -42,6 +42,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CheckIcon from '@mui/icons-material/Check'
 import CircularProgress from '@mui/material/CircularProgress'
 import LinearProgress from '@mui/material/LinearProgress'
+import Paper from '@mui/material/Paper'
 import Tooltip from '@mui/material/Tooltip'
 import InputAdornment from '@mui/material/InputAdornment'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
@@ -78,6 +79,28 @@ interface OpmeItem { codigoTUSS: string; descricao: string; fabricante: string; 
 interface ExameItem { codigoTUSS: string; descricao: string; tipo: string; qtd: string }
 interface MaterialItem { codigo: string; descricao: string; fabricante: string; qtd: string; valor: string }
 interface Cotacao { fornecedor: string; valor: string }
+
+interface TerapiaProcedimento {
+  id: string
+  tipoTerapia: string
+  codigoTUSS: string
+  numeroSessoes: string
+  dataInicio: string
+  dataTermino: string
+  frequenciaSemanal: string
+  duracaoSessao: string
+}
+
+const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcedimento => ({
+  id: crypto.randomUUID(),
+  tipoTerapia: '',
+  codigoTUSS: '',
+  numeroSessoes: '',
+  dataInicio: base?.dataInicio ?? '',
+  dataTermino: base?.dataTermino ?? '',
+  frequenciaSemanal: '3x por semana',
+  duracaoSessao: '50',
+})
 
 interface DocUpload {
   id: string
@@ -480,6 +503,29 @@ function NovaSolicitacaoInner() {
     ...initialForm,
     tipoSolicitacao: moduloParam || '',
   })
+  // Terapias — array de procedimentos
+  const [terapiaProcedimentos, setTerapiaProcedimentos] = useState<TerapiaProcedimento[]>([newTerapiaProc()])
+
+  const handleAddTerapiaProc = () => {
+    if (terapiaProcedimentos.length >= 5) return
+    const first = terapiaProcedimentos[0]
+    setTerapiaProcedimentos(prev => [...prev, newTerapiaProc({ dataInicio: first?.dataInicio, dataTermino: first?.dataTermino })])
+  }
+
+  const handleRemoveTerapiaProc = (id: string) => {
+    if (terapiaProcedimentos.length <= 1) return
+    setTerapiaProcedimentos(prev => prev.filter(p => p.id !== id))
+  }
+
+  const handleUpdateTerapiaProc = (id: string, field: keyof Omit<TerapiaProcedimento, 'id'>, value: string) => {
+    setTerapiaProcedimentos(prev => prev.map(p => {
+      if (p.id !== id) return p
+      const updated = { ...p, [field]: value }
+      if (field === 'tipoTerapia') updated.codigoTUSS = TUSS_POR_TERAPIA[value] ?? p.codigoTUSS
+      return updated
+    }))
+  }
+
   // Docs step state
   const [docsObrigatorios, setDocsObrigatorios] = useState<DocUpload[]>([])
   const [docsAdicionais, setDocsAdicionais] = useState<DocUpload[]>([])
@@ -565,13 +611,19 @@ function NovaSolicitacaoInner() {
       return
     }
     if (currentStep === 3 && form.tipoSolicitacao === 'terapias') {
-      if (!form.numSessoes.trim()) {
-        alert('Informe o número de sessões solicitadas.')
+      if (!form.etapaAutorizacao) {
+        alert('Selecione a etapa da autorização.')
         return
       }
-      if (form.terapiaDataTermino && form.terapiaDataInicio && form.terapiaDataTermino <= form.terapiaDataInicio) {
-        alert('A data de término deve ser posterior à data de início.')
-        return
+      for (let i = 0; i < terapiaProcedimentos.length; i++) {
+        const p = terapiaProcedimentos[i]
+        const n = terapiaProcedimentos.length > 1 ? ` no Procedimento ${i + 1}` : ''
+        if (!p.tipoTerapia) { alert(`Selecione o tipo de terapia${n}.`); return }
+        if (!p.codigoTUSS.trim()) { alert(`Informe o código TUSS${n}.`); return }
+        if (!p.numeroSessoes.trim() || Number(p.numeroSessoes) <= 0) { alert(`Informe o número de sessões${n}.`); return }
+        if (!p.dataInicio) { alert(`Informe a data de início${n}.`); return }
+        if (!p.dataTermino) { alert(`Informe a data de término${n}.`); return }
+        if (p.dataTermino <= p.dataInicio) { alert(`A data de término deve ser posterior à data de início${n}.`); return }
       }
     }
     if (currentStep < 5) { setCurrentStep((s) => s + 1); return }
@@ -590,7 +642,11 @@ function NovaSolicitacaoInner() {
         if (tipo === 'oncologia') return form.protocoloQuimio || 'Protocolo oncológico'
         if (tipo === 'cirurgias') return form.procedimentos[0]?.descricao || 'Cirurgia eletiva'
         if (tipo === 'opme') return form.materiais[0]?.descricao || 'Material OPME'
-        if (tipo === 'terapias') return `${form.tipoTerapia || 'Terapia'} (${form.numSessoes || '?'} sessões)`
+        if (tipo === 'terapias') {
+          const first = terapiaProcedimentos[0]
+          if (terapiaProcedimentos.length > 1) return `${terapiaProcedimentos.length} procedimentos terapêuticos`
+          return `${first?.tipoTerapia || 'Terapia'} (${first?.numeroSessoes || '?'} sessões)`
+        }
         if (tipo === 'homecare') return `Home Care — ${form.modalidadeHomeCare || 'Modalidade não informada'}`
         return 'Procedimento solicitado'
       }
@@ -1027,124 +1083,142 @@ function NovaSolicitacaoInner() {
   )
 
   // Terapias
-  const renderTerapiasStep3 = () => {
-    const dataErro = form.terapiaDataTermino && form.terapiaDataInicio && form.terapiaDataTermino <= form.terapiaDataInicio
-    return (
-      <Box>
-        <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>Sessões de Terapia</Typography>
-        <Grid container spacing={2}>
+  const renderTerapiasStep3 = () => (
+    <Box>
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>Sessões de Terapia</Typography>
 
-          {/* Ajuste 1 — Etapa da Autorização */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Etapa da Autorização *</FieldLabel>
-            <FormControl fullWidth size="small">
-              <Select
-                value={form.etapaAutorizacao}
-                onChange={(e) => setSelect('etapaAutorizacao')(e.target.value)}
-                displayEmpty
-              >
-                <MenuItem value="" disabled><em>Selecione</em></MenuItem>
-                <MenuItem value="primeira_solicitacao">Primeira Solicitação</MenuItem>
-                <MenuItem value="continuidade">Continuidade / Renovação</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            {form.etapaAutorizacao === 'continuidade' && (
-              <Alert severity="info" sx={{ fontSize: 13 }}>
-                Renovação exige Relatório de Evolução Terapêutica emitido pelo profissional executante. Verifique o anexo na etapa Documentos.
-              </Alert>
-            )}
-          </Grid>
-
-          {/* Tipo de Terapia */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Tipo de Terapia</FieldLabel>
-            <FormControl fullWidth size="small">
-              <Select
-                value={form.tipoTerapia}
-                onChange={(e) => {
-                  const val = e.target.value
-                  setForm((f) => ({ ...f, tipoTerapia: val, codigoTuss: TUSS_POR_TERAPIA[val] ?? f.codigoTuss }))
-                }}
-              >
-                <MenuItem value="ABA / Análise do Comportamento">ABA / Análise do Comportamento</MenuItem>
-                <MenuItem value="Fisioterapia">Fisioterapia</MenuItem>
-                <MenuItem value="Fonoaudiologia">Fonoaudiologia</MenuItem>
-                <MenuItem value="Hidroterapia">Hidroterapia</MenuItem>
-                <MenuItem value="Musicoterapia">Musicoterapia</MenuItem>
-                <MenuItem value="Psicologia">Psicologia</MenuItem>
-                <MenuItem value="Equoterapia">Equoterapia</MenuItem>
-                <MenuItem value="Terapia Ocupacional">Terapia Ocupacional</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Ajuste 2 — Código TUSS */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Código TUSS *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Ex: 50000470"
-              value={form.codigoTuss}
-              onChange={set('codigoTuss')}
-              helperText="Código da Tabela TUSS para o procedimento solicitado."
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title="Verifique o código no pedido médico. O sistema sugere com base no tipo de terapia selecionado." placement="top">
-                      <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.disabled', cursor: 'default' }} />
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-
-          {/* Ajuste 4 — Nº de Sessões (obrigatório) */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Número de Sessões Solicitadas *</FieldLabel>
-            <TextField fullWidth size="small" type="number" value={form.numSessoes} onChange={set('numSessoes')} />
-          </Grid>
-
-          {/* Ajuste 3 — Período de Vigência */}
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Data de Início *</FieldLabel>
-            <TextField fullWidth size="small" type="date" value={form.terapiaDataInicio} onChange={set('terapiaDataInicio')} InputLabelProps={{ shrink: true }} />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Data de Término *</FieldLabel>
-            <TextField
-              fullWidth size="small" type="date"
-              value={form.terapiaDataTermino}
-              onChange={set('terapiaDataTermino')}
-              InputLabelProps={{ shrink: true }}
-              error={!!dataErro}
-              helperText={dataErro ? 'A data de término deve ser posterior à data de início.' : ''}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Frequência Semanal</FieldLabel>
-            <FormControl fullWidth size="small">
-              <Select value={form.frequenciaSemanal} onChange={(e) => setSelect('frequenciaSemanal')(e.target.value)}>
-                <MenuItem value="1x por semana">1x por semana</MenuItem>
-                <MenuItem value="2x por semana">2x por semana</MenuItem>
-                <MenuItem value="3x por semana">3x por semana</MenuItem>
-                <MenuItem value="5x por semana">5x por semana</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FieldLabel>Duração da Sessão (min)</FieldLabel>
-            <TextField fullWidth size="small" type="number" value={form.duracaoSessao} onChange={set('duracaoSessao')} />
-          </Grid>
-
+      {/* Etapa da Autorização — nível da solicitação */}
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <FieldLabel>Etapa da Autorização *</FieldLabel>
+          <FormControl fullWidth size="small">
+            <Select
+              value={form.etapaAutorizacao}
+              onChange={(e) => setSelect('etapaAutorizacao')(e.target.value)}
+              displayEmpty
+            >
+              <MenuItem value="" disabled><em>Selecione</em></MenuItem>
+              <MenuItem value="primeira_solicitacao">Primeira Solicitação</MenuItem>
+              <MenuItem value="continuidade">Continuidade / Renovação</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
-      </Box>
-    )
-  }
+        {form.etapaAutorizacao === 'continuidade' && (
+          <Grid size={{ xs: 12 }}>
+            <Alert severity="info" sx={{ fontSize: 13 }}>
+              Renovação exige Relatório de Evolução Terapêutica emitido pelo profissional executante. Verifique o anexo na etapa Documentos.
+            </Alert>
+          </Grid>
+        )}
+      </Grid>
+
+      {/* Cards de procedimento */}
+      {terapiaProcedimentos.map((proc, idx) => {
+        const dataErro = proc.dataTermino && proc.dataInicio && proc.dataTermino <= proc.dataInicio
+        return (
+          <Paper key={proc.id} variant="outlined" sx={{ p: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="subtitle2" fontWeight={700}>Procedimento {idx + 1}</Typography>
+              {terapiaProcedimentos.length > 1 && (
+                <IconButton size="small" color="error" onClick={() => handleRemoveTerapiaProc(proc.id)}>
+                  <DeleteOutlineIcon fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Tipo de Terapia *</FieldLabel>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={proc.tipoTerapia}
+                    onChange={(e) => handleUpdateTerapiaProc(proc.id, 'tipoTerapia', e.target.value)}
+                    displayEmpty
+                  >
+                    <MenuItem value="" disabled><em>Selecione</em></MenuItem>
+                    <MenuItem value="ABA / Análise do Comportamento">ABA / Análise do Comportamento</MenuItem>
+                    <MenuItem value="Fisioterapia">Fisioterapia</MenuItem>
+                    <MenuItem value="Fonoaudiologia">Fonoaudiologia</MenuItem>
+                    <MenuItem value="Hidroterapia">Hidroterapia</MenuItem>
+                    <MenuItem value="Musicoterapia">Musicoterapia</MenuItem>
+                    <MenuItem value="Psicologia">Psicologia</MenuItem>
+                    <MenuItem value="Equoterapia">Equoterapia</MenuItem>
+                    <MenuItem value="Terapia Ocupacional">Terapia Ocupacional</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Código TUSS *</FieldLabel>
+                <TextField
+                  fullWidth size="small"
+                  placeholder="Ex: 50000470"
+                  value={proc.codigoTUSS}
+                  onChange={(e) => handleUpdateTerapiaProc(proc.id, 'codigoTUSS', e.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title="Sugerido com base no tipo de terapia. Editável." placement="top">
+                          <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.disabled', cursor: 'default' }} />
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Nº de Sessões *</FieldLabel>
+                <TextField fullWidth size="small" type="number" value={proc.numeroSessoes} onChange={(e) => handleUpdateTerapiaProc(proc.id, 'numeroSessoes', e.target.value)} />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Data de Início *</FieldLabel>
+                <TextField fullWidth size="small" type="date" value={proc.dataInicio} onChange={(e) => handleUpdateTerapiaProc(proc.id, 'dataInicio', e.target.value)} InputLabelProps={{ shrink: true }} />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Data de Término *</FieldLabel>
+                <TextField
+                  fullWidth size="small" type="date"
+                  value={proc.dataTermino}
+                  onChange={(e) => handleUpdateTerapiaProc(proc.id, 'dataTermino', e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  error={!!dataErro}
+                  helperText={dataErro ? 'Deve ser posterior à data de início.' : ''}
+                />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Frequência Semanal</FieldLabel>
+                <FormControl fullWidth size="small">
+                  <Select value={proc.frequenciaSemanal} onChange={(e) => handleUpdateTerapiaProc(proc.id, 'frequenciaSemanal', e.target.value)}>
+                    <MenuItem value="1x por semana">1x por semana</MenuItem>
+                    <MenuItem value="2x por semana">2x por semana</MenuItem>
+                    <MenuItem value="3x por semana">3x por semana</MenuItem>
+                    <MenuItem value="5x por semana">5x por semana</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Duração da Sessão (min)</FieldLabel>
+                <TextField fullWidth size="small" type="number" value={proc.duracaoSessao} onChange={(e) => handleUpdateTerapiaProc(proc.id, 'duracaoSessao', e.target.value)} />
+              </Grid>
+            </Grid>
+          </Paper>
+        )
+      })}
+
+      <Tooltip title={terapiaProcedimentos.length >= 5 ? 'Máximo de 5 procedimentos por solicitação' : ''} placement="top">
+        <span>
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={handleAddTerapiaProc}
+            fullWidth
+            disabled={terapiaProcedimentos.length >= 5}
+            sx={{ mt: 1 }}
+          >
+            Adicionar procedimento
+          </Button>
+        </span>
+      </Tooltip>
+    </Box>
+  )
 
   // OPME
   const renderOpmeStep3 = () => (
@@ -1521,13 +1595,22 @@ function NovaSolicitacaoInner() {
               </>}
               {form.tipoSolicitacao === 'terapias' && <>
                 {rows('Etapa da Autorização', form.etapaAutorizacao === 'continuidade' ? 'Continuidade / Renovação' : form.etapaAutorizacao === 'primeira_solicitacao' ? 'Primeira Solicitação' : '—')}
-                {rows('Tipo de Terapia', form.tipoTerapia)}
-                {rows('Código TUSS', form.codigoTuss)}
-                {rows('Nº de Sessões', form.numSessoes)}
-                {rows('Data de Início', form.terapiaDataInicio)}
-                {rows('Data de Término', form.terapiaDataTermino)}
-                {rows('Frequência Semanal', form.frequenciaSemanal)}
-                {rows('Duração da Sessão', `${form.duracaoSessao} min`)}
+                {terapiaProcedimentos.map((proc, idx) => (
+                  <Box key={proc.id} sx={{ mt: 1.5, mb: 0.5 }}>
+                    {terapiaProcedimentos.length > 1 && (
+                      <Typography variant="subtitle2" sx={{ fontSize: 12, fontWeight: 700, mb: 0.5, color: 'text.secondary' }}>
+                        Procedimento {idx + 1}
+                      </Typography>
+                    )}
+                    {rows('Tipo de Terapia', proc.tipoTerapia)}
+                    {rows('Código TUSS', proc.codigoTUSS)}
+                    {rows('Nº de Sessões', proc.numeroSessoes)}
+                    {rows('Data de Início', proc.dataInicio)}
+                    {rows('Data de Término', proc.dataTermino)}
+                    {rows('Frequência Semanal', proc.frequenciaSemanal)}
+                    {rows('Duração da Sessão', `${proc.duracaoSessao} min`)}
+                  </Box>
+                ))}
               </>}
               {form.tipoSolicitacao === 'homecare' && <>
                 {rows('Modalidade', form.modalidadeHomeCare)}
