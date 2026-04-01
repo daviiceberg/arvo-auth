@@ -34,6 +34,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import SmartToyIcon from '@mui/icons-material/SmartToy'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -57,6 +58,7 @@ interface RespostaSubmissao {
   procedimento: string
   tipoDecisao: 'automatica' | 'revisao_humana'
   resultadoIA?: 'aprovada' | 'negada'
+  motivoNegacao?: string
   prioridade?: 'baixa' | 'media' | 'alta' | 'urgencia'
   slaHoras?: number
 }
@@ -562,9 +564,12 @@ function NovaSolicitacaoInner() {
         return 24
       }
 
+      const isTerapias = tipo === 'terapias'
       const resp: RespostaSubmissao = isSimples
         ? { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'automatica', resultadoIA: 'aprovada' }
-        : { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'revisao_humana', prioridade: getPrioridade(), slaHoras: getSlaHoras() }
+        : isTerapias
+          ? { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'automatica', resultadoIA: 'negada', motivoNegacao: 'Laudo médico ausente ou inválido. A cobertura de terapias especiais exige laudo atualizado (máx. 6 meses) assinado pelo médico assistente. Reenvie a solicitação com o documento.' }
+          : { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'revisao_humana', prioridade: getPrioridade(), slaHoras: getSlaHoras() }
 
       setResposta(resp)
       setSubmitting(false)
@@ -1622,10 +1627,13 @@ function NovaSolicitacaoInner() {
       >
         <DialogTitle sx={{ pb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-            <CheckCircleIcon sx={{ fontSize: 28, color: 'success.main', flexShrink: 0, mt: '2px' }} />
+            {resposta?.resultadoIA === 'negada'
+              ? <CancelIcon sx={{ fontSize: 28, color: 'error.main', flexShrink: 0, mt: '2px' }} />
+              : <CheckCircleIcon sx={{ fontSize: 28, color: 'success.main', flexShrink: 0, mt: '2px' }} />
+            }
             <Box>
               <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3 }}>
-                Solicitação enviada com sucesso
+                {resposta?.resultadoIA === 'negada' ? 'Solicitação negada automaticamente' : 'Solicitação enviada com sucesso'}
               </Typography>
               {resposta && (
                 <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', lineHeight: 1.4, display: 'block', mt: 0.25 }}>
@@ -1639,35 +1647,63 @@ function NovaSolicitacaoInner() {
         <DialogContent sx={{ pt: 0 }}>
           {resposta?.tipoDecisao === 'automatica' ? (
             <>
-              <Box sx={{ backgroundColor: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.25)', borderRadius: 2, p: 2, mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <SmartToyIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
-                  <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
-                    Decidida automaticamente pela IA
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: resposta.resultadoIA === 'aprovada' ? '#16a34a' : '#d4183d', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                      Resultado:{' '}
-                      <Box component="span" sx={{ fontWeight: 700, color: resposta.resultadoIA === 'aprovada' ? '#166534' : '#b91c1c' }}>
-                        {resposta.resultadoIA === 'aprovada' ? 'Aprovada' : 'Negada'}
-                      </Box>
+              {resposta.resultadoIA === 'negada' ? (
+                <Box sx={{ backgroundColor: 'rgba(212,24,61,0.05)', border: '1px solid rgba(212,24,61,0.25)', borderRadius: 2, p: 2, mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                    <SmartToyIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
+                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
+                      Negada automaticamente pela IA
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Sem alertas identificados</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Disponível no histórico</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#d4183d', flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        Resultado: <Box component="span" sx={{ fontWeight: 700, color: '#b91c1c' }}>Negada</Box>
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#d4183d', flexShrink: 0, mt: '4px' }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: '#b91c1c', fontWeight: 600, lineHeight: 1.5 }}>
+                        {resposta.motivoNegacao}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Disponível no histórico</Typography>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
+              ) : (
+                <Box sx={{ backgroundColor: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.25)', borderRadius: 2, p: 2, mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                    <SmartToyIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
+                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
+                      Aprovada automaticamente pela IA
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#16a34a', flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        Resultado: <Box component="span" sx={{ fontWeight: 700, color: '#166534' }}>Aprovada</Box>
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Sem alertas identificados</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Disponível no histórico</Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              )}
               <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.6 }}>
-                Esta solicitação foi processada automaticamente. Nenhuma ação adicional é necessária.
+                {resposta.resultadoIA === 'negada'
+                  ? 'Esta solicitação foi processada automaticamente. Corrija a pendência e reenvie.'
+                  : 'Esta solicitação foi processada automaticamente. Nenhuma ação adicional é necessária.'}
               </Typography>
             </>
           ) : (
