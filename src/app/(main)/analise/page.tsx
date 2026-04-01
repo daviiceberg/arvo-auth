@@ -2334,11 +2334,13 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
       </Card>
 
       {/* Decisão do analista */}
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="caption" fontWeight={600} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5, display: 'block', mb: 1 }}>
-          Decisão do analista
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Card sx={{ mt: 2, overflow: 'hidden' }}>
+        <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid rgba(0,0,0,0.07)', display: 'flex', alignItems: 'center', gap: 1, backgroundColor: 'rgba(0,0,0,0.02)' }}>
+          <Typography variant="body2" fontWeight={700} color="text.primary">
+            Decisão do analista
+          </Typography>
+        </Box>
+        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
             <span style={{ width: '100%' }}>
               <Button
@@ -2383,9 +2385,8 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
             </Button>
           </Box>
         </Box>
-      </Box>
+      </Card>
     </>
-  )
   )
 }
 
