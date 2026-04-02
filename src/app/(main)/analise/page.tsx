@@ -673,11 +673,36 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
       dutRelevantes: ['DUT 1 — Exames de rotina'],
     },
   },
+  opme_quadril: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Fev/2026', padrao: 'recurrent' },
+    leituraAssistida: 'Beneficiário com histórico ortopédico documentado. Consultas de acompanhamento em Ortopedia nos últimos 18 meses com progressão da coxartrose bilateral. Radiografias seriadas confirmam piora gradual. Indicação cirúrgica compatível com o quadro clínico registrado.',
+    consultasRecentes: { count: 6, periodo: 'últimos 12 meses', especialidades: ['Ortopedia', 'Clínica Geral', 'Anestesiologia'] },
+    procedimentosRelacionados: 'Consultas ortopédicas de acompanhamento, radiografias de quadril bilateral, sessões de fisioterapia (encerradas por falha de resposta).',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: { cid: 'M16.1', count: 4, descricao: 'Coxartrose primária unilateral' },
+    autorizacoesAnteriores: [
+      { id: 'REQ-2026-02310', procedimento: 'Fisioterapia Ortopédica', codigo: '50000470', cid: 'M16.1', data: 'Fev/2026', decisao: 'aprovado', motivo: 'Indicação clínica documentada' },
+      { id: 'REQ-2025-11847', procedimento: 'Radiografia Quadril Bilateral', codigo: '40901060', cid: 'M16.1', data: 'Nov/2025', decisao: 'aprovado', motivo: 'Acompanhamento evolutivo' },
+      { id: 'REQ-2025-08934', procedimento: 'Consulta Ortopedia', codigo: '10101012', cid: 'M16.1', data: 'Ago/2025', decisao: 'aprovado', motivo: 'Solicitação médica com indicação' },
+    ],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais: 'Sem restrições contratuais identificadas. Cobertura OPME ativa conforme contrato Premium.',
+      dutRelevantes: [
+        'DUT 45 — Artroplastia total de quadril',
+        'DUT 63 — Próteses, órteses e materiais especiais (OPME)',
+      ],
+    },
+  },
 }
 
 function getHistoricoKey(pedidoId: string): string {
   if (pedidoId === 'REQ-2026-04797') return 'high_use'
   if (pedidoId === 'REQ-2026-04801') return 'primeira_vez'
+  if (pedidoId === 'REQ-2026-04905') return 'opme_quadril'
   return 'default'
 }
 
@@ -1787,8 +1812,18 @@ function ObservacoesSection({ pedido }: { pedido: Pedido }) {
 type IACampoStatus = 'ok' | 'warning' | 'error'
 interface IAExtractionField { label: string; valor: string; status: IACampoStatus }
 
-function getIAExtractionFields(docNome: string, docTipo: string): IAExtractionField[] {
+function getIAExtractionFields(docNome: string, docTipo: string, dadosExtraidos?: import('@/data/pedidos').OrcamentoDadosExtraidos): IAExtractionField[] {
   const tipo = (docNome + docTipo).toLowerCase()
+  if ((tipo.includes('orçamento') || tipo.includes('cotação')) && dadosExtraidos) {
+    return [
+      { label: 'Fabricante', valor: dadosExtraidos.fabricante, status: 'ok' },
+      { label: 'Modelo do implante', valor: dadosExtraidos.modelo, status: 'ok' },
+      { label: 'Valor unitário', valor: `R$ ${dadosExtraidos.valorUnitario.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, status: 'ok' },
+      { label: 'Registro ANVISA', valor: dadosExtraidos.registroANVISA, status: 'ok' },
+      { label: 'Cotações apresentadas', valor: `${dadosExtraidos.numeroCotacoes} de 3 exigidas`, status: dadosExtraidos.numeroCotacoes < 3 ? 'error' : 'ok' },
+      { label: 'Observação', valor: dadosExtraidos.observacao, status: 'warning' },
+    ]
+  }
   if (tipo.includes('pedido') || tipo.includes('médico') || tipo.includes('solicitação')) {
     return [
       { label: 'Médico solicitante', valor: 'Identificado com CRM legível', status: 'ok' },
@@ -2025,7 +2060,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
             // Documento enviado — visual padrão
             const iaFields = processingId === docKey
               ? null
-              : getIAExtractionFields(doc.nome, doc.tipo)
+              : getIAExtractionFields(doc.nome, doc.tipo, doc.dadosExtraidos)
 
             return (
               <Box

@@ -93,6 +93,15 @@ export type Pedido = {
   ajustes?: Ajuste[]
 }
 
+export interface OrcamentoDadosExtraidos {
+  fabricante: string
+  modelo: string
+  valorUnitario: number
+  registroANVISA: string
+  numeroCotacoes: number
+  observacao: string
+}
+
 export interface Documento {
   id: string
   nome: string
@@ -101,6 +110,7 @@ export interface Documento {
   enviadoEm?: string
   obrigatorio: boolean
   status: 'enviado' | 'pendente'
+  dadosExtraidos?: OrcamentoDadosExtraidos
 }
 
 export const pedidos: Pedido[] = [
@@ -949,24 +959,44 @@ export const pedidos: Pedido[] = [
         dataFim: '15/04/2026',
         cid: 'M16.1',
         nivelAud: 'HOSPITALAR',
+        fabricante: 'Zimmer Biomet Brasil Ltda',
+        valorUnitario: 8750.00,
       },
     ],
     alertas: [],
-    iaSugestao: 'Aprovar',
+    iaSugestao: 'Negar',
     iaJustificativa:
-      'Artroplastia total de quadril para osteoartrose bilateral grau IV. Falha conservadora documentada (12 meses de fisioterapia e analgesia). Valor do implante dentro da tabela OPME vigente. Prestador credenciado e com histórico de cirurgias bem-sucedidas. Indicação clínica sólida com escala de dor Oxford score 14/48.',
+      'Indicação clínica sólida para artroplastia total de quadril (CID M16.1, Oxford score 14/48). Implante Zimmer Biomet Taperloc Complete, R$ 8.750,00 — dentro da tabela OPME vigente. Registro ANVISA confirmado. Bloqueio documental: apenas 2 de 3 cotações de fornecedores exigidas pela ANS foram apresentadas. Exames pré-operatórios em andamento conforme observação do solicitante.',
     iaChecklist: [
       { texto: 'Artrose grau IV confirmada em radiografia', status: 'ok' },
       { texto: 'Falha conservadora documentada por 12 meses', status: 'ok' },
-      { texto: 'Valor do implante dentro da tabela OPME', status: 'ok' },
+      { texto: 'Valor do implante dentro da tabela OPME (R$ 8.750,00)', status: 'ok' },
+      { texto: 'Registro ANVISA do implante verificado (80087830003)', status: 'ok' },
       { texto: 'Prestador credenciado', status: 'ok' },
       { texto: 'Exames pré-operatórios completos', status: 'warning' },
+      { texto: 'Cotação de fornecedores incompleta — 2 de 3 cotações exigidas', status: 'error' },
     ],
     observacoes: 'Paciente com coxartrose bilateral grau IV. Oxford Hip Score 14/48 (grave). Radiografia panorâmica confirmando perda articular total. Exames pré-op em andamento.',
     documentos: [
       { id: 'DOC-121', nome: 'Radiografia-Quadril-Bilateral.pdf', tipo: 'Exame de Imagem', tamanho: '5.8 MB', enviadoEm: '01/03/2026', obrigatorio: true, status: 'enviado' },
       { id: 'DOC-122', nome: 'Laudo-Ortopedico.pdf', tipo: 'Laudo Médico', tamanho: '780 KB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-123', nome: 'Orcamento-OPME-Quadril.pdf', tipo: 'Orçamento / Cotação', tamanho: '640 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-123',
+        nome: 'Orcamento-OPME-Quadril.pdf',
+        tipo: 'Orçamento / Cotação',
+        tamanho: '640 KB',
+        enviadoEm: '18/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+        dadosExtraidos: {
+          fabricante: 'Zimmer Biomet Brasil Ltda',
+          modelo: 'Taperloc Complete Hip System',
+          valorUnitario: 8750.00,
+          registroANVISA: '80087830003',
+          numeroCotacoes: 2,
+          observacao: 'Documento contém apenas 2 cotações. Falta cotação de fornecedor alternativo.',
+        },
+      },
     ],
   },
   {
