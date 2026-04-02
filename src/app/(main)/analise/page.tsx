@@ -16,6 +16,7 @@ import Skeleton from '@mui/material/Skeleton'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -1551,6 +1552,17 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
           Procedimentos ({procs.length})
         </Typography>
         <Table size="small">
+          <TableHead>
+            <TableRow sx={{ '& th': { borderBottom: '1px solid rgba(0,0,0,0.08)' } }}>
+              <TableCell sx={{ pl: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 120 }}>Código</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1 }}>Descrição</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 80 }}>Qtd</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, minWidth: 120 }}>Prestador</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 140 }}>Período</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1 }}>Status</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, pr: 0 }} />
+            </TableRow>
+          </TableHead>
           <TableBody>
             {procs.map((proc) => {
               const ajuste = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'quantidade')
@@ -1565,7 +1577,7 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                 >
                   <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
                     {proc.fabricante !== undefined && (
-                      <Chip label="OPME" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(217,119,6,0.12)', color: '#b45309', fontWeight: 700, mb: 0.5, display: 'block', width: 'fit-content' }} />
+                      <Chip label="OPME" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, mb: 0.5, display: 'block', width: 'fit-content' }} />
                     )}
                     {ajusteCodigo ? (
                       <Box>
@@ -1600,23 +1612,36 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                       </Box>
                     )}
                   </TableCell>
-                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}>
                     {ajuste ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
-                        <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty} ·</Typography>
-                        <Typography sx={{ fontSize: 12, color: '#b45309', fontWeight: 700 }}>Aut: {ajuste.valorNovo} ✏</Typography>
+                      <Box>
+                        <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty}</Typography>
+                        <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>Aut: {ajuste.valorNovo} ✏</Typography>
                       </Box>
                     ) : (
-                      `Qtd: ${proc.qty}${proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}`
-                    )}
-                    {ajustePrestador && (
-                      <Box sx={{ mt: 0.5 }}>
-                        <Typography sx={{ fontSize: 11, color: 'text.disabled', textDecoration: 'line-through' }}>{ajustePrestador.valorAnterior}</Typography>
-                        <Typography sx={{ fontSize: 11, color: '#b45309', fontWeight: 600 }}>✏ {ajustePrestador.valorNovo}</Typography>
-                      </Box>
+                      <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        {`Qtd: ${proc.qty}${proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}`}
+                      </Typography>
                     )}
                   </TableCell>
-                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                  <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
+                    {ajustePrestador ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 11, color: 'text.disabled', textDecoration: 'line-through', lineHeight: 1.3, display: 'block' }}>
+                          {ajustePrestador.valorAnterior}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
+                          <EditIcon sx={{ fontSize: 11, color: 'primary.main', flexShrink: 0 }} />
+                          <Typography sx={{ fontSize: 11, color: 'primary.main', fontWeight: 600, lineHeight: 1.3 }}>
+                            {ajustePrestador.valorNovo}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{p.hospital}</Typography>
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 140 }}>
                     {proc.dataInicio} → {proc.dataFim}
                   </TableCell>
                   <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
@@ -1648,7 +1673,7 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                           icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
                           label="Ajustado"
                           size="small"
-                          sx={{ backgroundColor: 'rgba(180,83,9,0.1)', color: '#b45309', fontWeight: 700, fontSize: 11, height: 20 }}
+                          sx={{ backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, fontSize: 11, height: 20 }}
                         />
                       )}
                     </Box>
@@ -1690,23 +1715,44 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
             })}
           </TableBody>
         </Table>
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-          {[
-            { label: 'Hospital / Clínica', value: p.hospital },
-            { label: 'Médico Solicitante', value: p.medico },
-            { label: 'CRM', value: p.crm },
-            { label: 'Especialidade', value: p.especialidade },
-          ].map((f) => (
-            <Box key={f.label}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
-                {f.label}
-              </Typography>
-              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
-                {f.value}
-              </Typography>
+        {(() => {
+          const prestadorAjuste = allAjustes.find(a => a.campo === 'prestador')
+          const hospitalVigente = prestadorAjuste ? prestadorAjuste.valorNovo : p.hospital
+          return (
+            <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+              <Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                  Hospital / Clínica
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{hospitalVigente}</Typography>
+                  {prestadorAjuste && (
+                    <Chip
+                      icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
+                      label="Prestador ajustado"
+                      size="small"
+                      sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.08)', color: 'primary.main' }}
+                    />
+                  )}
+                </Box>
+              </Box>
+              {[
+                { label: 'Médico Solicitante', value: p.medico },
+                { label: 'CRM', value: p.crm },
+                { label: 'Especialidade', value: p.especialidade },
+              ].map((f) => (
+                <Box key={f.label}>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                    {f.label}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                    {f.value}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
-          ))}
-        </Box>
+          )
+        })()}
       </CardContent>
     </Card>
   )
@@ -1733,16 +1779,16 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, cursor: 'pointer', userSelect: 'none' }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <EditIcon sx={{ fontSize: 15, color: '#b45309' }} />
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>
+            <EditIcon sx={{ fontSize: 15, color: 'primary.main' }} />
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'primary.main' }}>
               Ajustes Registrados ({ajustes.length})
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Typography sx={{ fontSize: 12, color: '#b45309', fontWeight: 600 }}>
+            <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 600 }}>
               {collapsed ? 'ver todos' : 'recolher'}
             </Typography>
-            <ExpandMoreIcon sx={{ fontSize: 16, color: '#b45309', transform: collapsed ? 'none' : 'rotate(180deg)', transition: 'transform 200ms' }} />
+            <ExpandMoreIcon sx={{ fontSize: 16, color: 'primary.main', transform: collapsed ? 'none' : 'rotate(180deg)', transition: 'transform 200ms' }} />
           </Box>
         </Box>
         <Collapse in={!collapsed}>
@@ -1754,7 +1800,7 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
               >
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.75 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                    <EditIcon sx={{ fontSize: 13, color: '#b45309' }} />
+                    <EditIcon sx={{ fontSize: 13, color: 'primary.main' }} />
                     <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{campoLabel[aj.campo]}</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, flexShrink: 0, ml: 1 }}>
@@ -1768,7 +1814,7 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>De:</Typography>
                   <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.valorAnterior}</Typography>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>→ Para:</Typography>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>{aj.valorNovo}</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'primary.main' }}>{aj.valorNovo}</Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25 }}>
                   Motivo: {aj.motivo}
