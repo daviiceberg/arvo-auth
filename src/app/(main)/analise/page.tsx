@@ -33,6 +33,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Collapse from '@mui/material/Collapse'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
@@ -70,6 +71,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 import { pedidos, Pedido, IASugestao, OrigemPedido, Ajuste, Documento } from '@/data/pedidos'
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -1105,31 +1108,48 @@ function formatAjusteTimestamp(ts: string): string {
 }
 
 // ── Ajuste Drawer ──────────────────────────────────────────────────────
+const MOTIVOS_AJUSTE_OPME_VALOR = [
+  'Valor acima da tabela de referência OPME',
+  'Divergência entre cotações',
+  'Material substituto aprovado',
+]
+
 interface AjusteDrawerProps {
   open: boolean
   pedidoId: string
   pedidoStatus: string
   existingAjustes?: Ajuste[]
-  proc: { codigo: string; descricao: string; qty: number; prestador: string } | null
+  proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number } | null
   onClose: () => void
   onConfirm: (ajuste: Omit<Ajuste, 'id'>) => void
 }
 
 function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, existingAjustes = [] }: AjusteDrawerProps) {
-  const [campo, setCampo] = useState<'quantidade' | 'prestador' | 'codigo' | ''>('')
+  const [campo, setCampo] = useState<'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | ''>('')
   const [novaQty, setNovaQty] = useState('')
   const [novoPrestador, setNovoPrestador] = useState('')
   const [novoCNES, setNovoCNES] = useState('')
   const [novoCodigo, setNovoCodigo] = useState('')
   const [novaDesc, setNovaDesc] = useState('')
+  const [novoFabricante, setNovoFabricante] = useState('')
+  const [novoValor, setNovoValor] = useState('')
   const [motivo, setMotivo] = useState('')
   const [fundamentacao, setFundamentacao] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const camposDisponiveis =
-    USER_PERFIL === 'Gestor'
-      ? [{ value: 'quantidade', label: 'Quantidade autorizada' }, { value: 'prestador', label: 'Prestador executante' }, { value: 'codigo', label: 'Código do procedimento' }]
-      : [{ value: 'quantidade', label: 'Quantidade autorizada' }]
+  const isOpme = proc?.fabricante !== undefined
+
+  const camposBase = USER_PERFIL === 'Gestor'
+    ? [{ value: 'quantidade', label: 'Quantidade autorizada' }, { value: 'prestador', label: 'Prestador executante' }, { value: 'codigo', label: 'Código do procedimento' }]
+    : [{ value: 'quantidade', label: 'Quantidade autorizada' }]
+
+  const camposDisponiveis = isOpme
+    ? [...camposBase, { value: 'fabricante', label: 'Fabricante' }, { value: 'valorUnitario', label: 'Valor unitário' }]
+    : camposBase
+
+  const motivosDisponiveis = campo === 'valorUnitario'
+    ? [...MOTIVOS_AJUSTE, ...MOTIVOS_AJUSTE_OPME_VALOR]
+    : MOTIVOS_AJUSTE
 
   const qtyNum = parseInt(novaQty, 10)
   const qtyStatus =
@@ -1190,6 +1210,11 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
       if (!novoCodigo.trim()) errs.novoCodigo = 'Informe o novo código'
       if (!novaDesc.trim()) errs.novaDesc = 'Informe a nova descrição'
     }
+    if (campo === 'fabricante' && !novoFabricante.trim()) errs.novoFabricante = 'Informe o novo fabricante'
+    if (campo === 'valorUnitario') {
+      const v = parseFloat(novoValor)
+      if (!novoValor || isNaN(v) || v <= 0) errs.novoValor = 'Informe um valor válido (> 0)'
+    }
     if (!motivo) errs.motivo = 'Selecione o motivo'
     if (motivo === 'Outro (descrever na fundamentação)' && !fundamentacao.trim()) errs.fundamentacao = 'Fundamentação obrigatória quando motivo é "Outro"'
     return errs
@@ -1205,11 +1230,16 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
     if (campo === 'quantidade') { valorAnterior = String(proc.qty); valorNovo = novaQty }
     if (campo === 'prestador') { valorAnterior = proc.prestador; valorNovo = novoCNES ? `${novoPrestador} (CNES: ${novoCNES})` : novoPrestador }
     if (campo === 'codigo') { valorAnterior = proc.codigo; valorNovo = `${novoCodigo} — ${novaDesc}` }
+    if (campo === 'fabricante') { valorAnterior = proc.fabricante ?? ''; valorNovo = novoFabricante }
+    if (campo === 'valorUnitario') {
+      valorAnterior = proc.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'
+      valorNovo = parseFloat(novoValor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+    }
 
     onConfirm({
       procedimentoCodigo: proc.codigo,
       procedimentoDescricao: proc.descricao,
-      campo: campo as 'quantidade' | 'prestador' | 'codigo',
+      campo: campo as Ajuste['campo'],
       valorAnterior,
       valorNovo,
       motivo,
@@ -1260,8 +1290,12 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
           {[
             { label: 'Código', value: proc?.codigo },
             { label: 'Descrição', value: proc?.descricao },
-            { label: 'Qtd. Solicitada', value: proc ? `${proc.qty} sessões` : '' },
+            { label: 'Qtd. Solicitada', value: proc ? `${proc.qty}${isOpme ? ' unidade' : ' sessões'}` : '' },
             { label: 'Prestador', value: proc?.prestador },
+            ...(isOpme ? [
+              { label: 'Fabricante', value: proc?.fabricante || '—' },
+              { label: 'Valor Unitário', value: proc?.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—' },
+            ] : []),
           ].map((f) => (
             <Box key={f.label} sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, width: 110, flexShrink: 0 }}>{f.label}:</Typography>
@@ -1372,11 +1406,57 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
             </Box>
           )}
 
+          {/* Fabricante */}
+          {campo === 'fabricante' && (
+            <Box sx={{ mb: 2 }}>
+              <TextField size="small" label="Fabricante atual" value={proc?.fabricante ?? '—'} disabled fullWidth sx={{ mb: 1.5 }} />
+              <TextField
+                size="small"
+                label="Novo fabricante *"
+                value={novoFabricante}
+                onChange={e => { setNovoFabricante(e.target.value); setErrors(v => ({ ...v, novoFabricante: '' })) }}
+                placeholder="Nome do fabricante"
+                error={!!errors.novoFabricante}
+                helperText={errors.novoFabricante}
+                fullWidth
+              />
+            </Box>
+          )}
+
+          {/* Valor unitário */}
+          {campo === 'valorUnitario' && (
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                size="small"
+                label="Valor atual"
+                value={proc?.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}
+                disabled
+                fullWidth
+                sx={{ mb: 1.5 }}
+              />
+              <TextField
+                size="small"
+                label="Novo valor unitário *"
+                type="number"
+                value={novoValor}
+                onChange={e => { setNovoValor(e.target.value); setErrors(v => ({ ...v, novoValor: '' })) }}
+                placeholder="0,00"
+                error={!!errors.novoValor}
+                helperText={errors.novoValor}
+                fullWidth
+                InputProps={{
+                  startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  inputProps: { min: 0.01, step: '0.01' },
+                }}
+              />
+            </Box>
+          )}
+
           {/* Motivo */}
           <FormControl fullWidth size="small" sx={{ mb: errors.motivo ? 0.5 : 2 }} error={!!errors.motivo}>
             <InputLabel>Motivo do ajuste *</InputLabel>
             <Select value={motivo} label="Motivo do ajuste *" onChange={e => { setMotivo(e.target.value); setErrors(v => ({ ...v, motivo: '' })) }}>
-              {MOTIVOS_AJUSTE.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
+              {motivosDisponiveis.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
             </Select>
             {errors.motivo && <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.motivo}</Typography>}
           </FormControl>
@@ -1395,9 +1475,15 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
         </Box>
 
         {/* Aviso auditoria */}
-        <Alert severity="warning" icon={<WarningAmberIcon sx={{ fontSize: 16 }} />} sx={{ fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
-          Este ajuste será registrado no histórico da guia com seu nome e data/hora.
-        </Alert>
+        {campo === 'valorUnitario' ? (
+          <Alert severity="warning" icon={<WarningAmberIcon sx={{ fontSize: 16 }} />} sx={{ fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
+            Ajustes de valor OPME são auditáveis e exigem fundamentação. O novo valor será registrado com seu nome, data/hora e motivo.
+          </Alert>
+        ) : (
+          <Alert severity="warning" icon={<WarningAmberIcon sx={{ fontSize: 16 }} />} sx={{ fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
+            Este ajuste será registrado no histórico da guia com seu nome e data/hora.
+          </Alert>
+        )}
       </Box>
 
       {/* Footer */}
@@ -1410,7 +1496,7 @@ function AjusteDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, 
           fullWidth
           onClick={handleConfirm}
           disabled={isGuiaFinalizada}
-          sx={{ fontWeight: 600, backgroundColor: '#b45309', '&:hover': { backgroundColor: '#92400e' } }}
+          sx={{ fontWeight: 600, backgroundColor: '#902B29', '&:hover': { backgroundColor: '#6e1f1d' } }}
         >
           Confirmar Ajuste
         </Button>
@@ -1425,7 +1511,7 @@ type ProcDecisao = 'aprovado' | 'negado' | 'pendente'
 interface ProcedimentosSectionProps {
   pedido: Pedido
   allAjustes: Ajuste[]
-  onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string }) => void
+  onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number }) => void
 }
 
 function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: ProcedimentosSectionProps) {
@@ -1453,6 +1539,9 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                   sx={{ cursor: 'default', '& td': { borderBottom: procs.indexOf(proc) < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none' }, '&:not(:first-of-type) td': { pt: 2 }, '&:hover': { backgroundColor: 'transparent' } }}
                 >
                   <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
+                    {proc.fabricante !== undefined && (
+                      <Chip label="OPME" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(217,119,6,0.12)', color: '#b45309', fontWeight: 700, mb: 0.5, display: 'block', width: 'fit-content' }} />
+                    )}
                     {ajusteCodigo ? (
                       <Box>
                         <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.codigo}</Typography>
@@ -1467,6 +1556,24 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                         <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[1] ?? ajusteCodigo.valorNovo}</Typography>
                       </Box>
                     ) : proc.descricao}
+                    {(proc.fabricante || proc.valorUnitario) && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
+                        {proc.fabricante && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <BusinessOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>{proc.fabricante}</Typography>
+                          </Box>
+                        )}
+                        {proc.valorUnitario ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <MonetizationOnOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.primary" sx={{ fontSize: 12, fontWeight: 600 }}>
+                              {proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </Typography>
+                          </Box>
+                        ) : null}
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
                     {ajuste ? (
@@ -1542,8 +1649,8 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
                           size="small"
                           variant="outlined"
                           startIcon={<EditIcon sx={{ fontSize: 12 }} />}
-                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital })}
-                          sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#b45309', color: '#b45309', backgroundColor: 'rgba(180,83,9,0.04)' } }}
+                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario })}
+                          sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#902B29', color: '#902B29', backgroundColor: 'rgba(144,43,41,0.04)' } }}
                         >
                           Ajustar
                         </Button>
@@ -1589,6 +1696,8 @@ function AjustesRegistradosSection({ ajustes }: { ajustes: Ajuste[] }) {
     quantidade: 'Qtd. autorizada alterada',
     prestador: 'Prestador executante alterado',
     codigo: 'Código do procedimento alterado',
+    fabricante: 'Fabricante alterado',
+    valorUnitario: 'Valor unitário alterado',
   }
 
   return (
@@ -1826,7 +1935,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
             <Button
               size="small"
               variant="outlined"
-              color="warning"
+              color="primary"
               startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
               onClick={() => setShowSolicitarModal(true)}
               sx={{ fontSize: 12, py: 0.4 }}
@@ -1865,7 +1974,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
               <Button
                 size="small"
                 variant="outlined"
-                color="warning"
+                color="primary"
                 startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
                 onClick={() => setShowSolicitarModal(true)}
                 sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
@@ -1904,7 +2013,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
                       variant="outlined"
                       startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
                       onClick={() => setShowAddModal(true)}
-                      sx={{ fontSize: 12, borderColor: '#f59e0b', color: '#b45309', '&:hover': { borderColor: '#b45309', backgroundColor: 'rgba(245,158,11,0.06)' } }}
+                      sx={{ fontSize: 12, borderColor: '#902B29', color: '#902B29', '&:hover': { borderColor: '#6e1f1d', backgroundColor: 'rgba(144,43,41,0.04)' } }}
                     >
                       Adicionar documento
                     </Button>
@@ -2156,7 +2265,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
           <Button variant="outlined" onClick={() => setShowSolicitarModal(false)}>Cancelar</Button>
           <Button
             variant="contained"
-            color="warning"
+            color="primary"
             disabled={solicitarDocs.length === 0}
             onClick={() => {
               setShowSolicitarModal(false)
@@ -2164,7 +2273,7 @@ function DocumentosSection({ pedido }: { pedido: Pedido }) {
               setSolicitarMensagem('')
               setToast('Solicitação enviada — pedido pendenciado aguardando documentação')
             }}
-            sx={{ backgroundColor: '#b45309', '&:hover': { backgroundColor: '#92400e' } }}
+            sx={{ backgroundColor: '#902B29', '&:hover': { backgroundColor: '#6e1f1d' } }}
           >
             Pendenciar e Notificar
           </Button>
@@ -2331,8 +2440,8 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
   const anyPendente = decisoes.some(d => d === 'pendente')
   const allAprovado = nAprovado === pedido.procedimentos.length
   const allNegado = nNegado === pedido.procedimentos.length
-  const confirmarBtnColor = allAprovado ? '#16a34a' : allNegado ? '#d4183d' : '#b45309'
-  const confirmarBtnHover = allAprovado ? '#15803d' : allNegado ? '#b91c1c' : '#92400e'
+  const confirmarBtnColor = allAprovado ? '#16a34a' : allNegado ? '#d4183d' : '#902B29'
+  const confirmarBtnHover = allAprovado ? '#15803d' : allNegado ? '#b91c1c' : '#6e1f1d'
   const confirmarPreview = allAprovado
     ? 'Todos os procedimentos serão aprovados'
     : allNegado
@@ -2423,7 +2532,21 @@ function AssistenteSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarC
               },
             ] : []
 
-            const allItems = [...iaChecklist, ...extraContinuidadeItems]
+            // Extra checklist items for OPME with valorUnitario
+            const isOpme = pedido.categoria === 'OPME'
+            const opmeProcsComValor = pedido.procedimentos.filter(p => p.fabricante !== undefined)
+            const extraOpmeItems: Array<{ texto: string; status: 'ok' | 'warning' | 'error' }> = isOpme && opmeProcsComValor.length > 0
+              ? opmeProcsComValor.map(p => {
+                  if (!p.valorUnitario) return { texto: 'Valor unitário não informado — obrigatório para OPME', status: 'error' as const }
+                  // Heuristic: if iaChecklist already has an 'error' about valor, mark as warning (above reference), else ok
+                  const valorAlertaExistente = iaChecklist.some(c => c.status === 'error' && c.texto.toLowerCase().includes('valor'))
+                  return valorAlertaExistente
+                    ? { texto: 'Valor unitário não verificado — conferir tabela de referência da operadora', status: 'warning' as const }
+                    : { texto: 'Valor unitário dentro da referência contratual', status: 'ok' as const }
+                })
+              : []
+
+            const allItems = [...iaChecklist, ...extraContinuidadeItems, ...extraOpmeItems]
 
             return (
               <Box>
@@ -2683,13 +2806,13 @@ function AnaliseInner() {
 
   // Ajuste state
   const [ajusteDrawerOpen, setAjusteDrawerOpen] = useState(false)
-  const [ajusteDrawerProc, setAjusteDrawerProc] = useState<{ codigo: string; descricao: string; qty: number; prestador: string } | null>(null)
+  const [ajusteDrawerProc, setAjusteDrawerProc] = useState<{ codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number } | null>(null)
   const [localAjustes, setLocalAjustes] = useState<Ajuste[]>([])
   const [showAjusteAprovarConfirm, setShowAjusteAprovarConfirm] = useState(false)
 
   const allAjustes: Ajuste[] = [...(pedido.ajustes ?? []), ...localAjustes]
 
-  const handleAjustarClick = (proc: { codigo: string; descricao: string; qty: number; prestador: string }) => {
+  const handleAjustarClick = (proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number }) => {
     setAjusteDrawerProc(proc)
     setAjusteDrawerOpen(true)
   }
@@ -2700,6 +2823,8 @@ function AnaliseInner() {
     setAjusteDrawerOpen(false)
     const campoLabel = ajuste.campo === 'quantidade' ? `Qtd. autorizada alterada de ${ajuste.valorAnterior} para ${ajuste.valorNovo}`
       : ajuste.campo === 'prestador' ? `Prestador alterado para ${ajuste.valorNovo}`
+      : ajuste.campo === 'fabricante' ? `Fabricante alterado para ${ajuste.valorNovo}`
+      : ajuste.campo === 'valorUnitario' ? `Valor unitário alterado para ${ajuste.valorNovo}`
       : `Código alterado para ${ajuste.valorNovo}`
     setSnackbar({ open: true, msg: `✓ Ajuste registrado — ${campoLabel}`, severity: 'warning' })
   }

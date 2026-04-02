@@ -1112,20 +1112,22 @@ function NovaSolicitacaoInner() {
         )}
       </Grid>
 
-      {/* Cards de procedimento */}
+      {/* Procedimentos */}
       {terapiaProcedimentos.map((proc, idx) => {
         const dataErro = proc.dataTermino && proc.dataInicio && proc.dataTermino <= proc.dataInicio
         return (
-          <Paper key={proc.id} variant="outlined" sx={{ p: 2, mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="subtitle2" fontWeight={700}>Procedimento {idx + 1}</Typography>
+          <Box key={proc.id} sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'transparent', mb: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, pt: 2, pb: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                {terapiaProcedimentos.length > 1 ? `Procedimento ${idx + 1}` : 'Procedimento'}
+              </Typography>
               {terapiaProcedimentos.length > 1 && (
                 <IconButton size="small" color="error" onClick={() => handleRemoveTerapiaProc(proc.id)}>
                   <DeleteOutlineIcon fontSize="small" />
                 </IconButton>
               )}
             </Box>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{ px: 2, pb: 2 }}>
               <Grid size={{ xs: 6 }}>
                 <FieldLabel>Tipo de Terapia *</FieldLabel>
                 <FormControl fullWidth size="small">
@@ -1199,21 +1201,28 @@ function NovaSolicitacaoInner() {
                 <TextField fullWidth size="small" type="number" value={proc.duracaoSessao} onChange={(e) => handleUpdateTerapiaProc(proc.id, 'duracaoSessao', e.target.value)} />
               </Grid>
             </Grid>
-          </Paper>
+          </Box>
         )
       })}
 
       <Tooltip title={terapiaProcedimentos.length >= 5 ? 'Máximo de 5 procedimentos por solicitação' : ''} placement="top">
         <span>
           <Button
-            variant="outlined"
+            variant="text"
             startIcon={<AddIcon />}
             onClick={handleAddTerapiaProc}
-            fullWidth
             disabled={terapiaProcedimentos.length >= 5}
-            sx={{ mt: 1 }}
+            sx={{
+              color: 'error.main',
+              fontWeight: 600,
+              fontSize: 13,
+              p: '4px 5px',
+              justifyContent: 'flex-start',
+              '& .MuiButton-startIcon': { color: 'error.main' },
+              '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+            }}
           >
-            Adicionar procedimento
+            Adicionar Procedimento
           </Button>
         </span>
       </Tooltip>
@@ -1922,7 +1931,7 @@ function NovaSolicitacaoInner() {
             <>
               <Box sx={{ backgroundColor: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: 2, p: 2, mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <WarningAmberIcon sx={{ fontSize: 18, color: 'warning.main' }} />
+                  <WarningAmberIcon sx={{ fontSize: 18, color: '#f59e0b' }} />
                   <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
                     Requer avaliação do operador
                   </Typography>

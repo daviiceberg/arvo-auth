@@ -30,13 +30,15 @@ export type Procedimento = {
   dataFim: string
   cid: string
   nivelAud: NivelAuditoria
+  fabricante?: string
+  valorUnitario?: number
 }
 
 export interface Ajuste {
   id: string
   procedimentoCodigo: string
   procedimentoDescricao: string
-  campo: 'quantidade' | 'prestador' | 'codigo'
+  campo: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario'
   valorAnterior: string
   valorNovo: string
   motivo: string
@@ -363,6 +365,8 @@ export const pedidos: Pedido[] = [
         dataFim: '05/04/2026',
         cid: 'M51.1',
         nivelAud: 'HOSPITALAR',
+        fabricante: 'Synthes Brasil Ltda',
+        valorUnitario: 4850.00,
       },
       {
         codigo: '30603010',
