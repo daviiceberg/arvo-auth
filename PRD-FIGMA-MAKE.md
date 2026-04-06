@@ -25,7 +25,7 @@
 
 | Token | Valor | Uso |
 |---|---|---|
-| `primary.main` | `#902B29` | Cor institucional Athena, botões primários, estados ativos, ícones de destaque |
+| `primary.main` | `#902B29` | Cor institucional Arvo, botões primários, estados ativos, ícones de destaque |
 | `primary.dark` | `#6e1f1d` | Hover do primary |
 | `primary.contrastText` | `#ffffff` | Texto sobre primary |
 | `error.main` | `#d4183d` | Erros, negações, SLA violado |

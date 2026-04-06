@@ -19,5 +19,5 @@ O projeto possui um tema MUI central que define os padrões visuais globais. **N
 - **Botões (`Button`)**: nunca adicionar `borderRadius` no `sx`. O tema já aplica `6px`. Usar apenas `fontWeight`, `px`, `color`, etc.
 - **Cards**: usar as propriedades padrão do tema. Não duplicar `border` ou `borderRadius` no `sx` a menos que seja uma exceção visual específica.
 - **Inputs/Selects**: não sobrescrever `borderRadius`. O tema aplica `6px` globalmente via `MuiOutlinedInput`.
-- **Cores primárias**: `#902B29` (vermelho Athena). Usar `primary.main` via tema sempre que possível.
+- **Cores primárias**: `#902B29` (vermelho Arvo). Usar `primary.main` via tema sempre que possível.
 - **Consistência**: toda nova página ou componente deve seguir os padrões acima. Ao replicar funcionalidades de outros projetos, adaptar os estilos ao tema deste sistema.

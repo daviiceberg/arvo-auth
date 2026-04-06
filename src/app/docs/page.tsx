@@ -286,7 +286,7 @@ function DesignSystemContent() {
       <DSSection>
         <SectionTitle>Paleta de Cores</SectionTitle>
         <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75, mb: 3 }}>
-          O sistema usa duas categorias de cor: <strong>identidade visual</strong> (vermelho Athena — ações, botões,
+          O sistema usa duas categorias de cor: <strong>identidade visual</strong> (vermelho Arvo — ações, botões,
           links interativos) e <strong>semântica de status</strong> (âmbar, verde, vermelho-alerta, azul, roxo —
           cada um com significado operacional fixo). Nunca trocar as cores semânticas por identidade visual.
         </Typography>
