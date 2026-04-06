@@ -25,8 +25,8 @@ function SimpleTable({ headers, rows }: { headers: string[]; rows: string[][] })
     <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, mt: 1.5, mb: 1 }}>
       <Box component="thead">
         <Box component="tr">
-          {headers.map((h) => (
-            <Box key={h} component="th" sx={{ textAlign: 'left', fontWeight: 700, py: 1, px: 1.5, backgroundColor: '#F0F0F0', borderBottom: '1px solid rgba(0,0,0,0.1)', color: '#1a1a1a' }}>
+          {headers.map((h, hi) => (
+            <Box key={`${h}-${hi}`} component="th" sx={{ textAlign: 'left', fontWeight: 700, py: 1, px: 1.5, backgroundColor: '#F0F0F0', borderBottom: '1px solid rgba(0,0,0,0.1)', color: '#1a1a1a' }}>
               {h}
             </Box>
           ))}
