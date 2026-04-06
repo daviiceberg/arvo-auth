@@ -1,3 +1,16 @@
+export type StatusProcessamento = 'aguardando_processamento' | 'em_processamento' | 'erro_processamento' | 'processado'
+
+export type PedidoEmProcessamento = {
+  id: string
+  statusProcessamento: Exclude<StatusProcessamento, 'processado'>
+  origem: OrigemPedido
+  beneficiario: string
+  plano: string
+  categoria: Categoria
+  entradaEm: Date
+  erroDescricao?: string
+}
+
 export type StatusGuia = 'Em Análise' | 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Pendente' | 'Devolutiva'
 export type SubStatus =
   | 'PENDENTE_AGUARDANDO'
@@ -5,7 +18,7 @@ export type SubStatus =
   | 'JUNTA_AGUARDANDO'
   | 'JUNTA_PARECER_RECEBIDO'
 export type TipoGuia = 'Eleitiva' | 'Urgente' | 'Emergência'
-export type OrigemPedido = 'app' | 'whatsapp' | 'email' | 'prestador'
+export type OrigemPedido = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center'
 export type NivelAuditoria = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI'
 export type SLAStatus = 'ok' | 'warning' | 'violated'
 export type IASugestao = 'Aprovar' | 'Negar' | 'Junta Médica'
@@ -2079,6 +2092,119 @@ export const historicoEntries: HistoricoEntry[] = [
     documentos: [
       { nome: 'Laudo Neuropsicológico — HIS-2026-0042.pdf', tipo: 'Laudo Médico', data: '01/04/2026 10:15' },
     ],
+  },
+]
+
+// ── Processing queue (not yet in operational queue) ──────────────────────
+export const pedidosEmProcessamento: PedidoEmProcessamento[] = [
+  {
+    id: 'REQ-2026-05008',
+    statusProcessamento: 'em_processamento',
+    origem: 'prestador',
+    beneficiario: 'Juliana Martins Costa',
+    plano: 'Premium Familiar',
+    categoria: 'Terapias Especiais',
+    entradaEm: new Date(Date.now() - 1 * 60000),
+  },
+  {
+    id: 'REQ-2026-05007',
+    statusProcessamento: 'em_processamento',
+    origem: 'app',
+    beneficiario: 'Marcos Vinicius Almeida',
+    plano: 'Gold',
+    categoria: 'Oncologia',
+    entradaEm: new Date(Date.now() - 2 * 60000),
+  },
+  {
+    id: 'REQ-2026-05003',
+    statusProcessamento: 'em_processamento',
+    origem: 'prestador',
+    beneficiario: 'Ana Lucia Ferraz',
+    plano: 'Premium',
+    categoria: 'Oncologia',
+    entradaEm: new Date(Date.now() - 3 * 60000),
+  },
+  {
+    id: 'REQ-2026-05010',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'whatsapp',
+    beneficiario: 'Patrícia Souza Lima',
+    plano: 'Premium Familiar',
+    categoria: 'OPME',
+    entradaEm: new Date(Date.now() - 5 * 60000),
+  },
+  {
+    id: 'REQ-2026-05009',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'email',
+    beneficiario: 'Fernando Gomes Neto',
+    plano: 'Básico',
+    categoria: 'Internação',
+    entradaEm: new Date(Date.now() - 7 * 60000),
+  },
+  {
+    id: 'REQ-2026-05001',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'email',
+    beneficiario: 'Fernanda Castro Lima',
+    plano: 'Premium Familiar',
+    categoria: 'Terapias Especiais',
+    entradaEm: new Date(Date.now() - 8 * 60000),
+  },
+  {
+    id: 'REQ-2026-05006',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'call_center',
+    beneficiario: 'Beatriz Oliveira Ramos',
+    plano: 'Gold',
+    categoria: 'Cirurgias Eletivas',
+    entradaEm: new Date(Date.now() - 12 * 60000),
+  },
+  {
+    id: 'REQ-2026-05005',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'app',
+    beneficiario: 'Diego Ferreira Santos',
+    plano: 'Premium',
+    categoria: 'Exames Alta Complexidade',
+    entradaEm: new Date(Date.now() - 15 * 60000),
+  },
+  {
+    id: 'REQ-2026-05002',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'whatsapp',
+    beneficiario: 'Carlos Augusto Mendes',
+    plano: 'Gold',
+    categoria: 'OPME',
+    entradaEm: new Date(Date.now() - 22 * 60000),
+  },
+  {
+    id: 'REQ-2026-05011',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'prestador',
+    beneficiario: 'Camila Torres Braga',
+    plano: 'Básico',
+    categoria: 'Urgência/Emergência',
+    entradaEm: new Date(Date.now() - 28 * 60000),
+  },
+  {
+    id: 'REQ-2026-05012',
+    statusProcessamento: 'aguardando_processamento',
+    origem: 'email',
+    beneficiario: 'Ricardo Pinheiro Luz',
+    plano: 'Premium Familiar',
+    categoria: 'Internação',
+    entradaEm: new Date(Date.now() - 35 * 60000),
+  },
+  {
+    id: 'REQ-2026-05004',
+    statusProcessamento: 'erro_processamento',
+    origem: 'email',
+    beneficiario: 'Roberto Silva Neto',
+    plano: 'Gold',
+    categoria: 'Internação',
+    entradaEm: new Date(Date.now() - 45 * 60000),
+    erroDescricao: 'PDF corrompido — não foi possível extrair documentos',
   },
 ]
 

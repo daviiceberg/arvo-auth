@@ -33,10 +33,8 @@ import AttachFileIcon from '@mui/icons-material/AttachFile'
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
-import CancelIcon from '@mui/icons-material/Cancel'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CheckIcon from '@mui/icons-material/Check'
@@ -47,7 +45,6 @@ import Tooltip from '@mui/material/Tooltip'
 import InputAdornment from '@mui/material/InputAdornment'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import { ThemeProvider } from '@mui/material/styles'
@@ -55,24 +52,6 @@ import theme from '@/theme'
 
 // ── Types ────────────────────────────────────────────────────────────
 type ModuloType = 'internacao' | 'urgencia' | 'oncologia' | 'terapias' | 'opme' | 'exames' | 'cirurgias' | 'homecare'
-
-interface RespostaSubmissao {
-  id: string
-  beneficiario: string
-  procedimento: string
-  tipoDecisao: 'automatica' | 'revisao_humana'
-  resultadoIA?: 'aprovada' | 'negada'
-  motivoNegacao?: string
-  prioridade?: 'baixa' | 'media' | 'alta' | 'urgencia'
-  slaHoras?: number
-}
-
-const PRIORIDADE_CONFIG: Record<NonNullable<RespostaSubmissao['prioridade']>, { label: string; color: string; bg: string }> = {
-  urgencia: { label: 'Urgência', color: '#d4183d', bg: 'rgba(212,24,61,0.10)' },
-  alta:     { label: 'Alta',     color: '#b45309', bg: 'rgba(180,83,9,0.10)'  },
-  media:    { label: 'Média',    color: '#1a5fa0', bg: 'rgba(37,99,235,0.10)' },
-  baixa:    { label: 'Baixa',   color: '#166534', bg: 'rgba(22,163,74,0.10)' },
-}
 
 interface ProcedimentoItem { codigoTUSS: string; descricao: string; qtd: string }
 interface OpmeItem { codigoTUSS: string; descricao: string; fabricante: string; qtd: string; valorUnit: string }
@@ -498,7 +477,7 @@ function NovaSolicitacaoInner() {
   const [rotation, setRotation] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [modalAberto, setModalAberto] = useState(false)
-  const [resposta, setResposta] = useState<RespostaSubmissao | null>(null)
+  const [numeroProtocolo, setNumeroProtocolo] = useState<string>('')
   const [form, setForm] = useState<FormData>({
     ...initialForm,
     tipoSolicitacao: moduloParam || '',
@@ -595,7 +574,7 @@ function NovaSolicitacaoInner() {
 
   const handleNovaSolicitacao = () => {
     setModalAberto(false)
-    setResposta(null)
+    setNumeroProtocolo('')
     setSubmitting(false)
     setCurrentStep(0)
     setUploadState('idle')
@@ -631,48 +610,8 @@ function NovaSolicitacaoInner() {
     // Step 5 — submit
     setSubmitting(true)
     setTimeout(() => {
-      const tipo = form.tipoSolicitacao as ModuloType
-      const isSimples = tipo === 'exames'
       const id = `REQ-2026-${String(50000 + Math.floor(Math.random() * 49999)).padStart(5, '0')}`
-
-      const getProcedimento = (): string => {
-        if (tipo === 'exames') return form.exames[0]?.descricao || 'Exame solicitado'
-        if (tipo === 'internacao') return `Internação — ${form.tipoAcomodacao || 'Hospitalar'}`
-        if (tipo === 'urgencia') return 'Atendimento de Urgência/Emergência'
-        if (tipo === 'oncologia') return form.protocoloQuimio || 'Protocolo oncológico'
-        if (tipo === 'cirurgias') return form.procedimentos[0]?.descricao || 'Cirurgia eletiva'
-        if (tipo === 'opme') return form.materiais[0]?.descricao || 'Material OPME'
-        if (tipo === 'terapias') {
-          const first = terapiaProcedimentos[0]
-          if (terapiaProcedimentos.length > 1) return `${terapiaProcedimentos.length} procedimentos terapêuticos`
-          return `${first?.tipoTerapia || 'Terapia'} (${first?.numeroSessoes || '?'} sessões)`
-        }
-        if (tipo === 'homecare') return `Home Care — ${form.modalidadeHomeCare || 'Modalidade não informada'}`
-        return 'Procedimento solicitado'
-      }
-
-      const getPrioridade = (): RespostaSubmissao['prioridade'] => {
-        if (tipo === 'urgencia') return 'urgencia'
-        if (['oncologia', 'opme', 'internacao'].includes(tipo)) return 'alta'
-        if (['cirurgias', 'terapias'].includes(tipo)) return 'media'
-        return 'baixa'
-      }
-
-      const getSlaHoras = (): number => {
-        if (tipo === 'urgencia') return 2
-        if (['oncologia', 'opme'].includes(tipo)) return 4
-        if (['internacao', 'cirurgias'].includes(tipo)) return 8
-        return 24
-      }
-
-      const isTerapias = tipo === 'terapias'
-      const resp: RespostaSubmissao = isSimples
-        ? { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'automatica', resultadoIA: 'aprovada' }
-        : isTerapias
-          ? { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'automatica', resultadoIA: 'negada', motivoNegacao: 'Laudo médico ausente ou inválido. A cobertura de terapias especiais exige laudo atualizado (máx. 6 meses) assinado pelo médico assistente. Reenvie a solicitação com o documento.' }
-          : { id, beneficiario: form.nomeBeneficiario || 'Beneficiário', procedimento: getProcedimento(), tipoDecisao: 'revisao_humana', prioridade: getPrioridade(), slaHoras: getSlaHoras() }
-
-      setResposta(resp)
+      setNumeroProtocolo(id)
       setSubmitting(false)
       setModalAberto(true)
     }, 1500)
@@ -1841,155 +1780,64 @@ function NovaSolicitacaoInner() {
       {/* ── Modal de confirmação pós-submissão ── */}
       <Dialog
         open={modalAberto}
-        maxWidth="sm"
+        maxWidth="xs"
         fullWidth
-        disableEscapeKeyDown
+        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
         onClose={(_, reason) => { if (reason === 'backdropClick') return }}
       >
-        <DialogTitle sx={{ pb: 1.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-            {resposta?.resultadoIA === 'negada'
-              ? <CancelIcon sx={{ fontSize: 28, color: 'error.main', flexShrink: 0, mt: '2px' }} />
-              : <CheckCircleIcon sx={{ fontSize: 28, color: 'success.main', flexShrink: 0, mt: '2px' }} />
-            }
-            <Box>
-              <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, lineHeight: 1.3 }}>
-                {resposta?.resultadoIA === 'negada' ? 'Solicitação negada automaticamente' : 'Solicitação enviada com sucesso'}
-              </Typography>
-              {resposta && (
-                <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', lineHeight: 1.4, display: 'block', mt: 0.25 }}>
-                  {resposta.id} · {resposta.beneficiario} · {resposta.procedimento}
-                </Typography>
-              )}
-            </Box>
+        <DialogContent sx={{ textAlign: 'center', pt: 4, pb: 2, px: 4 }}>
+          <Box sx={{
+            width: 64, height: 64, borderRadius: '50%',
+            backgroundColor: 'rgba(144,43,41,0.08)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            mx: 'auto', mb: 2.5,
+          }}>
+            <AssignmentTurnedInOutlinedIcon sx={{ fontSize: 32, color: '#902B29' }} />
           </Box>
-        </DialogTitle>
 
-        <DialogContent sx={{ pt: 0 }}>
-          {resposta?.tipoDecisao === 'automatica' ? (
-            <>
-              {resposta.resultadoIA === 'negada' ? (
-                <Box sx={{ backgroundColor: 'rgba(212,24,61,0.05)', border: '1px solid rgba(212,24,61,0.25)', borderRadius: 2, p: 2, mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <SmartToyIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
-                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
-                      Negada automaticamente pela IA
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#d4183d', flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                        Resultado: <Box component="span" sx={{ fontWeight: 700, color: '#b91c1c' }}>Negada</Box>
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#d4183d', flexShrink: 0, mt: '4px' }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: '#b91c1c', fontWeight: 600, lineHeight: 1.5 }}>
-                        {resposta.motivoNegacao}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Disponível no histórico</Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              ) : (
-                <Box sx={{ backgroundColor: 'rgba(22,163,74,0.06)', border: '1px solid rgba(22,163,74,0.25)', borderRadius: 2, p: 2, mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                    <SmartToyIcon sx={{ fontSize: 18, color: '#7c3aed' }} />
-                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
-                      Aprovada automaticamente pela IA
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#16a34a', flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                        Resultado: <Box component="span" sx={{ fontWeight: 700, color: '#166534' }}>Aprovada</Box>
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Sem alertas identificados</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Disponível no histórico</Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              )}
-              <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.6 }}>
-                {resposta.resultadoIA === 'negada'
-                  ? 'Esta solicitação foi processada automaticamente. Corrija a pendência e reenvie.'
-                  : 'Esta solicitação foi processada automaticamente. Nenhuma ação adicional é necessária.'}
-              </Typography>
-            </>
-          ) : (
-            <>
-              <Box sx={{ backgroundColor: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: 2, p: 2, mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                  <WarningAmberIcon sx={{ fontSize: 18, color: '#f59e0b' }} />
-                  <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
-                    Requer avaliação do operador
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>Adicionada à fila de análise</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                      Prioridade:{' '}
-                      {resposta?.prioridade && (() => {
-                        const cfg = PRIORIDADE_CONFIG[resposta.prioridade!]
-                        return (
-                          <Chip
-                            label={cfg.label}
-                            size="small"
-                            sx={{ height: 18, fontSize: 11, fontWeight: 700, backgroundColor: cfg.bg, color: cfg.color, '& .MuiChip-label': { px: 0.75 }, ml: 0.5, verticalAlign: 'middle' }}
-                          />
-                        )
-                      })()}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#5a6070', flexShrink: 0 }} />
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>SLA: {resposta?.slaHoras}h</Typography>
-                  </Box>
-                </Box>
-              </Box>
-              <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary', lineHeight: 1.6 }}>
-                A IA identificou pontos que requerem revisão humana antes da decisão.
-              </Typography>
-            </>
-          )}
+          <Typography variant="h6" fontWeight={700} sx={{ mb: 1, fontSize: 18 }}>
+            Solicitação Registrada
+          </Typography>
+
+          <Typography variant="body2" sx={{ color: '#64748b', mb: 3, fontSize: 13, lineHeight: 1.6 }}>
+            O pedido foi protocolado com sucesso e está na fila de análise.
+            O operador responsável irá avaliar e tomar a&nbsp;decisão.
+          </Typography>
+
+          <Box sx={{
+            backgroundColor: '#f8f5f5',
+            border: '1px solid rgba(144,43,41,0.15)',
+            borderRadius: 2, px: 2.5, py: 1.5, mb: 1,
+          }}>
+            <Typography variant="caption" sx={{
+              color: '#902B29', fontWeight: 700,
+              textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10,
+            }}>
+              Protocolo
+            </Typography>
+            <Typography variant="body1" fontWeight={700} sx={{ fontSize: 15, mt: 0.25 }}>
+              {numeroProtocolo || '—'}
+            </Typography>
+          </Box>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 3, pt: 1, gap: 1 }}>
-          {resposta?.tipoDecisao === 'automatica' ? (
-            <>
-              <Button variant="outlined" onClick={handleNovaSolicitacao} sx={{ minHeight: 40 }}>
-                Nova solicitação
-              </Button>
-              <Button variant="contained" onClick={() => router.push(`/historico?id=${resposta?.id}`)} sx={{ minHeight: 40 }}>
-                Ver no histórico
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="outlined" onClick={() => router.push('/fila')} sx={{ minHeight: 40 }}>
-                Voltar à fila
-              </Button>
-              <Button variant="contained" onClick={() => router.push(`/analise?id=${resposta?.id}`)} sx={{ minHeight: 40 }}>
-                Analisar agora
-              </Button>
-            </>
-          )}
+        <DialogActions sx={{ px: 4, pb: 3, pt: 0, flexDirection: 'column', gap: 1, '& > :not(style) ~ :not(style)': { ml: 0 } }}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => { setModalAberto(false); router.push('/') }}
+            sx={{ fontWeight: 700, textTransform: 'none', fontSize: 14 }}
+          >
+            Ver na Fila Operacional
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => { setModalAberto(false); handleNovaSolicitacao() }}
+            sx={{ fontWeight: 600, textTransform: 'none', fontSize: 14 }}
+          >
+            Nova Solicitação
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

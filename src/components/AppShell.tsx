@@ -116,12 +116,40 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const notifications = [
     {
+      id: 'REQ-2026-04810',
+      type: 'processamento_ok',
+      title: 'REQ-2026-04810 pronto para análise',
+      message: 'Maria Luísa Tavares · Cirurgias Eletivas · Sugestão: Aprovar',
+      time: '2min atrás',
+      read: false,
+      href: '/analise?id=REQ-2026-04810',
+    },
+    {
+      id: 'REQ-2026-04808',
+      type: 'processamento_auto',
+      title: 'REQ-2026-04808 aprovado automaticamente',
+      message: 'João Pedro Almeida · SADT',
+      time: '5min atrás',
+      read: false,
+      href: '/historico/REQ-2026-04808',
+    },
+    {
+      id: 'REQ-2026-05004',
+      type: 'processamento_erro',
+      title: 'REQ-2026-05004 — Erro no processamento',
+      message: 'Requer reprocessamento manual',
+      time: '10min atrás',
+      read: false,
+      href: '/dashboard',
+    },
+    {
       id: 'ATH-2026-00423',
       type: 'devolutiva',
       title: 'Devolutiva recebida',
       message: 'Prestador enviou documentação complementar para o pedido ATH-2026-00423.',
       time: '12min atrás',
       read: false,
+      href: '/analise?id=ATH-2026-00423',
     },
     {
       id: 'ATH-2026-00387',
@@ -130,6 +158,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       message: 'Pedido ATH-2026-00387 (Internação) vence o prazo em menos de 2 horas.',
       time: '45min atrás',
       read: false,
+      href: '/analise?id=ATH-2026-00387',
     },
     {
       id: 'ATH-2026-00431',
@@ -138,6 +167,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       message: 'Pedido ATH-2026-00431 adicionado à fila de Urgência/Emergência.',
       time: '1h atrás',
       read: true,
+      href: '/analise?id=ATH-2026-00431',
     },
   ]
 
@@ -204,7 +234,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {notifications.map((n, i) => (
                   <Box
                     key={n.id}
-                    onClick={() => { setNotifAnchor(null); router.push(`/analise?id=${n.id}`) }}
+                    onClick={() => { setNotifAnchor(null); router.push(n.href) }}
                     sx={{
                       px: 2, py: 1.75,
                       cursor: 'pointer',

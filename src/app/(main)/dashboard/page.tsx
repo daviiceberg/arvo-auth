@@ -42,7 +42,17 @@ import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn'
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import { dashboardMetrics, pedidos, type Pedido } from '@/data/pedidos'
+import TablePagination from '@mui/material/TablePagination'
+import Tooltip from '@mui/material/Tooltip'
+import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined'
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
+import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
+import WhatsAppIcon from '@mui/icons-material/WhatsApp'
+import SmartphoneIcon from '@mui/icons-material/Smartphone'
+import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
+import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined'
+import { dashboardMetrics, pedidos, pedidosEmProcessamento, type Pedido, type PedidoEmProcessamento } from '@/data/pedidos'
 import { classificarUrgencia } from '@/lib/urgencia'
 
 // ── Status color map ──────────────────────────────────────────────────
@@ -409,10 +419,104 @@ function CardSkeleton() {
   )
 }
 
+// ── Processing queue helpers ─────────────────────────────────────────
+const origemLabelMap: Record<string, string> = {
+  app: 'App',
+  whatsapp: 'WhatsApp',
+  email: 'E-mail',
+  prestador: 'Prestador',
+  call_center: 'Call Center',
+}
+const origemIconMap: Record<string, React.ReactNode> = {
+  app: <SmartphoneIcon sx={{ fontSize: 14 }} />,
+  whatsapp: <WhatsAppIcon sx={{ fontSize: 14 }} />,
+  email: <EmailOutlinedIcon sx={{ fontSize: 14 }} />,
+  prestador: <MedicalServicesOutlinedIcon sx={{ fontSize: 14 }} />,
+  call_center: <PhoneOutlinedIcon sx={{ fontSize: 14 }} />,
+}
+
+function formatTempoNaFila(entradaEm: Date): string {
+  const diffMin = Math.round((Date.now() - entradaEm.getTime()) / 60000)
+  if (diffMin < 1) return 'agora'
+  if (diffMin < 60) return `${diffMin} min`
+  const h = Math.floor(diffMin / 60)
+  return `${h}h${diffMin % 60 > 0 ? ` ${diffMin % 60}min` : ''}`
+}
+
+function formatEntradaEm(d: Date): string {
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+}
+
+const thSx = {
+  fontSize: '11px',
+  fontWeight: 700,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.5px',
+  color: 'text.secondary',
+  py: '6px',
+  px: 2,
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
+}
+
+function ProcessingStatusChip({ status }: { status: PedidoEmProcessamento['statusProcessamento'] }) {
+  if (status === 'em_processamento') {
+    return (
+      <Chip
+        icon={
+          <AutorenewOutlinedIcon
+            sx={{
+              fontSize: 14,
+              '@keyframes spin': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
+              animation: 'spin 1.5s linear infinite',
+            }}
+          />
+        }
+        label="Processando..."
+        size="small"
+        sx={{ backgroundColor: 'rgba(25,118,210,0.1)', color: 'rgb(25,118,210)', fontWeight: 600, fontSize: 12 }}
+      />
+    )
+  }
+  if (status === 'aguardando_processamento') {
+    return (
+      <Chip
+        icon={<HourglassEmptyOutlinedIcon sx={{ fontSize: 14 }} />}
+        label="Aguardando"
+        size="small"
+        sx={{ backgroundColor: 'rgba(90,96,112,0.1)', color: 'text.secondary', fontWeight: 600, fontSize: 12 }}
+      />
+    )
+  }
+  return (
+    <Chip
+      icon={<ErrorOutlineOutlinedIcon sx={{ fontSize: 14 }} />}
+      label="Erro — reprocessar"
+      size="small"
+      onClick={() => {}}
+      sx={{ backgroundColor: 'rgba(211,47,47,0.1)', color: 'error.main', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}
+    />
+  )
+}
+
+const statusOrder: Record<string, number> = {
+  em_processamento: 0,
+  aguardando_processamento: 1,
+  erro_processamento: 2,
+}
+
+const sortedProcessingQueue = [...pedidosEmProcessamento].sort((a, b) => {
+  const sa = statusOrder[a.statusProcessamento] ?? 9
+  const sb = statusOrder[b.statusProcessamento] ?? 9
+  if (sa !== sb) return sa - sb
+  return b.entradaEm.getTime() - a.entradaEm.getTime()
+})
+
 // ── Main Page ─────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [procPage, setProcPage] = useState(0)
+  const [procRowsPerPage, setProcRowsPerPage] = useState(5)
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 800)
@@ -459,7 +563,21 @@ export default function DashboardPage() {
                 iconBg="rgba(144,43,41,0.1)"
                 value={pedidos.length}
                 label="Aguardam Decisão"
-                sublabel={<><Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>{dashboardMetrics.slaViolados} violados</Box>{` · ${dashboardMetrics.slaWarning} atenção · ${dashboardMetrics.slaOk} no prazo`}</>}
+                sublabel={
+                  <>
+                    <Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>{dashboardMetrics.slaViolados} violados</Box>
+                    {` · ${dashboardMetrics.slaWarning} atenção · ${dashboardMetrics.slaOk} no prazo`}
+                    {pedidosEmProcessamento.length > 0 && (
+                      <>
+                        <Divider sx={{ my: 0.5 }} />
+                        <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
+                          <AutorenewOutlinedIcon sx={{ fontSize: 12 }} />
+                          + {pedidosEmProcessamento.length} chegando (em processamento)
+                        </Box>
+                      </>
+                    )}
+                  </>
+                }
                 onClick={() => router.push('/fila')}
               />
             </Grid>
@@ -583,6 +701,111 @@ export default function DashboardPage() {
                     </Box>
                   )
                 })}
+              </Box>
+            </CardContent>
+          </Card>
+        )
+      })()}
+
+      {/* Entrando no sistema — processing queue table */}
+      {!loading && pedidosEmProcessamento.length > 0 && (() => {
+        const emProc = pedidosEmProcessamento.filter(p => p.statusProcessamento === 'em_processamento').length
+        const aguardando = pedidosEmProcessamento.filter(p => p.statusProcessamento === 'aguardando_processamento').length
+        const comErro = pedidosEmProcessamento.filter(p => p.statusProcessamento === 'erro_processamento').length
+        const pagedProc = sortedProcessingQueue.slice(procPage * procRowsPerPage, procPage * procRowsPerPage + procRowsPerPage)
+
+        return (
+          <Card sx={{ mb: 2.5 }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AutorenewOutlinedIcon
+                    color="primary"
+                    sx={{
+                      fontSize: 18,
+                      '@keyframes spin': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
+                      animation: 'spin 2s linear infinite',
+                    }}
+                  />
+                  <Typography variant="subtitle2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+                    Entrando no sistema
+                  </Typography>
+                </Box>
+                <Tooltip title={`${emProc} em processamento · ${aguardando} aguardando · ${comErro} com erro`}>
+                  <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
+                    {pedidosEmProcessamento.length} pedidos aguardando processamento da IA
+                  </Typography>
+                </Tooltip>
+              </Box>
+
+              <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', overflow: 'hidden' }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ ...thSx, width: 150, minWidth: 150 }}>ID</TableCell>
+                      <TableCell sx={thSx}>Beneficiário</TableCell>
+                      <TableCell sx={{ ...thSx, width: 130 }}>Origem</TableCell>
+                      <TableCell sx={{ ...thSx, width: 140 }}>Categoria</TableCell>
+                      <TableCell sx={{ ...thSx, width: 110, minWidth: 110, whiteSpace: 'nowrap' }}>Tempo em fila</TableCell>
+                      <TableCell sx={{ ...thSx, width: 180 }}>Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {pagedProc.map((p) => (
+                      <TableRow key={p.id} sx={{ '&:last-child td': { borderBottom: 0 } }}>
+                        <TableCell sx={{ py: '4px', px: '12px', width: 150, minWidth: 150 }}>
+                          <Typography variant="caption" color="primary" fontWeight={600} sx={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}>
+                            {p.id}
+                          </Typography>
+                          <Typography variant="caption" color="text.disabled" sx={{ fontSize: 11, whiteSpace: 'nowrap', display: 'block' }}>
+                            {formatEntradaEm(p.entradaEm)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ py: '4px', px: '12px' }}>
+                          <Typography variant="body2" fontWeight={600} noWrap sx={{ fontSize: 13, lineHeight: 1.3 }}>
+                            {p.beneficiario}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, lineHeight: 1.3 }}>
+                            {p.plano}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ py: '4px', px: '12px' }}>
+                          <Chip
+                            label={origemLabelMap[p.origem]}
+                            size="small"
+                            icon={origemIconMap[p.origem] as React.ReactElement}
+                            sx={{ height: 22, fontSize: 11 }}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ py: '4px', px: '12px' }}>
+                          <Chip label={p.categoria} size="small" sx={{ height: 22, fontSize: 11 }} />
+                        </TableCell>
+                        <TableCell sx={{ py: '4px', px: '12px', whiteSpace: 'nowrap', width: 110 }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+                            {formatTempoNaFila(p.entradaEm)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ py: '4px', px: '12px' }}>
+                          <ProcessingStatusChip status={p.statusProcessamento} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                {sortedProcessingQueue.length > 5 && (
+                  <TablePagination
+                    component="div"
+                    count={sortedProcessingQueue.length}
+                    page={procPage}
+                    onPageChange={(_, newPage) => setProcPage(newPage)}
+                    rowsPerPage={procRowsPerPage}
+                    onRowsPerPageChange={(e) => { setProcRowsPerPage(parseInt(e.target.value, 10)); setProcPage(0) }}
+                    rowsPerPageOptions={[5, 10, 25]}
+                    labelRowsPerPage="Por página:"
+                    labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+                    sx={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
+                  />
+                )}
               </Box>
             </CardContent>
           </Card>
