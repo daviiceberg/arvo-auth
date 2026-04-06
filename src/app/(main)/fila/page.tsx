@@ -39,6 +39,7 @@ import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
 import GavelIcon from '@mui/icons-material/Gavel'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Tooltip from '@mui/material/Tooltip'
 import { pedidos, type SLAStatus, type IASugestao, type Categoria, type OrigemPedido, type SubStatus } from '@/data/pedidos'
 
@@ -828,6 +829,13 @@ function FilaInner() {
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }}>
                         <SLAChip status={pedido.slaStatus} texto={pedido.slaTexto} />
+                        {pedido.status === 'Devolutiva' && (
+                          <Tooltip title="Devolutiva não interrompe o prazo ANS — SLA continua em contagem" placement="top">
+                            <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.4, fontSize: 10, color: '#b45309', fontWeight: 600, cursor: 'default' }}>
+                              <TimerOffIcon sx={{ fontSize: 11 }} /> SLA em curso
+                            </Typography>
+                          </Tooltip>
+                        )}
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }}>
                         <Tooltip title="Ponto de vista da análise da IA — a decisão final é do analista" placement="top">
@@ -836,16 +844,32 @@ function FilaInner() {
                       </TableCell>
                       <TableCell sx={{ px: 1.5 }} onClick={(e) => e.stopPropagation()}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => router.push(`/analise?id=${pedido.id}`)}
-                            aria-label={`Analisar pedido ${pedido.id}`}
-                            sx={{ minHeight: 28, fontSize: 12, px: 1.5 }}
+                          <Tooltip
+                            title={pedido.lockOperador ? `Em análise por ${pedido.lockOperador.nome} desde ${pedido.lockOperador.desde}` : ''}
+                            placement="top"
+                            disableHoverListener={!pedido.lockOperador}
                           >
-                            Analisar
-                          </Button>
-                          {pedido.subStatus && (
+                            <span>
+                              <Button
+                                size="small"
+                                variant={pedido.lockOperador ? 'outlined' : 'contained'}
+                                onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                                aria-label={`Analisar pedido ${pedido.id}`}
+                                sx={{ minHeight: 28, fontSize: 12, px: 1.5, ...(pedido.lockOperador && { color: 'text.secondary', borderColor: 'rgba(0,0,0,0.2)' }) }}
+                              >
+                                {pedido.lockOperador ? 'Observar' : 'Analisar'}
+                              </Button>
+                            </span>
+                          </Tooltip>
+                          {pedido.lockOperador && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
+                              <LockOutlinedIcon sx={{ fontSize: 11, color: 'text.disabled' }} />
+                              <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
+                                {pedido.lockOperador.nome}
+                              </Typography>
+                            </Box>
+                          )}
+                          {!pedido.lockOperador && pedido.subStatus && (
                             <Box sx={{ mt: 0.75 }}>
                               <RowStatusLabel subStatus={pedido.subStatus} />
                             </Box>

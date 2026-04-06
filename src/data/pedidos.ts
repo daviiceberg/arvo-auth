@@ -91,6 +91,8 @@ export type Pedido = {
   juntaRecomendacao?: 'Aprovar' | 'Negar'
   etapaAutorizacao?: 'primeira_solicitacao' | 'continuidade'
   ajustes?: Ajuste[]
+  lockOperador?: { nome: string; desde: string }
+  liminar?: { ativa: boolean; processo: string; escopo: string; validade: string; observacao?: string }
 }
 
 export interface OrcamentoDadosExtraidos {
@@ -424,6 +426,7 @@ export const pedidos: Pedido[] = [
         timestamp: '2026-03-23T14:30:00',
       },
     ],
+    lockOperador: { nome: 'Carla Mendes', desde: '09:15' },
   },
   {
     id: 'REQ-2026-04831',
@@ -1040,27 +1043,101 @@ export const pedidos: Pedido[] = [
         nivelAud: 'HOSPITALAR',
       },
     ],
-    alertas: ['Alta Complexidade'],
+    alertas: ['Alta Complexidade', 'Oncologia — Ciclo 3/6'],
     iaSugestao: 'Aprovar',
     iaJustificativa:
-      'Paciente em protocolo de quimioterapia para carcinoma de mama (C50.9). Ciclo 3/6 — solicitação dentro do plano terapêutico aprovado. Pendência: laudo oncológico do ciclo anterior e protocolo atualizado com estadiamento não foram anexados pelo prestador.',
+      'Ciclo 3/6 de Carboplatina + Paclitaxel para carcinoma de mama (C50.9). Biópsia confirmatória presente no histórico (ciclo 1). Peso da paciente: 62 kg — cálculo de dose verificável. CRM 67890-SP é de oncologista. Pedido médico dentro do prazo de 3 meses. Autorização solicitada para 30 dias conforme regra ANS. Bloqueio documental: laudo de evolução do ciclo 2 e protocolo atualizado com estadiamento atual não foram anexados.',
     iaChecklist: [
-      { texto: 'CID C50.9 compatível com protocolo QT', status: 'ok' },
-      { texto: 'Laudo oncológico do ciclo anterior ausente', status: 'error' },
-      { texto: 'Protocolo de quimioterapia desatualizado', status: 'error' },
+      { texto: 'CID C50.9 compatível com protocolo QT — Carboplatina + Paclitaxel', status: 'ok' },
+      { texto: 'Biópsia do tumor confirmando diagnóstico disponível no histórico', status: 'ok' },
+      { texto: 'Peso da paciente registrado (62 kg) — cálculo de dose validável', status: 'ok' },
+      { texto: 'CRM 67890-SP verificado como oncologista', status: 'ok' },
+      { texto: 'Data do pedido médico dentro de 3 meses', status: 'ok' },
+      { texto: 'Autorização solicitada para período máximo de 30 dias (ANS)', status: 'ok' },
       { texto: 'Plano terapêutico inicial disponível no sistema', status: 'ok' },
       { texto: 'Prestador credenciado para procedimentos oncológicos', status: 'ok' },
+      { texto: 'Laudo de evolução do ciclo anterior (ciclo 2) ausente', status: 'error' },
+      { texto: 'Protocolo de quimioterapia desatualizado — estadiamento atual necessário', status: 'error' },
     ],
-    observacoes: 'Pendência aberta em 21/03/2026. Prestador notificado por sistema interno. Prazo de resposta: 28/03/2026. SLA violado aguardando documentação complementar.',
+    observacoes: 'Pendência aberta em 21/03/2026. Prestador notificado por sistema interno. Prazo de resposta: 28/03/2026. SLA violado aguardando documentação complementar. Biópsia e pedido original do ciclo 1 disponíveis no sistema.',
     documentos: [
       { id: 'DOC-131', nome: 'Pedido-Medico-QT-Ciclo3.pdf', tipo: 'Pedido Médico', tamanho: '185 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-132', nome: 'Biopsia-Tumor-Mama-C50.pdf', tipo: 'Laudo Médico', tamanho: '1.2 MB', enviadoEm: '15/01/2026', obrigatorio: true, status: 'enviado' },
     ],
     pendenciaMotivos: [
-      'Laudo oncológico do ciclo anterior (ciclo 2) não anexado',
-      'Protocolo de quimioterapia desatualizado — necessário estadiamento atual',
+      'Laudo de evolução oncológica do ciclo 2 não anexado — exigência para continuidade do protocolo',
+      'Protocolo de quimioterapia desatualizado — necessário estadiamento atual com peso e dosagem recalculados',
     ],
     pendenciaResponsavel: 'Ana Paula Santos',
     pendenciaData: '21/03/2026',
+  },
+  {
+    id: 'REQ-2026-04921',
+    status: 'Em Análise',
+    tipoGuia: 'Eleitiva',
+    categoria: 'Oncologia',
+    nivelAuditoria: 'HOSPITALAR',
+    prioridade: 'alta',
+    origem: 'prestador',
+    dataProtocolo: '05/04/2026 08:45',
+    tempoFila: '12 horas',
+    slaStatus: 'warning',
+    slaTexto: '9h restantes',
+    beneficiario: {
+      nome: 'Marcos Aurélio Teixeira',
+      carteirinha: '0012345600078003',
+      cpf: '678.901.234-56',
+      dataNascimento: '12/09/1961',
+      idade: 64,
+      sexo: 'M',
+      plano: 'Premium',
+      carencia: false,
+    },
+    prestador: {
+      hospital: 'Hospital do Câncer de Barretos',
+      medico: 'Dra. Fernanda Azeredo',
+      crm: '78901-SP',
+      especialidade: 'Oncologia Clínica',
+    },
+    procedimentos: [
+      {
+        codigo: '90600143',
+        tuss: '90600143',
+        descricao: 'Bevacizumabe (Avastin) 400mg IV — Carcinoma colorretal metastático (Ciclo 8/12)',
+        qty: 1,
+        qtyAutorizada: undefined,
+        dataInicio: '10/04/2026',
+        dataFim: '10/04/2026',
+        cid: 'C18.9',
+        nivelAud: 'HOSPITALAR',
+      },
+    ],
+    alertas: ['Liminar Judicial', 'Alta Complexidade'],
+    liminar: {
+      ativa: true,
+      processo: '1043827-12.2026.8.26.0100',
+      escopo: 'Bevacizumabe (Avastin) 400mg IV — protocolo oncológico para carcinoma colorretal metastático (C18.9), ciclos conforme indicação do médico assistente',
+      validade: '30/06/2026',
+      observacao: 'Decisão liminar proferida em 15/03/2026. Cobre exclusivamente o medicamento e dose descritos no processo. Procedimentos não listados NÃO estão cobertos pela ordem judicial. Aplicar negativa sobre procedimento fora do escopo não viola a liminar, mas deve ser fundamentada.',
+    },
+    iaSugestao: 'Aprovar',
+    iaJustificativa:
+      'Beneficiário com liminar judicial ativa cobrindo Bevacizumabe 400mg IV (processo 1043827-12.2026.8.26.0100, válida até 30/06/2026). Cumprimento da ordem judicial é obrigatório. Indicação clínica compatível: carcinoma colorretal metastático (C18.9), ciclo 8/12 dentro do protocolo terapêutico em curso desde Ago/2025. Prestador credenciado para oncologia. Procedimento enquadrado no escopo exato da liminar.',
+    iaChecklist: [
+      { texto: 'Liminar judicial ativa e dentro da validade (30/06/2026)', status: 'ok' },
+      { texto: 'Procedimento dentro do escopo exato da liminar (Bevacizumabe 400mg)', status: 'ok' },
+      { texto: 'CID C18.9 compatível com protocolo — Bevacizumabe em colorretal', status: 'ok' },
+      { texto: 'Biópsia confirmatória disponível no histórico do sistema', status: 'ok' },
+      { texto: 'CRM 78901-SP verificado como oncologista', status: 'ok' },
+      { texto: 'Prestador credenciado para oncologia de alta complexidade', status: 'ok' },
+      { texto: 'Exames pré-ciclo (hemograma, creatinina) enviados — aguardando validação', status: 'warning' },
+    ],
+    observacoes: 'Paciente com carcinoma colorretal metastático em tratamento com Bevacizumabe desde Ago/2025. Ciclo 8 de 12 previsto. Autorização obrigatória por força de liminar judicial vigente (despacho de 15/03/2026). Exames pré-ciclo anexados pelo prestador em 04/04/2026.',
+    documentos: [
+      { id: 'DOC-141', nome: 'Decisao-Liminar-1043827.pdf', tipo: 'Documento Judicial', tamanho: '320 KB', enviadoEm: '16/03/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-142', nome: 'Pedido-Medico-Bevacizumabe-Ciclo8.pdf', tipo: 'Pedido Médico', tamanho: '195 KB', enviadoEm: '04/04/2026', obrigatorio: true, status: 'enviado' },
+      { id: 'DOC-143', nome: 'Exames-Pre-Ciclo8.pdf', tipo: 'Laudo Médico', tamanho: '510 KB', enviadoEm: '04/04/2026', obrigatorio: true, status: 'enviado' },
+    ],
   },
 ]
 
