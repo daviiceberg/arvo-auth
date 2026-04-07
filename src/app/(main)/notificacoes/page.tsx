@@ -8,61 +8,11 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined'
-import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined'
-import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
-
-const initialNotifications = [
-  {
-    id: 'n-1',
-    pedidoId: 'ATH-2026-00423',
-    type: 'devolutiva',
-    title: 'Devolutiva recebida',
-    message: 'O prestador Hospital São Lucas enviou documentação complementar para o pedido ATH-2026-00423 (Cirurgia Eletiva).',
-    time: '12min atrás',
-    read: false,
-  },
-  {
-    id: 'n-2',
-    pedidoId: 'ATH-2026-00387',
-    type: 'sla',
-    title: 'SLA em risco',
-    message: 'O pedido ATH-2026-00387 da categoria Internação vence o prazo regulatório em menos de 2 horas. Ação imediata recomendada.',
-    time: '45min atrás',
-    read: false,
-  },
-  {
-    id: 'n-3',
-    pedidoId: 'ATH-2026-00431',
-    type: 'urgencia',
-    title: 'Novo pedido de Urgência/Emergência',
-    message: 'O pedido ATH-2026-00431 foi adicionado à fila de Urgência/Emergência e aguarda análise prioritária.',
-    time: '1h atrás',
-    read: true,
-  },
-]
-
-const typeConfig: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  devolutiva: {
-    icon: <AssignmentReturnOutlinedIcon sx={{ fontSize: 18 }} />,
-    color: '#2563eb',
-    bg: 'rgba(37,99,235,0.1)',
-  },
-  sla: {
-    icon: <ReportProblemOutlinedIcon sx={{ fontSize: 18 }} />,
-    color: '#b45309',
-    bg: 'rgba(245,158,11,0.12)',
-  },
-  urgencia: {
-    icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 18 }} />,
-    color: '#d4183d',
-    bg: 'rgba(212,24,61,0.1)',
-  },
-}
+import { NOTIFICACOES, type Notificacao } from '@/data/notificacoes'
 
 export default function NotificacoesPage() {
   const router = useRouter()
-  const [notifications, setNotifications] = useState(initialNotifications)
+  const [notifications, setNotifications] = useState<Notificacao[]>(NOTIFICACOES)
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
@@ -70,11 +20,11 @@ export default function NotificacoesPage() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }
 
-  const handleClick = (n: (typeof notifications)[number]) => {
+  const handleClick = (n: Notificacao) => {
     setNotifications((prev) =>
       prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
     )
-    router.push(`/analise?id=${n.pedidoId}`)
+    router.push(n.href)
   }
 
   return (
@@ -114,7 +64,6 @@ export default function NotificacoesPage() {
           </Box>
         ) : (
           notifications.map((n, i) => {
-            const config = typeConfig[n.type] ?? typeConfig.devolutiva
             return (
               <Box key={n.id}>
                 {i > 0 && <Divider />}
@@ -132,24 +81,6 @@ export default function NotificacoesPage() {
                     transition: 'background-color 150ms ease',
                   }}
                 >
-                  {/* Type icon */}
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 1.5,
-                      backgroundColor: config.bg,
-                      color: config.color,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      mt: 0.25,
-                    }}
-                  >
-                    {config.icon}
-                  </Box>
-
                   {/* Content */}
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
@@ -161,7 +92,7 @@ export default function NotificacoesPage() {
                         {n.title}
                       </Typography>
                       <Chip
-                        label={n.pedidoId}
+                        label={n.id}
                         size="small"
                         sx={{
                           height: 18,
