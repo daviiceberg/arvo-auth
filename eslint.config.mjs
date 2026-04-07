@@ -4,6 +4,7 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importX from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import unusedImports from 'eslint-plugin-unused-imports';
 import nextPlugin from '@next/eslint-plugin-next';
 import globals from 'globals';
@@ -11,7 +12,7 @@ import globals from 'globals';
 export default tseslint.config(
   // Global ignores
   {
-    ignores: ['.next/', 'node_modules/', 'out/', 'public/'],
+    ignores: ['.next/', 'node_modules/', 'out/', 'public/', '*.config.*'],
   },
 
   // Base configs
@@ -94,9 +95,7 @@ export default tseslint.config(
       'import-x/no-duplicates': 'error',
     },
     settings: {
-      'import-x/resolver': {
-        typescript: { alwaysTryTypes: true },
-      },
+      'import-x/resolver-next': [createTypeScriptImportResolver({ alwaysTryTypes: true })],
     },
   },
 
@@ -125,7 +124,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['../../*'],
+              group: ['../../**'],
               message:
                 'Use path aliases (@/core, @/shared, @/modules, @/types, @/mocks) instead of deep relative imports.',
             },
