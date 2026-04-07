@@ -126,7 +126,8 @@ const origemConfig: Record<OrigemPedido, { label: string; color: string; icon: R
   app:       { label: 'App', color: '#2563eb', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
   whatsapp:  { label: 'WhatsApp',   color: '#16a34a', icon: <WhatsAppIcon sx={{ fontSize: 13 }} /> },
   email:     { label: 'E-mail',     color: '#0891b2', icon: <EmailOutlinedIcon sx={{ fontSize: 13 }} /> },
-  prestador: { label: 'Prestador',  color: '#902B29', icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} /> },
+  prestador:    { label: 'Prestador',    color: '#902B29', icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} /> },
+  call_center:  { label: 'Call Center',  color: '#6366f1', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
 }
 function OrigemLabel({ origem }: { origem: OrigemPedido }) {
   const { label, color, icon } = origemConfig[origem]
