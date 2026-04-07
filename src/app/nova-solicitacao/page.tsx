@@ -168,6 +168,7 @@ interface FormData {
   validadeCarteirinha: string
   // Step 2
   cidPrincipal: string
+  cidsSecundarios: string[]
   caraterAtendimento: string
   medicoSolicitante: string
   crm: string
@@ -249,6 +250,7 @@ const initialForm: FormData = {
   operadora: 'Bradesco Saúde',
   validadeCarteirinha: '',
   cidPrincipal: 'M17.1 - Gonartrose primária bilateral',
+  cidsSecundarios: [],
   caraterAtendimento: 'Eletivo',
   medicoSolicitante: 'Dr. João Oliveira',
   crm: 'CRM/SP 123456',
@@ -484,6 +486,7 @@ function NovaSolicitacaoInner() {
   })
   // Terapias — array de procedimentos
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState<TerapiaProcedimento[]>([newTerapiaProc()])
+  const [cidSecundarioInput, setCidSecundarioInput] = useState('')
 
   const handleAddTerapiaProc = () => {
     if (terapiaProcedimentos.length >= 5) return
@@ -787,7 +790,54 @@ function NovaSolicitacaoInner() {
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel validated>CID Principal</FieldLabel>
-          <TextField fullWidth size="small" value={form.cidPrincipal} onChange={set('cidPrincipal')} sx={inputSx(true)} />
+          <TextField fullWidth size="small" value={form.cidPrincipal} onChange={set('cidPrincipal')} placeholder="Ex: Z32.1" sx={inputSx(true)} />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <FieldLabel>CIDs Secundários <Typography component="span" variant="caption" sx={{ color: '#64748b', fontWeight: 400 }}>(opcional)</Typography></FieldLabel>
+          {form.cidsSecundarios.length > 0 && (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1.5 }}>
+              {form.cidsSecundarios.map((cid, idx) => (
+                <Chip
+                  key={idx}
+                  label={cid}
+                  size="small"
+                  onDelete={() => setForm(f => ({ ...f, cidsSecundarios: f.cidsSecundarios.filter((_, i) => i !== idx) }))}
+                  sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12 }}
+                />
+              ))}
+            </Box>
+          )}
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <TextField
+              size="small"
+              value={cidSecundarioInput}
+              onChange={e => setCidSecundarioInput(e.target.value.toUpperCase())}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && cidSecundarioInput.trim()) {
+                  e.preventDefault()
+                  setForm(f => ({ ...f, cidsSecundarios: [...f.cidsSecundarios, cidSecundarioInput.trim()] }))
+                  setCidSecundarioInput('')
+                }
+              }}
+              placeholder="Ex: I10"
+              sx={{ width: 160 }}
+            />
+            <Button
+              size="small"
+              variant="text"
+              disabled={!cidSecundarioInput.trim()}
+              onClick={() => {
+                setForm(f => ({ ...f, cidsSecundarios: [...f.cidsSecundarios, cidSecundarioInput.trim()] }))
+                setCidSecundarioInput('')
+              }}
+              sx={{ color: '#902B29', textTransform: 'none', fontWeight: 600, fontSize: 13, px: 1 }}
+            >
+              + Adicionar
+            </Button>
+          </Box>
+          <Typography variant="caption" sx={{ color: '#94a3b8', fontSize: 11, mt: 0.5, display: 'block' }}>
+            Informe CIDs relevantes para este atendimento. Pressione Enter ou clique em &quot;+ Adicionar&quot;.
+          </Typography>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel warning>Caráter do Atendimento</FieldLabel>
@@ -1511,6 +1561,19 @@ function NovaSolicitacaoInner() {
         <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>Dados Clínicos</Typography>
         <Box sx={{ mb: 3 }}>
           {rows('CID Principal', form.cidPrincipal)}
+          {form.cidsSecundarios.length > 0 && (
+            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, py: 0.75, borderBottom: '1px solid #f1f5f9' }}>
+              <Typography variant="caption" sx={{ color: '#64748b', fontSize: 12, minWidth: 160, flexShrink: 0 }}>
+                CIDs Secundários
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {form.cidsSecundarios.map((cid, i) => (
+                  <Chip key={i} label={cid} size="small"
+                    sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 11, height: 20 }} />
+                ))}
+              </Box>
+            </Box>
+          )}
           {rows('Caráter do Atendimento', form.caraterAtendimento)}
           {rows('Médico Solicitante', form.medicoSolicitante)}
           {rows('CRM', form.crm)}

@@ -1746,6 +1746,19 @@ function ProcedimentosSection({ pedido, allAjustes, onAjustarClick }: Procedimen
             })}
           </TableBody>
         </Table>
+        {pedido.cidsSecundarios && pedido.cidsSecundarios.length > 0 && (
+          <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+              CIDs Secundários
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
+              {pedido.cidsSecundarios.map((cid, i) => (
+                <Chip key={i} label={cid} size="small"
+                  sx={{ backgroundColor: 'rgba(100,116,139,0.08)', color: '#475569', fontWeight: 600, fontSize: 12, height: 20 }} />
+              ))}
+            </Box>
+          </Box>
+        )}
         {(() => {
           const prestadorAjuste = allAjustes.find(a => a.campo === 'prestador')
           const hospitalVigente = prestadorAjuste ? prestadorAjuste.valorNovo : p.hospital

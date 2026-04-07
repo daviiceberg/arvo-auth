@@ -106,6 +106,7 @@ export type Pedido = {
   ajustes?: Ajuste[]
   lockOperador?: { nome: string; desde: string }
   liminar?: { ativa: boolean; processo: string; escopo: string; validade: string; observacao?: string }
+  cidsSecundarios?: string[]
 }
 
 export interface OrcamentoDadosExtraidos {
@@ -201,6 +202,7 @@ export const pedidos: Pedido[] = [
       { id: 'DOC-004', nome: 'Relatorio-Evolucao-Q1-2026.pdf', tipo: 'Relatório de Evolução', tamanho: '890 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
     ],
     etapaAutorizacao: 'continuidade',
+    cidsSecundarios: ['F80.1'],
   },
   {
     id: 'REQ-2026-04801',
@@ -276,6 +278,7 @@ export const pedidos: Pedido[] = [
     subStatus: 'JUNTA_PARECER_RECEBIDO',
     juntaParecer: 'Após análise coletiva realizada em 28/03/2026, a Junta Médica recomenda aprovação do protocolo FOLFOX para adenocarcinoma de cólon estágio III (C18.9). O uso off-label de Oxaliplatina é respaldado pela diretriz ASCO 2024 e pelo histórico de resposta terapêutica documentado. Condições: monitorização quinzenal da função renal e hepática, avaliação de toxicidade ao 2º ciclo. A liminar judicial em vigor corrobora a indicação. Responsável pelo parecer: Dr. Henrique Mello — Oncologista Sênior (CRM 11234-SP).',
     juntaRecomendacao: 'Aprovar',
+    cidsSecundarios: ['K57.3'],
   },
   {
     id: 'REQ-2026-04812',
@@ -689,6 +692,7 @@ export const pedidos: Pedido[] = [
       { id: 'DOC-072', nome: 'Raio-X-Torax.pdf', tipo: 'Exame de Imagem', tamanho: '4.1 MB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
       { id: 'DOC-073', nome: 'Hemograma-Completo.pdf', tipo: 'Exame Laboratorial', tamanho: '190 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
     ],
+    cidsSecundarios: ['I10', 'E11.9'],
   },
   {
     id: 'REQ-2026-04795',
@@ -1214,6 +1218,7 @@ export interface HistoricoEntry {
   documentos?: { nome: string; tipo: string; data: string }[]
   juntaMedica?: JuntaMedica
   ajustes?: Ajuste[]
+  cidsSecundarios?: string[]
 }
 
 export const historicoEntries: HistoricoEntry[] = [
