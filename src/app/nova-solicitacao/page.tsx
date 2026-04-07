@@ -1799,10 +1799,30 @@ function NovaSolicitacaoInner() {
             Solicitação Registrada
           </Typography>
 
-          <Typography variant="body2" sx={{ color: '#64748b', mb: 3, fontSize: 13, lineHeight: 1.6 }}>
-            O pedido foi protocolado com sucesso e está na fila de análise.
-            O operador responsável irá avaliar e tomar a&nbsp;decisão.
+          <Typography variant="body2" sx={{ color: '#64748b', mb: 2, fontSize: 13, lineHeight: 1.6 }}>
+            O pedido foi protocolado. A IA está analisando agora.
           </Typography>
+
+          <Box sx={{
+            backgroundColor: 'rgba(144,43,41,0.04)',
+            border: '1px solid rgba(144,43,41,0.12)',
+            borderRadius: 2, px: 2, py: 1.5, mb: 3,
+            textAlign: 'left',
+          }}>
+            <Typography variant="caption" sx={{
+              color: '#64748b', fontSize: 11.5, fontWeight: 600,
+              textTransform: 'uppercase', letterSpacing: 0.4,
+              display: 'block', mb: 1,
+            }}>
+              Após o processamento, o pedido será:
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: 12, lineHeight: 1.8, display: 'block' }}>
+              • <Box component="span" sx={{ fontWeight: 600, color: '#15803d' }}>Autorizado ou negado automaticamente</Box> — sem ação necessária, ou
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: 12, lineHeight: 1.8, display: 'block' }}>
+              • <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>Encaminhado para a Fila Operacional</Box> — quando a IA identificar necessidade de análise&nbsp;humana
+            </Typography>
+          </Box>
 
           <Box sx={{
             backgroundColor: '#f8f5f5',
@@ -1825,10 +1845,10 @@ function NovaSolicitacaoInner() {
           <Button
             fullWidth
             variant="contained"
-            onClick={() => { setModalAberto(false); router.push('/') }}
+            onClick={() => { setModalAberto(false); router.push('/dashboard') }}
             sx={{ fontWeight: 700, textTransform: 'none', fontSize: 14 }}
           >
-            Ver na Fila Operacional
+            Acompanhar no Dashboard
           </Button>
           <Button
             fullWidth
