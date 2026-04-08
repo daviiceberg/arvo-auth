@@ -8,17 +8,17 @@
 
 ### Types
 
-| Type | Quando usar |
-|------|-------------|
-| `feat` | Nova funcionalidade |
-| `fix` | Correção de bug |
+| Type       | Quando usar                       |
+| ---------- | --------------------------------- |
+| `feat`     | Nova funcionalidade               |
+| `fix`      | Correção de bug                   |
 | `refactor` | Mudança sem alterar comportamento |
-| `style` | Formatação (não é CSS) |
-| `chore` | Configs, dependências, build |
-| `docs` | Documentação |
-| `test` | Testes |
-| `ci` | CI/CD |
-| `perf` | Performance |
+| `style`    | Formatação (não é CSS)            |
+| `chore`    | Configs, dependências, build      |
+| `docs`     | Documentação                      |
+| `test`     | Testes                            |
+| `ci`       | CI/CD                             |
+| `perf`     | Performance                       |
 
 ### Scopes
 
@@ -77,31 +77,36 @@ chore/NEW-779-configure-eslint
 
 ### Título
 
-- Máximo 70 caracteres, em inglês
+- Máximo 70 caracteres, em português
 - Começar com type: `feat: ...`, `fix: ...`, `refactor: ...`
 
 ### Descrição
 
-- Bullet points diretos — sem checkboxes
-- Seções: Summary, Ticket, Changes, Screenshots (se visual)
+- Bullet points diretos em português — sem checkboxes
+- Seções: Resumo, Ticket, Mudanças, Screenshots (se visual)
+- PR é comunicação interna do time — português facilita o entendimento
 
 ### Exemplo
 
 ```markdown
-## Summary
-Set up ESLint, Prettier, Husky and Commitlint for the project.
+## Resumo
+
+Configurar ESLint, Prettier, Husky e Commitlint no projeto.
 
 ## Ticket
+
 [NEW-779](https://linear.app/arvosaude/issue/NEW-779)
 
-## Changes
-- Configured ESLint flat config with type-checked rules
-- Added Prettier with printWidth 100
-- Set up Husky pre-commit hook with lint-staged
-- Added Commitlint with conventional commits validation
-- Created logger utility to replace console.log
-- Added EditorConfig for cross-editor consistency
+## Mudanças
+
+- Configurado ESLint flat config com regras type-checked
+- Adicionado Prettier com printWidth 100
+- Configurado Husky pre-commit hook com lint-staged
+- Adicionado Commitlint com validação de conventional commits
+- Criado utilitário de logger pra substituir console.log
+- Adicionado EditorConfig pra consistência entre editores
 
 ## Screenshots
-N/A — configuration only, no visual changes.
+
+N/A — apenas configuração, sem mudanças visuais.
 ```

@@ -6,7 +6,7 @@
 
 - ALL code must be written in English — variables, functions, comments, logs, types, everything
 - ALL log messages must be in English
-- ALL git artifacts in English — commits, branches, PR titles and descriptions
+- Git artifacts: commits and branches in English. PR titles and descriptions in Portuguese-BR (team communication)
 
 ## Logging
 

@@ -1,15 +1,15 @@
-## Summary
+## Resumo
 
-<!-- What this PR does and why -->
+<!-- O que essa PR faz e por quê -->
 
 ## Ticket
 
-<!-- Linear link: NEW-XXX -->
+<!-- Link do Linear: NEW-XXX -->
 
-## Changes
+## Mudanças
 
-<!-- Bullet points — direct and objective -->
+<!-- Bullet points — direto e objetivo -->
 
-## Screenshots (if applicable)
+## Screenshots (se aplicável)
 
-<!-- Before/after for visual changes -->
+<!-- Antes/depois para mudanças visuais -->
