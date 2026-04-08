@@ -7,7 +7,6 @@ export {
   OriginChip,
   PrioDot,
   RequestTypeChip,
-  SubStatusLabel,
   DecisionActionChip,
 } from './chips';
 

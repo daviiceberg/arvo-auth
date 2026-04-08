@@ -2252,13 +2252,19 @@ export const dashboardMetrics = (() => {
   const catOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care', 'SADT']
   const counts: Record<string, { total: number; pendentes: number }> = {}
   for (const p of pedidos) {
-    if (!counts[p.categoria]) counts[p.categoria] = { total: 0, pendentes: 0 }
-    counts[p.categoria].total++
-    if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) counts[p.categoria].pendentes++
+    counts[p.categoria] ??= { total: 0, pendentes: 0 }
+    const entry = counts[p.categoria]
+    if (entry) {
+      entry.total++
+      if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) entry.pendentes++
+    }
   }
   const porCategoria = catOrder
-    .filter(cat => counts[cat] && counts[cat].total > 0)
-    .map(cat => ({ categoria: cat as Categoria, total: counts[cat].total, pendentes: counts[cat].pendentes, color: catColors[cat] }))
+    .filter(cat => (counts[cat]?.total ?? 0) > 0)
+    .map(cat => {
+      const c = counts[cat]
+      return { categoria: cat as Categoria, total: c?.total ?? 0, pendentes: c?.pendentes ?? 0, color: catColors[cat] ?? '#5a6070' }
+    })
 
   return {
     total: pedidos.length + historicoEntries.length,

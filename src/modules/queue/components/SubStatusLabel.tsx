@@ -3,15 +3,27 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { subStatusConfigMap } from '@/shared/constants/sub-status-config';
 import { type SubStatus } from '@/types/pedido';
+
+interface SubStatusConfig {
+  label: string;
+  color: string;
+  pulsing: boolean;
+}
+
+const SUB_STATUS_CONFIG: Record<SubStatus, SubStatusConfig> = {
+  PENDENTE_AGUARDANDO: { label: 'Aguardando', color: '#b45309', pulsing: true },
+  PENDENTE_RETORNO_RECEBIDO: { label: 'Retorno recebido', color: '#b45309', pulsing: false },
+  JUNTA_AGUARDANDO: { label: 'Ag. Junta Médica', color: '#2563eb', pulsing: true },
+  JUNTA_PARECER_RECEBIDO: { label: 'Parecer recebido', color: '#2563eb', pulsing: false },
+};
 
 interface SubStatusLabelProps {
   subStatus: SubStatus;
 }
 
 export default function SubStatusLabel({ subStatus }: SubStatusLabelProps) {
-  const config = subStatusConfigMap[subStatus];
+  const config = SUB_STATUS_CONFIG[subStatus];
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>

@@ -18,8 +18,9 @@ import {
   PrioDot,
   RequestTypeChip,
   SLAChip,
-  SubStatusLabel,
 } from '@/shared/components';
+
+import SubStatusLabel from './SubStatusLabel';
 import { type Pedido } from '@/types/pedido';
 
 import { REQUEST_TYPE_MAP } from '../constants/request-type-map';

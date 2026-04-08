@@ -83,8 +83,9 @@ chore/NEW-779-configure-eslint
 ### Descrição
 
 - Bullet points diretos em português — sem checkboxes
-- Seções: Resumo, Ticket, Mudanças, Screenshots (se visual)
+- Seções (nessa ordem): Resumo, Mudanças, Screenshots (se aplicável), Ticket (sempre por último)
 - PR é comunicação interna do time — português facilita o entendimento
+- Descrição é sobre o que mudou, não sobre o processo de desenvolvimento
 
 ### Exemplo
 
@@ -92,10 +93,6 @@ chore/NEW-779-configure-eslint
 ## Resumo
 
 Configurar ESLint, Prettier, Husky e Commitlint no projeto.
-
-## Ticket
-
-[NEW-779](https://linear.app/arvosaude/issue/NEW-779)
 
 ## Mudanças
 
@@ -109,4 +106,8 @@ Configurar ESLint, Prettier, Husky e Commitlint no projeto.
 ## Screenshots
 
 N/A — apenas configuração, sem mudanças visuais.
+
+## Ticket
+
+[NEW-779](https://linear.app/arvosaude/issue/NEW-779)
 ```

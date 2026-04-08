@@ -41,7 +41,7 @@ You must act as a quality barrier against technical debt and UI/UX inconsistenci
 ## 5. General Code Conventions
 
 - **Language:** Code, JSDoc, comments strictly in **ENGLISH**.
-- **Naming:** Components `PascalCase`, hooks `useCamelCase`, files/folders kebab-case.
+- **Naming:** Components `PascalCase`, hooks `useCamelCase`. Component files use `PascalCase.tsx` (Next.js convention), other files use `kebab-case.ts`.
 
 ## 6. Strict Impersonality [CRITICAL]
 
