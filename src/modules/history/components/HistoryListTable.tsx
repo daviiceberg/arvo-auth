@@ -14,6 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import { type HistoricoEntry } from '@/types/pedido';
 
 import { type SortDirection } from '../types';
+
 import HistoryListTableRow from './HistoryListTableRow';
 
 interface HistoryListTableProps {
@@ -95,9 +96,9 @@ export default function HistoryListTable({
         count={filteredCount}
         page={page}
         rowsPerPage={rowsPerPage}
-        onPageChange={(_e, p) => onPageChange(p)}
+        onPageChange={(_e, p) => { onPageChange(p); }}
         rowsPerPageOptions={[]}
-        labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+        labelDisplayedRows={({ from, to, count }) => `${String(from)}–${String(to)} de ${String(count)}`}
       />
     </Card>
   );

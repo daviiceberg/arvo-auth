@@ -38,7 +38,7 @@ export default function QueueTabBar({
       <Box sx={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
         <Tabs
           value={tabValue}
-          onChange={(_e, v) => onTabChange(v)}
+          onChange={(_e, v) => { onTabChange(v); }}
           aria-label="Abas da fila"
           sx={{
             px: 2,
@@ -105,9 +105,9 @@ export default function QueueTabBar({
             Filtrar:
           </Typography>
           {([
-            { key: 'all', label: `Todas (${devolutivasCount})`, icon: null },
-            { key: 'aguardando', label: `Aguardando (${devolutivasAguardando})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
-            { key: 'retorno', label: `Retorno recebido (${devolutivasRetorno})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
+            { key: 'all', label: `Todas (${String(devolutivasCount)})`, icon: null },
+            { key: 'aguardando', label: `Aguardando (${String(devolutivasAguardando)})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
+            { key: 'retorno', label: `Retorno recebido (${String(devolutivasRetorno)})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
           ] as const).map(({ key, label, icon }) => (
             <Chip
               key={key}
@@ -118,7 +118,7 @@ export default function QueueTabBar({
                 </Box>
               }
               size="small"
-              onClick={() => onDevolutivasSubFilterChange(key)}
+              onClick={() => { onDevolutivasSubFilterChange(key); }}
               sx={{
                 height: 24,
                 fontSize: 12,

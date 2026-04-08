@@ -53,9 +53,9 @@ export default function CategorySummary({ categories, loading }: CategorySummary
           key={cat.categoria}
           role="button"
           tabIndex={0}
-          onClick={() => router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`)}
+          onClick={() => { router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`); }}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`); } }}
-          aria-label={`Filtrar por categoria ${cat.categoria}: ${cat.total} pedidos`}
+          aria-label={`Filtrar por categoria ${cat.categoria}: ${String(cat.total)} pedidos`}
           sx={{
             display: 'flex',
             alignItems: 'center',

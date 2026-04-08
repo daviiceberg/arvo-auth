@@ -1,43 +1,47 @@
 'use client'
 
 import React, { Suspense } from 'react'
+
 import { useSearchParams } from 'next/navigation'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import Chip from '@mui/material/Chip'
-import Stepper from '@mui/material/Stepper'
-import Step from '@mui/material/Step'
-import StepLabel from '@mui/material/StepLabel'
-import IconButton from '@mui/material/IconButton'
-import CircularProgress from '@mui/material/CircularProgress'
-import ZoomInIcon from '@mui/icons-material/ZoomIn'
-import ZoomOutIcon from '@mui/icons-material/ZoomOut'
-import RotateRightIcon from '@mui/icons-material/RotateRight'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
-import CloseIcon from '@mui/icons-material/Close'
+
+import CheckIcon from '@mui/icons-material/Check'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
+import RotateRightIcon from '@mui/icons-material/RotateRight'
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import ZoomInIcon from '@mui/icons-material/ZoomIn'
+import ZoomOutIcon from '@mui/icons-material/ZoomOut'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import CircularProgress from '@mui/material/CircularProgress'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Step from '@mui/material/Step'
+import StepLabel from '@mui/material/StepLabel'
+import Stepper from '@mui/material/Stepper'
 import { ThemeProvider } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+
 import theme from '@/core/theme'
-import { type ModuloType } from '../types'
+
 import { moduloLabels } from '../constants/module-labels'
-import { initialForm } from '../hooks/useNewRequestForm'
-import { useNewRequestForm } from '../hooks/useNewRequestForm'
+import { useDocumentUpload } from '../hooks/useDocumentUpload'
+import { useNewRequestForm, initialForm  } from '../hooks/useNewRequestForm'
 import { useStepNavigation } from '../hooks/useStepNavigation'
 import { useUploadStep } from '../hooks/useUploadStep'
-import { useDocumentUpload } from '../hooks/useDocumentUpload'
-import { StepUpload } from './StepUpload'
+import { type ModuloType } from '../types'
+
 import { StepBeneficiary } from './StepBeneficiary'
 import { StepClinical } from './StepClinical'
-import { StepDynamic } from './StepDynamic'
 import { StepDocuments } from './StepDocuments'
+import { StepDynamic } from './StepDynamic'
 import { StepReview } from './StepReview'
-import { TissDocPreview } from './TissDocPreview'
+import { StepUpload } from './StepUpload'
 import { SuccessDialog } from './SuccessDialog'
+import { TissDocPreview } from './TissDocPreview'
 
 // ── Step custom icon ──────────────────────────────────────────────────
 function StepIcon({ active, completed, index }: { active: boolean; completed: boolean; index: number }) {
@@ -66,7 +70,7 @@ function StepIcon({ active, completed, index }: { active: boolean; completed: bo
 // ── Inner component (uses useSearchParams) ────────────────────────────
 function NewRequestInner() {
   const searchParams = useSearchParams()
-  const moduloParam = (searchParams.get('modulo') || '') as ModuloType | ''
+  const moduloParam = (searchParams.get('modulo') ?? '') as ModuloType | ''
 
   const {
     form, setForm, set, setSelect,
@@ -95,7 +99,7 @@ function NewRequestInner() {
   })
 
   const handleUploadComplete = () => {
-    handleUpload(() => setCurrentStep(1))
+    handleUpload(() => { setCurrentStep(1); })
   }
 
   const handleSkipUpload = () => {
@@ -131,13 +135,11 @@ function NewRequestInner() {
           <Typography variant="body1" fontWeight={700} sx={{ fontSize: 15 }}>
             Nova Solicitação: Pré-Autorização
           </Typography>
-          {form.tipoSolicitacao && (
-            <Chip
+          {form.tipoSolicitacao ? <Chip
               label={moduloLabels[form.tipoSolicitacao]}
               size="small"
               sx={{ fontWeight: 600, fontSize: 11, backgroundColor: 'rgba(144,43,41,0.08)', color: '#902B29' }}
-            />
-          )}
+            /> : null}
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
           <Button
@@ -145,7 +147,7 @@ function NewRequestInner() {
             size="small"
             startIcon={<SaveOutlinedIcon />}
             sx={{ minHeight: 36 }}
-            onClick={() => alert('Rascunho salvo!')}
+            onClick={() => { alert('Rascunho salvo!'); }}
           >
             Salvar Rascunho
           </Button>
@@ -295,7 +297,7 @@ function NewRequestInner() {
             flexShrink: 0,
           }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 11 }}>
-              {`Etapa ${currentStep + 1} de ${steps.length}`}
+              {`Etapa ${String(currentStep + 1)} de ${String(steps.length)}`}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1.5 }}>
               <Button

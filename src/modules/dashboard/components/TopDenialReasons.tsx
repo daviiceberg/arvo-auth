@@ -44,7 +44,7 @@ export default function TopDenialReasons({ reasons, loading }: TopDenialReasonsP
               <Box
                 sx={{
                   height: '100%',
-                  width: `${(motivo.count / maxCount) * 100}%`,
+                  width: `${String((motivo.count / maxCount) * 100)}%`,
                   backgroundColor: motivo.color,
                   borderRadius: 3,
                   transition: 'width 600ms ease',

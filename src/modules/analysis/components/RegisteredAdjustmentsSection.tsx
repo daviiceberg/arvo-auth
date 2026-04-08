@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+
+import EditIcon from '@mui/icons-material/Edit'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
-import EditIcon from '@mui/icons-material/Edit'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { type Ajuste } from '@/data/pedidos'
 
@@ -36,7 +37,7 @@ export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdju
     <Card sx={{ border: '1px solid rgba(245,158,11,0.35) !important', backgroundColor: 'rgba(255,251,235,0.6)' }}>
       <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
         <Box
-          onClick={() => setCollapsed(v => !v)}
+          onClick={() => { setCollapsed(v => !v); }}
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, cursor: 'pointer', userSelect: 'none' }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -80,11 +81,9 @@ export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdju
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25 }}>
                   Motivo: {aj.motivo}
                 </Typography>
-                {aj.fundamentacao && (
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25, fontStyle: 'italic' }}>
+                {aj.fundamentacao ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25, fontStyle: 'italic' }}>
                     {aj.fundamentacao}
-                  </Typography>
-                )}
+                  </Typography> : null}
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
                   Por: {aj.operador} ({aj.perfil})
                 </Typography>

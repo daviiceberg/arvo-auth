@@ -1,25 +1,26 @@
 'use client'
 
 import React from 'react'
+
+import AddIcon from '@mui/icons-material/Add'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import FormControl from '@mui/material/FormControl'
 import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
-import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import Chip from '@mui/material/Chip'
-import AddIcon from '@mui/icons-material/Add'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import AttachFileIcon from '@mui/icons-material/AttachFile'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import { type ModuloType, type DocUpload } from '../types'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 import { DOCS_OBRIGATORIOS, SUBTITULO_DOC, TIPOS_DOC_UPLOAD } from '../constants/mandatory-documents'
+import { type ModuloType, type DocUpload } from '../types'
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -90,7 +91,7 @@ export function StepDocuments({
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
             {docsObrigatorios.map((doc) => {
-              const req = reqs.find((_, i) => `OBR-${i}` === doc.id)
+              const req = reqs.find((_, i) => `OBR-${String(i)}` === doc.id)
               const inputRef = React.createRef<HTMLInputElement>()
               return (
                 <Box key={doc.id} sx={{
@@ -109,14 +110,14 @@ export function StepDocuments({
                         )}
                       </Box>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                        {doc.status === 'enviado' ? `${doc.nome} \u00B7 ${doc.tamanho}` : req ? `${req.descricao}` : ''}
+                        {doc.status === 'enviado' ? `${doc.nome} \u00B7 ${doc.tamanho}` : req ? req.descricao : ''}
                       </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
                       {doc.status === 'enviado' ? (
                         <>
                           <Chip label={'\u2705 Enviado'} size="small" sx={{ fontSize: 11, fontWeight: 700, backgroundColor: 'rgba(22,163,74,0.1)', color: '#15803d', height: 22 }} />
-                          <IconButton size="small" color="error" onClick={() => handleRemoveObrigDoc(doc.id, req?.nome ?? doc.nome)}>
+                          <IconButton size="small" color="error" onClick={() => { handleRemoveObrigDoc(doc.id, req?.nome ?? doc.nome); }}>
                             <DeleteOutlineIcon fontSize="small" />
                           </IconButton>
                         </>
@@ -158,7 +159,7 @@ export function StepDocuments({
                 <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{doc.nome}</Typography>
                 <Typography variant="caption" color="text.secondary">{doc.tipo} · {doc.tamanho}</Typography>
               </Box>
-              <IconButton size="small" color="error" onClick={() => handleRemoveDocAdicional(doc.id)}>
+              <IconButton size="small" color="error" onClick={() => { handleRemoveDocAdicional(doc.id); }}>
                 <DeleteOutlineIcon fontSize="small" />
               </IconButton>
             </Box>
@@ -174,7 +175,7 @@ export function StepDocuments({
             <Grid size={{ xs: 12, md: 6 }}>
               <FieldLabel>Tipo do documento <span style={{ color: '#C62828' }}>*</span></FieldLabel>
               <FormControl fullWidth size="small">
-                <Select value={newDocTipo} displayEmpty onChange={(e) => setNewDocTipo(e.target.value)}>
+                <Select value={newDocTipo} displayEmpty onChange={(e) => { setNewDocTipo(e.target.value); }}>
                   <MenuItem value="" disabled><em>Selecione...</em></MenuItem>
                   {TIPOS_DOC_UPLOAD.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
                 </Select>
@@ -182,13 +183,13 @@ export function StepDocuments({
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <FieldLabel>Descrição (opcional)</FieldLabel>
-              <TextField fullWidth size="small" value={newDocDescricao} onChange={(e) => setNewDocDescricao(e.target.value)} placeholder="Ex: Resultado do hemograma de 20/03" />
+              <TextField fullWidth size="small" value={newDocDescricao} onChange={(e) => { setNewDocDescricao(e.target.value); }} placeholder="Ex: Resultado do hemograma de 20/03" />
             </Grid>
           </Grid>
           {/* Drop zone */}
           <Box
             onDragOver={(e) => { e.preventDefault(); setDocDragOver(true) }}
-            onDragLeave={() => setDocDragOver(false)}
+            onDragLeave={() => { setDocDragOver(false); }}
             onDrop={(e) => { e.preventDefault(); setDocDragOver(false); const f = e.dataTransfer.files[0]; if (f) setNewDocFile(f) }}
             onClick={() => docFileRef.current?.click()}
             sx={{
@@ -213,7 +214,7 @@ export function StepDocuments({
           </Box>
         </Box>
       ) : (
-        <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => setShowAddDocForm(true)} sx={{ fontSize: 13 }}>
+        <Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={() => { setShowAddDocForm(true); }} sx={{ fontSize: 13 }}>
           Adicionar documento
         </Button>
       )}

@@ -78,8 +78,7 @@ export default function QueueTable({
                   <Typography variant="caption" color="text.disabled">
                     {hasFilters ? 'Tente ajustar ou limpar os filtros aplicados.' : 'A fila está vazia no momento.'}
                   </Typography>
-                  {hasFilters && (
-                    <Button
+                  {hasFilters ? <Button
                       size="small"
                       variant="outlined"
                       color="inherit"
@@ -87,8 +86,7 @@ export default function QueueTable({
                       onClick={onClearFilters}
                     >
                       Limpar filtros
-                    </Button>
-                  )}
+                    </Button> : null}
                 </Box>
               </TableCell>
             </TableRow>

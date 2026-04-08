@@ -1,6 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import CloseIcon from '@mui/icons-material/Close'
+import EditIcon from '@mui/icons-material/Edit'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -13,10 +18,6 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import CloseIcon from '@mui/icons-material/Close'
-import EditIcon from '@mui/icons-material/Edit'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 
 import { type Ajuste } from '@/data/pedidos'
 
@@ -79,11 +80,11 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
     } else if (lastPrestAjuste) {
       setCampo('prestador')
       setNovoPrestador(lastPrestAjuste.valorNovo.replace(/ \(CNES: .+\)$/, ''))
-      const cnesMatch = lastPrestAjuste.valorNovo.match(/CNES: (.+)\)$/)
+      const cnesMatch = /CNES: (.+)\)$/.exec(lastPrestAjuste.valorNovo)
       setNovoCNES(cnesMatch?.[1] ?? '')
     } else if (lastCodeAjuste) {
       setCampo('codigo')
-      setNovoCodigo(lastCodeAjuste.valorNovo.split(' — ')[0] ?? '')
+      setNovoCodigo(lastCodeAjuste.valorNovo.split(' — ')[0])
       setNovaDesc(lastCodeAjuste.valorNovo.split(' — ')[1] ?? '')
     } else {
       setCampo('')
@@ -103,7 +104,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
     if (!open) return
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    return () => { window.removeEventListener('keydown', handler); }
   }, [open, onClose])
 
   const validate = () => {
@@ -147,7 +148,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
     onConfirm({
       procedimentoCodigo: proc.codigo,
       procedimentoDescricao: proc.descricao,
-      campo: campo as Ajuste['campo'],
+      campo: campo,
       valorAnterior,
       valorNovo,
       motivo,
@@ -198,10 +199,10 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
           {[
             { label: 'Código', value: proc?.codigo },
             { label: 'Descrição', value: proc?.descricao },
-            { label: 'Qtd. Solicitada', value: proc ? `${proc.qty}${isOpme ? ' unidade' : ' sessões'}` : '' },
+            { label: 'Qtd. Solicitada', value: proc ? `${String(proc.qty)}${isOpme ? ' unidade' : ' sessões'}` : '' },
             { label: 'Prestador', value: proc?.prestador },
             ...(isOpme ? [
-              { label: 'Fabricante', value: proc?.fabricante || '—' },
+              { label: 'Fabricante', value: proc?.fabricante ?? '—' },
               { label: 'Valor Unitário', value: proc?.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—' },
             ] : []),
           ].map((f) => (
@@ -223,7 +224,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
             <Select value={campo} label="Campo a ajustar *" onChange={e => { setCampo(e.target.value as typeof campo); setErrors(v => ({ ...v, campo: '' })) }} autoFocus>
               {camposDisponiveis.map(c => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
             </Select>
-            {errors.campo && <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.campo}</Typography>}
+            {errors.campo ? <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.campo}</Typography> : null}
           </FormControl>
 
           {/* Quantidade */}
@@ -242,7 +243,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
                   sx={{ flex: 1 }}
                 />
               </Box>
-              {errors.novaQty && <Typography sx={{ fontSize: 11, color: 'error.main', mb: 0.75 }}>{errors.novaQty}</Typography>}
+              {errors.novaQty ? <Typography sx={{ fontSize: 11, color: 'error.main', mb: 0.75 }}>{errors.novaQty}</Typography> : null}
               {qtyStatus === 'below' && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                   <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309' }} />
@@ -277,7 +278,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
                 size="small"
                 label="CNES (opcional)"
                 value={novoCNES}
-                onChange={e => setNovoCNES(e.target.value.replace(/\D/g, ''))}
+                onChange={e => { setNovoCNES(e.target.value.replace(/\D/g, '')); }}
                 inputProps={{ inputMode: 'numeric' }}
                 fullWidth
               />
@@ -366,7 +367,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
             <Select value={motivo} label="Motivo do ajuste *" onChange={e => { setMotivo(e.target.value); setErrors(v => ({ ...v, motivo: '' })) }}>
               {motivosDisponiveis.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
             </Select>
-            {errors.motivo && <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.motivo}</Typography>}
+            {errors.motivo ? <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.motivo}</Typography> : null}
           </FormControl>
 
           <TextField

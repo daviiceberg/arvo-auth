@@ -20,8 +20,8 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => { setLoading(false); }, 800);
+    return () => { clearTimeout(t); };
   }, []);
 
   const {

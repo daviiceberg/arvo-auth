@@ -14,7 +14,6 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
 import {
-  type DecisaoAcao,
   type OriginFilter,
   type ActionFilter,
   type DivergenceFilter,
@@ -137,8 +136,7 @@ export default function HistoryListFilterBar({
               <MenuItem value="divergiu">Apenas divergências</MenuItem>
             </Select>
           </FormControl>
-          {hasFilters && (
-            <Button
+          {hasFilters ? <Button
               size="small"
               startIcon={<FilterListOffIcon />}
               onClick={onClearFilters}
@@ -146,8 +144,7 @@ export default function HistoryListFilterBar({
               sx={{ fontSize: 12 }}
             >
               Limpar filtros
-            </Button>
-          )}
+            </Button> : null}
         </Box>
       </CardContent>
     </Card>

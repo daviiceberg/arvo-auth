@@ -55,7 +55,7 @@ export default function QueueFilterBar({
         placeholder="Buscar (ID, nome, carteirinha...)"
         size="small"
         value={search}
-        onChange={(e) => onSearchChange(e.target.value)}
+        onChange={(e) => { onSearchChange(e.target.value); }}
         slotProps={{
           input: {
             startAdornment: (
@@ -72,7 +72,7 @@ export default function QueueFilterBar({
         <Select
           value={categoriaFilter}
           label="Categoria"
-          onChange={(e) => onCategoriaFilterChange(e.target.value)}
+          onChange={(e) => { onCategoriaFilterChange(e.target.value); }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Internação">Internação</MenuItem>
@@ -90,7 +90,7 @@ export default function QueueFilterBar({
         <Select
           value={slaFilter}
           label="Situação SLA"
-          onChange={(e) => onSlaFilterChange(e.target.value)}
+          onChange={(e) => { onSlaFilterChange(e.target.value); }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="No prazo">No prazo</MenuItem>
@@ -103,7 +103,7 @@ export default function QueueFilterBar({
         <Select
           value={prestadorFilter}
           label="Prestador"
-          onChange={(e) => onPrestadorFilterChange(e.target.value)}
+          onChange={(e) => { onPrestadorFilterChange(e.target.value); }}
         >
           <MenuItem value="Todos">Todos</MenuItem>
           <MenuItem value="Hospital São Lucas">Hospital São Lucas</MenuItem>
@@ -117,7 +117,7 @@ export default function QueueFilterBar({
         <Select
           value={iaFilter}
           label="Sugestão IA"
-          onChange={(e) => onIaFilterChange(e.target.value)}
+          onChange={(e) => { onIaFilterChange(e.target.value); }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>

@@ -1,25 +1,25 @@
 'use client'
 import { useState } from 'react'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import Divider from '@mui/material/Divider'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
-import RestartAltIcon from '@mui/icons-material/RestartAlt'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 const faqs = [
   {
@@ -159,8 +159,8 @@ export default function AjudaPage() {
           {faqs.map((faq, i) => (
             <Accordion
               key={i}
-              expanded={expanded === `faq-${i}`}
-              onChange={handleAccordion(`faq-${i}`)}
+              expanded={expanded === `faq-${String(i)}`}
+              onChange={handleAccordion(`faq-${String(i)}`)}
               disableGutters
               elevation={0}
               sx={{
@@ -234,7 +234,7 @@ export default function AjudaPage() {
                   <Select
                     label="Tipo"
                     value={tipo}
-                    onChange={(e) => setTipo(e.target.value)}
+                    onChange={(e) => { setTipo(e.target.value); }}
                   >
                     {TIPO_OPTIONS.map((opt) => (
                       <MenuItem key={opt} value={opt}>
@@ -246,7 +246,7 @@ export default function AjudaPage() {
                 <TextField
                   label="E-mail para contato (opcional)"
                   value={emailContato}
-                  onChange={(e) => setEmailContato(e.target.value)}
+                  onChange={(e) => { setEmailContato(e.target.value); }}
                   size="small"
                   fullWidth
                   type="email"
@@ -256,22 +256,22 @@ export default function AjudaPage() {
               <TextField
                 label="Assunto"
                 value={assunto}
-                onChange={(e) => setAssunto(e.target.value.slice(0, MAX_ASSUNTO))}
+                onChange={(e) => { setAssunto(e.target.value.slice(0, MAX_ASSUNTO)); }}
                 size="small"
                 fullWidth
-                helperText={`${assunto.length}/${MAX_ASSUNTO} caracteres`}
+                helperText={`${String(assunto.length)}/${String(MAX_ASSUNTO)} caracteres`}
                 FormHelperTextProps={{ sx: { textAlign: 'right' } }}
               />
 
               <TextField
                 label="Descrição"
                 value={descricao}
-                onChange={(e) => setDescricao(e.target.value.slice(0, MAX_DESC))}
+                onChange={(e) => { setDescricao(e.target.value.slice(0, MAX_DESC)); }}
                 size="small"
                 fullWidth
                 multiline
                 minRows={4}
-                helperText={`${descricao.length}/${MAX_DESC} caracteres`}
+                helperText={`${String(descricao.length)}/${String(MAX_DESC)} caracteres`}
                 FormHelperTextProps={{ sx: { textAlign: 'right' } }}
               />
 

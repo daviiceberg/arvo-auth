@@ -1,6 +1,6 @@
 export type StatusProcessamento = 'aguardando_processamento' | 'em_processamento' | 'erro_processamento' | 'processado'
 
-export type PedidoEmProcessamento = {
+export interface PedidoEmProcessamento {
   id: string
   statusProcessamento: Exclude<StatusProcessamento, 'processado'>
   origem: OrigemPedido
@@ -33,7 +33,7 @@ export type Categoria =
   | 'Home Care'
   | 'SADT'
 
-export type Procedimento = {
+export interface Procedimento {
   codigo: string
   tuss: string
   descricao: string
@@ -61,7 +61,7 @@ export interface Ajuste {
   timestamp: string
 }
 
-export type Pedido = {
+export interface Pedido {
   id: string
   status: StatusGuia
   tipoGuia: TipoGuia
@@ -2257,7 +2257,7 @@ export const dashboardMetrics = (() => {
     if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) counts[p.categoria].pendentes++
   }
   const porCategoria = catOrder
-    .filter(cat => counts[cat]?.total > 0)
+    .filter(cat => counts[cat] && counts[cat].total > 0)
     .map(cat => ({ categoria: cat as Categoria, total: counts[cat].total, pendentes: counts[cat].pendentes, color: catColors[cat] }))
 
   return {

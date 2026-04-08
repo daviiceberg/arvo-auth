@@ -37,7 +37,7 @@ export default function QueueTableRow({ pedido, categoriaFilter, lastViewedId, o
   return (
     <TableRow
       key={pedido.id}
-      onClick={() => onRowClick(pedido.id)}
+      onClick={() => { onRowClick(pedido.id); }}
       aria-label={`Pedido ${pedido.id}`}
       sx={{
         cursor: 'pointer',
@@ -145,7 +145,7 @@ export default function QueueTableRow({ pedido, categoriaFilter, lastViewedId, o
           <span><IASuggestionChip suggestion={pedido.iaSugestao} /></span>
         </Tooltip>
       </TableCell>
-      <TableCell sx={{ px: 1.5 }} onClick={(e) => e.stopPropagation()}>
+      <TableCell sx={{ px: 1.5 }} onClick={(e) => { e.stopPropagation(); }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <Tooltip
             title={pedido.lockOperador ? `Em análise por ${pedido.lockOperador.nome} desde ${pedido.lockOperador.desde}` : ''}
@@ -156,7 +156,7 @@ export default function QueueTableRow({ pedido, categoriaFilter, lastViewedId, o
               <Button
                 size="small"
                 variant={pedido.lockOperador ? 'outlined' : 'contained'}
-                onClick={() => onRowClick(pedido.id)}
+                onClick={() => { onRowClick(pedido.id); }}
                 aria-label={`Analisar pedido ${pedido.id}`}
                 sx={{ minHeight: 28, fontSize: 12, px: 1.5, ...(pedido.lockOperador && { color: 'text.secondary', borderColor: 'rgba(0,0,0,0.2)' }) }}
               >
@@ -164,19 +164,15 @@ export default function QueueTableRow({ pedido, categoriaFilter, lastViewedId, o
               </Button>
             </span>
           </Tooltip>
-          {pedido.lockOperador && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
+          {pedido.lockOperador ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
               <LockOutlinedIcon sx={{ fontSize: 11, color: 'text.disabled' }} />
               <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
                 {pedido.lockOperador.nome}
               </Typography>
-            </Box>
-          )}
-          {!pedido.lockOperador && pedido.subStatus && (
-            <Box sx={{ mt: 0.75 }}>
+            </Box> : null}
+          {!pedido.lockOperador && pedido.subStatus ? <Box sx={{ mt: 0.75 }}>
               <SubStatusLabel subStatus={pedido.subStatus} />
-            </Box>
-          )}
+            </Box> : null}
         </Box>
       </TableCell>
     </TableRow>

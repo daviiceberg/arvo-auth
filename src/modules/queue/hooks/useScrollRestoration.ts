@@ -14,7 +14,7 @@ export function useScrollRestoration() {
     }
     if (savedId) {
       setLastViewedId(savedId);
-      setTimeout(() => setLastViewedId(null), 2500);
+      setTimeout(() => { setLastViewedId(null); }, 2500);
     }
     sessionStorage.removeItem('fila_scroll');
     sessionStorage.removeItem('fila_last_id');

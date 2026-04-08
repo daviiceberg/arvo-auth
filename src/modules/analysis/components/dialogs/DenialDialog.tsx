@@ -67,7 +67,7 @@ export default function DenialDialog({
             {DENIAL_REASONS.map((m, idx) => (
               <Box
                 key={idx}
-                onClick={() => onDenialReasonChange(idx)}
+                onClick={() => { onDenialReasonChange(idx); }}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -102,7 +102,7 @@ export default function DenialDialog({
           multiline rows={4} fullWidth size="small"
           placeholder="Descreva o motivo da negativa..."
           value={denialJustification}
-          onChange={e => onDenialJustificationChange(e.target.value)}
+          onChange={e => { onDenialJustificationChange(e.target.value); }}
           helperText={denialReasonIdx >= 0 && denialReasonIdx < DENIAL_REASONS.length - 1
             ? 'Texto preenchido automaticamente conforme o motivo. Edite se necessário.'
             : undefined}

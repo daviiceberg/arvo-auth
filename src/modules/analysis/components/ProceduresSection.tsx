@@ -1,5 +1,8 @@
 'use client'
 
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
+import EditIcon from '@mui/icons-material/Edit'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
@@ -12,9 +15,6 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
-import EditIcon from '@mui/icons-material/Edit'
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
 
 import { type Pedido, type Ajuste } from '@/data/pedidos'
 
@@ -79,14 +79,11 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                         <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[1] ?? ajusteCodigo.valorNovo}</Typography>
                       </Box>
                     ) : proc.descricao}
-                    {(proc.fabricante || proc.valorUnitario) && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
-                        {proc.fabricante && (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    {(proc.fabricante || proc.valorUnitario) ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
+                        {proc.fabricante ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <BusinessOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
                             <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>{proc.fabricante}</Typography>
-                          </Box>
-                        )}
+                          </Box> : null}
                         {proc.valorUnitario ? (
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <MonetizationOnOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
@@ -95,8 +92,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                             </Typography>
                           </Box>
                         ) : null}
-                      </Box>
-                    )}
+                      </Box> : null}
                   </TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}>
                     {ajuste ? (
@@ -106,7 +102,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                       </Box>
                     ) : (
                       <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
-                        {`Qtd: ${proc.qty}${proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}`}
+                        {`Qtd: ${String(proc.qty)}${proc.qtyAutorizada !== undefined ? ` · Aut: ${String(proc.qtyAutorizada)}` : ''}`}
                       </Typography>
                     )}
                   </TableCell>
@@ -132,13 +128,11 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                   </TableCell>
                   <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
-                      {proc.cid && (
-                        <Chip
+                      {proc.cid ? <Chip
                           label={`CID ${proc.cid}`}
                           size="small"
                           sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12, height: 20 }}
-                        />
-                      )}
+                        /> : null}
                       {(() => {
                         const lastDigit = parseInt(proc.codigo.slice(-1))
                         const credOk = lastDigit % 2 === 0
@@ -154,14 +148,12 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                           />
                         )
                       })()}
-                      {hasAnyAjuste && !isGuiaFinalizada && (
-                        <Chip
+                      {hasAnyAjuste && !isGuiaFinalizada ? <Chip
                           icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
                           label="Ajustado"
                           size="small"
                           sx={{ backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, fontSize: 11, height: 20 }}
-                        />
-                      )}
+                        /> : null}
                     </Box>
                   </TableCell>
                   <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
@@ -185,7 +177,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                           size="small"
                           variant="outlined"
                           startIcon={<EditIcon sx={{ fontSize: 12 }} />}
-                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario })}
+                          onClick={() => { onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario }); }}
                           sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#902B29', color: '#902B29', backgroundColor: 'rgba(144,43,41,0.04)' } }}
                         >
                           Ajustar
@@ -201,8 +193,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
             })}
           </TableBody>
         </Table>
-        {pedido.cidsSecundarios && pedido.cidsSecundarios.length > 0 && (
-          <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
+        {pedido.cidsSecundarios && pedido.cidsSecundarios.length > 0 ? <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
             <Typography variant="caption" sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}>
               CIDs Secundários
             </Typography>
@@ -212,8 +203,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                   sx={{ backgroundColor: 'rgba(100,116,139,0.08)', color: '#475569', fontWeight: 600, fontSize: 12, height: 20 }} />
               ))}
             </Box>
-          </Box>
-        )}
+          </Box> : null}
         {(() => {
           const prestadorAjuste = allAjustes.find(a => a.campo === 'prestador')
           const hospitalVigente = prestadorAjuste ? prestadorAjuste.valorNovo : p.hospital
@@ -225,14 +215,12 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
                   <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{hospitalVigente}</Typography>
-                  {prestadorAjuste && (
-                    <Chip
+                  {prestadorAjuste ? <Chip
                       icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
                       label="Prestador ajustado"
                       size="small"
                       sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.08)', color: 'primary.main' }}
-                    />
-                  )}
+                    /> : null}
                 </Box>
               </Box>
               {[

@@ -38,7 +38,7 @@ export function useAdjustmentState({ pedido, showSnackbar }: UseAdjustmentStateP
   }
 
   const handleAdjustConfirm = (ajuste: Omit<Ajuste, 'id'>) => {
-    const newAjuste: Ajuste = { id: `ADJ-${Date.now()}`, ...ajuste }
+    const newAjuste: Ajuste = { id: `ADJ-${String(Date.now())}`, ...ajuste }
     setLocalAdjustments(prev => [...prev, newAjuste])
     setDrawerOpen(false)
     const campoLabel =

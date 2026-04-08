@@ -12,9 +12,10 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import { type Pedido } from '@/types/pedido';
 
 import { StatusChip, SLAChip } from '@/shared/components';
+import { type Pedido } from '@/types/pedido';
+
 
 interface RecentRequestsTableProps {
   pedidos: Pedido[];
@@ -54,7 +55,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
         <Button
           size="small"
           endIcon={<ChevronRightIcon fontSize="small" />}
-          onClick={() => router.push('/fila')}
+          onClick={() => { router.push('/fila'); }}
           sx={{ fontSize: 12, color: 'primary.main' }}
           aria-label="Ver todas as solicitações"
         >
@@ -84,7 +85,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
               <TableRow
                 key={pedido.id}
                 tabIndex={0}
-                onClick={() => router.push(`/analise?id=${pedido.id}`)}
+                onClick={() => { router.push(`/analise?id=${pedido.id}`); }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/analise?id=${pedido.id}`); } }}
                 aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiario.nome}`}
                 sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' }, '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 } }}

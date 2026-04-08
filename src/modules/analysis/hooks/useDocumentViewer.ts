@@ -35,15 +35,15 @@ export function useDocumentViewer(pedido: Pedido) {
       return
     }
     setAddError('')
-    const newId = `DOC-LOCAL-${Date.now()}`
+    const newId = `DOC-LOCAL-${String(Date.now())}`
     const newDoc: Documento = {
       id: newId,
       nome: addFile.name,
       tipo: addTipo,
       tamanho:
         addFile.size > 1024 * 1024
-          ? `${(addFile.size / 1024 / 1024).toFixed(1)} MB`
-          : `${Math.round(addFile.size / 1024)} KB`,
+          ? `${String((addFile.size / 1024 / 1024).toFixed(1))} MB`
+          : `${String(Math.round(addFile.size / 1024))} KB`,
       enviadoEm: new Date().toLocaleDateString('pt-BR'),
       obrigatorio: false,
       status: 'enviado',
@@ -55,7 +55,7 @@ export function useDocumentViewer(pedido: Pedido) {
     setAddFile(null)
     setToast('Documento adicionado com sucesso')
     setProcessingId(newId)
-    setTimeout(() => setProcessingId(null), 2500)
+    setTimeout(() => { setProcessingId(null); }, 2500)
   }
 
   const handleAddModalClose = () => {

@@ -1,18 +1,21 @@
 'use client'
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import Typography from '@mui/material/Typography'
+
 import { NOTIFICACOES, type Notificacao } from '@/data/notificacoes'
 
 export default function NotificacoesPage() {
   const router = useRouter()
-  const [notifications, setNotifications] = useState<Notificacao[]>(NOTIFICACOES)
+  const [notifications, setNotifications] = useState(NOTIFICACOES)
 
   const unreadCount = notifications.filter((n) => !n.read).length
 
@@ -37,7 +40,7 @@ export default function NotificacoesPage() {
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
             {unreadCount > 0
-              ? `Você tem ${unreadCount} notificaç${unreadCount === 1 ? 'ão não lida' : 'ões não lidas'}`
+              ? `Você tem ${String(unreadCount)} notificaç${unreadCount === 1 ? 'ão não lida' : 'ões não lidas'}`
               : 'Nenhuma notificação não lida'}
           </Typography>
         </Box>
@@ -68,7 +71,7 @@ export default function NotificacoesPage() {
               <Box key={n.id}>
                 {i > 0 && <Divider />}
                 <Box
-                  onClick={() => handleClick(n)}
+                  onClick={() => { handleClick(n); }}
                   sx={{
                     px: 2.5,
                     py: 2,

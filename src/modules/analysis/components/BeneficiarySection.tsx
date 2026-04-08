@@ -1,14 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+
+import FemaleIcon from '@mui/icons-material/Female'
+import MaleIcon from '@mui/icons-material/Male'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import FemaleIcon from '@mui/icons-material/Female'
-import MaleIcon from '@mui/icons-material/Male'
 
 import { type Pedido } from '@/data/pedidos'
 
@@ -34,7 +35,7 @@ export default function BeneficiarySection({ pedido }: BeneficiarySectionProps) 
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
-                label={`${b.idade} anos`}
+                label={`${String(b.idade)} anos`}
                 size="small"
                 sx={{ backgroundColor: 'rgba(0,0,0,0.06)', color: '#6b7280', fontWeight: 600, height: 22, fontSize: 12 }}
               />
@@ -56,7 +57,7 @@ export default function BeneficiarySection({ pedido }: BeneficiarySectionProps) 
           <Button
             size="small"
             variant="outlined"
-            onClick={() => router.push(`/fila?beneficiario=${encodeURIComponent(b.nome)}`)}
+            onClick={() => { router.push(`/fila?beneficiario=${encodeURIComponent(b.nome)}`); }}
             sx={{ fontSize: 12, py: 0.5, flexShrink: 0, color: 'primary.main', borderColor: 'rgba(144,43,41,0.35)', whiteSpace: 'nowrap' }}
           >
             Ver todas as guias deste beneficiário →

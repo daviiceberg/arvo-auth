@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
-import { type FormData, type TerapiaProcedimento } from '../types'
+
 import { getStep3Label } from '../constants/module-labels'
+import { type FormData, type TerapiaProcedimento } from '../types'
 
 interface UseStepNavigationParams {
   form: FormData
@@ -15,7 +17,7 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   const [currentStep, setCurrentStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [modalAberto, setModalAberto] = useState(false)
-  const [numeroProtocolo, setNumeroProtocolo] = useState<string>('')
+  const [numeroProtocolo, setNumeroProtocolo] = useState('')
 
   const activeModulo = form.tipoSolicitacao
 

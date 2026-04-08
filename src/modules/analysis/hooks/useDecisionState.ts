@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
 
 import { type Pedido, type Ajuste } from '@/data/pedidos'
@@ -41,7 +42,7 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
   // Form field states
   const [approvalReason, setApprovalReason] = useState('')
   const [approvalJustification, setApprovalJustification] = useState('')
-  const [denialReasonIdx, setDenialReasonIdx] = useState<number>(-1)
+  const [denialReasonIdx, setDenialReasonIdx] = useState(-1)
   const [denialJustification, setDenialJustification] = useState('')
   const [pendencyItems, setPendencyItems] = useState<string[]>([])
   const [pendencyJustification, setPendencyJustification] = useState('')
@@ -128,7 +129,7 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
 
   const confirmPartialDecision = () => {
     const negados = pedido.procedimentos.filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
-    const allValid = negados.every(pr => partialDenialReasonMap[pr.codigo] !== undefined && partialDenialJustMap[pr.codigo]?.trim())
+    const allValid = negados.every(pr => partialDenialReasonMap[pr.codigo] !== undefined && partialDenialJustMap[pr.codigo].trim())
     if (!allValid) return
     setShowPartialDialog(false)
     const nAprovado = pedido.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
@@ -138,7 +139,7 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
     } else if (nAprovado === 0) {
       showSnackbar(`Pedido ${pedido.id} negado`, 'error')
     } else {
-      showSnackbar(`Pedido ${pedido.id} — Aprovação Parcial registrada (${nAprovado} aprovado(s), ${nNegado} negado(s))`, 'warning')
+      showSnackbar(`Pedido ${pedido.id} — Aprovação Parcial registrada (${String(nAprovado)} aprovado(s), ${String(nNegado)} negado(s))`, 'warning')
     }
   }
 

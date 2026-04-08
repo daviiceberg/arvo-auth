@@ -1,17 +1,19 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import { pedidos } from '@/data/pedidos';
 
 import { useQueueData } from '../hooks/useQueueData';
 import { useQueueFilters } from '../hooks/useQueueFilters';
 import { useScrollRestoration } from '../hooks/useScrollRestoration';
+
 import QueueFilterBar from './QueueFilterBar';
 import QueueMetricsRow from './QueueMetricsRow';
 import QueuePagination from './QueuePagination';
@@ -85,7 +87,7 @@ export default function QueuePage() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/nova-solicitacao')}
+          onClick={() => { router.push('/nova-solicitacao'); }}
           sx={{ mt: 0.5, minHeight: 44 }}
           aria-label="Nova solicitação"
         >

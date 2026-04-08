@@ -1,18 +1,20 @@
 'use client'
 
 import React from 'react'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import { type FormData, type ModuloType } from '../types'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 import { moduloLabels } from '../constants/module-labels'
+import { type FormData, type ModuloType } from '../types'
 
 // ── Field helpers ─────────────────────────────────────────────────────
 function FieldLabel({ children, validated, warning }: { children: React.ReactNode; validated?: boolean; warning?: boolean }) {
@@ -21,8 +23,8 @@ function FieldLabel({ children, validated, warning }: { children: React.ReactNod
       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
         {children}
       </Typography>
-      {validated && <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />}
-      {warning && <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
+      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
     </Box>
   )
 }
@@ -57,7 +59,7 @@ export function StepBeneficiary({ form, set, setSelect }: StepBeneficiaryProps) 
             <Select
               value={form.tipoSolicitacao}
               displayEmpty
-              onChange={(e) => setSelect('tipoSolicitacao')(e.target.value)}
+              onChange={(e) => { setSelect('tipoSolicitacao')(e.target.value); }}
               sx={{ backgroundColor: form.tipoSolicitacao ? '#f0fdf4' : '#fff' }}
             >
               <MenuItem value="" disabled><em>Selecione o tipo de solicitação...</em></MenuItem>

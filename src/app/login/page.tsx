@@ -1,15 +1,17 @@
 'use client'
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
-import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import InputAdornment from '@mui/material/InputAdornment'
+
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -59,7 +61,7 @@ export default function LoginPage() {
               label="E-mail"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); }}
               fullWidth
               required
               sx={{ mb: 2 }}
@@ -76,7 +78,7 @@ export default function LoginPage() {
               label="Senha"
               type="password"
               value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              onChange={(e) => { setSenha(e.target.value); }}
               fullWidth
               required
               sx={{ mb: 3 }}

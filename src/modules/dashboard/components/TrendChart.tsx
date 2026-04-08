@@ -21,23 +21,23 @@ export default function TrendChart({ data }: TrendChartProps) {
               <Box
                 sx={{
                   width: '100%',
-                  height: `${(d.negados / maxVal) * 140}px`,
+                  height: `${String((d.negados / maxVal) * 140)}px`,
                   minHeight: 3,
                   backgroundColor: '#d4183d',
                   borderRadius: '2px 2px 0 0',
                   opacity: 0.8,
                 }}
-                title={`Negados: ${d.negados}`}
+                title={`Negados: ${String(d.negados)}`}
               />
               <Box
                 sx={{
                   width: '100%',
-                  height: `${(d.aprovados / maxVal) * 140}px`,
+                  height: `${String((d.aprovados / maxVal) * 140)}px`,
                   minHeight: 4,
                   backgroundColor: '#16a34a',
                   borderRadius: '2px 2px 0 0',
                 }}
-                title={`Aprovados: ${d.aprovados}`}
+                title={`Aprovados: ${String(d.aprovados)}`}
               />
             </Box>
             <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 0.5 }}>

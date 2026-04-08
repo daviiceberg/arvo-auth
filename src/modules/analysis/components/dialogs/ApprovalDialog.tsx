@@ -44,7 +44,7 @@ export default function ApprovalDialog({
         </Typography>
         <FormControl fullWidth size="small" sx={{ mb: 2 }}>
           <InputLabel>Motivo Estruturado *</InputLabel>
-          <Select value={approvalReason} label="Motivo Estruturado *" onChange={e => onApprovalReasonChange(e.target.value)}>
+          <Select value={approvalReason} label="Motivo Estruturado *" onChange={e => { onApprovalReasonChange(e.target.value); }}>
             {APPROVAL_REASONS.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
           </Select>
         </FormControl>
@@ -52,7 +52,7 @@ export default function ApprovalDialog({
           label="Justificativa Técnica *"
           multiline rows={3} fullWidth size="small"
           value={approvalJustification}
-          onChange={e => onApprovalJustificationChange(e.target.value)}
+          onChange={e => { onApprovalJustificationChange(e.target.value); }}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5 }}>

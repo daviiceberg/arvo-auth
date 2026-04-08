@@ -31,7 +31,7 @@ export default function QueuePagination({ filteredCount, page, rowsPerPage, onPa
         count={filteredCount}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={(_e, newPage) => onPageChange(newPage)}
+        onPageChange={(_e, newPage) => { onPageChange(newPage); }}
         rowsPerPageOptions={[rowsPerPage]}
         labelDisplayedRows={() => ''}
         sx={{

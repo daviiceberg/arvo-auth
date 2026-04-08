@@ -1,5 +1,6 @@
 'use client'
 
+import SmartToyIcon from '@mui/icons-material/SmartToy'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -8,7 +9,6 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
 
 import { type IASugestao } from '@/data/pedidos'
 
@@ -49,7 +49,7 @@ export default function DivergenceDialog({
           multiline rows={4} fullWidth size="small"
           placeholder="Explique por que você está tomando uma decisão diferente da IA..."
           value={divergenceReason}
-          onChange={e => onDivergenceReasonChange(e.target.value)}
+          onChange={e => { onDivergenceReasonChange(e.target.value); }}
           error={divergenceReason.trim() === ''}
           helperText={divergenceReason.trim() === '' ? 'Campo obrigatório' : ''}
         />

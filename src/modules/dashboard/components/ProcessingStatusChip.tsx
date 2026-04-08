@@ -4,6 +4,7 @@ import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import Chip from '@mui/material/Chip';
+
 import { type PedidoEmProcessamento } from '@/types/pedido';
 
 interface ProcessingStatusChipProps {

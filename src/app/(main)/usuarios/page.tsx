@@ -1,38 +1,39 @@
 'use client'
 import { useState, useEffect } from 'react'
+
+import AddIcon from '@mui/icons-material/Add'
+import CloseIcon from '@mui/icons-material/Close'
+import EditIcon from '@mui/icons-material/Edit'
+import FilterListOffIcon from '@mui/icons-material/FilterListOff'
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'
+import SearchIcon from '@mui/icons-material/Search'
+import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
-import TextField from '@mui/material/TextField'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
 import FormControl from '@mui/material/FormControl'
 import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 import InputAdornment from '@mui/material/InputAdornment'
+import Switch from '@mui/material/Switch'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 import Grid from '@mui/material/Grid'
-import Divider from '@mui/material/Divider'
-import Switch from '@mui/material/Switch'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Avatar from '@mui/material/Avatar'
-import SearchIcon from '@mui/icons-material/Search'
-import AddIcon from '@mui/icons-material/Add'
-import EditIcon from '@mui/icons-material/Edit'
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew'
-import CloseIcon from '@mui/icons-material/Close'
-import FilterListOffIcon from '@mui/icons-material/FilterListOff'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 import {
   mockUsers, roleLabels, defaultPermissions,
   type SystemUser, type UserRole, type UserStatus, type UserPermissions,
@@ -83,7 +84,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
   const [senha, setSenha] = useState('')
   const [role, setRole] = useState<UserRole>(user?.role ?? 'autorizador')
   const [status, setStatus] = useState<UserStatus>(user?.status ?? 'ativo')
-  const [perms, setPerms] = useState<UserPermissions>(
+  const [perms, setPerms] = useState(
     user?.permissions ?? { ...defaultPermissions.autorizador }
   )
   const [senhaErro, setSenhaErro] = useState('')
@@ -127,7 +128,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
   const PermRow = ({ label, k }: { label: string; k: keyof UserPermissions }) => (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.75 }}>
       <Typography variant="body2" sx={{ fontSize: 13 }}>{label}</Typography>
-      <Switch size="small" checked={perms[k]} onChange={() => togglePerm(k)}
+      <Switch size="small" checked={perms[k]} onChange={() => { togglePerm(k); }}
         sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#902B29' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#902B29' } }}
       />
     </Box>
@@ -147,10 +148,10 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
         </Typography>
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label="Nome completo *" value={nome} onChange={e => setNome(e.target.value)} />
+            <TextField fullWidth size="small" label="Nome completo *" value={nome} onChange={e => { setNome(e.target.value); }} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label="E-mail *" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+            <TextField fullWidth size="small" label="E-mail *" type="email" value={email} onChange={e => { setEmail(e.target.value); }} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
@@ -163,7 +164,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
           <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Perfil *</InputLabel>
-              <Select value={role} label="Perfil *" onChange={e => handleRoleChange(e.target.value as UserRole)}>
+              <Select value={role} label="Perfil *" onChange={e => { handleRoleChange(e.target.value as UserRole); }}>
                 <MenuItem value="gestor">Gestor</MenuItem>
                 <MenuItem value="autorizador">Autorizador</MenuItem>
                 <MenuItem value="auditor">Auditor</MenuItem>
@@ -173,7 +174,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
           <Grid size={{ xs: 12, sm: 6 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Status *</InputLabel>
-              <Select value={status} label="Status *" onChange={e => setStatus(e.target.value as UserStatus)}>
+              <Select value={status} label="Status *" onChange={e => { setStatus(e.target.value as UserStatus); }}>
                 <MenuItem value="ativo">Ativo</MenuItem>
                 <MenuItem value="inativo">Inativo</MenuItem>
               </Select>
@@ -213,7 +214,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
 
 // ── Page ──────────────────────────────────────────────────────────────
 export default function UsuariosPage() {
-  const [users, setUsers] = useState<SystemUser[]>(mockUsers)
+  const [users, setUsers] = useState(mockUsers)
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<'Todos' | UserRole>('Todos')
   const [statusFilter, setStatusFilter] = useState<'Todos' | UserStatus>('Todos')
@@ -242,7 +243,7 @@ export default function UsuariosPage() {
       setUsers(prev => prev.map(u => u.id === selected.id ? { ...u, ...data } : u))
     } else {
       setUsers(prev => [...prev, {
-        id: `u-${Date.now()}`,
+        id: `u-${String(Date.now())}`,
         nome: data.nome!,
         email: data.email!,
         role: data.role!,
@@ -293,7 +294,7 @@ export default function UsuariosPage() {
               <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', fontWeight: 600, display: 'block', mb: 0.75 }}>
                 {k.label}
               </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 800, fontSize: 26, lineHeight: 1, color: k.color || 'text.primary' }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, fontSize: 26, lineHeight: 1, color: k.color ?? 'text.primary' }}>
                 {k.value}
               </Typography>
             </CardContent>
@@ -307,13 +308,13 @@ export default function UsuariosPage() {
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <TextField
               size="small" placeholder="Buscar por nome ou e-mail..."
-              value={search} onChange={e => setSearch(e.target.value)}
+              value={search} onChange={e => { setSearch(e.target.value); }}
               sx={{ flex: 2, minWidth: 220 }}
               InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} /></InputAdornment> }}
             />
             <FormControl size="small" sx={{ minWidth: 150 }}>
               <InputLabel>Perfil</InputLabel>
-              <Select value={roleFilter} label="Perfil" onChange={e => setRoleFilter(e.target.value as typeof roleFilter)}>
+              <Select value={roleFilter} label="Perfil" onChange={e => { setRoleFilter(e.target.value as typeof roleFilter); }}>
                 <MenuItem value="Todos">Todos os perfis</MenuItem>
                 <MenuItem value="gestor">Gestor</MenuItem>
                 <MenuItem value="autorizador">Autorizador</MenuItem>
@@ -322,18 +323,16 @@ export default function UsuariosPage() {
             </FormControl>
             <FormControl size="small" sx={{ minWidth: 130 }}>
               <InputLabel>Status</InputLabel>
-              <Select value={statusFilter} label="Status" onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}>
+              <Select value={statusFilter} label="Status" onChange={e => { setStatusFilter(e.target.value as typeof statusFilter); }}>
                 <MenuItem value="Todos">Todos</MenuItem>
                 <MenuItem value="ativo">Ativo</MenuItem>
                 <MenuItem value="inativo">Inativo</MenuItem>
               </Select>
             </FormControl>
-            {hasFilters && (
-              <Button size="small" startIcon={<FilterListOffIcon />} color="inherit" sx={{ fontSize: 12 }}
+            {hasFilters ? <Button size="small" startIcon={<FilterListOffIcon />} color="inherit" sx={{ fontSize: 12 }}
                 onClick={() => { setSearch(''); setRoleFilter('Todos'); setStatusFilter('Todos') }}>
                 Limpar filtros
-              </Button>
-            )}
+              </Button> : null}
           </Box>
         </CardContent>
       </Card>
@@ -385,13 +384,13 @@ export default function UsuariosPage() {
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
                     <Button size="small" startIcon={<EditIcon sx={{ fontSize: 14 }} />}
-                      onClick={() => openEdit(u)}
+                      onClick={() => { openEdit(u); }}
                       sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}>
                       Editar
                     </Button>
                     <Button size="small"
                       startIcon={<PowerSettingsNewIcon sx={{ fontSize: 14 }} />}
-                      onClick={() => handleToggleStatus(u.id)}
+                      onClick={() => { handleToggleStatus(u.id); }}
                       color={u.status === 'ativo' ? 'error' : 'success'}
                       sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}>
                       {u.status === 'ativo' ? 'Inativar' : 'Ativar'}

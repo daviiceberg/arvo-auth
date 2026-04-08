@@ -42,7 +42,7 @@ export default function MedicalBoardDialog({
         </Typography>
         <FormControl fullWidth size="small" sx={{ mb: 2 }}>
           <InputLabel>Motivo do Encaminhamento *</InputLabel>
-          <Select value={medicalBoardReason} label="Motivo do Encaminhamento *" onChange={e => onMedicalBoardReasonChange(e.target.value)}>
+          <Select value={medicalBoardReason} label="Motivo do Encaminhamento *" onChange={e => { onMedicalBoardReasonChange(e.target.value); }}>
             {MEDICAL_BOARD_REASONS.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
           </Select>
         </FormControl>
@@ -50,7 +50,7 @@ export default function MedicalBoardDialog({
           label="Observações para a Junta (opcional)"
           multiline rows={3} fullWidth size="small"
           value={medicalBoardObs}
-          onChange={e => onMedicalBoardObsChange(e.target.value)}
+          onChange={e => { onMedicalBoardObsChange(e.target.value); }}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5 }}>

@@ -1,6 +1,5 @@
 'use client';
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TableCell from '@mui/material/TableCell';
@@ -28,7 +27,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
           borderLeft: '3px solid #f59e0b',
         }),
       }}
-      onClick={() => onNavigate(entry.id)}
+      onClick={() => { onNavigate(entry.id); }}
     >
       <TableCell sx={{ px: 1.5 }}>
         <Typography

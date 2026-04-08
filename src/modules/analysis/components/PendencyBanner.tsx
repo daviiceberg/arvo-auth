@@ -1,15 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
-import Typography from '@mui/material/Typography'
+
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GavelIcon from '@mui/icons-material/Gavel'
 import HourglassTopIcon from '@mui/icons-material/HourglassTop'
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
+import Typography from '@mui/material/Typography'
 
 import { type Pedido } from '@/data/pedidos'
 
@@ -60,13 +61,11 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
         <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
           Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}. Aguardando envio dos documentos pelo beneficiário/prestador.
         </Typography>
-        {pedido.pendenciaMotivos && (
-          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+        {pedido.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {pedido.pendenciaMotivos.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
-          </Box>
-        )}
+          </Box> : null}
       </Alert>
     )
   }
@@ -84,13 +83,11 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
         <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
           A documentação solicitada foi recebida. Revise os itens abaixo e prossiga com a decisão.
         </Typography>
-        {pedido.pendenciaMotivos && (
-          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+        {pedido.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {pedido.pendenciaMotivos.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
-          </Box>
-        )}
+          </Box> : null}
       </Alert>
     )
   }
@@ -128,7 +125,7 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
           </Typography>
           <Box
             component="span"
-            onClick={() => setParecerExpanded(v => !v)}
+            onClick={() => { setParecerExpanded(v => !v); }}
             sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', color: '#16a34a', fontWeight: 600, fontSize: 12 }}
           >
             <ExpandMoreIcon sx={{ fontSize: 16, transition: 'transform 0.2s', transform: parecerExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />

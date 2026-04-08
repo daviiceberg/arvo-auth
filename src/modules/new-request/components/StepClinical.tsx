@@ -1,19 +1,21 @@
 'use client'
 
 import React from 'react'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import Grid from '@mui/material/Grid'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
-import Button from '@mui/material/Button'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 import { type FormData } from '../types'
 
 // ── Field helpers ─────────────────────────────────────────────────────
@@ -23,8 +25,8 @@ function FieldLabel({ children, validated, warning }: { children: React.ReactNod
       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
         {children}
       </Typography>
-      {validated && <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />}
-      {warning && <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
+      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
     </Box>
   )
 }
@@ -72,7 +74,7 @@ export function StepClinical({
                   key={idx}
                   label={cid}
                   size="small"
-                  onDelete={() => removeCidSecundario(idx)}
+                  onDelete={() => { removeCidSecundario(idx); }}
                   sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12 }}
                 />
               ))}
@@ -82,7 +84,7 @@ export function StepClinical({
             <TextField
               size="small"
               value={cidSecundarioInput}
-              onChange={e => setCidSecundarioInput(e.target.value.toUpperCase())}
+              onChange={e => { setCidSecundarioInput(e.target.value.toUpperCase()); }}
               onKeyDown={e => {
                 if (e.key === 'Enter' && cidSecundarioInput.trim()) {
                   e.preventDefault()
@@ -96,7 +98,7 @@ export function StepClinical({
               size="small"
               variant="text"
               disabled={!cidSecundarioInput.trim()}
-              onClick={() => addCidSecundario(cidSecundarioInput)}
+              onClick={() => { addCidSecundario(cidSecundarioInput); }}
               sx={{ color: '#902B29', textTransform: 'none', fontWeight: 600, fontSize: 13, px: 1 }}
             >
               + Adicionar
@@ -109,7 +111,7 @@ export function StepClinical({
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel warning>Caráter do Atendimento</FieldLabel>
           <FormControl fullWidth size="small">
-            <Select value={form.caraterAtendimento} onChange={(e) => setSelect('caraterAtendimento')(e.target.value)} sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: '#f59e0b' } }}>
+            <Select value={form.caraterAtendimento} onChange={(e) => { setSelect('caraterAtendimento')(e.target.value); }} sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: '#f59e0b' } }}>
               <MenuItem value="Eletivo">Eletivo</MenuItem>
               <MenuItem value="Urgência">Urgência</MenuItem>
               <MenuItem value="Emergência">Emergência</MenuItem>

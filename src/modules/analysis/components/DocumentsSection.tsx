@@ -1,6 +1,23 @@
 'use client'
 
 import React from 'react'
+
+import AttachFileIcon from '@mui/icons-material/AttachFile'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import CloseIcon from '@mui/icons-material/Close'
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import DownloadIcon from '@mui/icons-material/Download'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import GavelIcon from '@mui/icons-material/Gavel'
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
+import SmartToyIcon from '@mui/icons-material/SmartToy'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import ZoomInIcon from '@mui/icons-material/ZoomIn'
+import ZoomOutIcon from '@mui/icons-material/ZoomOut'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -24,22 +41,6 @@ import Snackbar from '@mui/material/Snackbar'
 import TextField from '@mui/material/TextField'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import AttachFileIcon from '@mui/icons-material/AttachFile'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import CloseIcon from '@mui/icons-material/Close'
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
-import DownloadIcon from '@mui/icons-material/Download'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import GavelIcon from '@mui/icons-material/Gavel'
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import VisibilityIcon from '@mui/icons-material/Visibility'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import ZoomInIcon from '@mui/icons-material/ZoomIn'
-import ZoomOutIcon from '@mui/icons-material/ZoomOut'
 
 import { type Pedido, type OrcamentoDadosExtraidos } from '@/data/pedidos'
 
@@ -72,7 +73,7 @@ function getIAExtractionFields(docNome: string, docTipo: string, dadosExtraidos?
       { label: 'Modelo do implante', valor: dadosExtraidos.modelo, status: 'ok' },
       { label: 'Valor unitário', valor: `R$ ${dadosExtraidos.valorUnitario.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, status: 'ok' },
       { label: 'Registro ANVISA', valor: dadosExtraidos.registroANVISA, status: 'ok' },
-      { label: 'Cotações apresentadas', valor: `${dadosExtraidos.numeroCotacoes} de 3 exigidas`, status: dadosExtraidos.numeroCotacoes < 3 ? 'error' : 'ok' },
+      { label: 'Cotações apresentadas', valor: `${String(dadosExtraidos.numeroCotacoes)} de 3 exigidas`, status: dadosExtraidos.numeroCotacoes < 3 ? 'error' : 'ok' },
       { label: 'Observação', valor: dadosExtraidos.observacao, status: 'warning' },
     ]
   }
@@ -145,7 +146,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
               size="small"
               variant="outlined"
               startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
-              onClick={() => doc.setShowAddModal(true)}
+              onClick={() => { doc.setShowAddModal(true); }}
               sx={{ fontSize: 12, py: 0.4 }}
             >
               Adicionar
@@ -155,7 +156,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
               variant="outlined"
               color="primary"
               startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-              onClick={() => doc.setShowSolicitarModal(true)}
+              onClick={() => { doc.setShowSolicitarModal(true); }}
               sx={{ fontSize: 12, py: 0.4 }}
             >
               Solicitar complementar
@@ -194,7 +195,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                 variant="outlined"
                 color="primary"
                 startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-                onClick={() => doc.setShowSolicitarModal(true)}
+                onClick={() => { doc.setShowSolicitarModal(true); }}
                 sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
               >
                 Solicitar complementar
@@ -230,7 +231,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                       size="small"
                       variant="outlined"
                       startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
-                      onClick={() => doc.setShowAddModal(true)}
+                      onClick={() => { doc.setShowAddModal(true); }}
                       sx={{ fontSize: 12, borderColor: '#902B29', color: '#902B29', '&:hover': { borderColor: '#6e1f1d', backgroundColor: 'rgba(144,43,41,0.04)' } }}
                     >
                       Adicionar documento
@@ -266,7 +267,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                       )}
                     </Box>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                      {docItem.tipo}{docItem.tamanho ? ` · ${docItem.tamanho}` : ''}{docItem.enviadoEm ? ` · Enviado em ${docItem.enviadoEm}` : ''}
+                      {docItem.tipo}{docItem.tamanho ? ` · ${String(docItem.tamanho)}` : ''}{docItem.enviadoEm ? ` · Enviado em ${String(docItem.enviadoEm)}` : ''}
                     </Typography>
                   </Box>
                   <Button
@@ -282,7 +283,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
 
                 {/* IA Extraction toggle */}
                 <Box
-                  onClick={() => doc.setExpandedIA(prev => ({ ...prev, [docKey]: !prev[docKey] }))}
+                  onClick={() => { doc.setExpandedIA(prev => ({ ...prev, [docKey]: !prev[docKey] })); }}
                   sx={{
                     display: 'flex', alignItems: 'center', gap: 0.75,
                     px: 2, py: 0.75,
@@ -350,14 +351,14 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
           <IconButton size="small" onClick={doc.handleAddModalClose}><CloseIcon fontSize="small" /></IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
-          {doc.addError && <Alert severity="error" sx={{ mb: 2, fontSize: 13 }}>{doc.addError}</Alert>}
+          {doc.addError ? <Alert severity="error" sx={{ mb: 2, fontSize: 13 }}>{doc.addError}</Alert> : null}
 
           {/* Tipo */}
           <Typography variant="caption" sx={{ fontWeight: 600, fontSize: 12, display: 'block', mb: 0.75 }}>
             Tipo do documento <span style={{ color: '#C62828' }}>*</span>
           </Typography>
           <FormControl fullWidth size="small" sx={{ mb: 2.5 }}>
-            <Select value={doc.addTipo} displayEmpty onChange={(e) => doc.setAddTipo(e.target.value)}>
+            <Select value={doc.addTipo} displayEmpty onChange={(e) => { doc.setAddTipo(e.target.value); }}>
               <MenuItem value="" disabled><em>Selecione o tipo...</em></MenuItem>
               {DOCUMENT_TYPES.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
             </Select>
@@ -369,7 +370,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
           </Typography>
           <Box
             onDragOver={(e) => { e.preventDefault(); doc.setAddDragOver(true) }}
-            onDragLeave={() => doc.setAddDragOver(false)}
+            onDragLeave={() => { doc.setAddDragOver(false); }}
             onDrop={(e) => {
               e.preventDefault(); doc.setAddDragOver(false)
               const f = e.dataTransfer.files[0]
@@ -413,7 +414,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
             fullWidth size="small" multiline rows={2}
             placeholder="Descreva o conteúdo do documento..."
             value={doc.addDescricao}
-            onChange={(e) => doc.setAddDescricao(e.target.value)}
+            onChange={(e) => { doc.setAddDescricao(e.target.value); }}
             sx={{ mb: 2 }}
           />
 
@@ -430,10 +431,10 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
       </Dialog>
 
       {/* Solicitar Documentação Complementar Modal */}
-      <Dialog open={doc.showSolicitarModal} onClose={() => doc.setShowSolicitarModal(false)} maxWidth="sm" fullWidth>
+      <Dialog open={doc.showSolicitarModal} onClose={() => { doc.setShowSolicitarModal(false); }} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
           <Typography fontWeight={700} sx={{ fontSize: 15 }}>Solicitar Documentação Complementar</Typography>
-          <IconButton size="small" onClick={() => doc.setShowSolicitarModal(false)}><CloseIcon fontSize="small" /></IconButton>
+          <IconButton size="small" onClick={() => { doc.setShowSolicitarModal(false); }}><CloseIcon fontSize="small" /></IconButton>
         </DialogTitle>
         <DialogContent sx={{ pt: 1 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, fontSize: 12 }}>
@@ -450,9 +451,9 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                   <Checkbox
                     size="small"
                     checked={doc.solicitarDocs.includes(tipo)}
-                    onChange={(e) => doc.setSolicitarDocs(prev =>
+                    onChange={(e) => { doc.setSolicitarDocs(prev =>
                       e.target.checked ? [...prev, tipo] : prev.filter(d => d !== tipo)
-                    )}
+                    ); }}
                     sx={{ py: 0.4, '&.Mui-checked': { color: 'primary.main' } }}
                   />
                 }
@@ -462,7 +463,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
           </Box>
           <FormControl size="small" fullWidth sx={{ mb: 2 }}>
             <InputLabel>Prazo para envio</InputLabel>
-            <Select value={doc.solicitarPrazo} label="Prazo para envio" onChange={e => doc.setSolicitarPrazo(e.target.value)}>
+            <Select value={doc.solicitarPrazo} label="Prazo para envio" onChange={e => { doc.setSolicitarPrazo(e.target.value); }}>
               {['3', '5', '7', '10', '15'].map(d => (
                 <MenuItem key={d} value={d}>{d} dias úteis</MenuItem>
               ))}
@@ -476,11 +477,11 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
             label="Mensagem ao beneficiário (opcional)"
             placeholder="Ex: Para prosseguirmos com a análise, precisamos dos documentos acima dentro do prazo indicado."
             value={doc.solicitarMensagem}
-            onChange={e => doc.setSolicitarMensagem(e.target.value)}
+            onChange={e => { doc.setSolicitarMensagem(e.target.value); }}
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
-          <Button variant="outlined" onClick={() => doc.setShowSolicitarModal(false)}>Cancelar</Button>
+          <Button variant="outlined" onClick={() => { doc.setShowSolicitarModal(false); }}>Cancelar</Button>
           <Button
             variant="contained"
             color="primary"
@@ -497,10 +498,10 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
       <Snackbar
         open={!!doc.toast}
         autoHideDuration={4000}
-        onClose={() => doc.setToast('')}
+        onClose={() => { doc.setToast(''); }}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert severity="success" onClose={() => doc.setToast('')} sx={{ minWidth: 280 }}>
+        <Alert severity="success" onClose={() => { doc.setToast(''); }} sx={{ minWidth: 280 }}>
           {doc.toast}
         </Alert>
       </Snackbar>
@@ -545,7 +546,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                 <IconButton
                   size="small"
                   aria-label="Reduzir zoom"
-                  onClick={() => doc.setZoom(z => Math.max(50, z - 10))}
+                  onClick={() => { doc.setZoom(z => Math.max(50, z - 10)); }}
                   disabled={doc.zoom <= 50}
                   sx={{ color: 'text.secondary' }}
                 >
@@ -555,7 +556,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
             </Tooltip>
             <Box
               aria-live="polite"
-              aria-label={`Zoom: ${doc.zoom}%`}
+              aria-label={`Zoom: ${String(doc.zoom)}%`}
               sx={{ px: 1.25, py: 0.25, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 1, minWidth: 42, textAlign: 'center' }}
             >
               <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'text.secondary' }}>{doc.zoom}%</Typography>
@@ -565,7 +566,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
                 <IconButton
                   size="small"
                   aria-label="Ampliar zoom"
-                  onClick={() => doc.setZoom(z => Math.min(200, z + 10))}
+                  onClick={() => { doc.setZoom(z => Math.min(200, z + 10)); }}
                   disabled={doc.zoom >= 200}
                   sx={{ color: 'text.secondary' }}
                 >
@@ -580,7 +581,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
               onClick={() => {
                 const a = document.createElement('a')
                 a.href = '/exemplo-pedido.png'
-                a.download = doc.viewDoc || 'documento'
+                a.download = doc.viewDoc ?? 'documento'
                 a.click()
               }}
               sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', textTransform: 'none', '&:hover': { color: 'text.primary', backgroundColor: 'rgba(0,0,0,0.04)' } }}
@@ -605,14 +606,14 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
           <Box sx={{
             backgroundColor: '#fff',
             boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
-            width: `${doc.zoom}%`,
+            width: `${String(doc.zoom)}%`,
             maxWidth: 757,
             borderRadius: 1,
             overflow: 'hidden',
           }}>
             <img
               src="/exemplo-pedido.png"
-              alt={`Visualização do documento: ${doc.viewDoc}`}
+              alt={`Visualização do documento: ${doc.viewDoc ?? ''}`}
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
           </Box>

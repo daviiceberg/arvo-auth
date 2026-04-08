@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -13,7 +15,6 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
 
 import { type HistoricoEntry } from '@/types/pedido';
 
@@ -281,11 +282,9 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
               {h.internacoes.periodo}
             </Typography>
-            {h.internacoes.detalhes && (
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mt: 0.5 }}>
+            {h.internacoes.detalhes ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mt: 0.5 }}>
                 {h.internacoes.detalhes}
-              </Typography>
-            )}
+              </Typography> : null}
           </Box>
           {/* CID recorrente */}
           <Box
@@ -374,7 +373,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
         {h.autorizacoesAnteriores.length > 3 && (
           <Button
             size="small"
-            onClick={() => setShowAllAuth(!showAllAuth)}
+            onClick={() => { setShowAllAuth(!showAllAuth); }}
             endIcon={
               <ExpandMoreIcon
                 sx={{ transform: showAllAuth ? 'rotate(180deg)' : 'none', transition: '0.2s', fontSize: 16 }}
@@ -382,7 +381,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
             }
             sx={{ fontSize: 12, color: 'text.secondary', textTransform: 'none', mb: 1.5 }}
           >
-            {showAllAuth ? 'Mostrar menos' : `Ver mais ${h.autorizacoesAnteriores.length - 3} registros`}
+            {showAllAuth ? 'Mostrar menos' : `Ver mais ${String(h.autorizacoesAnteriores.length - 3)} registros`}
           </Button>
         )}
 
@@ -404,7 +403,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
                   <Typography variant="caption" fontWeight={700} display="block">
                     {sinal.mensagem}
                   </Typography>
-                  {sinal.detalhes && <Typography variant="caption">{sinal.detalhes}</Typography>}
+                  {sinal.detalhes ? <Typography variant="caption">{sinal.detalhes}</Typography> : null}
                 </Alert>
               ))}
             </Box>
@@ -466,11 +465,9 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
             <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
               {h.elegibilidade.carencias ? 'Sim' : 'Não'}
             </Typography>
-            {h.elegibilidade.detalhesCarencia && (
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+            {h.elegibilidade.detalhesCarencia ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                 {h.elegibilidade.detalhesCarencia}
-              </Typography>
-            )}
+              </Typography> : null}
           </Box>
           {/* Limites contratuais */}
           <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>

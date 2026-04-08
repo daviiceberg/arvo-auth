@@ -1,5 +1,7 @@
 'use client'
 
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
@@ -13,13 +15,11 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
 
 import { type Pedido } from '@/data/pedidos'
 
-import { type ProcDecision } from '../../types'
 import { DENIAL_REASONS } from '../../constants/denial-reasons'
+import { type ProcDecision } from '../../types'
 
 interface PartialApprovalDialogProps {
   open: boolean
@@ -98,8 +98,7 @@ export default function PartialApprovalDialog({
                   </Box>
                 </Box>
                 {/* Fields for negated procedures */}
-                {isNegado && (
-                  <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {isNegado ? <Box sx={{ mt: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                     <FormControl fullWidth size="small">
                       <InputLabel>Motivo da negativa *</InputLabel>
                       <Select
@@ -123,12 +122,11 @@ export default function PartialApprovalDialog({
                       fullWidth
                       size="small"
                       value={justificativa}
-                      onChange={(e) => onPartialDenialJustMapChange({ ...partialDenialJustMap, [proc.codigo]: e.target.value })}
+                      onChange={(e) => { onPartialDenialJustMapChange({ ...partialDenialJustMap, [proc.codigo]: e.target.value }); }}
                       placeholder="Descreva o motivo da negativa para este procedimento..."
                       helperText={motivoIdx >= 0 && motivoIdx < DENIAL_REASONS.length - 1 ? 'Texto preenchido automaticamente. Edite se necessário.' : undefined}
                     />
-                  </Box>
-                )}
+                  </Box> : null}
               </Box>
             )
           })}
@@ -153,7 +151,7 @@ export default function PartialApprovalDialog({
           variant="contained"
           disabled={pedido.procedimentos
             .filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
-            .some(pr => partialDenialReasonMap[pr.codigo] === undefined || !partialDenialJustMap[pr.codigo]?.trim())}
+            .some(pr => partialDenialReasonMap[pr.codigo] === undefined || !partialDenialJustMap[pr.codigo].trim())}
           onClick={onConfirm}
           sx={{
             fontWeight: 600,

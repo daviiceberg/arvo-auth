@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+
 import { useParams, useRouter } from 'next/navigation';
 
 import { historicoEntries } from '@/data/pedidos';
@@ -19,7 +20,7 @@ export default function useHistoryDetail() {
   const params = useParams();
   const router = useRouter();
 
-  const id = params?.id as string;
+  const id = params.id as string;
 
   const sortedEntries = useMemo(() => getSortedEntries(), []);
 
@@ -59,7 +60,7 @@ export default function useHistoryDetail() {
       if (e.key === 'ArrowRight') handleNext();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
   }, [handlePrev, handleNext]);
 
   // -- Notify dialog state -------------------------------------------------

@@ -1,15 +1,16 @@
 'use client'
 
 import React from 'react'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Chip from '@mui/material/Chip'
-import Alert from '@mui/material/Alert'
+
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
+
+import { moduloLabels, getStep3Label  } from '../constants/module-labels'
 import { type FormData, type TerapiaProcedimento, type DocUpload } from '../types'
-import { moduloLabels } from '../constants/module-labels'
-import { getStep3Label } from '../constants/module-labels'
 
 interface StepReviewProps {
   form: FormData
@@ -69,8 +70,7 @@ export function StepReview({ form, terapiaProcedimentos, docsObrigatorios, docsA
         {rows('Indicação Clínica', form.indicacaoClinica)}
       </Box>
       {/* Step 3 summary */}
-      {form.tipoSolicitacao && (
-        <>
+      {form.tipoSolicitacao ? <>
           <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>
             {getStep3Label(form.tipoSolicitacao)}
           </Typography>
@@ -120,15 +120,14 @@ export function StepReview({ form, terapiaProcedimentos, docsObrigatorios, docsA
             {(form.tipoSolicitacao === 'cirurgias' || form.tipoSolicitacao === 'exames' || form.tipoSolicitacao === 'opme') && (
               <Box sx={{ py: 1 }}>
                 <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                  {form.tipoSolicitacao === 'cirurgias' && `${form.procedimentos.length} procedimento(s) e ${form.opme.length} material(is) OPME cadastrado(s).`}
-                  {form.tipoSolicitacao === 'exames' && `${form.exames.length} exame(s) solicitado(s).`}
-                  {form.tipoSolicitacao === 'opme' && `${form.materiais.length} material(is) cadastrado(s).`}
+                  {form.tipoSolicitacao === 'cirurgias' && `${String(form.procedimentos.length)} procedimento(s) e ${String(form.opme.length)} material(is) OPME cadastrado(s).`}
+                  {form.tipoSolicitacao === 'exames' && `${String(form.exames.length)} exame(s) solicitado(s).`}
+                  {form.tipoSolicitacao === 'opme' && `${String(form.materiais.length)} material(is) cadastrado(s).`}
                 </Typography>
               </Box>
             )}
           </Box>
-        </>
-      )}
+        </> : null}
 
       {/* Documentos Anexados */}
       {(() => {
@@ -139,11 +138,11 @@ export function StepReview({ form, terapiaProcedimentos, docsObrigatorios, docsA
         return (
           <>
             <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>
-              Documentos Anexados{total > 0 ? ` (${totalEnv} de ${total} obrigatórios)` : ''}
+              Documentos Anexados{total > 0 ? ` (${String(totalEnv)} de ${String(total)} obrigatórios)` : ''}
             </Typography>
             {pendentes.length > 0 && (
               <Alert severity="warning" sx={{ mb: 1.5, fontSize: 12 }}>
-                {pendentes.length} documento(s) obrigatório(s) pendente(s): <strong>{pendentes.map(d => d.nome).join(', ')}</strong>
+                {String(pendentes.length)} documento(s) obrigatório(s) pendente(s): <strong>{pendentes.map(d => d.nome).join(', ')}</strong>
               </Alert>
             )}
             <Box sx={{ mb: 3 }}>
@@ -154,7 +153,7 @@ export function StepReview({ form, terapiaProcedimentos, docsObrigatorios, docsA
                     : <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0 }} />}
                   <Typography variant="caption" sx={{ flex: 1, fontSize: 12 }}>{d.status === 'enviado' ? d.nome : d.nome}</Typography>
                   <Typography variant="caption" sx={{ fontSize: 11, color: d.status === 'enviado' ? '#15803d' : '#b45309', fontWeight: 600 }}>
-                    {d.status === 'enviado' ? `${d.tamanho}` : 'Pendente'}
+                    {d.status === 'enviado' ? d.tamanho : 'Pendente'}
                   </Typography>
                 </Box>
               ))}

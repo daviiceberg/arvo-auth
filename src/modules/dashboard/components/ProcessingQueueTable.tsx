@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import useProcessingQueue from '../hooks/useProcessingQueue';
+
 import ProcessingStatusChip from './ProcessingStatusChip';
 
 // -- Helpers ------------------------------------------------------------------
@@ -42,9 +43,9 @@ const originIconMap: Record<string, React.ReactNode> = {
 function formatQueueTime(entradaEm: Date): string {
   const diffMin = Math.round((Date.now() - entradaEm.getTime()) / 60000);
   if (diffMin < 1) return 'agora';
-  if (diffMin < 60) return `${diffMin} min`;
+  if (diffMin < 60) return `${String(diffMin)} min`;
   const h = Math.floor(diffMin / 60);
-  return `${h}h${diffMin % 60 > 0 ? ` ${diffMin % 60}min` : ''}`;
+  return `${String(h)}h${diffMin % 60 > 0 ? ` ${String(diffMin % 60)}min` : ''}`;
 }
 
 function formatEntryTime(d: Date): string {
@@ -94,7 +95,7 @@ export default function ProcessingQueueTable() {
               Entrando no sistema
             </Typography>
           </Box>
-          <Tooltip title={`${counts.processing} em processamento · ${counts.waiting} aguardando · ${counts.error} com erro`}>
+          <Tooltip title={`${String(counts.processing)} em processamento · ${String(counts.waiting)} aguardando · ${String(counts.error)} com erro`}>
             <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
               {total} pedidos aguardando processamento da IA
             </Typography>
@@ -165,7 +166,7 @@ export default function ProcessingQueueTable() {
               onRowsPerPageChange={handleRowsPerPageChange}
               rowsPerPageOptions={[5, 10, 25]}
               labelRowsPerPage="Por página:"
-              labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`}
+              labelDisplayedRows={({ from, to, count }) => `${String(from)}–${String(to)} de ${String(count)}`}
               sx={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
             />
           )}

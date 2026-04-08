@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import CloseIcon from '@mui/icons-material/Close';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -18,7 +20,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
 
 import { type HistoricoEntry } from '@/types/pedido';
 
@@ -158,7 +159,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
                 <IconButton
                   size="small"
                   aria-label="Reduzir zoom"
-                  onClick={() => setZoom((z) => Math.max(50, z - 10))}
+                  onClick={() => { setZoom((z) => Math.max(50, z - 10)); }}
                   disabled={zoom <= 50}
                   sx={{ color: 'text.secondary' }}
                 >
@@ -168,7 +169,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
             </Tooltip>
             <Box
               aria-live="polite"
-              aria-label={`Zoom: ${zoom}%`}
+              aria-label={`Zoom: ${String(zoom)}%`}
               sx={{
                 px: 1.25,
                 py: 0.25,
@@ -185,7 +186,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
                 <IconButton
                   size="small"
                   aria-label="Ampliar zoom"
-                  onClick={() => setZoom((z) => Math.min(200, z + 10))}
+                  onClick={() => { setZoom((z) => Math.min(200, z + 10)); }}
                   disabled={zoom >= 200}
                   sx={{ color: 'text.secondary' }}
                 >
@@ -200,7 +201,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
               onClick={() => {
                 const a = document.createElement('a');
                 a.href = '/exemplo-pedido.png';
-                a.download = viewDoc || 'documento';
+                a.download = viewDoc ?? 'documento';
                 a.click();
               }}
               sx={{
@@ -246,7 +247,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
             sx={{
               backgroundColor: '#fff',
               boxShadow: '0 2px 16px rgba(0,0,0,0.12)',
-              width: `${zoom}%`,
+              width: `${String(zoom)}%`,
               maxWidth: 757,
               borderRadius: 1,
               overflow: 'hidden',
@@ -254,7 +255,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
           >
             <img
               src="/exemplo-pedido.png"
-              alt={`Visualização do documento: ${viewDoc}`}
+              alt={`Visualização do documento: ${viewDoc ?? ''}`}
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
           </Box>

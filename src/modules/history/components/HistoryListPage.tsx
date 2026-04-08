@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import ScienceIcon from '@mui/icons-material/Science';
@@ -9,9 +11,9 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { useRouter } from 'next/navigation';
 
 import useHistoryList from '../hooks/useHistoryList';
+
 import HistoryListFilterBar from './HistoryListFilterBar';
 import HistoryListTable from './HistoryListTable';
 
@@ -43,7 +45,7 @@ export default function HistoryListPage() {
     },
     {
       label: 'Taxa de Aprovação',
-      value: `${vm.approvalRate}%`,
+      value: `${String(vm.approvalRate)}%`,
       color: '#16a34a',
       icon: <CheckCircleIcon sx={{ fontSize: 18, color: '#16a34a' }} />,
       bg: 'rgba(22,163,74,0.1)',
@@ -122,7 +124,7 @@ export default function HistoryListPage() {
         categories={vm.categories}
         hasFilters={vm.hasFilters}
         onClearFilters={vm.clearFilters}
-        onResetPage={() => vm.setPage(0)}
+        onResetPage={() => { vm.setPage(0); }}
       />
 
       {/* Table */}
@@ -134,7 +136,7 @@ export default function HistoryListPage() {
         sortDirection={vm.sortDirection}
         onToggleSort={vm.toggleSortDirection}
         onPageChange={vm.setPage}
-        onNavigate={(id) => router.push('/historico/' + id)}
+        onNavigate={(id) => { router.push('/historico/' + id); }}
       />
     </Box>
   );

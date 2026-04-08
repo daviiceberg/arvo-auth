@@ -1,17 +1,20 @@
 'use client'
 
 import React from 'react'
+
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+
 import { type FormData, type TerapiaProcedimento } from '../types'
-import { StepHospitalization } from './steps/StepHospitalization'
-import { StepUrgency } from './steps/StepUrgency'
-import { StepOncology } from './steps/StepOncology'
-import { StepTherapies } from './steps/StepTherapies'
-import { StepOpme } from './steps/StepOpme'
+
 import { StepExams } from './steps/StepExams'
-import { StepSurgeries } from './steps/StepSurgeries'
 import { StepHomeCare } from './steps/StepHomeCare'
+import { StepHospitalization } from './steps/StepHospitalization'
+import { StepOncology } from './steps/StepOncology'
+import { StepOpme } from './steps/StepOpme'
+import { StepSurgeries } from './steps/StepSurgeries'
+import { StepTherapies } from './steps/StepTherapies'
+import { StepUrgency } from './steps/StepUrgency'
 
 interface StepDynamicProps {
   form: FormData

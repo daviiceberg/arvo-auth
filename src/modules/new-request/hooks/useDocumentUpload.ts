@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { type ModuloType, type DocUpload } from '../types'
+
 import { DOCS_OBRIGATORIOS, DOCS_TERAPIAS_PRIMEIRA, DOCS_TERAPIAS_CONTINUIDADE } from '../constants/mandatory-documents'
+import { type ModuloType, type DocUpload } from '../types'
 
 interface UseDocumentUploadParams {
   activeModulo: ModuloType | ''
@@ -29,7 +30,7 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
       reqs = DOCS_OBRIGATORIOS[activeModulo] ?? []
     }
     setDocsObrigatorios(reqs.map((r, i) => ({
-      id: `OBR-${i}`,
+      id: `OBR-${String(i)}`,
       nome: r.nome,
       tipo: 'Obrigatório',
       tamanho: '',
@@ -46,7 +47,7 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
         ...d,
         status: 'enviado',
         nome: file.name,
-        tamanho: file.size > 1024 * 1024 ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : `${Math.round(file.size / 1024)} KB`,
+        tamanho: file.size > 1024 * 1024 ? `${String((file.size / 1024 / 1024).toFixed(1))} MB` : `${String(Math.round(file.size / 1024))} KB`,
         file,
       } : d
     ))
@@ -61,10 +62,10 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
   const handleAddDocAdicional = () => {
     if (!newDocTipo || !newDocFile) return
     setDocsAdicionais(prev => [...prev, {
-      id: `ADD-${Date.now()}`,
+      id: `ADD-${String(Date.now())}`,
       nome: newDocFile.name,
       tipo: newDocTipo,
-      tamanho: newDocFile.size > 1024 * 1024 ? `${(newDocFile.size / 1024 / 1024).toFixed(1)} MB` : `${Math.round(newDocFile.size / 1024)} KB`,
+      tamanho: newDocFile.size > 1024 * 1024 ? `${String((newDocFile.size / 1024 / 1024).toFixed(1))} MB` : `${String(Math.round(newDocFile.size / 1024))} KB`,
       obrigatorio: false,
       status: 'enviado',
       file: newDocFile,

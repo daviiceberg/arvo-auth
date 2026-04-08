@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { type FormData, type TerapiaProcedimento } from '../types'
+
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes'
+import { type FormData, type TerapiaProcedimento } from '../types'
 
 const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcedimento => ({
   id: crypto.randomUUID(),
@@ -45,7 +46,7 @@ export const initialForm: FormData = {
   totalCiclos: '',
   etapaAutorizacao: '',
   tipoTerapia: 'Fisioterapia',
-  codigoTuss: TUSS_POR_TERAPIA['Fisioterapia'] ?? '',
+  codigoTuss: TUSS_POR_TERAPIA.Fisioterapia ?? '',
   numSessoes: '',
   terapiaDataInicio: '',
   terapiaDataTermino: '',
@@ -65,19 +66,19 @@ export const initialForm: FormData = {
 }
 
 export function useNewRequestForm(moduloParam: string) {
-  const [form, setForm] = useState<FormData>({
+  const [form, setForm] = useState({
     ...initialForm,
     tipoSolicitacao: (moduloParam || '') as FormData['tipoSolicitacao'],
   })
 
-  const [terapiaProcedimentos, setTerapiaProcedimentos] = useState<TerapiaProcedimento[]>([newTerapiaProc()])
+  const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()])
   const [cidSecundarioInput, setCidSecundarioInput] = useState('')
 
   const set = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [field]: e.target.value }))
+    { setForm((f) => ({ ...f, [field]: e.target.value })); }
 
   const setSelect = (field: keyof FormData) => (value: string) =>
-    setForm((f) => ({ ...f, [field]: value }))
+    { setForm((f) => ({ ...f, [field]: value })); }
 
   const handleAddTerapiaProc = () => {
     if (terapiaProcedimentos.length >= 5) return

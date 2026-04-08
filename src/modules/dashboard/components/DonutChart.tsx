@@ -33,7 +33,7 @@ export default function DonutChart({ segments }: DonutChartProps) {
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="160" height="160" viewBox="0 0 140 140" role="img" aria-label={`Urgência: ${segments.map((d) => `${d.label} ${d.count}`).join(', ')}`}>
+        <svg width="160" height="160" viewBox="0 0 140 140" role="img" aria-label={`Urgência: ${segments.map((d) => `${d.label} ${String(d.count)}`).join(', ')}`}>
           {slices.map((s) => (
             <circle
               key={s.label}
@@ -43,9 +43,9 @@ export default function DonutChart({ segments }: DonutChartProps) {
               fill="none"
               stroke={s.color}
               strokeWidth="16"
-              strokeDasharray={`${s.dashLen} ${circumference - s.dashLen}`}
+              strokeDasharray={`${String(s.dashLen)} ${String(circumference - s.dashLen)}`}
               strokeDashoffset={s.offset}
-              transform={`rotate(-90 ${cx} ${cy})`}
+              transform={`rotate(-90 ${String(cx)} ${String(cy)})`}
             />
           ))}
           <text x={cx} y={cy - 6} textAnchor="middle" fontSize="22" fontWeight="800" fill="#1a1a1a">
@@ -63,9 +63,9 @@ export default function DonutChart({ segments }: DonutChartProps) {
             key={d.key}
             role="button"
             tabIndex={0}
-            onClick={() => router.push(d.url)}
+            onClick={() => { router.push(d.url); }}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(d.url); } }}
-            aria-label={`Ver ${d.count} pedidos ${d.label}`}
+            aria-label={`Ver ${String(d.count)} pedidos ${d.label}`}
             sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'pointer', borderRadius: 1, p: 0.25, '&:hover': { backgroundColor: `${d.color}12` }, '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 1 } }}
           >
             <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: d.color, flexShrink: 0 }} />

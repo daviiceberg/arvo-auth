@@ -49,9 +49,9 @@ export default function PendencyDialog({
                 <Checkbox
                   size="small"
                   checked={pendencyItems.includes(item)}
-                  onChange={e => onPendencyItemsChange(
+                  onChange={e => { onPendencyItemsChange(
                     e.target.checked ? [...pendencyItems, item] : pendencyItems.filter(i => i !== item)
-                  )}
+                  ); }}
                 />
               }
               label={<Typography variant="body2">{item}</Typography>}
@@ -63,7 +63,7 @@ export default function PendencyDialog({
           multiline rows={3} fullWidth size="small"
           placeholder="Descreva o motivo..."
           value={pendencyJustification}
-          onChange={e => onPendencyJustificationChange(e.target.value)}
+          onChange={e => { onPendencyJustificationChange(e.target.value); }}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5 }}>

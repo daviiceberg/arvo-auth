@@ -1,16 +1,16 @@
 'use client'
 
 import React from 'react'
+
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
 import LinearProgress from '@mui/material/LinearProgress'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import { type FormData } from '../types'
-import { initialForm } from '../hooks/useNewRequestForm'
+import Typography from '@mui/material/Typography'
+
 
 interface StepUploadProps {
   uploadState: 'idle' | 'loading' | 'done'
@@ -36,9 +36,9 @@ export function StepUpload({ uploadState, uploadProgress, dragOver, setDragOver,
       {/* Drop zone */}
       <Box
         onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
-        onDragLeave={() => setDragOver(false)}
+        onDragLeave={() => { setDragOver(false); }}
         onDrop={(e) => { e.preventDefault(); setDragOver(false); onUpload() }}
-        onClick={() => uploadState === 'idle' && onUpload()}
+        onClick={() => { if (uploadState === 'idle') onUpload(); }}
         sx={{
           width: '100%',
           maxWidth: 480,

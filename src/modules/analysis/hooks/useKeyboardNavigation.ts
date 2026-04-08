@@ -30,8 +30,8 @@ export function useKeyboardNavigation({
   useEffect(() => {
     const anyOpen = isAnyDialogOpen || isDrawerOpen
     const handler = (e: KeyboardEvent) => {
-      const tag = (document.activeElement?.tagName || '').toLowerCase()
-      if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement)?.isContentEditable) return
+      const tag = (document.activeElement?.tagName ?? '').toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement | null)?.isContentEditable) return
       if (e.key === '?') {
         onShowShortcuts()
         return
@@ -59,7 +59,7 @@ export function useKeyboardNavigation({
       }
     }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    return () => { window.removeEventListener('keydown', handler); }
   }, [
     isAnyDialogOpen,
     isDrawerOpen,

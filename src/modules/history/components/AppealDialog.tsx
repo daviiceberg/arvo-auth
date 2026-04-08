@@ -69,7 +69,7 @@ export default function AppealDialog({
             <Select
               label="Canal de envio"
               value={notifyChannel}
-              onChange={(e) => onNotifyChannelChange(e.target.value as NotifyChannel)}
+              onChange={(e) => { onNotifyChannelChange(e.target.value as NotifyChannel); }}
             >
               <MenuItem value="app">
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

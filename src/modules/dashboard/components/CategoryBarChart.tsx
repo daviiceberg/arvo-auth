@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -26,11 +27,11 @@ export default function CategoryBarChart({ barData, maxBar }: CategoryBarChartPr
             key={d.label}
             role="button"
             tabIndex={0}
-            onClick={() => router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`)}
+            onClick={() => { router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`); }}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`); } }}
             aria-label={`Ver ${d.total} pedidos de ${d.categoria}`}
-            onMouseEnter={() => setHovered(d.label)}
-            onMouseLeave={() => setHovered(null)}
+            onMouseEnter={() => { setHovered(d.label); }}
+            onMouseLeave={() => { setHovered(null); }}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -52,12 +53,12 @@ export default function CategoryBarChart({ barData, maxBar }: CategoryBarChartPr
             <Box sx={{ flex: 1, height: 16, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
               <Box
                 sx={{
-                  width: `${(d.total / maxBar) * 100}%`,
+                  width: `${String((d.total / maxBar) * 100)}%`,
                   height: '100%',
                   backgroundColor: d.color,
                   transition: 'width 600ms ease',
                 }}
-                title={`${d.label}: ${d.total} pedidos`}
+                title={`${d.label}: ${String(d.total)} pedidos`}
               />
             </Box>
             <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', width: 20, textAlign: 'right', flexShrink: 0 }}>

@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import Box from '@mui/material/Box';
@@ -14,6 +13,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
 import useDashboardData from '../hooks/useDashboardData';
+
 import CategoryBarChart from './CategoryBarChart';
 import CategorySummary from './CategorySummary';
 import DashboardAlerts from './DashboardAlerts';
@@ -99,7 +99,7 @@ export default function DashboardPage() {
                 <Box
                   role="button"
                   tabIndex={0}
-                  onClick={() => router.push('/fila')}
+                  onClick={() => { router.push('/fila'); }}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/fila'); } }}
                   sx={{ cursor: 'pointer', '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: 2, borderRadius: '4px' } }}
                 >
@@ -116,14 +116,14 @@ export default function DashboardPage() {
                     { label: 'Negar', count: metrics.iaSugestaoNegar, color: '#d4183d', textColor: '#d4183d', bg: 'rgba(212,24,61,0.08)', hoverBg: 'rgba(212,24,61,0.13)', icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />, ia: 'Negar', microcopy: 'com bloqueio identificado' },
                     { label: 'Junta Médica', count: metrics.iaSugestaoJunta, color: '#b45309', textColor: '#b45309', bg: 'rgba(180,83,9,0.08)', hoverBg: 'rgba(180,83,9,0.13)', icon: <GroupsOutlinedIcon sx={{ fontSize: 16, color: '#b45309' }} />, ia: 'Junta Médica', microcopy: 'para revisão clínica' },
                     { label: 'Aprovar', count: metrics.iaSugestaoAprovar, color: '#16a34a', textColor: '#166534', bg: 'rgba(22,163,74,0.08)', hoverBg: 'rgba(22,163,74,0.13)', icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a' }} />, ia: 'Aprovar', microcopy: 'com critérios atendidos' },
-                  ] as Array<{ label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string; microcopy: string }>).map((s) => (
+                  ] as { label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string; microcopy: string }[]).map((s) => (
                     <Box
                       key={s.label}
                       role="button"
                       tabIndex={0}
-                      onClick={() => router.push(`/fila?ia=${encodeURIComponent(s.ia)}`)}
+                      onClick={() => { router.push(`/fila?ia=${encodeURIComponent(s.ia)}`); }}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?ia=${encodeURIComponent(s.ia)}`); } }}
-                      aria-label={`Ver ${s.count} pedidos com sugestão da IA: ${s.label}`}
+                      aria-label={`Ver ${String(s.count)} pedidos com sugestão da IA: ${s.label}`}
                       sx={{
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         borderRadius: 2, p: '10px 12px', cursor: 'pointer', flex: 1,
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                       {metrics.iaSinalizouCriticos} de {metrics.totalCriticosHist} com alerta da IA identificado
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>
-                      IA antecipou {metrics.taxaDeteccaoIA}% das negativas do período
+                      IA antecipou {String(metrics.taxaDeteccaoIA)}% das negativas do período
                     </Typography>
                   </Box>
                 </Box>

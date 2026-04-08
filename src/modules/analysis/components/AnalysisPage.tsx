@@ -1,13 +1,14 @@
 'use client'
 
 import { Suspense } from 'react'
+
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Snackbar from '@mui/material/Snackbar'
 
 import { DENIAL_REASONS } from '../constants/denial-reasons'
-import { useAnalysis } from '../hooks/useAnalysis'
 import { useAdjustmentState } from '../hooks/useAdjustmentState'
+import { useAnalysis } from '../hooks/useAnalysis'
 import { useDecisionState } from '../hooks/useDecisionState'
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation'
 
@@ -17,14 +18,6 @@ import AnalysisSkeleton from './AnalysisSkeleton'
 import AssistantSidebar from './AssistantSidebar'
 import BeneficiarySection from './BeneficiarySection'
 import ConsolidatedHistorySection from './ConsolidatedHistorySection'
-import DocumentsSection from './DocumentsSection'
-import InjunctionBanner from './InjunctionBanner'
-import ObservationsSection from './ObservationsSection'
-import PageHeader from './PageHeader'
-import PendencyBanner from './PendencyBanner'
-import ProceduresSection from './ProceduresSection'
-import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection'
-import SimultaneousGuidesAlert from './SimultaneousGuidesAlert'
 import AdjustmentApprovalDialog from './dialogs/AdjustmentApprovalDialog'
 import ApprovalDialog from './dialogs/ApprovalDialog'
 import DenialDialog from './dialogs/DenialDialog'
@@ -33,6 +26,14 @@ import MedicalBoardDialog from './dialogs/MedicalBoardDialog'
 import PartialApprovalDialog from './dialogs/PartialApprovalDialog'
 import PendencyDialog from './dialogs/PendencyDialog'
 import ShortcutsHelpDialog from './dialogs/ShortcutsHelpDialog'
+import DocumentsSection from './DocumentsSection'
+import InjunctionBanner from './InjunctionBanner'
+import ObservationsSection from './ObservationsSection'
+import PageHeader from './PageHeader'
+import PendencyBanner from './PendencyBanner'
+import ProceduresSection from './ProceduresSection'
+import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection'
+import SimultaneousGuidesAlert from './SimultaneousGuidesAlert'
 
 function AnalysisInner() {
   const {
@@ -64,8 +65,8 @@ function AnalysisInner() {
     onNavigateNext: handleNavNext,
     onApprove: decision.handleApproveClick,
     onDeny: decision.handleDenyClick,
-    onPendency: () => decision.setShowPendencyDialog(true),
-    onShowShortcuts: () => decision.setShowShortcutsHelp(true),
+    onPendency: () => { decision.setShowPendencyDialog(true); },
+    onShowShortcuts: () => { decision.setShowShortcutsHelp(true); },
   })
 
   return (
@@ -101,8 +102,8 @@ function AnalysisInner() {
             pedido={pedido}
             onAprovarClick={decision.handleApproveClick}
             onNegarClick={decision.handleDenyClick}
-            onPendenciarClick={() => decision.setShowPendencyDialog(true)}
-            onJuntaClick={() => decision.setShowMedicalBoardDialog(true)}
+            onPendenciarClick={() => { decision.setShowPendencyDialog(true); }}
+            onJuntaClick={() => { decision.setShowMedicalBoardDialog(true); }}
             procDecisoes={decision.procDecisions}
             onProcDecisaoChange={decision.handleProcDecisionChange}
             onConfirmarDecisaoClick={decision.handleConfirmDecisionClick}
@@ -133,7 +134,7 @@ function AnalysisInner() {
         pedidoStatus={pedido.status}
         proc={adjustment.drawerProc}
         existingAjustes={adjustment.allAdjustments}
-        onClose={() => adjustment.setDrawerOpen(false)}
+        onClose={() => { adjustment.setDrawerOpen(false); }}
         onConfirm={adjustment.handleAdjustConfirm}
       />
 
@@ -141,7 +142,7 @@ function AnalysisInner() {
       <AdjustmentApprovalDialog
         open={decision.showAdjustApprovalConfirm}
         allAdjustments={adjustment.allAdjustments}
-        onReview={() => decision.setShowAdjustApprovalConfirm(false)}
+        onReview={() => { decision.setShowAdjustApprovalConfirm(false); }}
         onConfirm={() => { decision.setShowAdjustApprovalConfirm(false); decision.doApprove() }}
       />
 
@@ -154,7 +155,7 @@ function AnalysisInner() {
         approvalJustification={decision.approvalJustification}
         onApprovalJustificationChange={decision.setApprovalJustification}
         onConfirm={decision.confirmApproval}
-        onClose={() => decision.setShowApprovalDialog(false)}
+        onClose={() => { decision.setShowApprovalDialog(false); }}
       />
 
       {/* Denial Dialog */}
@@ -171,7 +172,7 @@ function AnalysisInner() {
         denialJustification={decision.denialJustification}
         onDenialJustificationChange={decision.setDenialJustification}
         onConfirm={decision.confirmDenial}
-        onClose={() => decision.setShowDenialDialog(false)}
+        onClose={() => { decision.setShowDenialDialog(false); }}
       />
 
       {/* Pendency Dialog */}
@@ -182,7 +183,7 @@ function AnalysisInner() {
         pendencyJustification={decision.pendencyJustification}
         onPendencyJustificationChange={decision.setPendencyJustification}
         onConfirm={decision.confirmPendency}
-        onClose={() => decision.setShowPendencyDialog(false)}
+        onClose={() => { decision.setShowPendencyDialog(false); }}
       />
 
       {/* Medical Board Dialog */}
@@ -193,7 +194,7 @@ function AnalysisInner() {
         medicalBoardObs={decision.medicalBoardObs}
         onMedicalBoardObsChange={decision.setMedicalBoardObs}
         onConfirm={decision.confirmMedicalBoard}
-        onClose={() => decision.setShowMedicalBoardDialog(false)}
+        onClose={() => { decision.setShowMedicalBoardDialog(false); }}
       />
 
       {/* Divergence Dialog */}
@@ -203,7 +204,7 @@ function AnalysisInner() {
         divergenceReason={decision.divergenceReason}
         onDivergenceReasonChange={decision.setDivergenceReason}
         onContinue={decision.handleDivergenceContinue}
-        onClose={() => decision.setShowDivergenceDialog(false)}
+        onClose={() => { decision.setShowDivergenceDialog(false); }}
       />
 
       {/* Partial Approval Dialog */}
@@ -216,13 +217,13 @@ function AnalysisInner() {
         partialDenialJustMap={decision.partialDenialJustMap}
         onPartialDenialJustMapChange={decision.setPartialDenialJustMap}
         onConfirm={decision.confirmPartialDecision}
-        onClose={() => decision.setShowPartialDialog(false)}
+        onClose={() => { decision.setShowPartialDialog(false); }}
       />
 
       {/* Shortcuts Help Dialog */}
       <ShortcutsHelpDialog
         open={decision.showShortcutsHelp}
-        onClose={() => decision.setShowShortcutsHelp(false)}
+        onClose={() => { decision.setShowShortcutsHelp(false); }}
       />
     </Box>
   )

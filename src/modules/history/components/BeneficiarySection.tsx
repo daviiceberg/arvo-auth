@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import Box from '@mui/material/Box';
@@ -8,7 +10,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
-import { useRouter } from 'next/navigation';
 
 import { type HistoricoEntry } from '@/types/pedido';
 
@@ -41,7 +42,7 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
-                label={`${idade} anos`}
+                label={`${String(idade)} anos`}
                 size="small"
                 sx={{
                   backgroundColor: 'rgba(0,0,0,0.06)',
@@ -74,7 +75,7 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
           <Button
             size="small"
             variant="outlined"
-            onClick={() => router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiario)}`)}
+            onClick={() => { router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiario)}`); }}
             sx={{
               fontSize: 12,
               py: 0.5,

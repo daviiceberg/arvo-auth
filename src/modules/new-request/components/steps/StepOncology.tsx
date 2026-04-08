@@ -1,15 +1,17 @@
 'use client'
 
 import React from 'react'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import Grid from '@mui/material/Grid'
+
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import WarningAmberIcon from '@mui/icons-material/WarningAmber'
+import Box from '@mui/material/Box'
+import FormControl from '@mui/material/FormControl'
+import Grid from '@mui/material/Grid'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+
 import { type FormData } from '../../types'
 
 function FieldLabel({ children, validated, warning }: { children: React.ReactNode; validated?: boolean; warning?: boolean }) {
@@ -18,8 +20,8 @@ function FieldLabel({ children, validated, warning }: { children: React.ReactNod
       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
         {children}
       </Typography>
-      {validated && <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />}
-      {warning && <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
+      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
     </Box>
   )
 }
@@ -59,7 +61,7 @@ export function StepOncology({ form, set, setSelect }: StepOncologyProps) {
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel>Tipo de Tratamento</FieldLabel>
           <FormControl fullWidth size="small">
-            <Select value={form.tipoTratamento} onChange={(e) => setSelect('tipoTratamento')(e.target.value)}>
+            <Select value={form.tipoTratamento} onChange={(e) => { setSelect('tipoTratamento')(e.target.value); }}>
               <MenuItem value="Quimioterapia">Quimioterapia</MenuItem>
               <MenuItem value="Radioterapia">Radioterapia</MenuItem>
               <MenuItem value="Hormonioterapia">Hormonioterapia</MenuItem>

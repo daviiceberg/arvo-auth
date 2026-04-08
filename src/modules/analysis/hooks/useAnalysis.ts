@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { pedidos } from '@/data/pedidos'
@@ -23,7 +24,7 @@ export function useAnalysis() {
     if (currentIndex < total - 1) router.push(`/analise?id=${pedidos[currentIndex + 1].id}`)
   }
 
-  const handleBack = () => router.push('/fila')
+  const handleBack = () => { router.push('/fila'); }
 
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,

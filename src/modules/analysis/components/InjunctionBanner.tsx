@@ -1,9 +1,9 @@
 'use client'
 
+import GavelIcon from '@mui/icons-material/Gavel'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
-import GavelIcon from '@mui/icons-material/Gavel'
 
 import { type Pedido } from '@/data/pedidos'
 
@@ -29,11 +29,9 @@ export default function InjunctionBanner({ pedido }: InjunctionBannerProps) {
           <Typography variant="body2" sx={{ fontSize: 12, color: 'text.primary', mb: 0.5 }}>
             <Box component="span" sx={{ fontWeight: 600 }}>Escopo: </Box>{escopo}
           </Typography>
-          {observacao && (
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, display: 'block', fontStyle: 'italic' }}>
+          {observacao ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, display: 'block', fontStyle: 'italic' }}>
               {observacao}
-            </Typography>
-          )}
+            </Typography> : null}
         </Box>
       </Box>
     </Box>

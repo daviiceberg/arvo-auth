@@ -33,7 +33,7 @@ export default function HistoryDetailHeader({
   onPrev,
   onNext,
 }: HistoryDetailHeaderProps) {
-  const catStyle = categoryColorMap[entry.categoria] || { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' };
+  const catStyle = categoryColorMap[entry.categoria] ?? { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' };
 
   return (
     <Box sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
@@ -86,8 +86,7 @@ export default function HistoryDetailHeader({
             sx={{ backgroundColor: catStyle.bg, color: catStyle.color, fontWeight: 600, height: 22 }}
           />
           {entry.alertas &&
-            entry.alertas.length > 0 &&
-            entry.alertas.map((alerta) => (
+            entry.alertas.length > 0 ? entry.alertas.map((alerta) => (
               <Chip
                 key={alerta}
                 icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
@@ -95,7 +94,7 @@ export default function HistoryDetailHeader({
                 size="small"
                 sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontWeight: 700, height: 22 }}
               />
-            ))}
+            )) : null}
         </Box>
 
         {/* Navigator */}

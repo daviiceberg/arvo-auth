@@ -52,7 +52,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           <TableBody>
             {procs.map((proc, idx) => (
               <TableRow
-                key={proc.codigo + idx}
+                key={proc.codigo + String(idx)}
                 sx={{
                   cursor: 'default',
                   '& td': {
@@ -70,15 +70,14 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                 </TableCell>
                 <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
                   Qtd: {proc.qty}
-                  {proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}
+                  {proc.qtyAutorizada !== undefined ? ` · Aut: ${String(proc.qtyAutorizada)}` : ''}
                 </TableCell>
                 <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
                   {proc.dataInicio} → {proc.dataFim}
                 </TableCell>
                 <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
-                    {proc.cid && (
-                      <Chip
+                    {proc.cid ? <Chip
                         label={`CID ${proc.cid}`}
                         size="small"
                         sx={{
@@ -88,8 +87,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                           fontSize: 12,
                           height: 20,
                         }}
-                      />
-                    )}
+                      /> : null}
                     <Chip
                       label={proc.nivelAud}
                       size="small"
@@ -133,11 +131,9 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                             mb: 0.5,
                           }}
                         />
-                        {proc.motivoDecisao && (
-                          <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}>
+                        {proc.motivoDecisao ? <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}>
                             {proc.motivoDecisao}
-                          </Typography>
-                        )}
+                          </Typography> : null}
                       </Box>
                     ) : null}
                   </TableCell>
@@ -146,8 +142,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
             ))}
           </TableBody>
         </Table>
-        {entry.cidsSecundarios && entry.cidsSecundarios.length > 0 && (
-          <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
+        {entry.cidsSecundarios && entry.cidsSecundarios.length > 0 ? <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
             <Typography
               variant="caption"
               sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}
@@ -170,8 +165,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                 />
               ))}
             </Box>
-          </Box>
-        )}
+          </Box> : null}
         <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {[
             { label: 'Prestador', value: entry.prestador },

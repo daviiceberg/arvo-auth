@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
+
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
-import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
-import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined'
+import DialogContent from '@mui/material/DialogContent'
+import Typography from '@mui/material/Typography'
 
 interface SuccessDialogProps {
   open: boolean

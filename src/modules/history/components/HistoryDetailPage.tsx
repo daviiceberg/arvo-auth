@@ -28,6 +28,7 @@ import { DecisionActionChip } from '@/shared/components';
 import { type Ajuste } from '@/types/pedido';
 
 import useHistoryDetail from '../hooks/useHistoryDetail';
+
 import AppealDialog from './AppealDialog';
 import BeneficiarySection from './BeneficiarySection';
 import ConsolidatedHistorySection from './ConsolidatedHistorySection';
@@ -44,7 +45,7 @@ export default function HistoryDetailPage() {
     return (
       <Box sx={{ p: 4 }}>
         <Typography color="text.secondary">Pedido não encontrado.</Typography>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => vm.router.push('/historico')} sx={{ mt: 2 }}>
+        <Button startIcon={<ArrowBackIcon />} onClick={() => { vm.router.push('/historico'); }} sx={{ mt: 2 }}>
           Voltar ao Histórico
         </Button>
       </Box>
@@ -68,7 +69,7 @@ export default function HistoryDetailPage() {
         entry={entry}
         currentIndex={vm.currentIndex}
         total={vm.total}
-        onBack={() => vm.router.push('/historico')}
+        onBack={() => { vm.router.push('/historico'); }}
         onPrev={vm.handlePrev}
         onNext={vm.handleNext}
       />
@@ -177,16 +178,13 @@ export default function HistoryDetailPage() {
                       <Typography variant="body2" sx={{ fontSize: 13, lineHeight: 1.6 }}>
                         {entry.motivoDecisao}
                       </Typography>
-                      {entry.textoLivre && (
-                        <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 1, display: 'block', lineHeight: 1.5 }}>
+                      {entry.textoLivre ? <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 1, display: 'block', lineHeight: 1.5 }}>
                           {entry.textoLivre}
-                        </Typography>
-                      )}
+                        </Typography> : null}
                     </Box>
 
                     {/* Ajustes aplicados */}
-                    {entry.ajustes && entry.ajustes.length > 0 && (
-                      <Box
+                    {entry.ajustes && entry.ajustes.length > 0 ? <Box
                         sx={{
                           backgroundColor: 'rgba(255,251,235,0.8)',
                           border: '1px solid rgba(245,158,11,0.3)',
@@ -245,14 +243,12 @@ export default function HistoryDetailPage() {
                             );
                           })}
                         </Box>
-                      </Box>
-                    )}
+                      </Box> : null}
                   </Box>
                 )}
 
                 {/* Checklist IA */}
-                {entry.iaChecklist && entry.iaChecklist.length > 0 && (
-                  <Box sx={{ mb: 2 }}>
+                {entry.iaChecklist && entry.iaChecklist.length > 0 ? <Box sx={{ mb: 2 }}>
                     <Typography
                       variant="caption"
                       fontWeight={700}
@@ -290,8 +286,7 @@ export default function HistoryDetailPage() {
                         </Box>
                       ))}
                     </Box>
-                  </Box>
-                )}
+                  </Box> : null}
 
                 {/* Sugestao da IA */}
                 <Box sx={{ mb: 2 }}>
@@ -345,8 +340,7 @@ export default function HistoryDetailPage() {
                 )}
 
                 {/* Junta Medica */}
-                {entry.juntaMedica && (
-                  <>
+                {entry.juntaMedica ? <>
                     <Divider sx={{ my: 1.5 }} />
                     <Box
                       sx={{
@@ -405,8 +399,7 @@ export default function HistoryDetailPage() {
                         {entry.juntaMedica.parecer}
                       </Typography>
                     </Box>
-                  </>
-                )}
+                  </> : null}
               </Box>
 
               <Divider />
@@ -427,7 +420,7 @@ export default function HistoryDetailPage() {
                   variant="contained"
                   fullWidth
                   startIcon={<SendIcon />}
-                  onClick={() => vm.setNotifyOpen(true)}
+                  onClick={() => { vm.setNotifyOpen(true); }}
                   sx={{ fontWeight: 600, justifyContent: 'flex-start', px: 2 }}
                 >
                   Informar Decisão ao Beneficiário
@@ -441,7 +434,7 @@ export default function HistoryDetailPage() {
       {/* Appeal / Notify Dialog + Snackbar */}
       <AppealDialog
         open={vm.notifyOpen}
-        onClose={() => vm.setNotifyOpen(false)}
+        onClose={() => { vm.setNotifyOpen(false); }}
         entry={entry}
         notifyChannel={vm.notifyChannel}
         onNotifyChannelChange={vm.setNotifyChannel}

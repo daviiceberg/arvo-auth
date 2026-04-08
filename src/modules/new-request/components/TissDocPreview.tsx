@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
@@ -34,7 +35,7 @@ interface TissDocPreviewProps {
 export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
   return (
     <Box sx={{
-      transform: `scale(${zoom / 100}) rotate(${rotation}deg)`,
+      transform: `scale(${String(zoom / 100)}) rotate(${String(rotation)}deg)`,
       transformOrigin: 'top center',
       transition: 'transform 200ms ease',
       width: '100%',

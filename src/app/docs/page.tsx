@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
-import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
-import Button from '@mui/material/Button'
-import Alert from '@mui/material/Alert'
+import Tabs from '@mui/material/Tabs'
+import Typography from '@mui/material/Typography'
 
 // ── Helpers compartilhados ────────────────────────────────────────────────
 
@@ -26,7 +27,7 @@ function SimpleTable({ headers, rows }: { headers: string[]; rows: string[][] })
       <Box component="thead">
         <Box component="tr">
           {headers.map((h, hi) => (
-            <Box key={`${h}-${hi}`} component="th" sx={{ textAlign: 'left', fontWeight: 700, py: 1, px: 1.5, backgroundColor: '#F0F0F0', borderBottom: '1px solid rgba(0,0,0,0.1)', color: '#1a1a1a' }}>
+            <Box key={`${String(h)}-${String(hi)}`} component="th" sx={{ textAlign: 'left', fontWeight: 700, py: 1, px: 1.5, backgroundColor: '#F0F0F0', borderBottom: '1px solid rgba(0,0,0,0.1)', color: '#1a1a1a' }}>
               {h}
             </Box>
           ))}
@@ -56,11 +57,9 @@ function FeatureItem({ name, route, children }: { name: string; route?: string; 
     <Box sx={{ mb: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
         <Typography sx={{ fontWeight: 700, fontSize: 14, color: '#1a1a1a' }}>{name}</Typography>
-        {route && (
-          <Box component="code" sx={{ fontSize: 12, color: '#5a6070', backgroundColor: '#F0F0F0', px: 0.8, py: 0.25, borderRadius: 1, fontFamily: 'monospace' }}>
+        {route ? <Box component="code" sx={{ fontSize: 12, color: '#5a6070', backgroundColor: '#F0F0F0', px: 0.8, py: 0.25, borderRadius: 1, fontFamily: 'monospace' }}>
             {route}
-          </Box>
-        )}
+          </Box> : null}
       </Box>
       <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65 }}>{children}</Typography>
     </Box>
@@ -709,7 +708,7 @@ export default function DocsPage() {
         {/* Tabs */}
         <Tabs
           value={tab}
-          onChange={(_, v) => setTab(v)}
+          onChange={(_, v) => { setTab(v); }}
           sx={{ borderBottom: '1px solid rgba(0,0,0,0.08)', mb: 4 }}
         >
           <Tab label="Produto" sx={{ fontWeight: 600, fontSize: 14, textTransform: 'none' }} />

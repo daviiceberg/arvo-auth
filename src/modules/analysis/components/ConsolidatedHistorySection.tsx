@@ -1,6 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import HistoryIcon from '@mui/icons-material/History'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -9,12 +16,6 @@ import CardContent from '@mui/material/CardContent'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
-import CheckIcon from '@mui/icons-material/Check'
-import CloseIcon from '@mui/icons-material/Close'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HistoryIcon from '@mui/icons-material/History'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 
 import { type Pedido } from '@/data/pedidos'
 
@@ -28,11 +29,11 @@ interface HistoricoConsolidado {
   internacoes: { count: number; periodo: string; detalhes?: string }
   cidRecorrente: { cid: string; count: number; descricao: string } | null
   sessoesDoMes?: { utilizadas: number; autorizadas: number; tipo: string; cidF84?: boolean; dut?: string }[]
-  autorizacoesAnteriores: Array<{
+  autorizacoesAnteriores: {
     id: string; procedimento: string; codigo: string; cid: string
     data: string; decisao: 'aprovado' | 'negado' | 'ajustado'; motivo: string; destaque?: boolean
-  }>
-  sinaisAtencao: Array<{ id: string; mensagem: string; detalhes?: string; severidade: 'low' | 'medium' | 'high' }>
+  }[]
+  sinaisAtencao: { id: string; mensagem: string; detalhes?: string; severidade: 'low' | 'medium' | 'high' }[]
   elegibilidade: {
     status: 'ativo' | 'suspenso' | 'carencia'
     carencias: boolean; detalhesCarencia?: string
@@ -287,11 +288,9 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
               {h.internacoes.periodo}
             </Typography>
-            {h.internacoes.detalhes && (
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mt: 0.5 }}>
+            {h.internacoes.detalhes ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mt: 0.5 }}>
                 {h.internacoes.detalhes}
-              </Typography>
-            )}
+              </Typography> : null}
           </Box>
           {/* CID recorrente */}
           <Box sx={{
@@ -321,8 +320,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
         </Box>
 
         {/* Sessões do Mês */}
-        {h.sessoesDoMes && h.sessoesDoMes.length > 0 && (
-          <Box sx={{ mb: 2.5 }}>
+        {h.sessoesDoMes && h.sessoesDoMes.length > 0 ? <Box sx={{ mb: 2.5 }}>
             <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
               Sessões Mensais
             </Typography>
@@ -334,9 +332,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                           <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
-                          {s.dut && (
-                            <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563eb', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} />
-                          )}
+                          {s.dut ? <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563eb', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} /> : null}
                         </Box>
                         <Chip label="Ilimitado (RN 539)" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(37,99,235,0.1)', color: '#2563eb', fontWeight: 700, '& .MuiChip-label': { px: 0.75 } }} />
                       </Box>
@@ -356,23 +352,20 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                         <Typography variant="caption" fontWeight={600} sx={{ fontSize: 12 }}>{s.tipo}</Typography>
-                        {s.dut && (
-                          <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} />
-                        )}
+                        {s.dut ? <Chip label={s.dut} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary', fontWeight: 600, '& .MuiChip-label': { px: 0.75 } }} /> : null}
                       </Box>
                       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: barColor }}>
                         {s.utilizadas}/{s.autorizadas} sessões
                       </Typography>
                     </Box>
                     <Box sx={{ height: 6, borderRadius: 3, backgroundColor: 'rgba(0,0,0,0.08)' }}>
-                      <Box sx={{ height: '100%', width: `${pct}%`, borderRadius: 3, backgroundColor: barColor, transition: 'width 400ms ease' }} />
+                      <Box sx={{ height: '100%', width: `${String(pct)}%`, borderRadius: 3, backgroundColor: barColor, transition: 'width 400ms ease' }} />
                     </Box>
                   </Box>
                 )
               })}
             </Box>
-          </Box>
-        )}
+          </Box> : null}
 
         <Divider sx={{ mb: 2.5 }} />
 
@@ -423,11 +416,11 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
         {h.autorizacoesAnteriores.length > 3 && (
           <Button
             size="small"
-            onClick={() => setShowAllAuth(!showAllAuth)}
+            onClick={() => { setShowAllAuth(!showAllAuth); }}
             endIcon={<ExpandMoreIcon sx={{ transform: showAllAuth ? 'rotate(180deg)' : 'none', transition: '0.2s', fontSize: 16 }} />}
             sx={{ fontSize: 12, color: 'text.secondary', textTransform: 'none', mb: 1.5 }}
           >
-            {showAllAuth ? 'Mostrar menos' : `Ver mais ${h.autorizacoesAnteriores.length - 3} registros`}
+            {showAllAuth ? 'Mostrar menos' : `Ver mais ${String(h.autorizacoesAnteriores.length - 3)} registros`}
           </Button>
         )}
 
@@ -448,24 +441,20 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                 Sinais de Atenção
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
-                {hasHighUseF84 && (
-                  <Alert severity="info" icon={<InfoOutlinedIcon fontSize="small" />} sx={{ borderRadius: 1.5, py: 0.5 }}>
+                {hasHighUseF84 ? <Alert severity="info" icon={<InfoOutlinedIcon fontSize="small" />} sx={{ borderRadius: 1.5, py: 0.5 }}>
                     <Typography variant="caption" fontWeight={700} display="block">
                       Alta frequência de sessões identificada
                     </Typography>
                     <Typography variant="caption">
                       Para CID F84, RN 539/2022 garante cobertura ilimitada — volume elevado não é fundamento para negativa.
                     </Typography>
-                  </Alert>
-                )}
+                  </Alert> : null}
                 {filteredSinais.map((sinal) => (
                   <Alert key={sinal.id} severity={sinaisAtencaoColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
                     <Typography variant="caption" fontWeight={700} display="block">
                       {sinal.mensagem}
                     </Typography>
-                    {sinal.detalhes && (
-                      <Typography variant="caption">{sinal.detalhes}</Typography>
-                    )}
+                    {sinal.detalhes ? <Typography variant="caption">{sinal.detalhes}</Typography> : null}
                   </Alert>
                 ))}
               </Box>
@@ -481,8 +470,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
           {/* Etapa da Autorização -- only for Terapias Especiais */}
-          {pedido.categoria === 'Terapias Especiais' && pedido.etapaAutorizacao && (
-            <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
+          {pedido.categoria === 'Terapias Especiais' && pedido.etapaAutorizacao ? <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
                 Etapa da Autorização
               </Typography>
@@ -497,8 +485,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                   fontSize: 12,
                 }}
               />
-            </Box>
-          )}
+            </Box> : null}
           {/* Status elegibilidade */}
           <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
@@ -524,11 +511,9 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
             <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
               {h.elegibilidade.carencias ? 'Sim' : 'Não'}
             </Typography>
-            {h.elegibilidade.detalhesCarencia && (
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
+            {h.elegibilidade.detalhesCarencia ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                 {h.elegibilidade.detalhesCarencia}
-              </Typography>
-            )}
+              </Typography> : null}
           </Box>
           {/* Limites contratuais */}
           <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>

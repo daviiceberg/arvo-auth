@@ -38,7 +38,7 @@ export default function useProcessingQueue() {
     return { processing, waiting, error };
   }, []);
 
-  const handlePageChange = (_: unknown, newPage: number) => setPage(newPage);
+  const handlePageChange = (_: unknown, newPage: number) => { setPage(newPage); };
 
   const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(e.target.value, 10));

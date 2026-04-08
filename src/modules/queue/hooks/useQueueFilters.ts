@@ -36,27 +36,27 @@ export interface QueueFiltersActions {
 }
 
 export function useQueueFilters({ searchParams }: QueueFiltersParams): QueueFilters & QueueFiltersActions {
-  const initialCategoria = searchParams.get('categoria') || 'Todas';
+  const initialCategoria = searchParams.get('categoria') ?? 'Todas';
 
-  const [search, setSearch] = useState(searchParams.get('beneficiario') || '');
+  const [search, setSearch] = useState(searchParams.get('beneficiario') ?? '');
   const [categoriaFilter, setCategoriaFilter] = useState(initialCategoria);
-  const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') || 'Todas');
-  const [alertaFilter, setAlertaFilter] = useState(searchParams.get('alerta') || 'Todos');
+  const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') ?? 'Todas');
+  const [alertaFilter, setAlertaFilter] = useState(searchParams.get('alerta') ?? 'Todos');
   const [prestadorFilter, setPrestadorFilter] = useState('Todos');
-  const [iaFilter, setIaFilter] = useState(searchParams.get('ia') || 'Todas');
-  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'Todos');
-  const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') || '0', 10));
+  const [iaFilter, setIaFilter] = useState(searchParams.get('ia') ?? 'Todas');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') ?? 'Todos');
+  const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') ?? '0', 10));
   const [devolutivasSubFilter, setDevolutivasSubFilter] = useState<'all' | 'aguardando' | 'retorno'>('all');
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
 
   // Sync filters when URL params change
   useEffect(() => {
-    setCategoriaFilter(searchParams.get('categoria') || 'Todas');
-    setSlaFilter(searchParams.get('sla') || 'Todas');
-    setAlertaFilter(searchParams.get('alerta') || 'Todos');
-    setIaFilter(searchParams.get('ia') || 'Todas');
-    setStatusFilter(searchParams.get('status') || 'Todos');
+    setCategoriaFilter(searchParams.get('categoria') ?? 'Todas');
+    setSlaFilter(searchParams.get('sla') ?? 'Todas');
+    setAlertaFilter(searchParams.get('alerta') ?? 'Todos');
+    setIaFilter(searchParams.get('ia') ?? 'Todas');
+    setStatusFilter(searchParams.get('status') ?? 'Todos');
   }, [searchParams]);
 
   const hasFilters =

@@ -48,7 +48,7 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
             Alertas que requerem atenção
           </Typography>
           <Chip
-            label={`${totalCount} no total`}
+            label={`${String(totalCount)} no total`}
             size="small"
             sx={{ height: 20, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.08)', color: '#d4183d', '& .MuiChip-label': { px: 1 } }}
           />
@@ -61,9 +61,9 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
                 key={alerta.tipo}
                 role="button"
                 tabIndex={0}
-                onClick={() => router.push(url)}
+                onClick={() => { router.push(url); }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(url); } }}
-                aria-label={`Ver ${alerta.count} pedidos: ${alerta.tipo}`}
+                aria-label={`Ver ${String(alerta.count)} pedidos: ${alerta.tipo}`}
                 sx={{
                   flex: 1,
                   minWidth: 160,

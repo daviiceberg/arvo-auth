@@ -15,12 +15,12 @@ export function useUploadStep() {
     // Simulate progress: fast start, decelerate near end
     const milestones = [8, 20, 35, 50, 63, 74, 83, 89, 94, 98]
     milestones.forEach((target, i) => {
-      setTimeout(() => setUploadProgress(target), (i + 1) * 180)
+      setTimeout(() => { setUploadProgress(target); }, (i + 1) * 180)
     })
     setTimeout(() => {
       setUploadProgress(100)
       setUploadState('done')
-      setTimeout(() => onComplete(), 400)
+      setTimeout(() => { onComplete(); }, 400)
     }, 2200)
   }
 
@@ -29,9 +29,9 @@ export function useUploadStep() {
     setUploadProgress(0)
   }
 
-  const zoomIn = () => setZoom(z => Math.min(200, z + 10))
-  const zoomOut = () => setZoom(z => Math.max(50, z - 10))
-  const rotate = () => setRotation(r => (r + 90) % 360)
+  const zoomIn = () => { setZoom(z => Math.min(200, z + 10)); }
+  const zoomOut = () => { setZoom(z => Math.max(50, z - 10)); }
+  const rotate = () => { setRotation(r => (r + 90) % 360); }
 
   return {
     uploadState,

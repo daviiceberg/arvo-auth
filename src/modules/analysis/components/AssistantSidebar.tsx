@@ -1,6 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+
+import CallSplitIcon from '@mui/icons-material/CallSplit'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
+import CloseIcon from '@mui/icons-material/Close'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
+import GavelIcon from '@mui/icons-material/Gavel'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import SmartToyIcon from '@mui/icons-material/SmartToy'
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -10,14 +19,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
-import CallSplitIcon from '@mui/icons-material/CallSplit'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import CloseIcon from '@mui/icons-material/Close'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import GavelIcon from '@mui/icons-material/Gavel'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import SmartToyIcon from '@mui/icons-material/SmartToy'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 
 import { type Pedido } from '@/data/pedidos'
 import { iaSuggestionColorMap } from '@/shared/constants'
@@ -130,7 +131,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             const isContinuidade = pedido.etapaAutorizacao === 'continuidade'
 
             // Extra checklist items for Terapias continuidade
-            const extraContinuidadeItems: Array<{ texto: string; sub?: string; status: 'ok' | 'warning' | 'error' }> = isTerapias && isContinuidade ? [
+            const extraContinuidadeItems: { texto: string; sub?: string; status: 'ok' | 'warning' | 'error' }[] = isTerapias && isContinuidade ? [
               {
                 texto: 'Relatório de evolução terapêutica anexado',
                 status: pedido.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
@@ -144,7 +145,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             // Extra checklist items for OPME with valorUnitario
             const isOpme = pedido.categoria === 'OPME'
             const opmeProcsComValor = pedido.procedimentos.filter(p => p.fabricante !== undefined)
-            const extraOpmeItems: Array<{ texto: string; status: 'ok' | 'warning' | 'error' }> = isOpme && opmeProcsComValor.length > 0
+            const extraOpmeItems: { texto: string; status: 'ok' | 'warning' | 'error' }[] = isOpme && opmeProcsComValor.length > 0
               ? opmeProcsComValor.map(p => {
                   if (!p.valorUnitario) return { texto: 'Valor unitário não informado — obrigatório para OPME', status: 'error' as const }
                   const valorAlertaExistente = iaChecklist.some(c => c.status === 'error' && c.texto.toLowerCase().includes('valor'))
@@ -159,12 +160,11 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             return (
               <Box>
                 <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ textTransform: 'uppercase', fontSize: 12, letterSpacing: 0.5, display: 'block', mb: 1 }}>
-                  Checklist {isTerapias && isContinuidade && <Typography component="span" variant="caption" sx={{ fontSize: 11, textTransform: 'none', color: '#2563eb', fontWeight: 600 }}>— Continuidade</Typography>}
+                  Checklist {isTerapias && isContinuidade ? <Typography component="span" variant="caption" sx={{ fontSize: 11, textTransform: 'none', color: '#2563eb', fontWeight: 600 }}>— Continuidade</Typography> : null}
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                   {/* RN 539/2022 info item for F84 CIDs */}
-                  {isF84 && (
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, p: 1, borderRadius: 1.5, backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)', mb: 0.75 }}>
+                  {isF84 ? <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, p: 1, borderRadius: 1.5, backgroundColor: 'rgba(37,99,235,0.06)', border: '1px solid rgba(37,99,235,0.15)', mb: 0.75 }}>
                       <InfoOutlinedIcon sx={{ fontSize: 15, color: '#2563eb', flexShrink: 0, mt: 0.15 }} />
                       <Box>
                         <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: '#1d4ed8', lineHeight: 1.4 }}>
@@ -174,8 +174,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                           Operadora não pode negar por limite de sessões nem por escolha de método terapêutico. Espaço de negativa restrito a questões administrativas.
                         </Typography>
                       </Box>
-                    </Box>
-                  )}
+                    </Box> : null}
                   {allItems.map((item) => (
                     <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                       {item.status === 'ok' ? (
@@ -260,7 +259,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                             fullWidth
                             variant={isAprovado ? 'contained' : 'outlined'}
                             startIcon={isAprovado ? <CheckCircleOutlineIcon sx={{ fontSize: 14 }} /> : undefined}
-                            onClick={() => onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado')}
+                            onClick={() => { onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado'); }}
                             disabled={isGuiaFinalizada}
                             aria-label={isAprovado ? `Desfazer aprovação de ${proc.descricao}` : `Aprovar ${proc.descricao}`}
                             sx={{
@@ -282,7 +281,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                             fullWidth
                             variant={isNegado ? 'contained' : 'outlined'}
                             startIcon={isNegado ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
-                            onClick={() => onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado')}
+                            onClick={() => { onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado'); }}
                             disabled={isGuiaFinalizada}
                             aria-label={isNegado ? `Desfazer negativa de ${proc.descricao}` : `Negar ${proc.descricao}`}
                             sx={{
@@ -318,7 +317,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                       ? 'Aprovação Total'
                       : allNegado
                       ? 'Negativa Total'
-                      : `Aprovação Parcial — ${nAprovado} aprovado(s) · ${nNegado} negado(s)`}
+                      : `Aprovação Parcial — ${String(nAprovado)} aprovado(s) · ${String(nNegado)} negado(s)`}
                   </Typography>
                 </Box>
               )}

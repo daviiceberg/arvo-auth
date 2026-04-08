@@ -14,9 +14,10 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { type Pedido, type PedidoEmProcessamento } from '@/types/pedido';
 
 import { KpiCard } from '@/shared/components';
+import { type Pedido, type PedidoEmProcessamento } from '@/types/pedido';
+
 
 import { CardSkeleton } from './DashboardSkeleton';
 
@@ -58,7 +59,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => router.push('/nova-solicitacao')}
+          onClick={() => { router.push('/nova-solicitacao'); }}
           sx={{ mt: 0.5, minHeight: 44 }}
           aria-label="Nova solicitação"
         >
@@ -86,7 +87,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 sublabel={
                   <>
                     <Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>{metrics.slaViolados} violados</Box>
-                    {` · ${metrics.slaWarning} atenção · ${metrics.slaOk} no prazo`}
+                    {` · ${String(metrics.slaWarning)} atenção · ${String(metrics.slaOk)} no prazo`}
                     {pedidosEmProcessamento.length > 0 && (
                       <>
                         <Divider sx={{ my: 0.5 }} />
@@ -98,7 +99,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                     )}
                   </>
                 }
-                onClick={() => router.push('/fila')}
+                onClick={() => { router.push('/fila'); }}
               />
             </Grid>
             {/* Card 2 — Irregularities detected */}
@@ -108,7 +109,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 iconBg="rgba(245,158,11,0.12)"
                 value={metrics.totalAlertasAtivos}
                 label="Irregularidades Detectadas"
-                sublabel={`${metrics.alertasAtivos.slice(0, 2).map((a) => `${a.count} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`).join(' · ')}`}
+                sublabel={metrics.alertasAtivos.slice(0, 2).map((a) => `${String(a.count)} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`).join(' · ')}
                 valueColor="#b45309"
               />
             </Grid>
@@ -119,7 +120,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 iconBg="rgba(22,163,74,0.1)"
                 value={metrics.valorNegado}
                 label="Economia Gerada"
-                sublabel={`${metrics.negados} negativas · taxa ${metrics.taxaNegacao}%`}
+                sublabel={`${String(metrics.negados)} negativas · taxa ${String(metrics.taxaNegacao)}%`}
                 valueColor="#16a34a"
               />
             </Grid>
@@ -130,7 +131,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 iconBg="rgba(124,58,237,0.1)"
                 value={`${metrics.taxaDeteccaoIA}%`}
                 label="Efetividade da IA"
-                sublabel={`IA antecipou ${metrics.iaSinalizouCriticos} de ${metrics.totalCriticosHist} negativas`}
+                sublabel={`IA antecipou ${String(metrics.iaSinalizouCriticos)} de ${String(metrics.totalCriticosHist)} negativas`}
                 valueColor="#7c3aed"
               />
             </Grid>
@@ -141,7 +142,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 iconBg="rgba(37,99,235,0.1)"
                 value={metrics.valorTotal}
                 label="Valor em Risco"
-                sublabel={`${pedidos.length} pedidos aguardam decisão`}
+                sublabel={`${String(pedidos.length)} pedidos aguardam decisão`}
                 valueColor="#2563eb"
               />
             </Grid>

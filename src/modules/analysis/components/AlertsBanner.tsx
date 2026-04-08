@@ -1,9 +1,9 @@
 'use client'
 
+import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 
 import { type Pedido } from '@/data/pedidos'
 
