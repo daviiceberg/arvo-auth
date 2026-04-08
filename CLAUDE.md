@@ -52,8 +52,10 @@ Example: `feat/NEW-779-setup-code-quality-guardrails`
 
 ### Pull Requests
 
-- Title: short (max 70 chars), English, starts with type
-- Description: bullet points — direct and objective, no checkboxes
+- Title: short (max 70 chars), Portuguese-BR, starts with type
+- Description: bullet points in Portuguese-BR — direct and objective, no checkboxes
+- Sections order: Resumo, Mudanças, Screenshots (se aplicável), Ticket (always last)
+- Description is about what the PR changes — not about the development process
 - Template at `.github/PULL_REQUEST_TEMPLATE.md`
 
 ---
