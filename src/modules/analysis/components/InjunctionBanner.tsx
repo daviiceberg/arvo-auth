@@ -1,0 +1,41 @@
+'use client'
+
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
+import GavelIcon from '@mui/icons-material/Gavel'
+
+import { type Pedido } from '@/data/pedidos'
+
+interface InjunctionBannerProps {
+  pedido: Pedido
+}
+
+export default function InjunctionBanner({ pedido }: InjunctionBannerProps) {
+  if (!pedido.liminar?.ativa) return null
+  const { processo, escopo, validade, observacao } = pedido.liminar
+  return (
+    <Box sx={{ border: '1px solid rgba(124,58,237,0.35)', borderRadius: 2, backgroundColor: 'rgba(124,58,237,0.04)', p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+        <GavelIcon sx={{ fontSize: 20, color: '#7c3aed', flexShrink: 0, mt: 0.1 }} />
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+            <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: '#7c3aed' }}>
+              Liminar Judicial Ativa
+            </Typography>
+            <Chip label={`Válida até ${validade}`} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(124,58,237,0.12)', color: '#7c3aed', fontWeight: 700 }} />
+            <Chip label={processo} size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary', fontWeight: 600, fontFamily: 'monospace' }} />
+          </Box>
+          <Typography variant="body2" sx={{ fontSize: 12, color: 'text.primary', mb: 0.5 }}>
+            <Box component="span" sx={{ fontWeight: 600 }}>Escopo: </Box>{escopo}
+          </Typography>
+          {observacao && (
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, display: 'block', fontStyle: 'italic' }}>
+              {observacao}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  )
+}

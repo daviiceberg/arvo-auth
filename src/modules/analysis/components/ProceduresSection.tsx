@@ -1,0 +1,258 @@
+'use client'
+
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
+import Chip from '@mui/material/Chip'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'
+import EditIcon from '@mui/icons-material/Edit'
+import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined'
+
+import { type Pedido, type Ajuste } from '@/data/pedidos'
+
+import { USER_PROFILE } from '../types'
+
+interface ProceduresSectionProps {
+  pedido: Pedido
+  allAjustes: Ajuste[]
+  onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number }) => void
+}
+
+export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }: ProceduresSectionProps) {
+  const procs = pedido.procedimentos
+  const p = pedido.prestador
+  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(pedido.status)
+
+  return (
+    <Card>
+      <CardContent sx={{ p: 3 }}>
+        <Typography variant="h6" fontWeight={700} sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}>
+          Procedimentos ({procs.length})
+        </Typography>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{ '& th': { borderBottom: '1px solid rgba(0,0,0,0.08)' } }}>
+              <TableCell sx={{ pl: 0, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 120 }}>Código</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1 }}>Descrição</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 80 }}>Qtd</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, minWidth: 120 }}>Prestador</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, width: 140 }}>Período</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1 }}>Status</TableCell>
+              <TableCell sx={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary', pb: 1, pr: 0 }} />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {procs.map((proc) => {
+              const ajuste = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'quantidade')
+              const ajustePrestador = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'prestador')
+              const ajusteCodigo = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'codigo')
+              const hasAnyAjuste = allAjustes.some(a => a.procedimentoCodigo === proc.codigo)
+
+              return (
+                <TableRow
+                  key={proc.codigo}
+                  sx={{ cursor: 'default', '& td': { borderBottom: procs.indexOf(proc) < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none' }, '&:not(:first-of-type) td': { pt: 2 }, '&:hover': { backgroundColor: 'transparent' } }}
+                >
+                  <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
+                    {proc.fabricante !== undefined && (
+                      <Chip label="OPME" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, mb: 0.5, display: 'block', width: 'fit-content' }} />
+                    )}
+                    {ajusteCodigo ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.codigo}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[0]}</Typography>
+                      </Box>
+                    ) : proc.codigo}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
+                    {ajusteCodigo ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.descricao}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[1] ?? ajusteCodigo.valorNovo}</Typography>
+                      </Box>
+                    ) : proc.descricao}
+                    {(proc.fabricante || proc.valorUnitario) && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
+                        {proc.fabricante && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <BusinessOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>{proc.fabricante}</Typography>
+                          </Box>
+                        )}
+                        {proc.valorUnitario ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <MonetizationOnOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.primary" sx={{ fontSize: 12, fontWeight: 600 }}>
+                              {proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </Typography>
+                          </Box>
+                        ) : null}
+                      </Box>
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}>
+                    {ajuste ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty}</Typography>
+                        <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>Aut: {ajuste.valorNovo} ✏</Typography>
+                      </Box>
+                    ) : (
+                      <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        {`Qtd: ${proc.qty}${proc.qtyAutorizada !== undefined ? ` · Aut: ${proc.qtyAutorizada}` : ''}`}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
+                    {ajustePrestador ? (
+                      <Box>
+                        <Typography sx={{ fontSize: 11, color: 'text.disabled', textDecoration: 'line-through', lineHeight: 1.3, display: 'block' }}>
+                          {ajustePrestador.valorAnterior}
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
+                          <EditIcon sx={{ fontSize: 11, color: 'primary.main', flexShrink: 0 }} />
+                          <Typography sx={{ fontSize: 11, color: 'primary.main', fontWeight: 600, lineHeight: 1.3 }}>
+                            {ajustePrestador.valorNovo}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{p.hospital}</Typography>
+                    )}
+                  </TableCell>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 140 }}>
+                    {proc.dataInicio} → {proc.dataFim}
+                  </TableCell>
+                  <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
+                      {proc.cid && (
+                        <Chip
+                          label={`CID ${proc.cid}`}
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(37,99,235,0.08)', color: '#2563eb', fontWeight: 700, fontSize: 12, height: 20 }}
+                        />
+                      )}
+                      {(() => {
+                        const lastDigit = parseInt(proc.codigo.slice(-1))
+                        const credOk = lastDigit % 2 === 0
+                        return (
+                          <Chip
+                            label={credOk ? 'Credenciado' : 'Não credenciado'}
+                            size="small"
+                            sx={{
+                              backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
+                              color: credOk ? '#16a34a' : '#d4183d',
+                              fontWeight: 700, fontSize: 11, height: 20,
+                            }}
+                          />
+                        )
+                      })()}
+                      {hasAnyAjuste && !isGuiaFinalizada && (
+                        <Chip
+                          icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
+                          label="Ajustado"
+                          size="small"
+                          sx={{ backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, fontSize: 11, height: 20 }}
+                        />
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
+                    {USER_PROFILE !== 'Auditor' && (
+                      isGuiaFinalizada ? (
+                        <Tooltip title="Guia já finalizada — edição não permitida">
+                          <span>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              disabled
+                              startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                              sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.15)', color: 'text.disabled', py: 0.25, px: 1 }}
+                            >
+                              Ajustar
+                            </Button>
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<EditIcon sx={{ fontSize: 12 }} />}
+                          onClick={() => onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario })}
+                          sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#902B29', color: '#902B29', backgroundColor: 'rgba(144,43,41,0.04)' } }}
+                        >
+                          Ajustar
+                        </Button>
+                      )
+                    )}
+                    {USER_PROFILE === 'Auditor' && (
+                      <Chip label="Somente leitura" size="small" sx={{ fontSize: 11, height: 20, backgroundColor: 'rgba(0,0,0,0.06)', color: 'text.secondary' }} />
+                    )}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+        {pedido.cidsSecundarios && pedido.cidsSecundarios.length > 0 && (
+          <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
+            <Typography variant="caption" sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+              CIDs Secundários
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
+              {pedido.cidsSecundarios.map((cid, i) => (
+                <Chip key={i} label={cid} size="small"
+                  sx={{ backgroundColor: 'rgba(100,116,139,0.08)', color: '#475569', fontWeight: 600, fontSize: 12, height: 20 }} />
+              ))}
+            </Box>
+          </Box>
+        )}
+        {(() => {
+          const prestadorAjuste = allAjustes.find(a => a.campo === 'prestador')
+          const hospitalVigente = prestadorAjuste ? prestadorAjuste.valorNovo : p.hospital
+          return (
+            <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+              <Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                  Hospital / Clínica
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{hospitalVigente}</Typography>
+                  {prestadorAjuste && (
+                    <Chip
+                      icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
+                      label="Prestador ajustado"
+                      size="small"
+                      sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.08)', color: 'primary.main' }}
+                    />
+                  )}
+                </Box>
+              </Box>
+              {[
+                { label: 'Médico Solicitante', value: p.medico },
+                { label: 'CRM', value: p.crm },
+                { label: 'Especialidade', value: p.especialidade },
+              ].map((f) => (
+                <Box key={f.label}>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: 'uppercase', mb: 0.5 }}>
+                    {f.label}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                    {f.value}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          )
+        })()}
+      </CardContent>
+    </Card>
+  )
+}
