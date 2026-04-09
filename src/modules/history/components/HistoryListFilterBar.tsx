@@ -13,11 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
-import {
-  type OriginFilter,
-  type ActionFilter,
-  type DivergenceFilter,
-} from '../types';
+import { type OriginFilter, type ActionFilter, type DivergenceFilter } from '../types';
 
 interface HistoryListFilterBarProps {
   search: string;
@@ -65,12 +61,14 @@ export default function HistoryListFilterBar({
               onResetPage();
             }}
             sx={{ flex: 2, minWidth: 240 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
           <FormControl size="small" sx={{ minWidth: 150 }}>
@@ -136,7 +134,8 @@ export default function HistoryListFilterBar({
               <MenuItem value="divergiu">Apenas divergências</MenuItem>
             </Select>
           </FormControl>
-          {hasFilters ? <Button
+          {hasFilters ? (
+            <Button
               size="small"
               startIcon={<FilterListOffIcon />}
               onClick={onClearFilters}
@@ -144,7 +143,8 @@ export default function HistoryListFilterBar({
               sx={{ fontSize: 12 }}
             >
               Limpar filtros
-            </Button> : null}
+            </Button>
+          ) : null}
         </Box>
       </CardContent>
     </Card>

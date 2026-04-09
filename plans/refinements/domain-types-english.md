@@ -1,3 +1,5 @@
+> **STATUS: DONE** — Resolvido na sessão de 08/04/2026
+
 # Renomear propriedades de tipos de domínio para inglês
 
 > **Princípio:** Não negociamos qualidade. Todo código em inglês.
@@ -21,128 +23,129 @@ As interfaces de domínio (`Pedido`, `Ajuste`, `HistoricoEntry`, `SystemUser`, e
 
 ### Interface Pedido (src/types/pedido.ts)
 
-| Antes (PT) | Depois (EN) |
-|------------|-------------|
-| `beneficiario` | `beneficiary` |
-| `beneficiario.nome` | `beneficiary.name` |
-| `beneficiario.carteirinha` | `beneficiary.cardNumber` |
-| `beneficiario.cpf` | `beneficiary.cpf` (sigla, mantém) |
-| `beneficiario.dataNascimento` | `beneficiary.birthDate` |
-| `beneficiario.idade` | `beneficiary.age` |
-| `beneficiario.sexo` | `beneficiary.sex` |
-| `beneficiario.plano` | `beneficiary.plan` |
-| `beneficiario.carencia` | `beneficiary.waitingPeriod` |
-| `prestador` | `provider` |
-| `prestador.hospital` | `provider.hospital` |
-| `prestador.medico` | `provider.doctor` |
-| `prestador.crm` | `provider.crm` (sigla, mantém) |
-| `prestador.especialidade` | `provider.specialty` |
-| `origem` | `origin` |
-| `procedimentos` | `procedures` |
-| `alertas` | `alerts` |
-| `iaSugestao` | `iaSuggestion` |
-| `iaJustificativa` | `iaJustification` |
-| `iaChecklist` | `iaChecklist` (já inglês) |
-| `observacoes` | `observations` |
-| `documentos` | `documents` |
-| `pendenciaMotivos` | `pendencyReasons` |
-| `pendenciaResponsavel` | `pendencyResponsible` |
-| `pendenciaData` | `pendencyDate` |
-| `subStatus` | `subStatus` (já inglês) |
-| `juntaParecer` | `boardOpinion` |
-| `juntaRecomendacao` | `boardRecommendation` |
-| `etapaAutorizacao` | `authorizationStage` |
-| `ajustes` | `adjustments` |
-| `lockOperador` | `operatorLock` |
-| `liminar` | `injunction` |
-| `cidsSecundarios` | `secondaryCids` |
-| `dataProtocolo` | `protocolDate` |
-| `tempoFila` | `queueTime` |
-| `slaTexto` | `slaText` |
-| `tipoGuia` | `guideType` |
-| `categoria` | `category` |
-| `nivelAuditoria` | `auditLevel` |
-| `prioridade` | `priority` |
+| Antes (PT)                    | Depois (EN)                       |
+| ----------------------------- | --------------------------------- |
+| `beneficiario`                | `beneficiary`                     |
+| `beneficiario.nome`           | `beneficiary.name`                |
+| `beneficiario.carteirinha`    | `beneficiary.cardNumber`          |
+| `beneficiario.cpf`            | `beneficiary.cpf` (sigla, mantém) |
+| `beneficiario.dataNascimento` | `beneficiary.birthDate`           |
+| `beneficiario.idade`          | `beneficiary.age`                 |
+| `beneficiario.sexo`           | `beneficiary.sex`                 |
+| `beneficiario.plano`          | `beneficiary.plan`                |
+| `beneficiario.carencia`       | `beneficiary.waitingPeriod`       |
+| `prestador`                   | `provider`                        |
+| `prestador.hospital`          | `provider.hospital`               |
+| `prestador.medico`            | `provider.doctor`                 |
+| `prestador.crm`               | `provider.crm` (sigla, mantém)    |
+| `prestador.especialidade`     | `provider.specialty`              |
+| `origem`                      | `origin`                          |
+| `procedimentos`               | `procedures`                      |
+| `alertas`                     | `alerts`                          |
+| `iaSugestao`                  | `iaSuggestion`                    |
+| `iaJustificativa`             | `iaJustification`                 |
+| `iaChecklist`                 | `iaChecklist` (já inglês)         |
+| `observacoes`                 | `observations`                    |
+| `documentos`                  | `documents`                       |
+| `pendenciaMotivos`            | `pendencyReasons`                 |
+| `pendenciaResponsavel`        | `pendencyResponsible`             |
+| `pendenciaData`               | `pendencyDate`                    |
+| `subStatus`                   | `subStatus` (já inglês)           |
+| `juntaParecer`                | `boardOpinion`                    |
+| `juntaRecomendacao`           | `boardRecommendation`             |
+| `etapaAutorizacao`            | `authorizationStage`              |
+| `ajustes`                     | `adjustments`                     |
+| `lockOperador`                | `operatorLock`                    |
+| `liminar`                     | `injunction`                      |
+| `cidsSecundarios`             | `secondaryCids`                   |
+| `dataProtocolo`               | `protocolDate`                    |
+| `tempoFila`                   | `queueTime`                       |
+| `slaTexto`                    | `slaText`                         |
+| `tipoGuia`                    | `guideType`                       |
+| `categoria`                   | `category`                        |
+| `nivelAuditoria`              | `auditLevel`                      |
+| `prioridade`                  | `priority`                        |
 
 ### Interface Procedimento
 
-| Antes | Depois |
-|-------|--------|
-| `codigo` | `code` |
-| `tuss` | `tuss` (sigla) |
-| `descricao` | `description` |
-| `qty` | `qty` (já abreviação EN) |
-| `qtyAutorizada` | `authorizedQty` |
-| `dataInicio` | `startDate` |
-| `dataFim` | `endDate` |
-| `cid` | `cid` (sigla) |
-| `nivelAud` | `auditLevel` |
-| `fabricante` | `manufacturer` |
-| `valorUnitario` | `unitValue` |
+| Antes           | Depois                   |
+| --------------- | ------------------------ |
+| `codigo`        | `code`                   |
+| `tuss`          | `tuss` (sigla)           |
+| `descricao`     | `description`            |
+| `qty`           | `qty` (já abreviação EN) |
+| `qtyAutorizada` | `authorizedQty`          |
+| `dataInicio`    | `startDate`              |
+| `dataFim`       | `endDate`                |
+| `cid`           | `cid` (sigla)            |
+| `nivelAud`      | `auditLevel`             |
+| `fabricante`    | `manufacturer`           |
+| `valorUnitario` | `unitValue`              |
 
 ### Interface Ajuste
 
-| Antes | Depois |
-|-------|--------|
-| `procedimentoCodigo` | `procedureCode` |
+| Antes                   | Depois                 |
+| ----------------------- | ---------------------- |
+| `procedimentoCodigo`    | `procedureCode`        |
 | `procedimentoDescricao` | `procedureDescription` |
-| `campo` | `field` |
-| `valorAnterior` | `previousValue` |
-| `valorNovo` | `newValue` |
-| `motivo` | `reason` |
-| `fundamentacao` | `justification` |
-| `operador` | `operator` |
-| `perfil` | `profile` |
+| `campo`                 | `field`                |
+| `valorAnterior`         | `previousValue`        |
+| `valorNovo`             | `newValue`             |
+| `motivo`                | `reason`               |
+| `fundamentacao`         | `justification`        |
+| `operador`              | `operator`             |
+| `perfil`                | `profile`              |
 
 ### Interface HistoricoEntry
 
-| Antes | Depois |
-|-------|--------|
-| `beneficiario` | `beneficiary` |
-| `carteirinha` | `cardNumber` |
-| `plano` | `plan` |
-| `procedimento` | `procedure` |
-| `medicoSolicitante` | `requestingDoctor` |
-| `dataProtocolo` | `protocolDate` |
-| `dataDecisao` | `decisionDate` |
-| `acao` | `action` |
-| `analista` | `analyst` |
-| `motivoDecisao` | `decisionReason` |
-| `textoLivre` | `freeText` |
-| `divergencia` | `divergence` |
-| `divergenciaMotivo` | `divergenceReason` |
-| `tempoAnaliseMin` | `analysisTimeMin` |
+| Antes                     | Depois               |
+| ------------------------- | -------------------- |
+| `beneficiario`            | `beneficiary`        |
+| `carteirinha`             | `cardNumber`         |
+| `plano`                   | `plan`               |
+| `procedimento`            | `procedure`          |
+| `medicoSolicitante`       | `requestingDoctor`   |
+| `dataProtocolo`           | `protocolDate`       |
+| `dataDecisao`             | `decisionDate`       |
+| `acao`                    | `action`             |
+| `analista`                | `analyst`            |
+| `motivoDecisao`           | `decisionReason`     |
+| `textoLivre`              | `freeText`           |
+| `divergencia`             | `divergence`         |
+| `divergenciaMotivo`       | `divergenceReason`   |
+| `tempoAnaliseMin`         | `analysisTimeMin`    |
 | `procedimentosDetalhados` | `detailedProcedures` |
 
 ### Interface SystemUser
 
-| Antes | Depois |
-|-------|--------|
-| `nome` | `name` |
-| `ultimoAcesso` | `lastAccess` |
-| `criadoEm` | `createdAt` |
-| `permissions.podeAprovar` | `permissions.canApprove` |
-| `permissions.podeNegar` | `permissions.canDeny` |
-| `permissions.podeVisualizarRelatorios` | `permissions.canViewReports` |
-| `permissions.podeCriarUsuarios` | `permissions.canCreateUsers` |
-| `permissions.podeVisualizarHistorico` | `permissions.canViewHistory` |
-| `permissions.podeConfigurarSistema` | `permissions.canConfigureSystem` |
+| Antes                                  | Depois                           |
+| -------------------------------------- | -------------------------------- |
+| `nome`                                 | `name`                           |
+| `ultimoAcesso`                         | `lastAccess`                     |
+| `criadoEm`                             | `createdAt`                      |
+| `permissions.podeAprovar`              | `permissions.canApprove`         |
+| `permissions.podeNegar`                | `permissions.canDeny`            |
+| `permissions.podeVisualizarRelatorios` | `permissions.canViewReports`     |
+| `permissions.podeCriarUsuarios`        | `permissions.canCreateUsers`     |
+| `permissions.podeVisualizarHistorico`  | `permissions.canViewHistory`     |
+| `permissions.podeConfigurarSistema`    | `permissions.canConfigureSystem` |
 
 ### Types/Enums (NÃO renomear valores, só nomes de tipo)
 
-| Antes | Depois | Nota |
-|-------|--------|------|
-| `StatusGuia` | `GuideStatus` | Nome do type |
-| `TipoGuia` | `GuideType` | Nome do type |
-| `OrigemPedido` | `RequestOrigin` | Nome do type |
-| `NivelAuditoria` | `AuditLevel` | Nome do type |
-| `IASugestao` | `IASuggestion` | Nome do type |
-| `Categoria` | `Category` | Nome do type |
-| `DecisaoAcao` | `DecisionAction` | Nome do type |
-| `DecisaoOrigem` | `DecisionOrigin` | Nome do type |
+| Antes                 | Depois             | Nota         |
+| --------------------- | ------------------ | ------------ |
+| `StatusGuia`          | `GuideStatus`      | Nome do type |
+| `TipoGuia`            | `GuideType`        | Nome do type |
+| `OrigemPedido`        | `RequestOrigin`    | Nome do type |
+| `NivelAuditoria`      | `AuditLevel`       | Nome do type |
+| `IASugestao`          | `IASuggestion`     | Nome do type |
+| `Categoria`           | `Category`         | Nome do type |
+| `DecisaoAcao`         | `DecisionAction`   | Nome do type |
+| `DecisaoOrigem`       | `DecisionOrigin`   | Nome do type |
 | `StatusProcessamento` | `ProcessingStatus` | Nome do type |
 
 **IMPORTANTE:** Os VALORES dos types permanecem em português porque são termos médicos brasileiros renderizados na UI:
+
 - `'Em Análise'`, `'Aprovado'`, `'Negado'` — ficam como estão
 - `'Internação'`, `'Oncologia'`, `'OPME'` — ficam como estão
 - `'Eleitiva'`, `'Urgente'`, `'Emergência'` — ficam como estão

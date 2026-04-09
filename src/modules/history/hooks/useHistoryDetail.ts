@@ -24,10 +24,7 @@ export default function useHistoryDetail() {
 
   const sortedEntries = useMemo(() => getSortedEntries(), []);
 
-  const entry = useMemo(
-    () => historicoEntries.find((e) => e.id === id) ?? null,
-    [id],
-  );
+  const entry = useMemo(() => historicoEntries.find((e) => e.id === id) ?? null, [id]);
 
   const currentIndex = useMemo(
     () => sortedEntries.findIndex((e) => e.id === id),
@@ -38,15 +35,13 @@ export default function useHistoryDetail() {
 
   // -- Navigation ----------------------------------------------------------
   const handlePrev = useCallback(() => {
-    if (currentIndex > 0) {
-      router.push('/historico/' + sortedEntries[currentIndex - 1]!.id);
-    }
+    const prev = currentIndex > 0 ? sortedEntries[currentIndex - 1] : undefined;
+    if (prev) router.push('/historico/' + prev.id);
   }, [currentIndex, sortedEntries, router]);
 
   const handleNext = useCallback(() => {
-    if (currentIndex < total - 1) {
-      router.push('/historico/' + sortedEntries[currentIndex + 1]!.id);
-    }
+    const next = currentIndex < total - 1 ? sortedEntries[currentIndex + 1] : undefined;
+    if (next) router.push('/historico/' + next.id);
   }, [currentIndex, total, sortedEntries, router]);
 
   // -- Keyboard navigation -------------------------------------------------
@@ -60,7 +55,9 @@ export default function useHistoryDetail() {
       if (e.key === 'ArrowRight') handleNext();
     };
     window.addEventListener('keydown', onKey);
-    return () => { window.removeEventListener('keydown', onKey); };
+    return () => {
+      window.removeEventListener('keydown', onKey);
+    };
   }, [handlePrev, handleNext]);
 
   // -- Notify dialog state -------------------------------------------------

@@ -18,7 +18,6 @@ import Typography from '@mui/material/Typography';
 import { KpiCard } from '@/shared/components';
 import { type Request, type ProcessingRequest } from '@/types/pedido';
 
-
 import { CardSkeleton } from './DashboardSkeleton';
 
 interface DashboardKpiRowProps {
@@ -41,13 +40,20 @@ interface DashboardKpiRowProps {
   };
 }
 
-export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamento, metrics }: DashboardKpiRowProps) {
+export default function DashboardKpiRow({
+  loading,
+  pedidos,
+  pedidosEmProcessamento,
+  metrics,
+}: DashboardKpiRowProps) {
   const router = useRouter();
 
   return (
     <>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
+      >
         <Box>
           <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-0.5px' }}>
             Gestão Inteligente de Pedidos
@@ -59,7 +65,9 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => { router.push('/nova-solicitacao'); }}
+          onClick={() => {
+            router.push('/nova-solicitacao');
+          }}
           sx={{ mt: 0.5, minHeight: 44 }}
           aria-label="Nova solicitação"
         >
@@ -86,20 +94,32 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 label="Aguardam Decisão"
                 sublabel={
                   <>
-                    <Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>{metrics.slaViolados} violados</Box>
+                    <Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>
+                      {metrics.slaViolados} violados
+                    </Box>
                     {` · ${String(metrics.slaWarning)} atenção · ${String(metrics.slaOk)} no prazo`}
                     {pedidosEmProcessamento.length > 0 && (
                       <>
                         <Divider sx={{ my: 0.5 }} />
-                        <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.secondary' }}>
-                          <AutorenewOutlinedIcon sx={{ fontSize: 12 }} />
-                          + {pedidosEmProcessamento.length} chegando (em processamento)
+                        <Box
+                          component="span"
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5,
+                            color: 'text.secondary',
+                          }}
+                        >
+                          <AutorenewOutlinedIcon sx={{ fontSize: 12 }} />+{' '}
+                          {pedidosEmProcessamento.length} chegando (em processamento)
                         </Box>
                       </>
                     )}
                   </>
                 }
-                onClick={() => { router.push('/fila'); }}
+                onClick={() => {
+                  router.push('/fila');
+                }}
               />
             </Grid>
             {/* Card 2 — Irregularities detected */}
@@ -109,7 +129,13 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
                 iconBg="rgba(245,158,11,0.12)"
                 value={metrics.totalAlertasAtivos}
                 label="Irregularidades Detectadas"
-                sublabel={metrics.alertasAtivos.slice(0, 2).map((a) => `${String(a.count)} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`).join(' · ')}
+                sublabel={metrics.alertasAtivos
+                  .slice(0, 2)
+                  .map(
+                    (a) =>
+                      `${String(a.count)} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`,
+                  )
+                  .join(' · ')}
                 valueColor="#b45309"
               />
             </Grid>
@@ -129,7 +155,7 @@ export default function DashboardKpiRow({ loading, pedidos, pedidosEmProcessamen
               <KpiCard
                 icon={<SmartToyIcon sx={{ fontSize: 20, color: '#7c3aed' }} />}
                 iconBg="rgba(124,58,237,0.1)"
-                value={`${metrics.taxaDeteccaoIA}%`}
+                value={`${String(metrics.taxaDeteccaoIA)}%`}
                 label="Efetividade da IA"
                 sublabel={`IA antecipou ${String(metrics.iaSinalizouCriticos)} de ${String(metrics.totalCriticosHist)} negativas`}
                 valueColor="#7c3aed"

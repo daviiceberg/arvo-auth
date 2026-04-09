@@ -1,32 +1,34 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import AddIcon from '@mui/icons-material/Add'
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import AddIcon from '@mui/icons-material/Add';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-import { type FormData } from '../../types'
+import { type FormData } from '@/modules/new-request/types';
 
 interface StepSurgeriesProps {
-  form: FormData
-  setForm: React.Dispatch<React.SetStateAction<FormData>>
+  form: FormData;
+  setForm: React.Dispatch<React.SetStateAction<FormData>>;
 }
 
 export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
   return (
     <Box>
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>Procedimentos Cirúrgicos</Typography>
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
+        Procedimentos Cirúrgicos
+      </Typography>
       <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden', mb: 3 }}>
         <Table size="small">
           <TableHead>
@@ -40,20 +42,86 @@ export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
           <TableBody>
             {form.procedimentos.map((p, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={p.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, codigoTUSS: e.target.value }; return { ...f, procedimentos: a } }); }} sx={{ width: 110 }} /></TableCell>
-                <TableCell><TextField size="small" value={p.descricao} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, procedimentos: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" type="number" value={p.qtd} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, procedimentos: a } }); }} /></TableCell>
-                <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, procedimentos: f.procedimentos.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={p.codigoTUSS}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        procedimentos: f.procedimentos.map((item, idx) =>
+                          idx === i ? { ...item, codigoTUSS: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                    sx={{ width: 110 }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={p.descricao}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        procedimentos: f.procedimentos.map((item, idx) =>
+                          idx === i ? { ...item, descricao: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                    fullWidth
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={p.qtd}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        procedimentos: f.procedimentos.map((item, idx) =>
+                          idx === i ? { ...item, qtd: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => {
+                      setForm((f) => ({
+                        ...f,
+                        procedimentos: f.procedimentos.filter((_, j) => j !== i),
+                      }));
+                    }}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Box>
-      <Button size="small" startIcon={<AddIcon />} onClick={() => { setForm(f => ({ ...f, procedimentos: [...f.procedimentos, { codigoTUSS: '', descricao: '', qtd: '1' }] })); }}>
+      <Button
+        size="small"
+        startIcon={<AddIcon />}
+        onClick={() => {
+          setForm((f) => ({
+            ...f,
+            procedimentos: [...f.procedimentos, { codigoTUSS: '', descricao: '', qtd: '1' }],
+          }));
+        }}
+      >
         Adicionar Procedimento
       </Button>
       <Divider sx={{ my: 3 }} />
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>Materiais e OPME</Typography>
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
+        Materiais e OPME
+      </Typography>
       <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden', mb: 2 }}>
         <Table size="small">
           <TableHead>
@@ -69,20 +137,111 @@ export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
           <TableBody>
             {form.opme.map((o, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={o.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, codigoTUSS: e.target.value }; return { ...f, opme: a } }); }} sx={{ width: 100 }} /></TableCell>
-                <TableCell><TextField size="small" value={o.descricao} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, opme: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" value={o.fabricante} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, fabricante: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" type="number" value={o.qtd} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" value={o.valorUnit} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, valorUnit: e.target.value }; return { ...f, opme: a } }); }} placeholder="R$ 0,00" /></TableCell>
-                <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, opme: f.opme.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={o.codigoTUSS}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        opme: f.opme.map((item, idx) =>
+                          idx === i ? { ...item, codigoTUSS: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                    sx={{ width: 100 }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={o.descricao}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        opme: f.opme.map((item, idx) =>
+                          idx === i ? { ...item, descricao: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                    fullWidth
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={o.fabricante}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        opme: f.opme.map((item, idx) =>
+                          idx === i ? { ...item, fabricante: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={o.qtd}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        opme: f.opme.map((item, idx) =>
+                          idx === i ? { ...item, qtd: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    value={o.valorUnit}
+                    onChange={(e) => {
+                      setForm((f) => ({
+                        ...f,
+                        opme: f.opme.map((item, idx) =>
+                          idx === i ? { ...item, valorUnit: e.target.value } : item,
+                        ),
+                      }));
+                    }}
+                    placeholder="R$ 0,00"
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => {
+                      setForm((f) => ({ ...f, opme: f.opme.filter((_, j) => j !== i) }));
+                    }}
+                  >
+                    <DeleteOutlineIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Box>
-      <Button size="small" startIcon={<AddIcon />} onClick={() => { setForm(f => ({ ...f, opme: [...f.opme, { codigoTUSS: '', descricao: '', fabricante: '', qtd: '1', valorUnit: '' }] })); }}>
+      <Button
+        size="small"
+        startIcon={<AddIcon />}
+        onClick={() => {
+          setForm((f) => ({
+            ...f,
+            opme: [
+              ...f.opme,
+              { codigoTUSS: '', descricao: '', fabricante: '', qtd: '1', valorUnit: '' },
+            ],
+          }));
+        }}
+      >
         Adicionar Material / OPME
       </Button>
     </Box>
-  )
+  );
 }

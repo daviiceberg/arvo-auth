@@ -47,8 +47,7 @@ export default function useHistoryList() {
         const matchOrigin = originFilter === 'Todas' || e.origin === originFilter;
         const matchAction = actionFilter === 'Todas' || e.action === actionFilter;
         const matchCategory = categoryFilter === 'Todas' || e.category === categoryFilter;
-        const matchDivergence =
-          divergenceFilter === 'Todas' || (divergenceFilter === 'divergiu' && e.divergence);
+        const matchDivergence = divergenceFilter === 'Todas' || e.divergence;
         return matchSearch && matchOrigin && matchAction && matchCategory && matchDivergence;
       })
       .sort((a, b) => {

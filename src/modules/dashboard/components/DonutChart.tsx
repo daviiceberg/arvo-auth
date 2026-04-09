@@ -19,21 +19,40 @@ export default function DonutChart({ segments }: DonutChartProps) {
   const cy = 70;
   const circumference = 2 * Math.PI * r;
 
-  let cumulative = 0;
+  type SliceData = UrgencySegment & { dashLen: number; offset: number };
   const slices = segments
     .filter((d) => d.count > 0)
-    .map((d) => {
-      const pct = d.count / total;
-      const offset = circumference * (1 - cumulative);
-      const dashLen = circumference * pct;
-      cumulative += pct;
-      return { ...d, dashLen, offset };
-    });
+    .reduce<{ result: SliceData[]; cumulative: number }>(
+      ({ result, cumulative }, d) => {
+        const pct = d.count / total;
+        const offset = circumference * (1 - cumulative);
+        const dashLen = circumference * pct;
+        return {
+          result: [...result, { ...d, dashLen, offset }],
+          cumulative: cumulative + pct,
+        };
+      },
+      { result: [], cumulative: 0 },
+    ).result;
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
+    <Box
+      sx={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <svg width="160" height="160" viewBox="0 0 140 140" role="img" aria-label={`Urgência: ${segments.map((d) => `${d.label} ${String(d.count)}`).join(', ')}`}>
+        <svg
+          width="160"
+          height="160"
+          viewBox="0 0 140 140"
+          role="img"
+          aria-label={`Urgência: ${segments.map((d) => `${d.label} ${String(d.count)}`).join(', ')}`}
+        >
           {slices.map((s) => (
             <circle
               key={s.label}
@@ -57,22 +76,61 @@ export default function DonutChart({ segments }: DonutChartProps) {
         </svg>
       </Box>
       {/* Legend — 4 clickable items */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 12px', width: '100%', mt: 1.5 }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '6px 12px',
+          width: '100%',
+          mt: 1.5,
+        }}
+      >
         {segments.map((d) => (
           <Box
             key={d.key}
             role="button"
             tabIndex={0}
-            onClick={() => { router.push(d.url); }}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(d.url); } }}
+            onClick={() => {
+              router.push(d.url);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                router.push(d.url);
+              }
+            }}
             aria-label={`Ver ${String(d.count)} pedidos ${d.label}`}
-            sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'pointer', borderRadius: 1, p: 0.25, '&:hover': { backgroundColor: `${d.color}12` }, '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 1 } }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.75,
+              cursor: 'pointer',
+              borderRadius: 1,
+              p: 0.25,
+              '&:hover': { backgroundColor: `${d.color}12` },
+              '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 1 },
+            }}
           >
-            <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: d.color, flexShrink: 0 }} />
-            <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', flex: 1 }} noWrap>
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: '3px',
+                backgroundColor: d.color,
+                flexShrink: 0,
+              }}
+            />
+            <Typography
+              variant="caption"
+              sx={{ fontSize: 12, color: 'text.secondary', flex: 1 }}
+              noWrap
+            >
               {d.label}
             </Typography>
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', flexShrink: 0 }}>
+            <Typography
+              variant="caption"
+              sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', flexShrink: 0 }}
+            >
               {d.count}
             </Typography>
           </Box>

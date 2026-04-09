@@ -48,7 +48,13 @@ export default function AppealDialog({
 }: AppealDialogProps) {
   return (
     <>
-      <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth PaperProps={{ sx: { borderRadius: 2 } }}>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="xs"
+        fullWidth
+        slotProps={{ paper: { sx: { borderRadius: 2 } } }}
+      >
         <DialogTitle sx={{ fontSize: 15, fontWeight: 700, pb: 1 }}>
           Informar Decisão ao Beneficiário
         </DialogTitle>
@@ -69,7 +75,9 @@ export default function AppealDialog({
             <Select
               label="Canal de envio"
               value={notifyChannel}
-              onChange={(e) => { onNotifyChannelChange(e.target.value as NotifyChannel); }}
+              onChange={(e) => {
+                onNotifyChannelChange(e.target.value as NotifyChannel);
+              }}
             >
               <MenuItem value="app">
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -96,14 +104,20 @@ export default function AppealDialog({
             sx={{ mt: 2, '& .MuiAlert-message': { fontSize: 12 } }}
             icon={<InfoOutlinedIcon sx={{ fontSize: 15 }} />}
           >
-            A mensagem incluirá o resultado ({entry.action}), o número do protocolo e instruções ao beneficiário.
+            A mensagem incluirá o resultado ({entry.action}), o número do protocolo e instruções ao
+            beneficiário.
           </Alert>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
           <Button onClick={onClose} color="inherit" sx={{ fontWeight: 600 }}>
             Cancelar
           </Button>
-          <Button variant="contained" onClick={onSend} startIcon={<SendIcon />} sx={{ fontWeight: 600 }}>
+          <Button
+            variant="contained"
+            onClick={onSend}
+            startIcon={<SendIcon />}
+            sx={{ fontWeight: 600 }}
+          >
             Enviar
           </Button>
         </DialogActions>

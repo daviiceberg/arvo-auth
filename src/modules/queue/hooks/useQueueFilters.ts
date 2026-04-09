@@ -1,9 +1,21 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 interface QueueFiltersParams {
   searchParams: URLSearchParams;
+}
+
+interface QueueFilterValues {
+  search: string;
+  categoryFilter: string;
+  slaFilter: string;
+  alertFilter: string;
+  providerFilter: string;
+  iaSuggestionFilter: string;
+  statusFilter: string;
+  tabValue: number;
+  returnSubFilter: 'all' | 'aguardando' | 'retorno';
 }
 
 export interface QueueFilters {
@@ -35,69 +47,117 @@ export interface QueueFiltersActions {
   hasFilters: boolean;
 }
 
-export function useQueueFilters({ searchParams }: QueueFiltersParams): QueueFilters & QueueFiltersActions {
-  const initialCategory = searchParams.get('categoria') ?? 'Todas';
+const FILTER_DEFAULTS: Omit<
+  QueueFilterValues,
+  | 'search'
+  | 'categoryFilter'
+  | 'slaFilter'
+  | 'alertFilter'
+  | 'iaSuggestionFilter'
+  | 'statusFilter'
+  | 'tabValue'
+> = {
+  providerFilter: 'Todos',
+  returnSubFilter: 'all',
+};
 
-  const [search, setSearch] = useState(searchParams.get('beneficiario') ?? '');
-  const [categoryFilter, setCategoryFilter] = useState(initialCategory);
-  const [slaFilter, setSlaFilter] = useState(searchParams.get('sla') ?? 'Todas');
-  const [alertFilter, setAlertFilter] = useState(searchParams.get('alerta') ?? 'Todos');
-  const [providerFilter, setProviderFilter] = useState('Todos');
-  const [iaSuggestionFilter, setIaSuggestionFilter] = useState(searchParams.get('ia') ?? 'Todas');
-  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') ?? 'Todos');
-  const [tabValue, setTabValue] = useState(parseInt(searchParams.get('tab') ?? '0', 10));
-  const [returnSubFilter, setReturnSubFilter] = useState<'all' | 'aguardando' | 'retorno'>('all');
+function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
+  return {
+    search: searchParams.get('beneficiario') ?? '',
+    categoryFilter: searchParams.get('categoria') ?? 'Todas',
+    slaFilter: searchParams.get('sla') ?? 'Todas',
+    alertFilter: searchParams.get('alerta') ?? 'Todos',
+    providerFilter: FILTER_DEFAULTS.providerFilter,
+    iaSuggestionFilter: searchParams.get('ia') ?? 'Todas',
+    statusFilter: searchParams.get('status') ?? 'Todos',
+    tabValue: Number(searchParams.get('tab')) || 0,
+    returnSubFilter: FILTER_DEFAULTS.returnSubFilter,
+  };
+}
+
+export function useQueueFilters({
+  searchParams,
+}: QueueFiltersParams): QueueFilters & QueueFiltersActions {
+  const [filters, setFilters] = useState<QueueFilterValues>(() =>
+    buildInitialFilters(searchParams),
+  );
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
 
-  // Sync filters when URL params change
-  useEffect(() => {
-    setCategoryFilter(searchParams.get('categoria') ?? 'Todas');
-    setSlaFilter(searchParams.get('sla') ?? 'Todas');
-    setAlertFilter(searchParams.get('alerta') ?? 'Todos');
-    setIaSuggestionFilter(searchParams.get('ia') ?? 'Todas');
-    setStatusFilter(searchParams.get('status') ?? 'Todos');
-  }, [searchParams]);
+  // Sync state when URL params change (e.g. sidebar navigation to /fila?categoria=X)
+  const searchParamsKey = searchParams.toString();
+  const [prevParamsKey, setPrevParamsKey] = useState(searchParamsKey);
+  if (searchParamsKey !== prevParamsKey) {
+    setPrevParamsKey(searchParamsKey);
+    setFilters(buildInitialFilters(searchParams));
+    setPage(0);
+  }
 
-  const hasFilters =
-    search !== '' ||
-    categoryFilter !== 'Todas' ||
-    slaFilter !== 'Todas' ||
-    alertFilter !== 'Todos' ||
-    providerFilter !== 'Todos' ||
-    iaSuggestionFilter !== 'Todas' ||
-    statusFilter !== 'Todos';
+  const updateFilter = useCallback(
+    <K extends keyof QueueFilterValues>(key: K, value: QueueFilterValues[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+      setPage(0);
+    },
+    [],
+  );
+
+  const hasFilters = useMemo(
+    () =>
+      filters.search !== '' ||
+      filters.categoryFilter !== 'Todas' ||
+      filters.slaFilter !== 'Todas' ||
+      filters.alertFilter !== 'Todos' ||
+      filters.providerFilter !== 'Todos' ||
+      filters.iaSuggestionFilter !== 'Todas' ||
+      filters.statusFilter !== 'Todos',
+    [filters],
+  );
 
   const clearFilters = useCallback(() => {
-    setSearch('');
-    setCategoryFilter('Todas');
-    setSlaFilter('Todas');
-    setProviderFilter('Todos');
-    setIaSuggestionFilter('Todas');
+    setFilters((prev) => ({
+      ...prev,
+      search: '',
+      categoryFilter: 'Todas',
+      slaFilter: 'Todas',
+      providerFilter: 'Todos',
+      iaSuggestionFilter: 'Todas',
+    }));
     setPage(0);
   }, []);
 
   return {
-    search,
-    categoryFilter,
-    slaFilter,
-    alertFilter,
-    providerFilter,
-    iaSuggestionFilter,
-    statusFilter,
-    tabValue,
-    returnSubFilter,
+    ...filters,
     page,
     rowsPerPage,
-    setSearch,
-    setCategoryFilter,
-    setSlaFilter,
-    setAlertFilter,
-    setProviderFilter,
-    setIaSuggestionFilter,
-    setStatusFilter,
-    setTabValue,
-    setReturnSubFilter,
+
+    // Setters (same API as before)
+    setSearch: (value: string) => {
+      updateFilter('search', value);
+    },
+    setCategoryFilter: (value: string) => {
+      updateFilter('categoryFilter', value);
+    },
+    setSlaFilter: (value: string) => {
+      updateFilter('slaFilter', value);
+    },
+    setAlertFilter: (value: string) => {
+      updateFilter('alertFilter', value);
+    },
+    setProviderFilter: (value: string) => {
+      updateFilter('providerFilter', value);
+    },
+    setIaSuggestionFilter: (value: string) => {
+      updateFilter('iaSuggestionFilter', value);
+    },
+    setStatusFilter: (value: string) => {
+      updateFilter('statusFilter', value);
+    },
+    setTabValue: (value: number) => {
+      updateFilter('tabValue', value);
+    },
+    setReturnSubFilter: (value: 'all' | 'aguardando' | 'retorno') => {
+      updateFilter('returnSubFilter', value);
+    },
     setPage,
     clearFilters,
     hasFilters,

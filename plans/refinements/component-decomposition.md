@@ -1,3 +1,5 @@
+> **STATUS: DONE** — Resolvido na sessão de 09/04/2026
+
 # Decompor componentes grandes (SRP)
 
 ## Contexto
@@ -9,6 +11,7 @@ A auditoria técnica identificou 3 componentes que excedem 400 linhas e violam o
 ### 1. `DocumentsSection.tsx` (624 linhas) — CRÍTICO
 
 **Problema:** Um componente que faz 5 coisas:
+
 1. Renderiza lista de documentos
 2. Renderiza extração IA por documento
 3. Renderiza viewer com zoom
@@ -27,6 +30,7 @@ DocumentsSection.tsx (~80 linhas) — orquestrador
 ```
 
 **Utilitários a extrair:**
+
 - `getIAExtractionFields()` (67 linhas) → `src/modules/analysis/utils/ia-extraction.ts`
 - `docIcon()` → `src/modules/analysis/utils/document-icons.tsx`
 

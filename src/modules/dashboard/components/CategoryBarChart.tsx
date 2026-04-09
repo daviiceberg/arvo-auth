@@ -20,18 +20,33 @@ export default function CategoryBarChart({ barData, maxBar }: CategoryBarChartPr
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
+    <Box
+      sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+    >
+      <Box
+        sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}
+      >
         {barData.map((d) => (
           <Box
             key={d.label}
             role="button"
             tabIndex={0}
-            onClick={() => { router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`); }}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`); } }}
-            aria-label={`Ver ${d.total} pedidos de ${d.categoria}`}
-            onMouseEnter={() => { setHovered(d.label); }}
-            onMouseLeave={() => { setHovered(null); }}
+            onClick={() => {
+              router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                router.push(`/fila?categoria=${encodeURIComponent(d.categoria)}`);
+              }
+            }}
+            aria-label={`Ver ${String(d.total)} pedidos de ${d.categoria}`}
+            onMouseEnter={() => {
+              setHovered(d.label);
+            }}
+            onMouseLeave={() => {
+              setHovered(null);
+            }}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -47,10 +62,27 @@ export default function CategoryBarChart({ barData, maxBar }: CategoryBarChartPr
               '&:focus-visible': { outline: `2px solid ${d.color}`, outlineOffset: 2 },
             }}
           >
-            <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', width: 68, flexShrink: 0, textAlign: 'right' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: 12,
+                color: 'text.secondary',
+                width: 68,
+                flexShrink: 0,
+                textAlign: 'right',
+              }}
+            >
               {d.label}
             </Typography>
-            <Box sx={{ flex: 1, height: 16, borderRadius: 1, overflow: 'hidden', backgroundColor: 'rgba(0,0,0,0.04)' }}>
+            <Box
+              sx={{
+                flex: 1,
+                height: 16,
+                borderRadius: 1,
+                overflow: 'hidden',
+                backgroundColor: 'rgba(0,0,0,0.04)',
+              }}
+            >
               <Box
                 sx={{
                   width: `${String((d.total / maxBar) * 100)}%`,
@@ -61,7 +93,17 @@ export default function CategoryBarChart({ barData, maxBar }: CategoryBarChartPr
                 title={`${d.label}: ${String(d.total)} pedidos`}
               />
             </Box>
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 700, color: 'text.primary', width: 20, textAlign: 'right', flexShrink: 0 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: 'text.primary',
+                width: 20,
+                textAlign: 'right',
+                flexShrink: 0,
+              }}
+            >
               {d.total}
             </Typography>
             <ChevronRightIcon sx={{ fontSize: 12, color: 'text.secondary', flexShrink: 0 }} />

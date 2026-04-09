@@ -19,14 +19,22 @@ export default function ProcessingStatusChip({ status }: ProcessingStatusChipPro
           <AutorenewOutlinedIcon
             sx={{
               fontSize: 14,
-              '@keyframes spin': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
+              '@keyframes spin': {
+                from: { transform: 'rotate(0deg)' },
+                to: { transform: 'rotate(360deg)' },
+              },
               animation: 'spin 1.5s linear infinite',
             }}
           />
         }
         label="Processando..."
         size="small"
-        sx={{ backgroundColor: 'rgba(25,118,210,0.1)', color: 'rgb(25,118,210)', fontWeight: 600, fontSize: 12 }}
+        sx={{
+          backgroundColor: 'rgba(25,118,210,0.1)',
+          color: 'rgb(25,118,210)',
+          fontWeight: 600,
+          fontSize: 12,
+        }}
       />
     );
   }
@@ -37,7 +45,12 @@ export default function ProcessingStatusChip({ status }: ProcessingStatusChipPro
         icon={<HourglassEmptyOutlinedIcon sx={{ fontSize: 14 }} />}
         label="Aguardando"
         size="small"
-        sx={{ backgroundColor: 'rgba(90,96,112,0.1)', color: 'text.secondary', fontWeight: 600, fontSize: 12 }}
+        sx={{
+          backgroundColor: 'rgba(90,96,112,0.1)',
+          color: 'text.secondary',
+          fontWeight: 600,
+          fontSize: 12,
+        }}
       />
     );
   }
@@ -47,8 +60,14 @@ export default function ProcessingStatusChip({ status }: ProcessingStatusChipPro
       icon={<ErrorOutlineOutlinedIcon sx={{ fontSize: 14 }} />}
       label="Erro — reprocessar"
       size="small"
-      onClick={() => {}}
-      sx={{ backgroundColor: 'rgba(211,47,47,0.1)', color: 'error.main', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}
+      onClick={() => undefined}
+      sx={{
+        backgroundColor: 'rgba(211,47,47,0.1)',
+        color: 'error.main',
+        fontWeight: 600,
+        fontSize: 12,
+        cursor: 'pointer',
+      }}
     />
   );
 }

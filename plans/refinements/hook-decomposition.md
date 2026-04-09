@@ -1,3 +1,5 @@
+> **STATUS: DONE** — Resolvido na sessão de 09/04/2026
+
 # Decompor hooks com estado excessivo
 
 ## Contexto
@@ -9,6 +11,7 @@ A auditoria técnica identificou 3 hooks que violam o princípio de responsabili
 ### 1. `useDecisionState.ts` (222 linhas, 11 useState) — CRÍTICO
 
 **Problema:** Mistura 3 responsabilidades distintas:
+
 - Estado de visibilidade dos 8 dialogs
 - Estados de formulário (motivo aprovação, motivo negação, itens pendência, etc.)
 - Lógica de fluxo de decisão (divergência, aprovação parcial, confirmações)
@@ -73,7 +76,7 @@ interface QueueFilters {
 
 const [filters, setFilters] = useState<QueueFilters>(initialFilters);
 const updateFilter = <K extends keyof QueueFilters>(key: K, value: QueueFilters[K]) => {
-  setFilters(prev => ({ ...prev, [key]: value }));
+  setFilters((prev) => ({ ...prev, [key]: value }));
   setPage(0);
 };
 ```

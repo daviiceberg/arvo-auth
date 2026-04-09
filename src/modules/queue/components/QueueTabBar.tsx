@@ -38,7 +38,9 @@ export default function QueueTabBar({
       <Box sx={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
         <Tabs
           value={tabValue}
-          onChange={(_e, v) => { onTabChange(v); }}
+          onChange={(_e, v) => {
+            onTabChange(v as number);
+          }}
           aria-label="Abas da fila"
           sx={{
             px: 2,
@@ -51,7 +53,11 @@ export default function QueueTabBar({
             label={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 Fila Geral
-                <Chip label={totalCount} size="small" sx={{ height: 18, fontSize: 12, fontWeight: 700 }} />
+                <Chip
+                  label={totalCount}
+                  size="small"
+                  sx={{ height: 18, fontSize: 12, fontWeight: 700 }}
+                />
               </Box>
             }
             aria-label="Fila Geral"
@@ -63,7 +69,13 @@ export default function QueueTabBar({
                 <Chip
                   label={urgEmergCount}
                   size="small"
-                  sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d' }}
+                  sx={{
+                    height: 18,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    backgroundColor: 'rgba(212,24,61,0.1)',
+                    color: '#d4183d',
+                  }}
                 />
               </Box>
             }
@@ -76,7 +88,13 @@ export default function QueueTabBar({
                 <Chip
                   label={returnsCount}
                   size="small"
-                  sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309' }}
+                  sx={{
+                    height: 18,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    backgroundColor: 'rgba(245,158,11,0.12)',
+                    color: '#b45309',
+                  }}
                 />
               </Box>
             }
@@ -89,7 +107,13 @@ export default function QueueTabBar({
                 <Chip
                   label={stalled12h}
                   size="small"
-                  sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(234,88,12,0.1)', color: '#ea580c' }}
+                  sx={{
+                    height: 18,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    backgroundColor: 'rgba(234,88,12,0.1)',
+                    color: '#ea580c',
+                  }}
                 />
               </Box>
             }
@@ -100,15 +124,45 @@ export default function QueueTabBar({
 
       {/* Devolutivas sub-filter chips */}
       {tabValue === 2 && (
-        <Box sx={{ px: 2, py: 1.25, display: 'flex', alignItems: 'center', gap: 1, borderBottom: '1px solid rgba(0,0,0,0.06)', backgroundColor: 'rgba(245,158,11,0.03)' }}>
-          <Typography variant="caption" sx={{ fontSize: 11, fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5, mr: 0.5 }}>
+        <Box
+          sx={{
+            px: 2,
+            py: 1.25,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            borderBottom: '1px solid rgba(0,0,0,0.06)',
+            backgroundColor: 'rgba(245,158,11,0.03)',
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              mr: 0.5,
+            }}
+          >
             Filtrar:
           </Typography>
-          {([
-            { key: 'all', label: `Todas (${String(returnsCount)})`, icon: null },
-            { key: 'aguardando', label: `Aguardando (${String(returnsWaiting)})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
-            { key: 'retorno', label: `Retorno recebido (${String(returnsReceived)})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
-          ] as const).map(({ key, label, icon }) => (
+          {(
+            [
+              { key: 'all', label: `Todas (${String(returnsCount)})`, icon: null },
+              {
+                key: 'aguardando',
+                label: `Aguardando (${String(returnsWaiting)})`,
+                icon: <HourglassTopIcon sx={{ fontSize: 13 }} />,
+              },
+              {
+                key: 'retorno',
+                label: `Retorno recebido (${String(returnsReceived)})`,
+                icon: <MoveToInboxIcon sx={{ fontSize: 13 }} />,
+              },
+            ] as const
+          ).map(({ key, label, icon }) => (
             <Chip
               key={key}
               label={
@@ -118,14 +172,20 @@ export default function QueueTabBar({
                 </Box>
               }
               size="small"
-              onClick={() => { onReturnSubFilterChange(key); }}
+              onClick={() => {
+                onReturnSubFilterChange(key);
+              }}
               sx={{
                 height: 24,
                 fontSize: 12,
                 fontWeight: returnSubFilter === key ? 700 : 500,
-                backgroundColor: returnSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
+                backgroundColor:
+                  returnSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
                 color: returnSubFilter === key ? '#b45309' : 'text.secondary',
-                border: returnSubFilter === key ? '1px solid rgba(245,158,11,0.4)' : '1px solid transparent',
+                border:
+                  returnSubFilter === key
+                    ? '1px solid rgba(245,158,11,0.4)'
+                    : '1px solid transparent',
                 cursor: 'pointer',
               }}
             />

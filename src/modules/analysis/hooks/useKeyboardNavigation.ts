@@ -1,18 +1,24 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 interface UseKeyboardNavigationParams {
-  isAnyDialogOpen: boolean
-  isDrawerOpen: boolean
-  canNavigatePrev: boolean
-  canNavigateNext: boolean
-  onNavigatePrev: () => void
-  onNavigateNext: () => void
-  onApprove: () => void
-  onDeny: () => void
-  onPendency: () => void
-  onShowShortcuts: () => void
+  isAnyDialogOpen: boolean;
+  isDrawerOpen: boolean;
+  canNavigatePrev: boolean;
+  canNavigateNext: boolean;
+  onNavigatePrev: () => void;
+  onNavigateNext: () => void;
+  onApprove: () => void;
+  onDeny: () => void;
+  onPendency: () => void;
+  onShowShortcuts: () => void;
+}
+
+function isEditableElement(el: Element | null): boolean {
+  if (!el) return false;
+  const tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || (el as HTMLElement).isContentEditable;
 }
 
 export function useKeyboardNavigation({
@@ -28,38 +34,42 @@ export function useKeyboardNavigation({
   onShowShortcuts,
 }: UseKeyboardNavigationParams) {
   useEffect(() => {
-    const anyOpen = isAnyDialogOpen || isDrawerOpen
+    const anyOpen = isAnyDialogOpen || isDrawerOpen;
     const handler = (e: KeyboardEvent) => {
-      const tag = (document.activeElement?.tagName ?? '').toLowerCase()
-      if (tag === 'input' || tag === 'textarea' || (document.activeElement as HTMLElement | null)?.isContentEditable) return
+      if (isEditableElement(document.activeElement)) return;
+
       if (e.key === '?') {
-        onShowShortcuts()
-        return
+        onShowShortcuts();
+        return;
       }
-      if (anyOpen) return
-      if (e.key === 'ArrowRight' || e.key === 'j' || e.key === 'J') {
-        if (canNavigateNext) onNavigateNext()
-        return
+
+      if (anyOpen) return;
+
+      const keyActions: Record<string, (() => void) | undefined> = {
+        ArrowRight: canNavigateNext ? onNavigateNext : undefined,
+        j: canNavigateNext ? onNavigateNext : undefined,
+        J: canNavigateNext ? onNavigateNext : undefined,
+        ArrowLeft: canNavigatePrev ? onNavigatePrev : undefined,
+        k: canNavigatePrev ? onNavigatePrev : undefined,
+        K: canNavigatePrev ? onNavigatePrev : undefined,
+        a: onApprove,
+        A: onApprove,
+        n: onDeny,
+        N: onDeny,
+        p: onPendency,
+        P: onPendency,
+      };
+
+      const action = keyActions[e.key];
+      if (action) {
+        e.preventDefault();
+        action();
       }
-      if (e.key === 'ArrowLeft' || e.key === 'k' || e.key === 'K') {
-        if (canNavigatePrev) onNavigatePrev()
-        return
-      }
-      if (e.key === 'a' || e.key === 'A') {
-        onApprove()
-        return
-      }
-      if (e.key === 'n' || e.key === 'N') {
-        onDeny()
-        return
-      }
-      if (e.key === 'p' || e.key === 'P') {
-        onPendency()
-        return
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => { window.removeEventListener('keydown', handler); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+    };
   }, [
     isAnyDialogOpen,
     isDrawerOpen,
@@ -71,5 +81,5 @@ export function useKeyboardNavigation({
     onDeny,
     onPendency,
     onShowShortcuts,
-  ])
+  ]);
 }

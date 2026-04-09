@@ -33,10 +33,13 @@ export default function HistoryDetailHeader({
   onPrev,
   onNext,
 }: HistoryDetailHeaderProps) {
-  const catStyle = categoryColorMap[entry.category] ?? { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' };
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- noUncheckedIndexedAccess widens Record access to include undefined
+  const catStyle = categoryColorMap[entry.category] ?? { bg: 'transparent', color: 'inherit' };
 
   return (
-    <Box sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+    <Box
+      sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}
+    >
       <Button
         startIcon={<ArrowBackIcon sx={{ fontSize: 13 }} />}
         size="small"
@@ -83,18 +86,29 @@ export default function HistoryDetailHeader({
           <Chip
             label={entry.category}
             size="small"
-            sx={{ backgroundColor: catStyle.bg, color: catStyle.color, fontWeight: 600, height: 22 }}
+            sx={{
+              backgroundColor: catStyle.bg,
+              color: catStyle.color,
+              fontWeight: 600,
+              height: 22,
+            }}
           />
-          {entry.alerts &&
-            entry.alerts.length > 0 ? entry.alerts.map((alerta) => (
-              <Chip
-                key={alerta}
-                icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
-                label={alerta}
-                size="small"
-                sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontWeight: 700, height: 22 }}
-              />
-            )) : null}
+          {entry.alerts && entry.alerts.length > 0
+            ? entry.alerts.map((alerta) => (
+                <Chip
+                  key={alerta}
+                  icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
+                  label={alerta}
+                  size="small"
+                  sx={{
+                    backgroundColor: 'rgba(245,158,11,0.12)',
+                    color: '#b45309',
+                    fontWeight: 700,
+                    height: 22,
+                  }}
+                />
+              ))
+            : null}
         </Box>
 
         {/* Navigator */}
@@ -139,7 +153,13 @@ export default function HistoryDetailHeader({
             }}
           >
             <Typography
-              sx={{ fontSize: 12, fontWeight: 600, color: 'text.primary', whiteSpace: 'nowrap', lineHeight: '30px' }}
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'text.primary',
+                whiteSpace: 'nowrap',
+                lineHeight: '30px',
+              }}
             >
               {currentIndex + 1}
               <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>

@@ -27,7 +27,9 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
           borderLeft: '3px solid #f59e0b',
         }),
       }}
-      onClick={() => { onNavigate(entry.id); }}
+      onClick={() => {
+        onNavigate(entry.id);
+      }}
     >
       <TableCell sx={{ px: 1.5 }}>
         <Typography
@@ -127,7 +129,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-          {`${entry.decisionDate.slice(0, 5)}/${entry.decisionDate.slice(8, 10)} · ${entry.decisionDate.split(' ')[1]}`}
+          {`${entry.decisionDate.slice(0, 5)}/${entry.decisionDate.slice(8, 10)} · ${entry.decisionDate.split(' ')[1] ?? ''}`}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>

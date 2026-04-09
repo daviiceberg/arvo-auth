@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-import { MEDICAL_BOARD_REASONS } from '../../constants/medical-board-reasons'
+import { MEDICAL_BOARD_REASONS } from '@/modules/analysis/constants/medical-board-reasons';
 
 interface MedicalBoardDialogProps {
-  open: boolean
-  medicalBoardReason: string
-  onMedicalBoardReasonChange: (value: string) => void
-  medicalBoardObs: string
-  onMedicalBoardObsChange: (value: string) => void
-  onConfirm: () => void
-  onClose: () => void
+  open: boolean;
+  medicalBoardReason: string;
+  onMedicalBoardReasonChange: (value: string) => void;
+  medicalBoardObs: string;
+  onMedicalBoardObsChange: (value: string) => void;
+  onConfirm: () => void;
+  onClose: () => void;
 }
 
 export default function MedicalBoardDialog({
@@ -42,15 +42,30 @@ export default function MedicalBoardDialog({
         </Typography>
         <FormControl fullWidth size="small" sx={{ mb: 2 }}>
           <InputLabel>Motivo do Encaminhamento *</InputLabel>
-          <Select value={medicalBoardReason} label="Motivo do Encaminhamento *" onChange={e => { onMedicalBoardReasonChange(e.target.value); }}>
-            {MEDICAL_BOARD_REASONS.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>)}
+          <Select
+            value={medicalBoardReason}
+            label="Motivo do Encaminhamento *"
+            onChange={(e) => {
+              onMedicalBoardReasonChange(e.target.value);
+            }}
+          >
+            {MEDICAL_BOARD_REASONS.map((m) => (
+              <MenuItem key={m} value={m}>
+                {m}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <TextField
           label="Observações para a Junta (opcional)"
-          multiline rows={3} fullWidth size="small"
+          multiline
+          rows={3}
+          fullWidth
+          size="small"
           value={medicalBoardObs}
-          onChange={e => { onMedicalBoardObsChange(e.target.value); }}
+          onChange={(e) => {
+            onMedicalBoardObsChange(e.target.value);
+          }}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5 }}>
@@ -65,5 +80,5 @@ export default function MedicalBoardDialog({
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

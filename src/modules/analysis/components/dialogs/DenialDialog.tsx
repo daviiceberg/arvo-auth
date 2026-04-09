@@ -1,32 +1,32 @@
-'use client'
+'use client';
 
-import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-import { type IASuggestion } from '@/data/pedidos'
+import { type IASuggestion } from '@/data/pedidos';
 
-import { DENIAL_REASONS } from '../../constants/denial-reasons'
+import { DENIAL_REASONS } from '@/modules/analysis/constants/denial-reasons';
 
 interface DenialDialogProps {
-  open: boolean
-  requestId: string
-  beneficiaryName: string
-  iaSuggestion: IASuggestion
-  denialReasonIdx: number
-  onDenialReasonChange: (idx: number) => void
-  denialJustification: string
-  onDenialJustificationChange: (value: string) => void
-  onConfirm: () => void
-  onClose: () => void
+  open: boolean;
+  requestId: string;
+  beneficiaryName: string;
+  iaSuggestion: IASuggestion;
+  denialReasonIdx: number;
+  onDenialReasonChange: (idx: number) => void;
+  denialJustification: string;
+  onDenialJustificationChange: (value: string) => void;
+  onConfirm: () => void;
+  onClose: () => void;
 }
 
 export default function DenialDialog({
@@ -50,7 +50,8 @@ export default function DenialDialog({
         </Typography>
         {iaSuggestion !== 'Negar' && (
           <Alert severity="warning" sx={{ mb: 2, borderRadius: 1 }}>
-            A IA sugeriu <strong>{iaSuggestion}</strong> para este caso. Ao registrar negativa, justifique o motivo da divergência no campo abaixo.
+            A IA sugeriu <strong>{iaSuggestion}</strong> para este caso. Ao registrar negativa,
+            justifique o motivo da divergência no campo abaixo.
           </Alert>
         )}
         <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5 }}>
@@ -59,23 +60,24 @@ export default function DenialDialog({
         <RadioGroup
           value={denialReasonIdx === -1 ? '' : String(denialReasonIdx)}
           onChange={(e) => {
-            const idx = Number(e.target.value)
-            onDenialReasonChange(idx)
+            const idx = Number(e.target.value);
+            onDenialReasonChange(idx);
           }}
         >
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1, mb: 2 }}>
             {DENIAL_REASONS.map((m, idx) => (
               <Box
                 key={idx}
-                onClick={() => { onDenialReasonChange(idx); }}
+                onClick={() => {
+                  onDenialReasonChange(idx);
+                }}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
                   p: 1.25,
-                  border: denialReasonIdx === idx
-                    ? '2px solid #d4183d'
-                    : '1px solid rgba(0,0,0,0.12)',
+                  border:
+                    denialReasonIdx === idx ? '2px solid #d4183d' : '1px solid rgba(0,0,0,0.12)',
                   borderRadius: 2,
                   cursor: 'pointer',
                   backgroundColor: denialReasonIdx === idx ? 'rgba(212,24,61,0.04)' : '#fff',
@@ -87,10 +89,21 @@ export default function DenialDialog({
                   value={String(idx)}
                   size="small"
                   checked={denialReasonIdx === idx}
-                  onChange={() => {}}
-                  sx={{ p: 0, color: denialReasonIdx === idx ? '#d4183d' : undefined, '&.Mui-checked': { color: '#d4183d' } }}
+                  onChange={() => undefined}
+                  sx={{
+                    p: 0,
+                    color: denialReasonIdx === idx ? '#d4183d' : undefined,
+                    '&.Mui-checked': { color: '#d4183d' },
+                  }}
                 />
-                <Typography variant="body2" sx={{ fontSize: 12, fontWeight: denialReasonIdx === idx ? 700 : 500, lineHeight: 1.3 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: denialReasonIdx === idx ? 700 : 500,
+                    lineHeight: 1.3,
+                  }}
+                >
                   {m.label}
                 </Typography>
               </Box>
@@ -99,13 +112,20 @@ export default function DenialDialog({
         </RadioGroup>
         <TextField
           label={`Justificativa técnica *${denialReasonIdx === DENIAL_REASONS.length - 1 ? '' : ' (editável)'}`}
-          multiline rows={4} fullWidth size="small"
+          multiline
+          rows={4}
+          fullWidth
+          size="small"
           placeholder="Descreva o motivo da negativa..."
           value={denialJustification}
-          onChange={e => { onDenialJustificationChange(e.target.value); }}
-          helperText={denialReasonIdx >= 0 && denialReasonIdx < DENIAL_REASONS.length - 1
-            ? 'Texto preenchido automaticamente conforme o motivo. Edite se necessário.'
-            : undefined}
+          onChange={(e) => {
+            onDenialJustificationChange(e.target.value);
+          }}
+          helperText={
+            denialReasonIdx >= 0 && denialReasonIdx < DENIAL_REASONS.length - 1
+              ? 'Texto preenchido automaticamente conforme o motivo. Edite se necessário.'
+              : undefined
+          }
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
@@ -120,5 +140,5 @@ export default function DenialDialog({
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

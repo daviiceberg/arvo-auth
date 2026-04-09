@@ -1,79 +1,26 @@
-'use client'
+'use client';
 
-import { useState, useRef } from 'react'
+import { useState } from 'react';
 
-import { type Request, type Document } from '@/data/pedidos'
+import { type Request, type Document } from '@/data/pedidos';
+
+import { useDocumentModals } from './useDocumentModals';
 
 export function useDocumentViewer(request: Request) {
-  const [localDocs, setLocalDocs] = useState<Document[]>([])
-  const [viewDoc, setViewDoc] = useState<string | null>(null)
-  const [zoom, setZoom] = useState(100)
-  const [expandedIA, setExpandedIA] = useState<Record<string, boolean>>({ '0': true })
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [addTipo, setAddTipo] = useState('')
-  const [addDescricao, setAddDescricao] = useState('')
-  const [addFile, setAddFile] = useState<File | null>(null)
-  const [addDragOver, setAddDragOver] = useState(false)
-  const [addError, setAddError] = useState('')
-  const [processingId, setProcessingId] = useState<string | null>(null)
-  const [toast, setToast] = useState('')
-  const [showSolicitarModal, setShowSolicitarModal] = useState(false)
-  const [solicitarDocs, setSolicitarDocs] = useState<string[]>([])
-  const [solicitarMensagem, setSolicitarMensagem] = useState('')
-  const [solicitarPrazo, setSolicitarPrazo] = useState('5')
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  // Viewer-only state
+  const [localDocs, setLocalDocs] = useState<Document[]>([]);
+  const [viewDoc, setViewDoc] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(100);
+  const [expandedIA, setExpandedIA] = useState<Record<string, boolean>>({ '0': true });
 
-  const allDocs = [...request.documents, ...localDocs]
+  // Compose modal state (delegates localDocs mutation)
+  const modals = useDocumentModals({ setLocalDocs });
 
-  const handleAddConfirm = () => {
-    if (!addTipo) {
-      setAddError('Selecione o tipo do documento.')
-      return
-    }
-    if (!addFile) {
-      setAddError('Selecione um arquivo.')
-      return
-    }
-    setAddError('')
-    const newId = `DOC-LOCAL-${String(Date.now())}`
-    const newDoc: Document = {
-      id: newId,
-      nome: addFile.name,
-      tipo: addTipo,
-      tamanho:
-        addFile.size > 1024 * 1024
-          ? `${String((addFile.size / 1024 / 1024).toFixed(1))} MB`
-          : `${String(Math.round(addFile.size / 1024))} KB`,
-      enviadoEm: new Date().toLocaleDateString('pt-BR'),
-      obrigatorio: false,
-      status: 'enviado',
-    }
-    setLocalDocs(prev => [...prev, newDoc])
-    setShowAddModal(false)
-    setAddTipo('')
-    setAddDescricao('')
-    setAddFile(null)
-    setToast('Documento adicionado com sucesso')
-    setProcessingId(newId)
-    setTimeout(() => { setProcessingId(null); }, 2500)
-  }
+  const allDocs = [...request.documents, ...localDocs];
 
-  const handleAddModalClose = () => {
-    setShowAddModal(false)
-    setAddTipo('')
-    setAddDescricao('')
-    setAddFile(null)
-    setAddError('')
-  }
-
-  const handleSolicitarConfirm = () => {
-    setShowSolicitarModal(false)
-    setSolicitarDocs([])
-    setSolicitarMensagem('')
-    setToast('Solicitação enviada — pedido pendenciado aguardando documentação')
-  }
-
+  // Return flat object preserving the original API
   return {
+    // Viewer state
     localDocs,
     viewDoc,
     setViewDoc,
@@ -81,32 +28,34 @@ export function useDocumentViewer(request: Request) {
     setZoom,
     expandedIA,
     setExpandedIA,
-    showAddModal,
-    setShowAddModal,
-    addTipo,
-    setAddTipo,
-    addDescricao,
-    setAddDescricao,
-    addFile,
-    setAddFile,
-    addDragOver,
-    setAddDragOver,
-    addError,
-    processingId,
-    toast,
-    setToast,
-    showSolicitarModal,
-    setShowSolicitarModal,
-    solicitarDocs,
-    setSolicitarDocs,
-    solicitarMensagem,
-    setSolicitarMensagem,
-    solicitarPrazo,
-    setSolicitarPrazo,
-    fileInputRef,
     allDocs,
-    handleAddConfirm,
-    handleAddModalClose,
-    handleSolicitarConfirm,
-  }
+
+    // Modal state (spread from useDocumentModals)
+    showAddModal: modals.showAddModal,
+    setShowAddModal: modals.setShowAddModal,
+    addTipo: modals.addTipo,
+    setAddTipo: modals.setAddTipo,
+    addDescricao: modals.addDescricao,
+    setAddDescricao: modals.setAddDescricao,
+    addFile: modals.addFile,
+    setAddFile: modals.setAddFile,
+    addDragOver: modals.addDragOver,
+    setAddDragOver: modals.setAddDragOver,
+    addError: modals.addError,
+    processingId: modals.processingId,
+    toast: modals.toast,
+    setToast: modals.setToast,
+    showSolicitarModal: modals.showSolicitarModal,
+    setShowSolicitarModal: modals.setShowSolicitarModal,
+    solicitarDocs: modals.solicitarDocs,
+    setSolicitarDocs: modals.setSolicitarDocs,
+    solicitarMensagem: modals.solicitarMensagem,
+    setSolicitarMensagem: modals.setSolicitarMensagem,
+    solicitarPrazo: modals.solicitarPrazo,
+    setSolicitarPrazo: modals.setSolicitarPrazo,
+    fileInputRef: modals.fileInputRef,
+    handleAddConfirm: modals.handleAddConfirm,
+    handleAddModalClose: modals.handleAddModalClose,
+    handleSolicitarConfirm: modals.handleSolicitarConfirm,
+  };
 }
