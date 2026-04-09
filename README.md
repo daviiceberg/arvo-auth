@@ -1,116 +1,106 @@
 # Arvo Auth Frontend
 
-Frontend do sistema de autorização de pedidos médicos para operadoras de planos de saúde. Permite analisar, aprovar, negar e acompanhar solicitações de procedimentos médicos com suporte a sugestões de IA.
+Intelligent medical authorization system for health insurance operators. Receives procedure requests, runs intelligence checks, and presents structured analysis to support human decision-making.
 
-## Tech Stack
+**Stack:** Next.js 16 · React 19 · TypeScript 5 (strict) · MUI v7 · Emotion · Space Grotesk
 
-- **Next.js 16** (App Router)
-- **React 19**
-- **TypeScript 5**
-- **MUI 7** (Material UI) + Emotion
-- **Fonte:** Space Grotesk
-
-## Pré-requisitos
-
-- Node.js 20+
-- npm (ou yarn / pnpm)
-
-## Início Rápido
+## Quick Start
 
 ```bash
-# Instalar dependências
 npm install
-
-# Rodar em desenvolvimento
-npm run dev
+npm run dev        # http://localhost:3000
 ```
-
-Acesse [http://localhost:3000](http://localhost:3000). A aplicação redireciona para `/dashboard`.
 
 ## Scripts
 
-| Comando         | Descrição                  |
-| --------------- | -------------------------- |
-| `npm run dev`   | Servidor de desenvolvimento |
-| `npm run build` | Build de produção          |
-| `npm start`     | Servir build de produção   |
+| Command               | Description                                             |
+| --------------------- | ------------------------------------------------------- |
+| `npm run dev`         | Development server (Turbopack)                          |
+| `npm run build`       | Production build (TypeScript check + static generation) |
+| `npm run lint`        | ESLint check                                            |
+| `npm run lint:strict` | ESLint with `--max-warnings 0` (CI gate)                |
+| `npm start`           | Serve production build                                  |
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
 src/
-├── app/
-│   ├── login/                 # Tela de login
-│   ├── nova-solicitacao/      # Formulário multi-step de nova solicitação
-│   ├── docs/                  # Documentação do produto e design system
-│   └── (main)/                # Layout autenticado (AppShell)
-│       ├── dashboard/         # KPIs, gráficos e métricas
-│       ├── fila/              # Fila operacional de pedidos pendentes
-│       ├── analise/           # Análise detalhada de pedido
-│       ├── historico/         # Histórico de decisões (audit trail)
-│       │   └── [id]/          # Detalhe de decisão individual
-│       ├── usuarios/          # Gestão de usuários (admin)
-│       ├── meu-perfil/        # Perfil do usuário
-│       ├── notificacoes/      # Lista de notificações
-│       └── ajuda/             # Ajuda e atalhos de teclado
-├── components/
-│   ├── AppShell.tsx           # Layout principal (sidebar + topbar)
-│   └── Providers.tsx          # ThemeProvider + Emotion
-├── theme/
-│   ├── index.ts               # Tema MUI (cores, tipografia, overrides)
-│   └── EmotionRegistry.tsx    # Cache Emotion para SSR
-├── data/
-│   ├── pedidos.ts             # Dados mock de pedidos e métricas
-│   └── usuarios.ts            # Dados mock de usuários
-└── lib/
-    └── urgencia.ts            # Classificação de urgência
+├── app/                    → Next.js App Router (routing only, no business logic)
+│   ├── login/              → Login page
+│   ├── nova-solicitacao/   → Multi-step new request form
+│   ├── docs/               → Product docs & design system
+│   └── (main)/             → Authenticated layout (AppShell)
+│       ├── dashboard/      → KPIs, charts, metrics
+│       ├── fila/           → Operational queue (pending requests)
+│       ├── analise/        → Request analysis (IA + analyst decision)
+│       ├── historico/      → Decision history (audit trail)
+│       ├── usuarios/       → User management (admin)
+│       └── ...
+├── core/                   → Theme (MUI), Providers
+├── shared/
+│   ├── components/         → Reusable chips (Category, SLA, Status...) + cards (KPI, Metric)
+│   ├── constants/          → Centralized color maps (9 domain mappings)
+│   └── utils/              → Logger (loglevel), urgency helpers
+├── modules/
+│   ├── analysis/           → Request analysis module (largest — 40+ components)
+│   ├── queue/              → Operational queue with filters and tabs
+│   ├── history/            → Decision history and audit trail
+│   ├── new-request/        → Multi-step request form (8 event types)
+│   ├── dashboard/          → KPI dashboard and charts
+│   └── shell/              → AppShell layout (sidebar + topbar)
+├── types/                  → Domain types (pedido, usuario, notificacao)
+└── data/                   → Mock data (will be replaced by API integration)
 ```
 
-## Funcionalidades
+## Architecture
 
-- **Fila Operacional** -- Filtragem por categoria, status, tipo (1a solicitação vs continuidade) e SLA
-- **Análise com IA** -- Sugestões automáticas (Aprovar/Negar/Junta Médica) com checklist de validação
-- **Decisões** -- Aprovação total, parcial, negativa, pendência e encaminhamento para junta médica
-- **Dashboard** -- KPIs, taxa de detecção por IA, tendências mensais, motivos de negativa
-- **Histórico** -- Audit trail completo com rastreamento de divergência entre IA e analista
-- **Gestão de Usuários** -- CRUD com papéis (Gestor, Autorizador, Auditor) e permissões
-- **Multi-regional** -- Seletor de regional (Sul, Sudeste, Nordeste)
-- **Atalhos de Teclado** -- `A` Aprovar, `N` Negar, `P` Pendente, `?` Ajuda
+**Pattern:** MVVM — Hooks (ViewModel) · Components (View) · Constants · Types
 
-## Categorias de Procedimentos
+Each module follows the same structure:
 
-| Categoria               | Cor       |
-| ----------------------- | --------- |
-| Internação              | `#902B29` |
-| Urgência/Emergência     | `#d4183d` |
-| Oncologia               | `#7c3aed` |
-| Terapias Especiais      | `#2563eb` |
-| OPME                    | `#b45309` |
-| Exames Alta Complexidade| `#0891b2` |
-| Cirurgias Eletivas      | `#059669` |
-| Home Care               | `#16a34a` |
+- `components/` — React components (View layer, no business logic)
+- `hooks/` — Custom hooks (ViewModel layer, all state and logic)
+- `types/` — Module-specific type definitions
+- `constants/` — Module-specific constants and mappings
 
-## Papéis de Usuário
+See [AGENTS.md](AGENTS.md) for domain context and decision tree.
+See [CLAUDE.md](CLAUDE.md) for code standards and component map.
 
-| Papel         | Acesso                                         |
-| ------------- | ---------------------------------------------- |
-| **Gestor**    | Acesso total (relatórios, config, usuários)     |
-| **Autorizador** | Análise e decisão na fila operacional         |
-| **Auditor**   | Somente leitura (histórico e relatórios)        |
+## Event Types (Authorization Categories)
 
-## Documentação Interna
+| Category              | Color     | Description                            |
+| --------------------- | --------- | -------------------------------------- |
+| Hospitalization       | `#902B29` | Clinical and surgical admissions       |
+| Urgency/Emergency     | `#d4183d` | Time-sensitive regulatory flow         |
+| Oncology              | `#7c3aed` | Chemotherapy, immunotherapy, radiation |
+| Special Therapies     | `#2563eb` | ABA, physiotherapy, speech therapy     |
+| OPME                  | `#b45309` | Prosthetics and special materials      |
+| High Complexity Exams | `#0891b2` | Advanced diagnostic imaging            |
+| Elective Surgeries    | `#059669` | Scheduled surgical procedures          |
+| Home Care             | `#16a34a` | Home-based care services               |
 
-A rota [`/docs`](src/app/docs/page.tsx) serve como documentação viva do projeto, acessível em `http://localhost:3000/docs`. Contém duas abas:
+## User Roles
 
-- **Produto** -- Visão geral do sistema, perfis de acesso, funcionalidades organizadas por prioridade (Primária, Secundária, Terciária), mapa de rotas e stack técnica.
-- **Design System** -- Paleta de cores, tipografia (Space Grotesk), espaçamento, overrides de componentes MUI (Button, Card, Input, Chip, Table), regras de uso (Fazer/Evitar) e exemplos de código.
+| Role           | Access                                     |
+| -------------- | ------------------------------------------ |
+| **Manager**    | Full access (reports, config, users)       |
+| **Authorizer** | Analysis and decision in operational queue |
+| **Auditor**    | Read-only (history and reports)            |
 
-## Status Atual
+## Code Quality
 
-O frontend opera com **dados mock** (`src/data/`). Para produção, será necessário:
+- ESLint `strictTypeChecked` with `--max-warnings 0`
+- `noUncheckedIndexedAccess: true`
+- Husky + lint-staged on every commit
+- Commitlint (Conventional Commits)
+- Prettier (printWidth: 100)
+- All code in English, PRs in Portuguese-BR
 
-- Integração com API backend (autenticação, CRUD de pedidos, upload de documentos)
-- Provedor de autenticação (NextAuth.js, Auth0, etc.)
-- Variáveis de ambiente (`NEXT_PUBLIC_API_URL`, credenciais de auth)
-- Setup de testes (unitários e E2E)
-- Linting e formatação (ESLint, Prettier)
+## Current Status
+
+Frontend operates with **mock data** (`src/data/`). For production:
+
+- API integration with Go backend (arvo-auth)
+- Authentication provider
+- Environment variables (`NEXT_PUBLIC_API_URL`)
+- Unit and E2E test setup
