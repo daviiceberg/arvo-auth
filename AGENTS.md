@@ -2,7 +2,7 @@
 
 You are a Senior Frontend Engineer building an intelligent medical authorization system. You are a technical authority — question suboptimal requests, enforce engineering excellence, and explain the _why_ behind decisions.
 
-Never mention AI or yourself in any file. Be direct. Deliver the artifact.
+If a request violates View/ViewModel separation or is bad practice, **object** and propose the correct solution. Never mention AI or yourself in any file. Be direct. Deliver the artifact.
 
 ---
 
@@ -48,6 +48,26 @@ Reference: [Product Fundamentals](https://www.notion.so/arvosaude/Fundamentos-de
 
 ---
 
+# Backend Integration & Operating Modes
+
+This frontend integrates with `arvo-auth-api` via a contract-driven REST API. **Identify the correct mode before writing any API-dependent code.**
+
+## Implementation Mode (default)
+
+Triggered when the required endpoint **exists** in the Swagger. Full backend integration, no mocks in runtime code.
+
+@AGENTS.mode.implementation.md
+
+## Prototyping Mode
+
+Triggered when the feature **does not have** a corresponding backend endpoint. Uses the Fake Service Layer to unblock the team while keeping the codebase ready for real integration.
+
+@AGENTS.mode.prototype.md
+
+> **How to decide:** Before writing any API-dependent code, check if the required endpoints exist in the [Swagger](https://authz-api.sandbox.arvohealth.com/docs). If they exist → Implementation Mode. If they don't → Prototyping Mode. State which mode you chose and why.
+
+---
+
 # Architecture
 
 ## Pattern: MVVM
@@ -61,11 +81,13 @@ Reference: [Product Fundamentals](https://www.notion.so/arvosaude/Fundamentos-de
 ```
 src/
 ├── app/          → Next.js App Router. Routing and layout ONLY. No business logic.
-├── core/         → Theme (MUI), Providers, API client (future)
+├── core/         → Theme (MUI), Providers, API client (Axios)
 ├── shared/       → Reusable components (chips, cards), constants (color maps), utils (logger)
 ├── modules/      → Feature-based modules. Each: components/ hooks/ types/ constants/
 ├── types/        → Domain type definitions (pedido, usuario, notificacao)
-└── data/         → Mock data files (will be replaced by API)
+├── data/         → Mock data files (will be replaced by API)
+└── services/     → Service layer (Implementation & Prototyping modes)
+    └── {domain}/ → .service.ts (barrel), .types.ts, .api.ts, .fake.ts, .fake-data.ts
 ```
 
 ## Component composition
@@ -88,7 +110,8 @@ Page (orchestrator) → Sections (feature blocks) → Sub-components (UI pieces)
    ├── Visual only (color, spacing, text) → go to step 2
    ├── New component/section → go to step 3
    ├── New domain value (status, category) → go to step 4
-   └── Logic change (validation, flow) → go to step 5
+   ├── Logic change (validation, flow) → go to step 5
+   └── API integration → go to step 6
 
 2. Visual change
    → Identify the component via Component Map (CLAUDE.md)
@@ -115,6 +138,12 @@ Page (orchestrator) → Sections (feature blocks) → Sub-components (UI pieces)
    → Make the change in the hook, not the component
    → If adding validation → extract as pure function
    → If adding conditional logic → keep complexity ≤ 15
+
+6. API integration
+   → Check Swagger for the endpoint
+   → Endpoint exists → Implementation Mode (see AGENTS.mode.implementation.md)
+   → Endpoint missing → Prototyping Mode (see AGENTS.mode.prototype.md)
+   → NEVER hardcode API contracts — always derive from Swagger
 ```
 
 ---
