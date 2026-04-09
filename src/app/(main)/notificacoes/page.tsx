@@ -1,39 +1,41 @@
-'use client'
-import { useState } from 'react'
+'use client';
+import { useState } from 'react';
 
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import Chip from '@mui/material/Chip'
-import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 
-import { NOTIFICACOES, type Notification } from '@/data/notificacoes'
+import { NOTIFICACOES, type Notification } from '@/data/notificacoes';
 
 export default function NotificacoesPage() {
-  const router = useRouter()
-  const [notifications, setNotifications] = useState(NOTIFICACOES)
+  const router = useRouter();
+  const [notifications, setNotifications] = useState(NOTIFICACOES);
 
-  const unreadCount = notifications.filter((n) => !n.read).length
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
-  }
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
 
   const handleClick = (n: Notification) => {
     setNotifications((prev) =>
-      prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
-    )
-    router.push(n.href)
-  }
+      prev.map((item) => (item.id === n.id ? { ...item, read: true } : item)),
+    );
+    router.push(n.href);
+  };
 
   return (
     <Box sx={{ p: 3, maxWidth: 760, mx: 'auto' }}>
       {/* Page header */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
+      >
         <Box>
           <Typography variant="h5" fontWeight={700} sx={{ fontSize: 22, mb: 0.5 }}>
             Notificações
@@ -59,7 +61,9 @@ export default function NotificacoesPage() {
       {/* Notifications card */}
       <Card sx={{ overflow: 'hidden' }}>
         {notifications.length === 0 ? (
-          <Box sx={{ py: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}>
+          <Box
+            sx={{ py: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1.5 }}
+          >
             <NotificationsNoneIcon sx={{ fontSize: 48, color: 'text.disabled' }} />
             <Typography variant="body2" color="text.secondary" fontWeight={500}>
               Nenhuma notificação
@@ -71,7 +75,9 @@ export default function NotificacoesPage() {
               <Box key={n.id}>
                 {i > 0 && <Divider />}
                 <Box
-                  onClick={() => { handleClick(n); }}
+                  onClick={() => {
+                    handleClick(n);
+                  }}
                   sx={{
                     px: 2.5,
                     py: 2,
@@ -138,10 +144,10 @@ export default function NotificacoesPage() {
                   )}
                 </Box>
               </Box>
-            )
+            );
           })
         )}
       </Card>
     </Box>
-  )
+  );
 }

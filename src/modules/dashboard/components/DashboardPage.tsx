@@ -26,7 +26,8 @@ import TrendChart from './TrendChart';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { loading, metrics, pedidos, pedidosEmProcessamento, barData, maxBar, urgencySegments } = useDashboardData();
+  const { loading, metrics, pedidos, pedidosEmProcessamento, barData, maxBar, urgencySegments } =
+    useDashboardData();
 
   return (
     <Box sx={{ p: 3 }}>
@@ -48,8 +49,19 @@ export default function DashboardPage() {
       <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
         {/* Category Distribution — flex 5 */}
         <Card sx={{ flex: 5, display: 'flex', flexDirection: 'column' }}>
-          <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}>
+          <CardContent
+            sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              '&:last-child': { pb: 2 },
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}
+            >
               Distribuição por Categoria
             </Typography>
             {loading ? (
@@ -66,9 +78,20 @@ export default function DashboardPage() {
 
         {/* General Status — flex 3 */}
         <Card sx={{ flex: 3, display: 'flex', flexDirection: 'column' }}>
-          <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
+          <CardContent
+            sx={{
+              p: 2,
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              '&:last-child': { pb: 2 },
+            }}
+          >
             <Box sx={{ mb: 1 }}>
-              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+              <Typography
+                variant="body2"
+                sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}
+              >
                 Status Geral
               </Typography>
               <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
@@ -79,7 +102,9 @@ export default function DashboardPage() {
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <Skeleton variant="circular" width={110} height={110} />
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-                  {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} variant="text" height={14} />)}
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} variant="text" height={14} />
+                  ))}
                 </Box>
               </Box>
             ) : (
@@ -91,17 +116,49 @@ export default function DashboardPage() {
         {/* AI Suggestions — flex 4 */}
         <Box sx={{ flex: 4, display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 2 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+            <CardContent
+              sx={{
+                p: 2,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                '&:last-child': { pb: 2 },
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 1.5,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}
+                >
                   Sugestão da IA
                 </Typography>
                 <Box
                   role="button"
                   tabIndex={0}
-                  onClick={() => { router.push('/fila'); }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push('/fila'); } }}
-                  sx={{ cursor: 'pointer', '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: 2, borderRadius: '4px' } }}
+                  onClick={() => {
+                    router.push('/fila');
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push('/fila');
+                    }
+                  }}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:focus-visible': {
+                      outline: '2px solid #902B29',
+                      outlineOffset: 2,
+                      borderRadius: '4px',
+                    },
+                  }}
                 >
                   <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
                     Ver todos ›
@@ -112,21 +169,75 @@ export default function DashboardPage() {
                 <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 1 }} />
               ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
-                  {([
-                    { label: 'Negar', count: metrics.iaSugestaoNegar, color: '#d4183d', textColor: '#d4183d', bg: 'rgba(212,24,61,0.08)', hoverBg: 'rgba(212,24,61,0.13)', icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />, ia: 'Negar', microcopy: 'com bloqueio identificado' },
-                    { label: 'Junta Médica', count: metrics.iaSugestaoJunta, color: '#b45309', textColor: '#b45309', bg: 'rgba(180,83,9,0.08)', hoverBg: 'rgba(180,83,9,0.13)', icon: <GroupsOutlinedIcon sx={{ fontSize: 16, color: '#b45309' }} />, ia: 'Junta Médica', microcopy: 'para revisão clínica' },
-                    { label: 'Aprovar', count: metrics.iaSugestaoAprovar, color: '#16a34a', textColor: '#166534', bg: 'rgba(22,163,74,0.08)', hoverBg: 'rgba(22,163,74,0.13)', icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a' }} />, ia: 'Aprovar', microcopy: 'com critérios atendidos' },
-                  ] as { label: string; count: number; color: string; textColor: string; bg: string; hoverBg: string; icon: React.ReactNode; ia: string; microcopy: string }[]).map((s) => (
+                  {(
+                    [
+                      {
+                        label: 'Negar',
+                        count: metrics.iaSugestaoNegar,
+                        color: '#d4183d',
+                        textColor: '#d4183d',
+                        bg: 'rgba(212,24,61,0.08)',
+                        hoverBg: 'rgba(212,24,61,0.13)',
+                        icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />,
+                        ia: 'Negar',
+                        microcopy: 'com bloqueio identificado',
+                      },
+                      {
+                        label: 'Junta Médica',
+                        count: metrics.iaSugestaoJunta,
+                        color: '#b45309',
+                        textColor: '#b45309',
+                        bg: 'rgba(180,83,9,0.08)',
+                        hoverBg: 'rgba(180,83,9,0.13)',
+                        icon: <GroupsOutlinedIcon sx={{ fontSize: 16, color: '#b45309' }} />,
+                        ia: 'Junta Médica',
+                        microcopy: 'para revisão clínica',
+                      },
+                      {
+                        label: 'Aprovar',
+                        count: metrics.iaSugestaoAprovar,
+                        color: '#16a34a',
+                        textColor: '#166534',
+                        bg: 'rgba(22,163,74,0.08)',
+                        hoverBg: 'rgba(22,163,74,0.13)',
+                        icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a' }} />,
+                        ia: 'Aprovar',
+                        microcopy: 'com critérios atendidos',
+                      },
+                    ] as {
+                      label: string;
+                      count: number;
+                      color: string;
+                      textColor: string;
+                      bg: string;
+                      hoverBg: string;
+                      icon: React.ReactNode;
+                      ia: string;
+                      microcopy: string;
+                    }[]
+                  ).map((s) => (
                     <Box
                       key={s.label}
                       role="button"
                       tabIndex={0}
-                      onClick={() => { router.push(`/fila?ia=${encodeURIComponent(s.ia)}`); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?ia=${encodeURIComponent(s.ia)}`); } }}
+                      onClick={() => {
+                        router.push(`/fila?ia=${encodeURIComponent(s.ia)}`);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          router.push(`/fila?ia=${encodeURIComponent(s.ia)}`);
+                        }
+                      }}
                       aria-label={`Ver ${String(s.count)} pedidos com sugestão da IA: ${s.label}`}
                       sx={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        borderRadius: 2, p: '10px 12px', cursor: 'pointer', flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderRadius: 2,
+                        p: '10px 12px',
+                        cursor: 'pointer',
+                        flex: 1,
                         backgroundColor: s.bg,
                         transition: 'background-color 150ms ease',
                         '&:hover': { backgroundColor: s.hoverBg },
@@ -135,21 +246,45 @@ export default function DashboardPage() {
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {s.icon}
-                        <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: s.textColor }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ fontSize: 13, fontWeight: 600, color: s.textColor }}
+                        >
                           {s.label}
                         </Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
-                        <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700, color: s.textColor, lineHeight: 1 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{ fontSize: 16, fontWeight: 700, color: s.textColor, lineHeight: 1 }}
+                        >
                           {s.count}
                         </Typography>
-                        <Typography variant="caption" sx={{ fontSize: 11, color: s.textColor, opacity: 0.7, lineHeight: 1.2, display: 'block' }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            fontSize: 11,
+                            color: s.textColor,
+                            opacity: 0.7,
+                            lineHeight: 1.2,
+                            display: 'block',
+                          }}
+                        >
                           {s.count === 1 ? 'pedido' : 'pedidos'} {s.microcopy}
                         </Typography>
                       </Box>
                     </Box>
                   ))}
-                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 'auto', pt: 0.5, display: 'block' }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 12,
+                      color: 'text.secondary',
+                      mt: 'auto',
+                      pt: 0.5,
+                      display: 'block',
+                    }}
+                  >
                     Pedidos ativos em análise
                   </Typography>
                 </Box>
@@ -163,8 +298,25 @@ export default function DashboardPage() {
       <Grid container spacing={2} sx={{ mb: 2.5, alignItems: 'stretch' }}>
         <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', flexShrink: 0, mb: 1 }}>
+            <CardContent
+              sx={{
+                p: 3,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                '&:last-child': { pb: 3 },
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'text.secondary',
+                  flexShrink: 0,
+                  mb: 1,
+                }}
+              >
                 Volume Mensal — Aprovações vs Negações
               </Typography>
               {loading ? (
@@ -180,25 +332,62 @@ export default function DashboardPage() {
 
         <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+            <CardContent
+              sx={{
+                p: 3,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                '&:last-child': { pb: 3 },
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 2,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}
+                >
                   Negativas fundamentadas
                 </Typography>
-                <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>Mês atual</Typography>
+                <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>
+                  Mês atual
+                </Typography>
               </Box>
               {loading ? (
                 <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 1 }} />
               ) : (
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Box>
-                    <Typography variant="h3" fontWeight={800} sx={{ fontSize: 40, color: '#902B29', lineHeight: 1 }}>
+                    <Typography
+                      variant="h3"
+                      fontWeight={800}
+                      sx={{ fontSize: 40, color: '#902B29', lineHeight: 1 }}
+                    >
                       {metrics.negados}
                     </Typography>
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.75 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.75 }}
+                    >
                       negativas emitidas
                     </Typography>
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ fontSize: 12, color: 'text.secondary', display: 'block', mt: 0.5 }}
+                    >
                       Economia estimada: {metrics.valorNegado}
                     </Typography>
                   </Box>
@@ -211,8 +400,12 @@ export default function DashboardPage() {
                       border: '1px solid rgba(144,43,41,0.15)',
                     }}
                   >
-                    <Typography variant="caption" sx={{ fontSize: 12, color: '#902B29', fontWeight: 600, display: 'block' }}>
-                      {metrics.iaSinalizouCriticos} de {metrics.totalCriticosHist} com alerta da IA identificado
+                    <Typography
+                      variant="caption"
+                      sx={{ fontSize: 12, color: '#902B29', fontWeight: 600, display: 'block' }}
+                    >
+                      {metrics.iaSinalizouCriticos} de {metrics.totalCriticosHist} com alerta da IA
+                      identificado
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280' }}>
                       IA antecipou {String(metrics.taxaDeteccaoIA)}% das negativas do período
@@ -229,7 +422,15 @@ export default function DashboardPage() {
       <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
         <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
+            <CardContent
+              sx={{
+                p: 3,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                '&:last-child': { pb: 3 },
+              }}
+            >
               <RecentRequestsTable pedidos={pedidos} loading={loading} />
             </CardContent>
           </Card>
@@ -239,8 +440,25 @@ export default function DashboardPage() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
             {/* Top Denial Reasons */}
             <Card sx={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
-              <CardContent sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column', '&:last-child': { pb: 3 } }}>
-                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 2, flexShrink: 0 }}>
+              <CardContent
+                sx={{
+                  p: 3,
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  '&:last-child': { pb: 3 },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: 'text.secondary',
+                    mb: 2,
+                    flexShrink: 0,
+                  }}
+                >
                   Principais Motivos de Negativa
                 </Typography>
                 <TopDenialReasons reasons={metrics.topMotivosNegativa} loading={loading} />
@@ -250,7 +468,10 @@ export default function DashboardPage() {
             {/* Category Summary */}
             <Card>
               <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-                <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}
+                >
                   Por Categoria
                 </Typography>
                 <CategorySummary categories={metrics.porCategoria} loading={loading} />

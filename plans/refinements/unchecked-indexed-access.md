@@ -7,6 +7,7 @@
 `noUncheckedIndexedAccess` é uma das regras mais importantes do TypeScript strict. Faz com que `array[0]` retorne `T | undefined` em vez de `T`, prevenindo bugs onde se acessa um índice que pode não existir.
 
 Tentamos ativar e encontramos 113 erros de tipo. A maioria em:
+
 - Mock data computations (`src/data/pedidos.ts`)
 - `ConsolidatedHistorySection.tsx` (acesso a mock data por key)
 - Navigation hooks (acesso a `pedidos[index]`)

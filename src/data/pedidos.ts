@@ -1,27 +1,37 @@
-export type ProcessingStatus = 'aguardando_processamento' | 'em_processamento' | 'erro_processamento' | 'processado'
+export type ProcessingStatus =
+  | 'aguardando_processamento'
+  | 'em_processamento'
+  | 'erro_processamento'
+  | 'processado';
 
 export interface ProcessingRequest {
-  id: string
-  statusProcessamento: Exclude<ProcessingStatus, 'processado'>
-  origin: RequestOrigin
-  beneficiary: string
-  plan: string
-  category: Category
-  entradaEm: Date
-  erroDescricao?: string
+  id: string;
+  statusProcessamento: Exclude<ProcessingStatus, 'processado'>;
+  origin: RequestOrigin;
+  beneficiary: string;
+  plan: string;
+  category: Category;
+  entradaEm: Date;
+  erroDescricao?: string;
 }
 
-export type GuideStatus = 'Em Análise' | 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Pendente' | 'Devolutiva'
+export type GuideStatus =
+  | 'Em Análise'
+  | 'Aprovado'
+  | 'Negado'
+  | 'Aprovado Parcial'
+  | 'Pendente'
+  | 'Devolutiva';
 export type SubStatus =
   | 'PENDENTE_AGUARDANDO'
   | 'PENDENTE_RETORNO_RECEBIDO'
   | 'JUNTA_AGUARDANDO'
-  | 'JUNTA_PARECER_RECEBIDO'
-export type GuideType = 'Eleitiva' | 'Urgente' | 'Emergência'
-export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center'
-export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI'
-export type SLAStatus = 'ok' | 'warning' | 'violated'
-export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica'
+  | 'JUNTA_PARECER_RECEBIDO';
+export type GuideType = 'Eleitiva' | 'Urgente' | 'Emergência';
+export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
+export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
+export type SLAStatus = 'ok' | 'warning' | 'violated';
+export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica';
 export type Category =
   | 'Internação'
   | 'Urgência/Emergência'
@@ -31,102 +41,108 @@ export type Category =
   | 'Exames Alta Complexidade'
   | 'Cirurgias Eletivas'
   | 'Home Care'
-  | 'SADT'
+  | 'SADT';
 
 export interface Procedure {
-  code: string
-  tuss: string
-  description: string
-  qty: number
-  authorizedQty?: number
-  startDate: string
-  endDate: string
-  cid: string
-  auditLevel: AuditLevel
-  manufacturer?: string
-  unitValue?: number
+  code: string;
+  tuss: string;
+  description: string;
+  qty: number;
+  authorizedQty?: number;
+  startDate: string;
+  endDate: string;
+  cid: string;
+  auditLevel: AuditLevel;
+  manufacturer?: string;
+  unitValue?: number;
 }
 
 export interface Adjustment {
-  id: string
-  procedureCode: string
-  procedureDescription: string
-  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario'
-  previousValue: string
-  newValue: string
-  reason: string
-  justification?: string
-  operator: string
-  profile: string
-  timestamp: string
+  id: string;
+  procedureCode: string;
+  procedureDescription: string;
+  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario';
+  previousValue: string;
+  newValue: string;
+  reason: string;
+  justification?: string;
+  operator: string;
+  profile: string;
+  timestamp: string;
 }
 
 export interface Request {
-  id: string
-  status: GuideStatus
-  guideType: GuideType
-  category: Category
-  auditLevel: AuditLevel
-  priority: 'alta' | 'media' | 'baixa'
-  protocolDate: string
-  queueTime: string
-  slaStatus: SLAStatus
-  slaText: string
+  id: string;
+  status: GuideStatus;
+  guideType: GuideType;
+  category: Category;
+  auditLevel: AuditLevel;
+  priority: 'alta' | 'media' | 'baixa';
+  protocolDate: string;
+  queueTime: string;
+  slaStatus: SLAStatus;
+  slaText: string;
   beneficiary: {
-    name: string
-    cardNumber: string
-    cpf: string
-    birthDate: string
-    age: number
-    sex: 'M' | 'F'
-    plan: string
-    waitingPeriod: boolean
-  }
+    name: string;
+    cardNumber: string;
+    cpf: string;
+    birthDate: string;
+    age: number;
+    sex: 'M' | 'F';
+    plan: string;
+    waitingPeriod: boolean;
+  };
   provider: {
-    hospital: string
-    doctor: string
-    crm: string
-    specialty: string
-  }
-  origin: RequestOrigin
-  procedures: Procedure[]
-  alerts: string[]
-  iaSuggestion: IASuggestion
-  iaJustification: string
-  iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[]
-  observations: string
-  documents: Document[]
-  pendencyReasons?: string[]
-  pendencyResponsible?: string
-  pendencyDate?: string
-  subStatus?: SubStatus
-  boardOpinion?: string
-  boardRecommendation?: 'Aprovar' | 'Negar'
-  authorizationStage?: 'primeira_solicitacao' | 'continuidade'
-  adjustments?: Adjustment[]
-  operatorLock?: { nome: string; desde: string }
-  injunction?: { ativa: boolean; processo: string; escopo: string; validade: string; observacao?: string }
-  secondaryCids?: string[]
+    hospital: string;
+    doctor: string;
+    crm: string;
+    specialty: string;
+  };
+  origin: RequestOrigin;
+  procedures: Procedure[];
+  alerts: string[];
+  iaSuggestion: IASuggestion;
+  iaJustification: string;
+  iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[];
+  observations: string;
+  documents: Document[];
+  pendencyReasons?: string[];
+  pendencyResponsible?: string;
+  pendencyDate?: string;
+  subStatus?: SubStatus;
+  boardOpinion?: string;
+  boardRecommendation?: 'Aprovar' | 'Negar';
+  authorizationStage?: 'primeira_solicitacao' | 'continuidade';
+  adjustments?: Adjustment[];
+  operatorLock?: { nome: string; desde: string };
+  injunction?: {
+    ativa: boolean;
+    processo: string;
+    escopo: string;
+    validade: string;
+    observacao?: string;
+  };
+  secondaryCids?: string[];
 }
 
 export interface BudgetExtractedData {
-  fabricante: string
-  modelo: string
-  valorUnitario: number
-  registroANVISA: string
-  numeroCotacoes: number
-  observacao: string
+  fabricante: string;
+  modelo: string;
+  valorUnitario: number;
+  registroANVISA: string;
+  numeroCotacoes: number;
+  observacao: string;
 }
 
 export interface Document {
-  id: string
-  nome: string
-  tipo: string
-  tamanho?: string
-  enviadoEm?: string
-  obrigatorio: boolean
-  status: 'enviado' | 'pendente'
-  dadosExtraidos?: BudgetExtractedData
+  id: string;
+  nome: string;
+  tipo: string;
+  tamanho?: string;
+  enviadoEm?: string;
+  obrigatorio: boolean;
+  status: 'enviado' | 'pendente';
+  dadosExtraidos?: BudgetExtractedData;
 }
 
 export const pedidos: Request[] = [
@@ -194,12 +210,45 @@ export const pedidos: Request[] = [
       { texto: 'Alta utilização identificada nos últimos 30 dias', status: 'warning' },
       { texto: 'CRM médico validado', status: 'ok' },
     ],
-    observations: 'Criança com TEA grau 2. Pais solicitam manutenção do protocolo intensivo conforme recomendação do neuropediatra. Liminar em vigor desde janeiro/2026.',
+    observations:
+      'Criança com TEA grau 2. Pais solicitam manutenção do protocolo intensivo conforme recomendação do neuropediatra. Liminar em vigor desde janeiro/2026.',
     documents: [
-      { id: 'DOC-001', nome: 'Laudo-Neuropsicologico-2026.pdf', tipo: 'Laudo Médico', tamanho: '2.1 MB', enviadoEm: '10/01/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-002', nome: 'Liminar-Judicial-0012345.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '15/01/2026', obrigatorio: false, status: 'enviado' },
-      { id: 'DOC-003', nome: 'Pedido-Medico-ABA.pdf', tipo: 'Pedido Médico', tamanho: '180 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-004', nome: 'Relatorio-Evolucao-Q1-2026.pdf', tipo: 'Relatório de Evolução', tamanho: '890 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-001',
+        nome: 'Laudo-Neuropsicologico-2026.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '2.1 MB',
+        enviadoEm: '10/01/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-002',
+        nome: 'Liminar-Judicial-0012345.pdf',
+        tipo: 'Documento Jurídico',
+        tamanho: '340 KB',
+        enviadoEm: '15/01/2026',
+        obrigatorio: false,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-003',
+        nome: 'Pedido-Medico-ABA.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '180 KB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-004',
+        nome: 'Relatorio-Evolucao-Q1-2026.pdf',
+        tipo: 'Relatório de Evolução',
+        tamanho: '890 KB',
+        enviadoEm: '22/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     authorizationStage: 'continuidade',
     secondaryCids: ['F80.1'],
@@ -268,15 +317,49 @@ export const pedidos: Request[] = [
       { texto: 'Liminar judicial ativa', status: 'warning' },
       { texto: 'Laudo oncológico completo anexado', status: 'ok' },
     ],
-    observations: 'Paciente em 4º ciclo de quimioterapia adjuvante. NIP aberta em fevereiro/2026 por uso off-label. Advogado responsável: Dr. Paulo Mendes (OAB/SP 123456).',
+    observations:
+      'Paciente em 4º ciclo de quimioterapia adjuvante. NIP aberta em fevereiro/2026 por uso off-label. Advogado responsável: Dr. Paulo Mendes (OAB/SP 123456).',
     documents: [
-      { id: 'DOC-011', nome: 'Laudo-Oncologico-Completo.pdf', tipo: 'Laudo Médico', tamanho: '3.8 MB', enviadoEm: '15/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-012', nome: 'Protocolo-FOLFOX-ASCO.pdf', tipo: 'Protocolo Clínico', tamanho: '780 KB', enviadoEm: '01/01/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-013', nome: 'NIP-2026-0234.pdf', tipo: 'Notificação', tamanho: '210 KB', enviadoEm: '10/02/2026', obrigatorio: false, status: 'enviado' },
-      { id: 'DOC-014', nome: 'Liminar-Judicial-0098765.pdf', tipo: 'Documento Jurídico', tamanho: '340 KB', enviadoEm: '20/02/2026', obrigatorio: false, status: 'enviado' },
+      {
+        id: 'DOC-011',
+        nome: 'Laudo-Oncologico-Completo.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '3.8 MB',
+        enviadoEm: '15/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-012',
+        nome: 'Protocolo-FOLFOX-ASCO.pdf',
+        tipo: 'Protocolo Clínico',
+        tamanho: '780 KB',
+        enviadoEm: '01/01/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-013',
+        nome: 'NIP-2026-0234.pdf',
+        tipo: 'Notificação',
+        tamanho: '210 KB',
+        enviadoEm: '10/02/2026',
+        obrigatorio: false,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-014',
+        nome: 'Liminar-Judicial-0098765.pdf',
+        tipo: 'Documento Jurídico',
+        tamanho: '340 KB',
+        enviadoEm: '20/02/2026',
+        obrigatorio: false,
+        status: 'enviado',
+      },
     ],
     subStatus: 'JUNTA_PARECER_RECEBIDO',
-    boardOpinion: 'Após análise coletiva realizada em 28/03/2026, a Junta Médica recomenda aprovação do protocolo FOLFOX para adenocarcinoma de cólon estágio III (C18.9). O uso off-label de Oxaliplatina é respaldado pela diretriz ASCO 2024 e pelo histórico de resposta terapêutica documentado. Condições: monitorização quinzenal da função renal e hepática, avaliação de toxicidade ao 2º ciclo. A liminar judicial em vigor corrobora a indicação. Responsável pelo parecer: Dr. Henrique Mello — Oncologista Sênior (CRM 11234-SP).',
+    boardOpinion:
+      'Após análise coletiva realizada em 28/03/2026, a Junta Médica recomenda aprovação do protocolo FOLFOX para adenocarcinoma de cólon estágio III (C18.9). O uso off-label de Oxaliplatina é respaldado pela diretriz ASCO 2024 e pelo histórico de resposta terapêutica documentado. Condições: monitorização quinzenal da função renal e hepática, avaliação de toxicidade ao 2º ciclo. A liminar judicial em vigor corrobora a indicação. Responsável pelo parecer: Dr. Henrique Mello — Oncologista Sênior (CRM 11234-SP).',
     boardRecommendation: 'Aprovar',
     secondaryCids: ['K57.3'],
   },
@@ -332,10 +415,27 @@ export const pedidos: Request[] = [
       { texto: 'Histórico de resposta terapêutica positiva', status: 'ok' },
       { texto: 'Documentação completa e dentro do prazo', status: 'ok' },
     ],
-    observations: 'Renovação trimestral. Mãe relata progresso significativo em comunicação e interação social. Médico solicita aumento de frequência para 6x/semana.',
+    observations:
+      'Renovação trimestral. Mãe relata progresso significativo em comunicação e interação social. Médico solicita aumento de frequência para 6x/semana.',
     documents: [
-      { id: 'DOC-021', nome: 'Laudo-TEA-Pediatra.pdf', tipo: 'Laudo Médico', tamanho: '1.4 MB', enviadoEm: '05/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-022', nome: 'Relatorio-Progresso-Q1.pdf', tipo: 'Relatório Terapêutico', tamanho: '890 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-021',
+        nome: 'Laudo-TEA-Pediatra.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '1.4 MB',
+        enviadoEm: '05/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-022',
+        nome: 'Relatorio-Progresso-Q1.pdf',
+        tipo: 'Relatório Terapêutico',
+        tamanho: '890 KB',
+        enviadoEm: '18/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     adjustments: [
       {
@@ -394,7 +494,7 @@ export const pedidos: Request[] = [
         cid: 'M51.1',
         auditLevel: 'HOSPITALAR',
         manufacturer: 'Synthes Brasil Ltda',
-        unitValue: 4850.00,
+        unitValue: 4850.0,
       },
       {
         code: '30603010',
@@ -421,12 +521,45 @@ export const pedidos: Request[] = [
       { texto: 'Relatório de imagem (RNM) anexado', status: 'ok' },
       { texto: 'Cotação de fornecedores pendente (exigência OPME)', status: 'warning' },
     ],
-    observations: 'Paciente refere dor incapacitante VAS 8/10. Fisioterapia realizada por 8 meses sem melhora. RNM de 10/02/2026 confirma herniação. Conferir situação do credenciamento do hospital antes de liberar.',
+    observations:
+      'Paciente refere dor incapacitante VAS 8/10. Fisioterapia realizada por 8 meses sem melhora. RNM de 10/02/2026 confirma herniação. Conferir situação do credenciamento do hospital antes de liberar.',
     documents: [
-      { id: 'DOC-031', nome: 'RNM-Coluna-Lombar-2026.pdf', tipo: 'Exame de Imagem', tamanho: '12.4 MB', enviadoEm: '10/02/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-032', nome: 'Relatorio-Fisioterapia.pdf', tipo: 'Relatório Clínico', tamanho: '420 KB', enviadoEm: '01/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-033', nome: 'Orcamento-OPME-XYZ.pdf', tipo: 'Orçamento / Cotação', tamanho: '890 KB', enviadoEm: '15/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-PENDENTE-001', nome: 'Cotação de Fornecedores (3 cópias)', tipo: 'Orçamento / Cotação', tamanho: undefined, enviadoEm: undefined, obrigatorio: true, status: 'pendente' },
+      {
+        id: 'DOC-031',
+        nome: 'RNM-Coluna-Lombar-2026.pdf',
+        tipo: 'Exame de Imagem',
+        tamanho: '12.4 MB',
+        enviadoEm: '10/02/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-032',
+        nome: 'Relatorio-Fisioterapia.pdf',
+        tipo: 'Relatório Clínico',
+        tamanho: '420 KB',
+        enviadoEm: '01/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-033',
+        nome: 'Orcamento-OPME-XYZ.pdf',
+        tipo: 'Orçamento / Cotação',
+        tamanho: '890 KB',
+        enviadoEm: '15/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-PENDENTE-001',
+        nome: 'Cotação de Fornecedores (3 cópias)',
+        tipo: 'Orçamento / Cotação',
+        tamanho: undefined,
+        enviadoEm: undefined,
+        obrigatorio: true,
+        status: 'pendente',
+      },
     ],
     adjustments: [
       {
@@ -496,10 +629,27 @@ export const pedidos: Request[] = [
       { texto: 'Alta utilização identificada (flag preventivo)', status: 'warning' },
       { texto: 'CRM e especialidade do médico validados', status: 'ok' },
     ],
-    observations: 'Devolvido em 20/03/2026 por falta do relatório de progresso Q4/2025. Família foi notificada por e-mail e tem prazo até 27/03/2026 para envio.',
+    observations:
+      'Devolvido em 20/03/2026 por falta do relatório de progresso Q4/2025. Família foi notificada por e-mail e tem prazo até 27/03/2026 para envio.',
     documents: [
-      { id: 'DOC-041', nome: 'Pedido-Medico-ABA-Manutencao.pdf', tipo: 'Pedido Médico', tamanho: '165 KB', enviadoEm: '18/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-042', nome: 'Laudo-Psiquiatra-Infantil.pdf', tipo: 'Laudo Médico', tamanho: '1.1 MB', enviadoEm: '01/02/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-041',
+        nome: 'Pedido-Medico-ABA-Manutencao.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '165 KB',
+        enviadoEm: '18/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-042',
+        nome: 'Laudo-Psiquiatra-Infantil.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '1.1 MB',
+        enviadoEm: '01/02/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     authorizationStage: 'continuidade',
     pendencyReasons: [
@@ -562,9 +712,18 @@ export const pedidos: Request[] = [
       { texto: 'Sem histórico de uso recente do mesmo procedimento', status: 'ok' },
       { texto: 'Prestador credenciado e habilitado', status: 'ok' },
     ],
-    observations: 'Solicitação de rotina. Paciente relatou episódio de cefaleia em trovão em 15/03/2026. Neurologia solicita exclusão de hemorragia subaracnóidea.',
+    observations:
+      'Solicitação de rotina. Paciente relatou episódio de cefaleia em trovão em 15/03/2026. Neurologia solicita exclusão de hemorragia subaracnóidea.',
     documents: [
-      { id: 'DOC-051', nome: 'Pedido-Medico-RNM.pdf', tipo: 'Pedido Médico', tamanho: '145 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-051',
+        nome: 'Pedido-Medico-RNM.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '145 KB',
+        enviadoEm: '22/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
   {
@@ -620,10 +779,27 @@ export const pedidos: Request[] = [
       { texto: 'CID I25.1 compatível com procedimento', status: 'ok' },
       { texto: 'Anestesista designado confirmado', status: 'warning' },
     ],
-    observations: 'NIP aberta em 18/03/2026 solicitando ecocardiograma e teste ergométrico. Prazo para resposta: 01/04/2026. Paciente tem histórico de IAM em 2019.',
+    observations:
+      'NIP aberta em 18/03/2026 solicitando ecocardiograma e teste ergométrico. Prazo para resposta: 01/04/2026. Paciente tem histórico de IAM em 2019.',
     documents: [
-      { id: 'DOC-061', nome: 'Laudo-Cardiologista.pdf', tipo: 'Laudo Médico', tamanho: '920 KB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-062', nome: 'Cinecoronariografia-2026.pdf', tipo: 'Exame de Imagem', tamanho: '8.2 MB', enviadoEm: '05/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-061',
+        nome: 'Laudo-Cardiologista.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '920 KB',
+        enviadoEm: '10/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-062',
+        nome: 'Cinecoronariografia-2026.pdf',
+        tipo: 'Exame de Imagem',
+        tamanho: '8.2 MB',
+        enviadoEm: '05/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     pendencyReasons: [
       'Ecocardiograma pré-operatório não apresentado',
@@ -686,11 +862,36 @@ export const pedidos: Request[] = [
       { texto: 'Gasometria e exames laboratoriais anexados', status: 'ok' },
       { texto: 'Prestador credenciado', status: 'ok' },
     ],
-    observations: 'Paciente admitido via pronto-socorro às 06h. Hemograma com leucocitose (14.200). Raio-X com consolidação em lobo inferior direito. Iniciado Amoxicilina + Clavulanato EV.',
+    observations:
+      'Paciente admitido via pronto-socorro às 06h. Hemograma com leucocitose (14.200). Raio-X com consolidação em lobo inferior direito. Iniciado Amoxicilina + Clavulanato EV.',
     documents: [
-      { id: 'DOC-071', nome: 'Boletim-Entrada-Pronto-Socorro.pdf', tipo: 'Documento Hospitalar', tamanho: '310 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-072', nome: 'Raio-X-Torax.pdf', tipo: 'Exame de Imagem', tamanho: '4.1 MB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-073', nome: 'Hemograma-Completo.pdf', tipo: 'Exame Laboratorial', tamanho: '190 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-071',
+        nome: 'Boletim-Entrada-Pronto-Socorro.pdf',
+        tipo: 'Documento Hospitalar',
+        tamanho: '310 KB',
+        enviadoEm: '24/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-072',
+        nome: 'Raio-X-Torax.pdf',
+        tipo: 'Exame de Imagem',
+        tamanho: '4.1 MB',
+        enviadoEm: '24/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-073',
+        nome: 'Hemograma-Completo.pdf',
+        tipo: 'Exame Laboratorial',
+        tamanho: '190 KB',
+        enviadoEm: '24/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     secondaryCids: ['I10', 'E11.9'],
   },
@@ -746,10 +947,27 @@ export const pedidos: Request[] = [
       { texto: 'NIP ativa pelo prestador não credenciado', status: 'warning' },
       { texto: 'Relatório médico de admissão em UTI anexado', status: 'ok' },
     ],
-    observations: 'Admissão de emergência às 03h22. Sem leito disponível na rede credenciada. Conforme RN 259, cobertura obrigatória em emergência. UTI com suporte de ventilação mecânica invasiva.',
+    observations:
+      'Admissão de emergência às 03h22. Sem leito disponível na rede credenciada. Conforme RN 259, cobertura obrigatória em emergência. UTI com suporte de ventilação mecânica invasiva.',
     documents: [
-      { id: 'DOC-081', nome: 'Relatorio-Admissao-UTI.pdf', tipo: 'Documento Hospitalar', tamanho: '450 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-082', nome: 'Gasometria-Arterial.pdf', tipo: 'Exame Laboratorial', tamanho: '95 KB', enviadoEm: '24/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-081',
+        nome: 'Relatorio-Admissao-UTI.pdf',
+        tipo: 'Documento Hospitalar',
+        tamanho: '450 KB',
+        enviadoEm: '24/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-082',
+        nome: 'Gasometria-Arterial.pdf',
+        tipo: 'Exame Laboratorial',
+        tamanho: '95 KB',
+        enviadoEm: '24/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
   {
@@ -804,11 +1022,36 @@ export const pedidos: Request[] = [
       { texto: 'CID C50.9 compatível com indicação', status: 'ok' },
       { texto: 'Ciclo anterior documentado sem toxicidade grave', status: 'ok' },
     ],
-    observations: 'Paciente em 6º ciclo de pembrolizumabe. Boa tolerância até o momento. Liminar obtida em outubro/2025 para cobertura do tratamento completo.',
+    observations:
+      'Paciente em 6º ciclo de pembrolizumabe. Boa tolerância até o momento. Liminar obtida em outubro/2025 para cobertura do tratamento completo.',
     documents: [
-      { id: 'DOC-091', nome: 'Laudo-PD-L1-CPS18.pdf', tipo: 'Laudo Médico', tamanho: '2.6 MB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-092', nome: 'Liminar-Pembrolizumabe.pdf', tipo: 'Documento Jurídico', tamanho: '290 KB', enviadoEm: '15/10/2025', obrigatorio: false, status: 'enviado' },
-      { id: 'DOC-093', nome: 'Prescricao-Oncologica.pdf', tipo: 'Pedido Médico', tamanho: '175 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-091',
+        nome: 'Laudo-PD-L1-CPS18.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '2.6 MB',
+        enviadoEm: '10/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-092',
+        nome: 'Liminar-Pembrolizumabe.pdf',
+        tipo: 'Documento Jurídico',
+        tamanho: '290 KB',
+        enviadoEm: '15/10/2025',
+        obrigatorio: false,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-093',
+        nome: 'Prescricao-Oncologica.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '175 KB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
   {
@@ -863,11 +1106,36 @@ export const pedidos: Request[] = [
       { texto: 'Documentação completa e atualizada', status: 'ok' },
       { texto: 'Prestador home care credenciado', status: 'ok' },
     ],
-    observations: 'Alta hospitalar em 20/03/2026 após fratura de fêmur. Paciente não deambula. Úlcera por pressão em sacral necessitando curativo diário. Família presente para suporte.',
+    observations:
+      'Alta hospitalar em 20/03/2026 após fratura de fêmur. Paciente não deambula. Úlcera por pressão em sacral necessitando curativo diário. Família presente para suporte.',
     documents: [
-      { id: 'DOC-101', nome: 'Sumario-Alta-Hospitalar.pdf', tipo: 'Documento Hospitalar', tamanho: '380 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-102', nome: 'Plano-Cuidados-Home-Care.pdf', tipo: 'Relatório Clínico', tamanho: '240 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-103', nome: 'Prescricao-Geriatrica.pdf', tipo: 'Pedido Médico', tamanho: '155 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-101',
+        nome: 'Sumario-Alta-Hospitalar.pdf',
+        tipo: 'Documento Hospitalar',
+        tamanho: '380 KB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-102',
+        nome: 'Plano-Cuidados-Home-Care.pdf',
+        tipo: 'Relatório Clínico',
+        tamanho: '240 KB',
+        enviadoEm: '22/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-103',
+        nome: 'Prescricao-Geriatrica.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '155 KB',
+        enviadoEm: '22/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
   {
@@ -933,11 +1201,36 @@ export const pedidos: Request[] = [
       { texto: 'Carência ativa no plano — não se aplica a parto', status: 'warning' },
       { texto: 'Exames pré-natal completos e atualizados', status: 'ok' },
     ],
-    observations: 'Primigesta, 38 semanas. USG de 20/03/2026 confirma DCP. Carência ativa no plano Essencial, mas parto tem cobertura obrigatória independente de carência.',
+    observations:
+      'Primigesta, 38 semanas. USG de 20/03/2026 confirma DCP. Carência ativa no plano Essencial, mas parto tem cobertura obrigatória independente de carência.',
     documents: [
-      { id: 'DOC-111', nome: 'USG-Pelve-38semanas.pdf', tipo: 'Exame de Imagem', tamanho: '3.4 MB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-112', nome: 'Cartao-Pre-Natal.pdf', tipo: 'Documento Clínico', tamanho: '520 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-113', nome: 'Pedido-Internacao-Maternidade.pdf', tipo: 'Pedido Médico', tamanho: '160 KB', enviadoEm: '22/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-111',
+        nome: 'USG-Pelve-38semanas.pdf',
+        tipo: 'Exame de Imagem',
+        tamanho: '3.4 MB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-112',
+        nome: 'Cartao-Pre-Natal.pdf',
+        tipo: 'Documento Clínico',
+        tamanho: '520 KB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-113',
+        nome: 'Pedido-Internacao-Maternidade.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '160 KB',
+        enviadoEm: '22/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
   {
@@ -980,7 +1273,7 @@ export const pedidos: Request[] = [
         cid: 'M16.1',
         auditLevel: 'HOSPITALAR',
         manufacturer: 'Zimmer Biomet Brasil Ltda',
-        unitValue: 8750.00,
+        unitValue: 8750.0,
       },
     ],
     alerts: [],
@@ -996,10 +1289,27 @@ export const pedidos: Request[] = [
       { texto: 'Exames pré-operatórios completos', status: 'warning' },
       { texto: 'Cotação de fornecedores incompleta — 2 de 3 cotações exigidas', status: 'error' },
     ],
-    observations: 'Paciente com coxartrose bilateral grau IV. Oxford Hip Score 14/48 (grave). Radiografia panorâmica confirmando perda articular total. Exames pré-op em andamento.',
+    observations:
+      'Paciente com coxartrose bilateral grau IV. Oxford Hip Score 14/48 (grave). Radiografia panorâmica confirmando perda articular total. Exames pré-op em andamento.',
     documents: [
-      { id: 'DOC-121', nome: 'Radiografia-Quadril-Bilateral.pdf', tipo: 'Exame de Imagem', tamanho: '5.8 MB', enviadoEm: '01/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-122', nome: 'Laudo-Ortopedico.pdf', tipo: 'Laudo Médico', tamanho: '780 KB', enviadoEm: '10/03/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-121',
+        nome: 'Radiografia-Quadril-Bilateral.pdf',
+        tipo: 'Exame de Imagem',
+        tamanho: '5.8 MB',
+        enviadoEm: '01/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-122',
+        nome: 'Laudo-Ortopedico.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '780 KB',
+        enviadoEm: '10/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
       {
         id: 'DOC-123',
         nome: 'Orcamento-OPME-Quadril.pdf',
@@ -1011,10 +1321,11 @@ export const pedidos: Request[] = [
         dadosExtraidos: {
           fabricante: 'Zimmer Biomet Brasil Ltda',
           modelo: 'Taperloc Complete Hip System',
-          valorUnitario: 8750.00,
+          valorUnitario: 8750.0,
           registroANVISA: '80087830003',
           numeroCotacoes: 2,
-          observacao: 'Documento contém apenas 2 cotações. Falta cotação de fornecedor alternativo.',
+          observacao:
+            'Documento contém apenas 2 cotações. Falta cotação de fornecedor alternativo.',
         },
       },
     ],
@@ -1074,12 +1385,32 @@ export const pedidos: Request[] = [
       { texto: 'Plano terapêutico inicial disponível no sistema', status: 'ok' },
       { texto: 'Prestador credenciado para procedimentos oncológicos', status: 'ok' },
       { texto: 'Laudo de evolução do ciclo anterior (ciclo 2) ausente', status: 'error' },
-      { texto: 'Protocolo de quimioterapia desatualizado — estadiamento atual necessário', status: 'error' },
+      {
+        texto: 'Protocolo de quimioterapia desatualizado — estadiamento atual necessário',
+        status: 'error',
+      },
     ],
-    observations: 'Pendência aberta em 21/03/2026. Prestador notificado por sistema interno. Prazo de resposta: 28/03/2026. SLA violado aguardando documentação complementar. Biópsia e pedido original do ciclo 1 disponíveis no sistema.',
+    observations:
+      'Pendência aberta em 21/03/2026. Prestador notificado por sistema interno. Prazo de resposta: 28/03/2026. SLA violado aguardando documentação complementar. Biópsia e pedido original do ciclo 1 disponíveis no sistema.',
     documents: [
-      { id: 'DOC-131', nome: 'Pedido-Medico-QT-Ciclo3.pdf', tipo: 'Pedido Médico', tamanho: '185 KB', enviadoEm: '20/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-132', nome: 'Biopsia-Tumor-Mama-C50.pdf', tipo: 'Laudo Médico', tamanho: '1.2 MB', enviadoEm: '15/01/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-131',
+        nome: 'Pedido-Medico-QT-Ciclo3.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '185 KB',
+        enviadoEm: '20/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-132',
+        nome: 'Biopsia-Tumor-Mama-C50.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '1.2 MB',
+        enviadoEm: '15/01/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
     pendencyReasons: [
       'Laudo de evolução oncológica do ciclo 2 não anexado — exigência para continuidade do protocolo',
@@ -1120,7 +1451,8 @@ export const pedidos: Request[] = [
       {
         code: '90600143',
         tuss: '90600143',
-        description: 'Bevacizumabe (Avastin) 400mg IV — Carcinoma colorretal metastático (Ciclo 8/12)',
+        description:
+          'Bevacizumabe (Avastin) 400mg IV — Carcinoma colorretal metastático (Ciclo 8/12)',
         qty: 1,
         authorizedQty: undefined,
         startDate: '10/04/2026',
@@ -1133,92 +1465,125 @@ export const pedidos: Request[] = [
     injunction: {
       ativa: true,
       processo: '1043827-12.2026.8.26.0100',
-      escopo: 'Bevacizumabe (Avastin) 400mg IV — protocolo oncológico para carcinoma colorretal metastático (C18.9), ciclos conforme indicação do médico assistente',
+      escopo:
+        'Bevacizumabe (Avastin) 400mg IV — protocolo oncológico para carcinoma colorretal metastático (C18.9), ciclos conforme indicação do médico assistente',
       validade: '30/06/2026',
-      observacao: 'Decisão liminar proferida em 15/03/2026. Cobre exclusivamente o medicamento e dose descritos no processo. Procedimentos não listados NÃO estão cobertos pela ordem judicial. Aplicar negativa sobre procedimento fora do escopo não viola a liminar, mas deve ser fundamentada.',
+      observacao:
+        'Decisão liminar proferida em 15/03/2026. Cobre exclusivamente o medicamento e dose descritos no processo. Procedimentos não listados NÃO estão cobertos pela ordem judicial. Aplicar negativa sobre procedimento fora do escopo não viola a liminar, mas deve ser fundamentada.',
     },
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Beneficiário com liminar judicial ativa cobrindo Bevacizumabe 400mg IV (processo 1043827-12.2026.8.26.0100, válida até 30/06/2026). Cumprimento da ordem judicial é obrigatório. Indicação clínica compatível: carcinoma colorretal metastático (C18.9), ciclo 8/12 dentro do protocolo terapêutico em curso desde Ago/2025. Prestador credenciado para oncologia. Procedimento enquadrado no escopo exato da liminar.',
     iaChecklist: [
       { texto: 'Liminar judicial ativa e dentro da validade (30/06/2026)', status: 'ok' },
-      { texto: 'Procedimento dentro do escopo exato da liminar (Bevacizumabe 400mg)', status: 'ok' },
+      {
+        texto: 'Procedimento dentro do escopo exato da liminar (Bevacizumabe 400mg)',
+        status: 'ok',
+      },
       { texto: 'CID C18.9 compatível com protocolo — Bevacizumabe em colorretal', status: 'ok' },
       { texto: 'Biópsia confirmatória disponível no histórico do sistema', status: 'ok' },
       { texto: 'CRM 78901-SP verificado como oncologista', status: 'ok' },
       { texto: 'Prestador credenciado para oncologia de alta complexidade', status: 'ok' },
-      { texto: 'Exames pré-ciclo (hemograma, creatinina) enviados — aguardando validação', status: 'warning' },
+      {
+        texto: 'Exames pré-ciclo (hemograma, creatinina) enviados — aguardando validação',
+        status: 'warning',
+      },
     ],
-    observations: 'Paciente com carcinoma colorretal metastático em tratamento com Bevacizumabe desde Ago/2025. Ciclo 8 de 12 previsto. Autorização obrigatória por força de liminar judicial vigente (despacho de 15/03/2026). Exames pré-ciclo anexados pelo prestador em 04/04/2026.',
+    observations:
+      'Paciente com carcinoma colorretal metastático em tratamento com Bevacizumabe desde Ago/2025. Ciclo 8 de 12 previsto. Autorização obrigatória por força de liminar judicial vigente (despacho de 15/03/2026). Exames pré-ciclo anexados pelo prestador em 04/04/2026.',
     documents: [
-      { id: 'DOC-141', nome: 'Decisao-Liminar-1043827.pdf', tipo: 'Documento Judicial', tamanho: '320 KB', enviadoEm: '16/03/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-142', nome: 'Pedido-Medico-Bevacizumabe-Ciclo8.pdf', tipo: 'Pedido Médico', tamanho: '195 KB', enviadoEm: '04/04/2026', obrigatorio: true, status: 'enviado' },
-      { id: 'DOC-143', nome: 'Exames-Pre-Ciclo8.pdf', tipo: 'Laudo Médico', tamanho: '510 KB', enviadoEm: '04/04/2026', obrigatorio: true, status: 'enviado' },
+      {
+        id: 'DOC-141',
+        nome: 'Decisao-Liminar-1043827.pdf',
+        tipo: 'Documento Judicial',
+        tamanho: '320 KB',
+        enviadoEm: '16/03/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-142',
+        nome: 'Pedido-Medico-Bevacizumabe-Ciclo8.pdf',
+        tipo: 'Pedido Médico',
+        tamanho: '195 KB',
+        enviadoEm: '04/04/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
+      {
+        id: 'DOC-143',
+        nome: 'Exames-Pre-Ciclo8.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '510 KB',
+        enviadoEm: '04/04/2026',
+        obrigatorio: true,
+        status: 'enviado',
+      },
     ],
   },
-]
+];
 
 // dashboardMetrics is defined at the bottom of this file (after historicoEntries) so it can be computed from both arrays.
 
 // ── Histórico ──────────────────────────────────────────────────────────
 
-export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva'
-export type DecisionOrigin = 'ia_automatica' | 'analista'
+export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva';
+export type DecisionOrigin = 'ia_automatica' | 'analista';
 
 export interface MedicalBoard {
-  dataReuniao: string
-  numeroAta: string
-  parecer: string
-  membros: { nome: string; especialidade: string; crm: string }[]
+  dataReuniao: string;
+  numeroAta: string;
+  parecer: string;
+  membros: { nome: string; especialidade: string; crm: string }[];
 }
 
 export interface HistoryEntry {
-  id: string
-  beneficiary: string
-  cardNumber: string
-  plan: string
-  category: Category
-  procedure: string
-  cid: string
-  provider: string
-  requestingDoctor: string
-  guideType: GuideType
-  protocolDate: string
-  decisionDate: string
-  action: DecisionAction
-  origin: DecisionOrigin
-  analyst: string
-  decisionReason: string
-  freeText?: string
-  iaSuggestion: IASuggestion
-  divergence: boolean
-  divergenceReason?: string
-  analysisTimeMin: number
-  observations?: string
-  sex?: 'M' | 'F'
-  age?: number
-  cpf?: string
-  birthDate?: string
-  waitingPeriod?: boolean
+  id: string;
+  beneficiary: string;
+  cardNumber: string;
+  plan: string;
+  category: Category;
+  procedure: string;
+  cid: string;
+  provider: string;
+  requestingDoctor: string;
+  guideType: GuideType;
+  protocolDate: string;
+  decisionDate: string;
+  action: DecisionAction;
+  origin: DecisionOrigin;
+  analyst: string;
+  decisionReason: string;
+  freeText?: string;
+  iaSuggestion: IASuggestion;
+  divergence: boolean;
+  divergenceReason?: string;
+  analysisTimeMin: number;
+  observations?: string;
+  sex?: 'M' | 'F';
+  age?: number;
+  cpf?: string;
+  birthDate?: string;
+  waitingPeriod?: boolean;
   detailedProcedures?: {
-    code: string
-    tuss: string
-    description: string
-    qty: number
-    authorizedQty?: number
-    startDate: string
-    endDate: string
-    cid: string
-    auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI'
-    decisao?: 'aprovado' | 'negado'
-    motivoDecisao?: string
-  }[]
-  alerts?: string[]
-  iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[]
-  documents?: { nome: string; tipo: string; data: string }[]
-  medicalBoard?: MedicalBoard
-  adjustments?: Adjustment[]
-  secondaryCids?: string[]
+    code: string;
+    tuss: string;
+    description: string;
+    qty: number;
+    authorizedQty?: number;
+    startDate: string;
+    endDate: string;
+    cid: string;
+    auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
+    decisao?: 'aprovado' | 'negado';
+    motivoDecisao?: string;
+  }[];
+  alerts?: string[];
+  iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[];
+  documents?: { nome: string; tipo: string; data: string }[];
+  medicalBoard?: MedicalBoard;
+  adjustments?: Adjustment[];
+  secondaryCids?: string[];
 }
 
 export const historicoEntries: HistoryEntry[] = [
@@ -1239,7 +1604,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Exames de rotina com CID compatível e médico credenciado. Procedimento consta no Rol ANS vigente.',
+    decisionReason:
+      'Exames de rotina com CID compatível e médico credenciado. Procedimento consta no Rol ANS vigente.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1249,7 +1615,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '15/07/1987',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40301012', tuss: '40301012', description: 'Hemograma completo + PCR + Glicemia em jejum', qty: 1, authorizedQty: 1, startDate: '23/03/2026', endDate: '23/03/2026', cid: 'R50.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40301012',
+        tuss: '40301012',
+        description: 'Hemograma completo + PCR + Glicemia em jejum',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '23/03/2026',
+        endDate: '23/03/2026',
+        cid: 'R50.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1277,7 +1653,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Controle metabólico periódico para paciente diabético. Indicação clínica compatível com CID. Cobertura obrigatória pela RN 465/2021.',
+    decisionReason:
+      'Controle metabólico periódico para paciente diabético. Indicação clínica compatível com CID. Cobertura obrigatória pela RN 465/2021.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1287,7 +1664,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '20/05/1967',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40301032', tuss: '40301032', description: 'Glicemia em jejum + HbA1c + Colesterol total e frações', qty: 1, authorizedQty: 1, startDate: '23/03/2026', endDate: '23/03/2026', cid: 'E11.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40301032',
+        tuss: '40301032',
+        description: 'Glicemia em jejum + HbA1c + Colesterol total e frações',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '23/03/2026',
+        endDate: '23/03/2026',
+        cid: 'E11.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1315,7 +1702,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Exame diagnóstico para ITU aguda. Caráter urgente justificado. Procedimento dentro do Rol ANS.',
+    decisionReason:
+      'Exame diagnóstico para ITU aguda. Caráter urgente justificado. Procedimento dentro do Rol ANS.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1325,7 +1713,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '09/11/1993',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40308060', tuss: '40308060', description: 'Urocultura + Antibiograma', qty: 1, authorizedQty: 1, startDate: '22/03/2026', endDate: '22/03/2026', cid: 'N39.0', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40308060',
+        tuss: '40308060',
+        description: 'Urocultura + Antibiograma',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '22/03/2026',
+        endDate: '22/03/2026',
+        cid: 'N39.0',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1353,7 +1751,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Acompanhamento de hipotireoidismo. CID compatível, médico credenciado, exames dentro do Rol ANS.',
+    decisionReason:
+      'Acompanhamento de hipotireoidismo. CID compatível, médico credenciado, exames dentro do Rol ANS.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1363,7 +1762,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '03/06/1980',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40301104', tuss: '40301104', description: 'TSH + T4 Livre + Anti-TPO', qty: 1, authorizedQty: 1, startDate: '22/03/2026', endDate: '22/03/2026', cid: 'E03.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40301104',
+        tuss: '40301104',
+        description: 'TSH + T4 Livre + Anti-TPO',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '22/03/2026',
+        endDate: '22/03/2026',
+        cid: 'E03.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1391,7 +1800,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Exame de imagem rotineiro com CID compatível. Primeira solicitação do período. Cobertura obrigatória.',
+    decisionReason:
+      'Exame de imagem rotineiro com CID compatível. Primeira solicitação do período. Cobertura obrigatória.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1401,7 +1811,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '22/09/1996',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40901016', tuss: '40901016', description: 'Raio-X de tórax PA e perfil', qty: 1, authorizedQty: 1, startDate: '21/03/2026', endDate: '21/03/2026', cid: 'J06.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40901016',
+        tuss: '40901016',
+        description: 'Raio-X de tórax PA e perfil',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '21/03/2026',
+        endDate: '21/03/2026',
+        cid: 'J06.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1429,7 +1849,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Negado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Exame realizado há 22 dias — intervalo mínimo de 30 dias não atingido. Solicitação de repetição não justificada clinicamente.',
+    decisionReason:
+      'Exame realizado há 22 dias — intervalo mínimo de 30 dias não atingido. Solicitação de repetição não justificada clinicamente.',
     iaSuggestion: 'Negar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1439,7 +1860,16 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '14/02/1974',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40302605', tuss: '40302605', description: 'Perfil lipídico completo (LDL, HDL, TG, colesterol total)', qty: 1, startDate: '21/03/2026', endDate: '21/03/2026', cid: 'E78.5', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40302605',
+        tuss: '40302605',
+        description: 'Perfil lipídico completo (LDL, HDL, TG, colesterol total)',
+        qty: 1,
+        startDate: '21/03/2026',
+        endDate: '21/03/2026',
+        cid: 'E78.5',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1467,7 +1897,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Fisioterapia respiratória indicada para asma. Número de sessões dentro do limite do protocolo clínico. CID e prestador credenciado.',
+    decisionReason:
+      'Fisioterapia respiratória indicada para asma. Número de sessões dentro do limite do protocolo clínico. CID e prestador credenciado.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1477,7 +1908,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '17/08/1984',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '50000470', tuss: '50000470', description: 'Fisioterapia respiratória — 10 sessões', qty: 10, authorizedQty: 10, startDate: '20/03/2026', endDate: '20/03/2026', cid: 'J45.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '50000470',
+        tuss: '50000470',
+        description: 'Fisioterapia respiratória — 10 sessões',
+        qty: 10,
+        authorizedQty: 10,
+        startDate: '20/03/2026',
+        endDate: '20/03/2026',
+        cid: 'J45.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1505,7 +1946,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Primeira solicitação do período. Documentação completa: laudo neuropediatra + relatório de TO. Cobertura obrigatória RN 539/2022.',
+    decisionReason:
+      'Primeira solicitação do período. Documentação completa: laudo neuropediatra + relatório de TO. Cobertura obrigatória RN 539/2022.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1515,7 +1957,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '05/03/2019',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '50000489', tuss: '50000489', description: 'Terapia Ocupacional para TEA — 12 sessões', qty: 12, authorizedQty: 12, startDate: '20/03/2026', endDate: '20/03/2026', cid: 'F84.0', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '50000489',
+        tuss: '50000489',
+        description: 'Terapia Ocupacional para TEA — 12 sessões',
+        qty: 12,
+        authorizedQty: 12,
+        startDate: '20/03/2026',
+        endDate: '20/03/2026',
+        cid: 'F84.0',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1544,18 +1996,30 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Ana Paula Santos',
-    decisionReason: 'Documentação completa. Radiografia confirmando Kellgren-Lawrence grau IV. Tratamento conservador esgotado (fisioterapia por 6 meses). OPME aprovada conforme cotações apresentadas.',
+    decisionReason:
+      'Documentação completa. Radiografia confirmando Kellgren-Lawrence grau IV. Tratamento conservador esgotado (fisioterapia por 6 meses). OPME aprovada conforme cotações apresentadas.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 23,
-    observations: 'Autorizado com quantidade parcial: 1 joelho (esquerdo). Direito deverá ser solicitado separadamente após recuperação.',
+    observations:
+      'Autorizado com quantidade parcial: 1 joelho (esquerdo). Direito deverá ser solicitado separadamente após recuperação.',
     sex: 'F',
     age: 62,
     cpf: '812.345.010-52',
     birthDate: '30/04/1963',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '30722013', tuss: '30722013', description: 'Artroplastia total de joelho — prótese não cimentada', qty: 1, authorizedQty: 1, startDate: '21/03/2026', endDate: '21/03/2026', cid: 'M17.1', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '30722013',
+        tuss: '30722013',
+        description: 'Artroplastia total de joelho — prótese não cimentada',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '21/03/2026',
+        endDate: '21/03/2026',
+        cid: 'M17.1',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1565,7 +2029,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0033.pdf', tipo: 'Laudo Médico', data: '19/03/2026 08:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0033.pdf', tipo: 'Guia Médica', data: '21/03/2026 10:15' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0033.pdf',
+        tipo: 'Guia Médica',
+        data: '21/03/2026 10:15',
+      },
     ],
     adjustments: [
       {
@@ -1576,7 +2044,8 @@ export const historicoEntries: HistoryEntry[] = [
         previousValue: 'Hospital São Camilo',
         newValue: 'Hospital Santa Cruz',
         reason: 'Prestador não credenciado para este procedimento',
-        justification: 'Hospital São Camilo com credenciamento suspenso para cirurgias ortopédicas desde 01/03/2026. Redirecionado para Hospital Santa Cruz, credenciado e com equipe disponível.',
+        justification:
+          'Hospital São Camilo com credenciamento suspenso para cirurgias ortopédicas desde 01/03/2026. Redirecionado para Hospital Santa Cruz, credenciado e com equipe disponível.',
         operator: 'Ana Paula Santos',
         profile: 'Gestora',
         timestamp: '2026-03-21T09:40:00',
@@ -1599,7 +2068,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Carlos Eduardo Ramos',
-    decisionReason: 'Caráter urgente confirmado. Saturação O₂ < 92%, necessidade de suporte ventilatório. Autorizada UTI por 5 dias com reavaliação.',
+    decisionReason:
+      'Caráter urgente confirmado. Saturação O₂ < 92%, necessidade de suporte ventilatório. Autorizada UTI por 5 dias com reavaliação.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 35,
@@ -1609,7 +2079,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '08/01/1956',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '30718014', tuss: '30718014', description: 'Internação clínica — Pneumonia bacteriana — 5 diárias UTI', qty: 5, authorizedQty: 5, startDate: '18/03/2026', endDate: '22/03/2026', cid: 'J18.9', auditLevel: 'UTI' },
+      {
+        code: '30718014',
+        tuss: '30718014',
+        description: 'Internação clínica — Pneumonia bacteriana — 5 diárias UTI',
+        qty: 5,
+        authorizedQty: 5,
+        startDate: '18/03/2026',
+        endDate: '22/03/2026',
+        cid: 'J18.9',
+        auditLevel: 'UTI',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1619,7 +2099,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0032.pdf', tipo: 'Laudo Médico', data: '18/03/2026 22:10' },
-      { nome: 'Guia de Autorização — HIS-2026-0032.pdf', tipo: 'Guia Médica', data: '18/03/2026 22:45' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0032.pdf',
+        tipo: 'Guia Médica',
+        data: '18/03/2026 22:45',
+      },
     ],
   },
   {
@@ -1638,7 +2122,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Ana Paula Santos',
-    decisionReason: 'Cateterismo confirma estenose >70% em 2 artérias. Stent farmacológico indicado por protocolo ACC/AHA. OPME aprovada — fabricante validado, 3 cotações apresentadas.',
+    decisionReason:
+      'Cateterismo confirma estenose >70% em 2 artérias. Stent farmacológico indicado por protocolo ACC/AHA. OPME aprovada — fabricante validado, 3 cotações apresentadas.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 150,
@@ -1648,7 +2133,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '25/07/1970',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '30507026', tuss: '30507026', description: 'Stent coronariano farmacológico — 2 unidades', qty: 2, authorizedQty: 2, startDate: '17/03/2026', endDate: '17/03/2026', cid: 'I25.1', auditLevel: 'HOSPITALAR' },
+      {
+        code: '30507026',
+        tuss: '30507026',
+        description: 'Stent coronariano farmacológico — 2 unidades',
+        qty: 2,
+        authorizedQty: 2,
+        startDate: '17/03/2026',
+        endDate: '17/03/2026',
+        cid: 'I25.1',
+        auditLevel: 'HOSPITALAR',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1658,7 +2153,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0031.pdf', tipo: 'Laudo Médico', data: '17/03/2026 14:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0031.pdf', tipo: 'Guia Médica', data: '17/03/2026 16:30' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0031.pdf',
+        tipo: 'Guia Médica',
+        data: '17/03/2026 16:30',
+      },
     ],
   },
   {
@@ -1677,7 +2176,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Juliana Costa',
-    decisionReason: 'Estadiamento T3N2M0. Protocolo FOLFOX dentro da diretriz ASCO para CCR estágio III. Resposta positiva nos ciclos anteriores. Aprovado.',
+    decisionReason:
+      'Estadiamento T3N2M0. Protocolo FOLFOX dentro da diretriz ASCO para CCR estágio III. Resposta positiva nos ciclos anteriores. Aprovado.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 41,
@@ -1687,7 +2187,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '11/12/1971',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '90010019', tuss: '90010019', description: 'Quimioterapia FOLFOX — 6º ciclo', qty: 1, authorizedQty: 1, startDate: '17/03/2026', endDate: '17/03/2026', cid: 'C18.7', auditLevel: 'HOSPITALAR' },
+      {
+        code: '90010019',
+        tuss: '90010019',
+        description: 'Quimioterapia FOLFOX — 6º ciclo',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '17/03/2026',
+        endDate: '17/03/2026',
+        cid: 'C18.7',
+        auditLevel: 'HOSPITALAR',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1697,7 +2207,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0030.pdf', tipo: 'Laudo Médico', data: '16/03/2026 09:30' },
-      { nome: 'Guia de Autorização — HIS-2026-0030.pdf', tipo: 'Guia Médica', data: '17/03/2026 11:00' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0030.pdf',
+        tipo: 'Guia Médica',
+        data: '17/03/2026 11:00',
+      },
     ],
   },
   {
@@ -1716,11 +2230,14 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Negado',
     origin: 'analista',
     analyst: 'Ana Paula Santos',
-    decisionReason: 'Solicitação de contraste não justificada na indicação clínica. Necessário relatório específico do ortopedista descrevendo suspeita de lesão que exige contraste.',
-    freeText: 'Pedido retorna sem o laudo complementar do ortopedista. RM sem contraste poderia ser aprovada, mas o médico indicou explicitamente "com contraste".',
+    decisionReason:
+      'Solicitação de contraste não justificada na indicação clínica. Necessário relatório específico do ortopedista descrevendo suspeita de lesão que exige contraste.',
+    freeText:
+      'Pedido retorna sem o laudo complementar do ortopedista. RM sem contraste poderia ser aprovada, mas o médico indicou explicitamente "com contraste".',
     iaSuggestion: 'Aprovar',
     divergence: true,
-    divergenceReason: 'IA aprovou sem avaliar especificidade do contraste. Análise humana identificou ausência de justificativa técnica para o contraste.',
+    divergenceReason:
+      'IA aprovou sem avaliar especificidade do contraste. Análise humana identificou ausência de justificativa técnica para o contraste.',
     analysisTimeMin: 18,
     sex: 'M',
     age: 36,
@@ -1728,7 +2245,16 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '19/06/1989',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40901024', tuss: '40901024', description: 'Ressonância magnética do joelho com contraste', qty: 1, startDate: '16/03/2026', endDate: '16/03/2026', cid: 'M23.2', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '40901024',
+        tuss: '40901024',
+        description: 'Ressonância magnética do joelho com contraste',
+        qty: 1,
+        startDate: '16/03/2026',
+        endDate: '16/03/2026',
+        cid: 'M23.2',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: ['Divergência IA'],
     iaChecklist: [
@@ -1738,7 +2264,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0029.pdf', tipo: 'Laudo Médico', data: '15/03/2026 10:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0029.pdf', tipo: 'Guia Médica', data: '16/03/2026 09:45' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0029.pdf',
+        tipo: 'Guia Médica',
+        data: '16/03/2026 09:45',
+      },
     ],
   },
   {
@@ -1757,10 +2287,12 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Juliana Costa',
-    decisionReason: 'Diagnóstico confirmado por psiquiatra. Sessões dentro do limite de 40 sessões/ano previsto no contrato. Psicóloga credenciada.',
+    decisionReason:
+      'Diagnóstico confirmado por psiquiatra. Sessões dentro do limite de 40 sessões/ano previsto no contrato. Psicóloga credenciada.',
     iaSuggestion: 'Junta Médica',
     divergence: true,
-    divergenceReason: 'IA sinalizou Junta Médica por quantidade de sessões acima da média. Analista verificou cláusula contratual específica do plano que permite 40 sessões — dentro da cobertura contratada.',
+    divergenceReason:
+      'IA sinalizou Junta Médica por quantidade de sessões acima da média. Analista verificou cláusula contratual específica do plano que permite 40 sessões — dentro da cobertura contratada.',
     analysisTimeMin: 27,
     sex: 'F',
     age: 47,
@@ -1768,7 +2300,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '27/03/1978',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '50000404', tuss: '50000404', description: 'Psicoterapia — 40 sessões anuais', qty: 40, authorizedQty: 40, startDate: '15/03/2026', endDate: '15/03/2026', cid: 'F33.1', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '50000404',
+        tuss: '50000404',
+        description: 'Psicoterapia — 40 sessões anuais',
+        qty: 40,
+        authorizedQty: 40,
+        startDate: '15/03/2026',
+        endDate: '15/03/2026',
+        cid: 'F33.1',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: ['Divergência IA'],
     iaChecklist: [
@@ -1778,16 +2320,25 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0028.pdf', tipo: 'Laudo Médico', data: '14/03/2026 11:15' },
-      { nome: 'Guia de Autorização — HIS-2026-0028.pdf', tipo: 'Guia Médica', data: '15/03/2026 14:30' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0028.pdf',
+        tipo: 'Guia Médica',
+        data: '15/03/2026 14:30',
+      },
     ],
     medicalBoard: {
       dataReuniao: '15/03/2026 10:00',
       numeroAta: 'ATA-2026-0428',
-      parecer: 'Junta médica revisou o histórico clínico da beneficiária e a cláusula contratual do plano Amil 300. Por unanimidade, a junta concluiu que as 40 sessões anuais de psicoterapia estão dentro da cobertura contratada. Decisão: APROVADO.',
+      parecer:
+        'Junta médica revisou o histórico clínico da beneficiária e a cláusula contratual do plano Amil 300. Por unanimidade, a junta concluiu que as 40 sessões anuais de psicoterapia estão dentro da cobertura contratada. Decisão: APROVADO.',
       membros: [
-        { nome: 'Dr. Antônio Mello',    especialidade: 'Psiquiatria',              crm: 'CRM/SP 41203' },
-        { nome: 'Dra. Fernanda Lopes',  especialidade: 'Auditoria Médica',         crm: 'CRM/SP 59871' },
-        { nome: 'Dr. Ricardo Azevedo',  especialidade: 'Saúde Mental / Perícia',   crm: 'CRM/SP 33902' },
+        { nome: 'Dr. Antônio Mello', especialidade: 'Psiquiatria', crm: 'CRM/SP 41203' },
+        { nome: 'Dra. Fernanda Lopes', especialidade: 'Auditoria Médica', crm: 'CRM/SP 59871' },
+        {
+          nome: 'Dr. Ricardo Azevedo',
+          especialidade: 'Saúde Mental / Perícia',
+          crm: 'CRM/SP 33902',
+        },
       ],
     },
   },
@@ -1807,10 +2358,12 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Negado',
     origin: 'analista',
     analyst: 'Carlos Eduardo Ramos',
-    decisionReason: 'Paciente em período de carência (ingresso há 28 dias). Internação eletiva não coberta antes de completar 180 dias de carência — conforme cláusula 8.2 do contrato. Indicado encaminhamento para Urgência se houver descompensação.',
+    decisionReason:
+      'Paciente em período de carência (ingresso há 28 dias). Internação eletiva não coberta antes de completar 180 dias de carência — conforme cláusula 8.2 do contrato. Indicado encaminhamento para Urgência se houver descompensação.',
     iaSuggestion: 'Aprovar',
     divergence: true,
-    divergenceReason: 'IA aprovou sem identificar o período de carência ativo do beneficiário. Verificação manual da data de ingresso revelou carência em vigência.',
+    divergenceReason:
+      'IA aprovou sem identificar o período de carência ativo do beneficiário. Verificação manual da data de ingresso revelou carência em vigência.',
     analysisTimeMin: 120,
     sex: 'M',
     age: 63,
@@ -1818,7 +2371,16 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '02/09/1962',
     waitingPeriod: true,
     detailedProcedures: [
-      { code: '30718014', tuss: '30718014', description: 'Internação clínica — Cardiomiopatia dilatada — apartamento, 3 diárias', qty: 3, startDate: '13/03/2026', endDate: '13/03/2026', cid: 'I42.0', auditLevel: 'HOSPITALAR' },
+      {
+        code: '30718014',
+        tuss: '30718014',
+        description: 'Internação clínica — Cardiomiopatia dilatada — apartamento, 3 diárias',
+        qty: 3,
+        startDate: '13/03/2026',
+        endDate: '13/03/2026',
+        cid: 'I42.0',
+        auditLevel: 'HOSPITALAR',
+      },
     ],
     alerts: ['Carência Ativa', 'Divergência IA'],
     iaChecklist: [
@@ -1828,7 +2390,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0027.pdf', tipo: 'Laudo Médico', data: '13/03/2026 07:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0027.pdf', tipo: 'Guia Médica', data: '13/03/2026 09:00' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0027.pdf',
+        tipo: 'Guia Médica',
+        data: '13/03/2026 09:00',
+      },
     ],
   },
   {
@@ -1847,7 +2413,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Emergência cirúrgica confirmada (apendicite aguda). Cobertura obrigatória em qualquer rede. Autorização automática por protocolo de urgência/emergência.',
+    decisionReason:
+      'Emergência cirúrgica confirmada (apendicite aguda). Cobertura obrigatória em qualquer rede. Autorização automática por protocolo de urgência/emergência.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1857,7 +2424,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '14/08/1997',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '30707005', tuss: '30707005', description: 'Atendimento de urgência — Appendicite aguda + Appendicectomia laparoscópica', qty: 1, authorizedQty: 1, startDate: '12/03/2026', endDate: '12/03/2026', cid: 'K35.8', auditLevel: 'HOSPITALAR' },
+      {
+        code: '30707005',
+        tuss: '30707005',
+        description: 'Atendimento de urgência — Appendicite aguda + Appendicectomia laparoscópica',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '12/03/2026',
+        endDate: '12/03/2026',
+        cid: 'K35.8',
+        auditLevel: 'HOSPITALAR',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1885,7 +2462,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Negado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Rinoplastia com finalidade exclusivamente estética não consta no Rol de Procedimentos ANS. CID Z41.1 indica procedimento para fins estéticos. Cobertura negada conforme RN 465/2021.',
+    decisionReason:
+      'Rinoplastia com finalidade exclusivamente estética não consta no Rol de Procedimentos ANS. CID Z41.1 indica procedimento para fins estéticos. Cobertura negada conforme RN 465/2021.',
     iaSuggestion: 'Negar',
     divergence: false,
     analysisTimeMin: 0,
@@ -1895,7 +2473,16 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '07/04/2000',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '31308083', tuss: '31308083', description: 'Rinoplastia estética', qty: 1, startDate: '11/03/2026', endDate: '11/03/2026', cid: 'Z41.1', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '31308083',
+        tuss: '31308083',
+        description: 'Rinoplastia estética',
+        qty: 1,
+        startDate: '11/03/2026',
+        endDate: '11/03/2026',
+        cid: 'Z41.1',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1923,7 +2510,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Ana Paula Santos',
-    decisionReason: 'Alta hospitalar recente (3 dias). Paciente com sequelas motoras leves pós-AVC. AD2 indicada pela médica assistente. Empresa de Home Care credenciada. Aprovado por 30 dias com reavaliação.',
+    decisionReason:
+      'Alta hospitalar recente (3 dias). Paciente com sequelas motoras leves pós-AVC. AD2 indicada pela médica assistente. Empresa de Home Care credenciada. Aprovado por 30 dias com reavaliação.',
     iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 32,
@@ -1933,7 +2521,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '03/02/1958',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '92000019', tuss: '92000019', description: 'Home Care AD2 — pós AVC isquêmico — 30 dias', qty: 30, authorizedQty: 30, startDate: '11/03/2026', endDate: '10/04/2026', cid: 'I63.9', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '92000019',
+        tuss: '92000019',
+        description: 'Home Care AD2 — pós AVC isquêmico — 30 dias',
+        qty: 30,
+        authorizedQty: 30,
+        startDate: '11/03/2026',
+        endDate: '10/04/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: [],
     iaChecklist: [
@@ -1943,7 +2541,11 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0024.pdf', tipo: 'Laudo Médico', data: '10/03/2026 10:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0024.pdf', tipo: 'Guia Médica', data: '11/03/2026 08:30' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0024.pdf',
+        tipo: 'Guia Médica',
+        data: '11/03/2026 08:30',
+      },
     ],
   },
   {
@@ -1962,10 +2564,12 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado',
     origin: 'analista',
     analyst: 'Juliana Costa',
-    decisionReason: 'PET-CT solicitado para estadiamento de neoplasia pulmonar confirmada por biópsia. Exame dentro das diretrizes INCA/SBCO. Aprovado.',
+    decisionReason:
+      'PET-CT solicitado para estadiamento de neoplasia pulmonar confirmada por biópsia. Exame dentro das diretrizes INCA/SBCO. Aprovado.',
     iaSuggestion: 'Junta Médica',
     divergence: true,
-    divergenceReason: 'IA sugeriu Junta Médica por ser exame de alto custo. Analista avaliou que diretrizes oncológicas são claras para este caso — estadiamento pré-cirúrgico é mandatório.',
+    divergenceReason:
+      'IA sugeriu Junta Médica por ser exame de alto custo. Analista avaliou que diretrizes oncológicas são claras para este caso — estadiamento pré-cirúrgico é mandatório.',
     analysisTimeMin: 55,
     sex: 'M',
     age: 57,
@@ -1973,7 +2577,17 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '18/10/1968',
     waitingPeriod: false,
     detailedProcedures: [
-      { code: '40901064', tuss: '40901064', description: 'PET-CT oncológico corpo inteiro', qty: 1, authorizedQty: 1, startDate: '10/03/2026', endDate: '10/03/2026', cid: 'C34.1', auditLevel: 'HOSPITALAR' },
+      {
+        code: '40901064',
+        tuss: '40901064',
+        description: 'PET-CT oncológico corpo inteiro',
+        qty: 1,
+        authorizedQty: 1,
+        startDate: '10/03/2026',
+        endDate: '10/03/2026',
+        cid: 'C34.1',
+        auditLevel: 'HOSPITALAR',
+      },
     ],
     alerts: ['Divergência IA'],
     iaChecklist: [
@@ -1983,16 +2597,21 @@ export const historicoEntries: HistoryEntry[] = [
     ],
     documents: [
       { nome: 'Laudo Médico — HIS-2026-0023.pdf', tipo: 'Laudo Médico', data: '09/03/2026 09:00' },
-      { nome: 'Guia de Autorização — HIS-2026-0023.pdf', tipo: 'Guia Médica', data: '10/03/2026 15:00' },
+      {
+        nome: 'Guia de Autorização — HIS-2026-0023.pdf',
+        tipo: 'Guia Médica',
+        data: '10/03/2026 15:00',
+      },
     ],
     medicalBoard: {
       dataReuniao: '10/03/2026 08:30',
       numeroAta: 'ATA-2026-0389',
-      parecer: 'Junta oncológica confirmou indicação de PET-CT para estadiamento pré-cirúrgico de neoplasia pulmonar (C34.1). Exame previsto nas diretrizes INCA/SBCO para este estadio. Custo justificado pela necessidade clínica. Decisão: APROVADO.',
+      parecer:
+        'Junta oncológica confirmou indicação de PET-CT para estadiamento pré-cirúrgico de neoplasia pulmonar (C34.1). Exame previsto nas diretrizes INCA/SBCO para este estadio. Custo justificado pela necessidade clínica. Decisão: APROVADO.',
       membros: [
-        { nome: 'Dr. Alexandre Fonseca', especialidade: 'Oncologia Clínica',    crm: 'CRM/SP 30044' },
-        { nome: 'Dra. Mariana Souza',    especialidade: 'Medicina Nuclear',     crm: 'CRM/SP 72314' },
-        { nome: 'Dr. Paulo Henrique',    especialidade: 'Auditoria Médica',     crm: 'CRM/SP 48903' },
+        { nome: 'Dr. Alexandre Fonseca', especialidade: 'Oncologia Clínica', crm: 'CRM/SP 30044' },
+        { nome: 'Dra. Mariana Souza', especialidade: 'Medicina Nuclear', crm: 'CRM/SP 72314' },
+        { nome: 'Dr. Paulo Henrique', especialidade: 'Auditoria Médica', crm: 'CRM/SP 48903' },
       ],
     },
   },
@@ -2012,7 +2631,8 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Negado',
     origin: 'ia_automatica',
     analyst: 'Sistema IA',
-    decisionReason: 'Beneficiária em período de carência para terapias especiais (ingresso há 89 dias — carência de 180 dias para esta cobertura). Solicitação negada conforme contrato.',
+    decisionReason:
+      'Beneficiária em período de carência para terapias especiais (ingresso há 89 dias — carência de 180 dias para esta cobertura). Solicitação negada conforme contrato.',
     iaSuggestion: 'Negar',
     divergence: false,
     analysisTimeMin: 0,
@@ -2022,7 +2642,16 @@ export const historicoEntries: HistoryEntry[] = [
     birthDate: '21/05/1991',
     waitingPeriod: true,
     detailedProcedures: [
-      { code: '50000463', tuss: '50000463', description: 'Fonoaudiologia — 20 sessões', qty: 20, startDate: '08/03/2026', endDate: '08/03/2026', cid: 'R47.0', auditLevel: 'AMBULATORIAL' },
+      {
+        code: '50000463',
+        tuss: '50000463',
+        description: 'Fonoaudiologia — 20 sessões',
+        qty: 20,
+        startDate: '08/03/2026',
+        endDate: '08/03/2026',
+        cid: 'R47.0',
+        auditLevel: 'AMBULATORIAL',
+      },
     ],
     alerts: ['Carência Ativa'],
     iaChecklist: [
@@ -2051,10 +2680,12 @@ export const historicoEntries: HistoryEntry[] = [
     action: 'Aprovado Parcial',
     origin: 'analista',
     analyst: 'Ana Paula Santos',
-    decisionReason: 'ABA aprovado por critérios atendidos (RN 539/2022). Fonoaudiologia negada por documentação clínica incompleta — relatório de evolução ausente.',
+    decisionReason:
+      'ABA aprovado por critérios atendidos (RN 539/2022). Fonoaudiologia negada por documentação clínica incompleta — relatório de evolução ausente.',
     iaSuggestion: 'Aprovar',
     divergence: true,
-    divergenceReason: 'Decisão parcial: ABA aprovado conforme RN 539/2022, Fonoaudiologia negada por ausência de relatório de evolução terapêutica.',
+    divergenceReason:
+      'Decisão parcial: ABA aprovado conforme RN 539/2022, Fonoaudiologia negada por ausência de relatório de evolução terapêutica.',
     analysisTimeMin: 35,
     sex: 'M',
     age: 7,
@@ -2095,10 +2726,14 @@ export const historicoEntries: HistoryEntry[] = [
       { texto: 'Decisão parcialmente alinhada com a IA', status: 'warning' },
     ],
     documents: [
-      { nome: 'Laudo Neuropsicológico — HIS-2026-0042.pdf', tipo: 'Laudo Médico', data: '01/04/2026 10:15' },
+      {
+        nome: 'Laudo Neuropsicológico — HIS-2026-0042.pdf',
+        tipo: 'Laudo Médico',
+        data: '01/04/2026 10:15',
+      },
     ],
   },
-]
+];
 
 // ── Processing queue (not yet in operational queue) ──────────────────────
 export const pedidosEmProcessamento: ProcessingRequest[] = [
@@ -2211,60 +2846,91 @@ export const pedidosEmProcessamento: ProcessingRequest[] = [
     entradaEm: new Date(Date.now() - 45 * 60000),
     erroDescricao: 'PDF corrompido — não foi possível extrair documentos',
   },
-]
+];
 
 // ── Dashboard Metrics (computed from real data) ─────────────────────────
 export const dashboardMetrics = (() => {
-  const _emAnalise = pedidos.filter(p => p.status === 'Em Análise').length
-  const _devolutivas = pedidos.filter(p => p.status === 'Devolutiva').length
-  const _urgencias = pedidos.filter(p => p.guideType === 'Urgente' || p.guideType === 'Emergência').length
-  const _aprovados = historicoEntries.filter(h => h.action === 'Aprovado').length
-  const _negados = historicoEntries.filter(h => h.action === 'Negado').length
-  const _taxaBase = _aprovados + _negados
+  const _emAnalise = pedidos.filter((p) => p.status === 'Em Análise').length;
+  const _devolutivas = pedidos.filter((p) => p.status === 'Devolutiva').length;
+  const _urgencias = pedidos.filter(
+    (p) => p.guideType === 'Urgente' || p.guideType === 'Emergência',
+  ).length;
+  const _aprovados = historicoEntries.filter((h) => h.action === 'Aprovado').length;
+  const _negados = historicoEntries.filter((h) => h.action === 'Negado').length;
+  const _taxaBase = _aprovados + _negados;
   // Irregularidades: total de alertas nos pedidos ativos
-  const _totalAlertasAtivos = pedidos.reduce((s, p) => s + p.alerts.length, 0)
-  const _pedidosComAlerta = pedidos.filter(p => p.alerts.length > 0).length
+  const _totalAlertasAtivos = pedidos.reduce((s, p) => s + p.alerts.length, 0);
+  const _pedidosComAlerta = pedidos.filter((p) => p.alerts.length > 0).length;
   // Devolutivas por sub-estado
-  const _devolutivasAguardando = pedidos.filter(p => p.subStatus === 'PENDENTE_AGUARDANDO').length
-  const _devolutivasRetorno = pedidos.filter(p => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO').length
-  const _retornosRecebidos = pedidos.filter(p => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO').length
+  const _devolutivasAguardando = pedidos.filter(
+    (p) => p.subStatus === 'PENDENTE_AGUARDANDO',
+  ).length;
+  const _devolutivasRetorno = pedidos.filter(
+    (p) => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO',
+  ).length;
+  const _retornosRecebidos = pedidos.filter(
+    (p) => p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO',
+  ).length;
   // Taxa de detecção da IA: % de negativas no histórico onde IA sugeriu Negar ou Junta antes do operador
-  const _criticosHist = historicoEntries.filter(h => h.action === 'Negado')
-  const _iaSinalizouCriticos = _criticosHist.filter(h => h.iaSuggestion === 'Negar' || h.iaSuggestion === 'Junta Médica').length
-  const _taxaDeteccaoIA = _criticosHist.length > 0 ? Math.round((_iaSinalizouCriticos / _criticosHist.length) * 100) : 0
-  const _slaViolados = pedidos.filter(p => p.slaStatus === 'violated').length
+  const _criticosHist = historicoEntries.filter((h) => h.action === 'Negado');
+  const _iaSinalizouCriticos = _criticosHist.filter(
+    (h) => h.iaSuggestion === 'Negar' || h.iaSuggestion === 'Junta Médica',
+  ).length;
+  const _taxaDeteccaoIA =
+    _criticosHist.length > 0 ? Math.round((_iaSinalizouCriticos / _criticosHist.length) * 100) : 0;
+  const _slaViolados = pedidos.filter((p) => p.slaStatus === 'violated').length;
   // Aprovadas sem alertas (genuinamente limpas)
-  const _aprovadosHist = historicoEntries.filter(h => h.action === 'Aprovado')
-  const _aprovadosSemAlerta = _aprovadosHist.length > 0
-    ? Math.round((_aprovadosHist.filter(h => !h.alerts || h.alerts.length === 0).length / _aprovadosHist.length) * 100)
-    : 0
+  const _aprovadosHist = historicoEntries.filter((h) => h.action === 'Aprovado');
+  const _aprovadosSemAlerta =
+    _aprovadosHist.length > 0
+      ? Math.round(
+          (_aprovadosHist.filter((h) => !h.alerts || h.alerts.length === 0).length /
+            _aprovadosHist.length) *
+            100,
+        )
+      : 0;
   const catColors: Record<string, string> = {
-    'Internação': '#902B29',
+    Internação: '#902B29',
     'Urgência/Emergência': '#d4183d',
-    'Oncologia': '#7c3aed',
+    Oncologia: '#7c3aed',
     'Terapias Especiais': '#2563eb',
-    'OPME': '#b45309',
+    OPME: '#b45309',
     'Exames Alta Complexidade': '#0891b2',
     'Cirurgias Eletivas': '#059669',
     'Home Care': '#16a34a',
-    'SADT': '#16a34a',
-  }
-  const catOrder = ['Internação', 'Urgência/Emergência', 'Oncologia', 'Terapias Especiais', 'OPME', 'Exames Alta Complexidade', 'Cirurgias Eletivas', 'Home Care', 'SADT']
-  const counts: Record<string, { total: number; pendentes: number }> = {}
+    SADT: '#16a34a',
+  };
+  const catOrder = [
+    'Internação',
+    'Urgência/Emergência',
+    'Oncologia',
+    'Terapias Especiais',
+    'OPME',
+    'Exames Alta Complexidade',
+    'Cirurgias Eletivas',
+    'Home Care',
+    'SADT',
+  ];
+  const counts: Record<string, { total: number; pendentes: number }> = {};
   for (const p of pedidos) {
-    counts[p.category] ??= { total: 0, pendentes: 0 }
-    const entry = counts[p.category]
+    counts[p.category] ??= { total: 0, pendentes: 0 };
+    const entry = counts[p.category];
     if (entry) {
-      entry.total++
-      if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) entry.pendentes++
+      entry.total++;
+      if (['Em Análise', 'Pendente', 'Devolutiva'].includes(p.status)) entry.pendentes++;
     }
   }
   const porCategoria = catOrder
-    .filter(cat => (counts[cat]?.total ?? 0) > 0)
-    .map(cat => {
-      const c = counts[cat]
-      return { categoria: cat as Category, total: c?.total ?? 0, pendentes: c?.pendentes ?? 0, color: catColors[cat] ?? '#5a6070' }
-    })
+    .filter((cat) => (counts[cat]?.total ?? 0) > 0)
+    .map((cat) => {
+      const c = counts[cat];
+      return {
+        categoria: cat as Category,
+        total: c?.total ?? 0,
+        pendentes: c?.pendentes ?? 0,
+        color: catColors[cat] ?? '#5a6070',
+      };
+    });
 
   return {
     total: pedidos.length + historicoEntries.length,
@@ -2272,7 +2938,8 @@ export const dashboardMetrics = (() => {
     aprovados: _aprovados,
     negados: _negados,
     devolutivas: _devolutivas,
-    devolutivasTotal: _devolutivas + historicoEntries.filter(h => h.action === 'Devolutiva').length,
+    devolutivasTotal:
+      _devolutivas + historicoEntries.filter((h) => h.action === 'Devolutiva').length,
     devolutivasAguardando: _devolutivasAguardando,
     devolutivasRetorno: _devolutivasRetorno,
     totalAlertasAtivos: _totalAlertasAtivos,
@@ -2287,11 +2954,11 @@ export const dashboardMetrics = (() => {
     taxaAprovacao: _taxaBase > 0 ? Math.round((_aprovados / _taxaBase) * 100) : 0,
     taxaNegacao: _taxaBase > 0 ? Math.round((_negados / _taxaBase) * 100) : 0,
     slaViolados: _slaViolados,
-    slaOk: pedidos.filter(p => p.slaStatus === 'ok').length,
-    slaWarning: pedidos.filter(p => p.slaStatus === 'warning').length,
-    iaSugestaoAprovar: pedidos.filter(p => p.iaSuggestion === 'Aprovar').length,
-    iaSugestaoNegar: pedidos.filter(p => p.iaSuggestion === 'Negar').length,
-    iaSugestaoJunta: pedidos.filter(p => p.iaSuggestion === 'Junta Médica').length,
+    slaOk: pedidos.filter((p) => p.slaStatus === 'ok').length,
+    slaWarning: pedidos.filter((p) => p.slaStatus === 'warning').length,
+    iaSugestaoAprovar: pedidos.filter((p) => p.iaSuggestion === 'Aprovar').length,
+    iaSugestaoNegar: pedidos.filter((p) => p.iaSuggestion === 'Negar').length,
+    iaSugestaoJunta: pedidos.filter((p) => p.iaSuggestion === 'Junta Médica').length,
     urgencias: _urgencias,
     monthlyTrend: [
       { mes: 'Out', aprovados: 142, negados: 28 },
@@ -2312,10 +2979,10 @@ export const dashboardMetrics = (() => {
     ultimasSolicitacoes: pedidos.slice(0, 5),
     retornosRecebidos: _retornosRecebidos,
     alertasAtivos: [
-      { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' },             // jurídico — maior risco
-      { tipo: 'NIP Ativa', count: 2, color: '#b45309' },                    // notificação regulatória
-      { tipo: 'SLA Violado', count: _slaViolados, color: '#d4183d' },       // prazo vencido
+      { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' }, // jurídico — maior risco
+      { tipo: 'NIP Ativa', count: 2, color: '#b45309' }, // notificação regulatória
+      { tipo: 'SLA Violado', count: _slaViolados, color: '#d4183d' }, // prazo vencido
       { tipo: 'Retornos recebidos', count: _retornosRecebidos, color: '#7c3aed' }, // retomada imediata
     ],
-  }
-})()
+  };
+})();

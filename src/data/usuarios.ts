@@ -1,25 +1,25 @@
 // ── Types ──────────────────────────────────────────────────────────────
-export type UserRole = 'gestor' | 'autorizador' | 'auditor'
-export type UserStatus = 'ativo' | 'inativo'
+export type UserRole = 'gestor' | 'autorizador' | 'auditor';
+export type UserStatus = 'ativo' | 'inativo';
 
 export interface UserPermissions {
-  canApprove: boolean
-  canDeny: boolean
-  canViewReports: boolean
-  canCreateUsers: boolean
-  canViewHistory: boolean
-  canConfigureSystem: boolean
+  canApprove: boolean;
+  canDeny: boolean;
+  canViewReports: boolean;
+  canCreateUsers: boolean;
+  canViewHistory: boolean;
+  canConfigureSystem: boolean;
 }
 
 export interface SystemUser {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-  status: UserStatus
-  lastAccess?: string
-  createdAt: string
-  permissions: UserPermissions
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  status: UserStatus;
+  lastAccess?: string;
+  createdAt: string;
+  permissions: UserPermissions;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ export const roleLabels: Record<UserRole, string> = {
   gestor: 'Gestor',
   autorizador: 'Autorizador',
   auditor: 'Auditor',
-}
+};
 
 export const defaultPermissions: Record<UserRole, UserPermissions> = {
   gestor: {
@@ -54,7 +54,7 @@ export const defaultPermissions: Record<UserRole, UserPermissions> = {
     canViewHistory: true,
     canConfigureSystem: false,
   },
-}
+};
 
 // ── Mock data ──────────────────────────────────────────────────────────
 export const mockUsers: SystemUser[] = [
@@ -137,4 +137,4 @@ export const mockUsers: SystemUser[] = [
     createdAt: '15/11/2025',
     permissions: { ...defaultPermissions.autorizador },
   },
-]
+];

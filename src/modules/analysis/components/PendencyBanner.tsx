@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import GavelIcon from '@mui/icons-material/Gavel'
-import HourglassTopIcon from '@mui/icons-material/HourglassTop'
-import MoveToInboxIcon from '@mui/icons-material/MoveToInbox'
-import Alert from '@mui/material/Alert'
-import Box from '@mui/material/Box'
-import Collapse from '@mui/material/Collapse'
-import Typography from '@mui/material/Typography'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import GavelIcon from '@mui/icons-material/Gavel';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
+import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos'
+import { type Request } from '@/data/pedidos';
 
 interface PendencyBannerProps {
-  request: Request
+  request: Request;
 }
 
 export default function PendencyBanner({ request }: PendencyBannerProps) {
-  const [opinionExpanded, setOpinionExpanded] = useState(false)
+  const [opinionExpanded, setOpinionExpanded] = useState(false);
 
-  const sub = request.subStatus
+  const sub = request.subStatus;
 
   // Legacy Devolutiva without subStatus
   if (request.status === 'Devolutiva' && !sub && request.pendencyReasons) {
@@ -30,7 +30,11 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
         <Alert
           severity="warning"
           icon={<ErrorOutlineIcon fontSize="small" />}
-          sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(245,158,11,0.35)' }}
+          sx={{
+            borderRadius: 2,
+            alignItems: 'flex-start',
+            border: '1px solid rgba(245,158,11,0.35)',
+          }}
         >
           <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
             Pedido em pendência — aguardando documentação complementar
@@ -40,12 +44,14 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {request.pendencyReasons.map((m) => (
-              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>
+                {m}
+              </Typography>
             ))}
           </Box>
         </Alert>
       </Box>
-    )
+    );
   }
 
   if (sub === 'PENDENTE_AGUARDANDO') {
@@ -53,21 +59,33 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
       <Alert
         severity="warning"
         icon={<HourglassTopIcon fontSize="small" />}
-        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(245,158,11,0.35)' }}
+        sx={{
+          borderRadius: 2,
+          alignItems: 'flex-start',
+          border: '1px solid rgba(245,158,11,0.35)',
+        }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Aguardando retorno — documentação complementar solicitada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}>
-          Pendenciado por <strong>{request.pendencyResponsible}</strong> em {request.pendencyDate}. Aguardando envio dos documentos pelo beneficiário/prestador.
+        <Typography
+          variant="caption"
+          sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}
+        >
+          Pendenciado por <strong>{request.pendencyResponsible}</strong> em {request.pendencyDate}.
+          Aguardando envio dos documentos pelo beneficiário/prestador.
         </Typography>
-        {request.pendencyReasons ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+        {request.pendencyReasons ? (
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {request.pendencyReasons.map((m) => (
-              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>
+                {m}
+              </Typography>
             ))}
-          </Box> : null}
+          </Box>
+        ) : null}
       </Alert>
-    )
+    );
   }
 
   if (sub === 'PENDENTE_RETORNO_RECEBIDO') {
@@ -75,21 +93,33 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
       <Alert
         severity="info"
         icon={<MoveToInboxIcon fontSize="small" />}
-        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(37,99,235,0.3)', backgroundColor: 'rgba(37,99,235,0.05)' }}
+        sx={{
+          borderRadius: 2,
+          alignItems: 'flex-start',
+          border: '1px solid rgba(37,99,235,0.3)',
+          backgroundColor: 'rgba(37,99,235,0.05)',
+        }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Retorno recebido — documentação complementar enviada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}>
+        <Typography
+          variant="caption"
+          sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}
+        >
           A documentação solicitada foi recebida. Revise os itens abaixo e prossiga com a decisão.
         </Typography>
-        {request.pendencyReasons ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+        {request.pendencyReasons ? (
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {request.pendencyReasons.map((m) => (
-              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
+              <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>
+                {m}
+              </Typography>
             ))}
-          </Box> : null}
+          </Box>
+        ) : null}
       </Alert>
-    )
+    );
   }
 
   if (sub === 'JUNTA_AGUARDANDO') {
@@ -97,16 +127,23 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
       <Alert
         severity="info"
         icon={<GavelIcon fontSize="small" />}
-        sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(37,99,235,0.3)', backgroundColor: 'rgba(37,99,235,0.04)' }}
+        sx={{
+          borderRadius: 2,
+          alignItems: 'flex-start',
+          border: '1px solid rgba(37,99,235,0.3)',
+          backgroundColor: 'rgba(37,99,235,0.04)',
+        }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
           Aguardando parecer da Junta Médica
         </Typography>
         <Typography variant="caption">
-          Este pedido foi encaminhado para avaliação pela Junta Médica. A decisão final ficará disponível após o recebimento do parecer. Ações de aprovação e negação estão temporariamente desabilitadas.
+          Este pedido foi encaminhado para avaliação pela Junta Médica. A decisão final ficará
+          disponível após o recebimento do parecer. Ações de aprovação e negação estão
+          temporariamente desabilitadas.
         </Typography>
       </Alert>
-    )
+    );
   }
 
   if (sub === 'JUNTA_PARECER_RECEBIDO') {
@@ -115,20 +152,42 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
         <Alert
           severity="success"
           icon={<GavelIcon fontSize="small" />}
-          sx={{ borderRadius: 2, alignItems: 'flex-start', border: '1px solid rgba(22,163,74,0.3)', backgroundColor: 'rgba(22,163,74,0.04)' }}
+          sx={{
+            borderRadius: 2,
+            alignItems: 'flex-start',
+            border: '1px solid rgba(22,163,74,0.3)',
+            backgroundColor: 'rgba(22,163,74,0.04)',
+          }}
         >
           <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
             Parecer da Junta Médica recebido
           </Typography>
           <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-            O parecer foi emitido e está disponível para consulta. Prossiga com a decisão com base na recomendação da junta.
+            O parecer foi emitido e está disponível para consulta. Prossiga com a decisão com base
+            na recomendação da junta.
           </Typography>
           <Box
             component="span"
-            onClick={() => { setOpinionExpanded(v => !v); }}
-            sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', color: '#16a34a', fontWeight: 600, fontSize: 12 }}
+            onClick={() => {
+              setOpinionExpanded((v) => !v);
+            }}
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.5,
+              cursor: 'pointer',
+              color: '#16a34a',
+              fontWeight: 600,
+              fontSize: 12,
+            }}
           >
-            <ExpandMoreIcon sx={{ fontSize: 16, transition: 'transform 0.2s', transform: opinionExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            <ExpandMoreIcon
+              sx={{
+                fontSize: 16,
+                transition: 'transform 0.2s',
+                transform: opinionExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            />
             {opinionExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
           </Box>
         </Alert>
@@ -141,17 +200,30 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
               backgroundColor: 'rgba(22,163,74,0.03)',
             }}
           >
-            <Typography variant="caption" fontWeight={700} sx={{ textTransform: 'uppercase', letterSpacing: 0.5, color: '#16a34a', display: 'block', mb: 1 }}>
+            <Typography
+              variant="caption"
+              fontWeight={700}
+              sx={{
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                color: '#16a34a',
+                display: 'block',
+                mb: 1,
+              }}
+            >
               Parecer da Junta Médica
             </Typography>
-            <Typography variant="body2" sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}>
+            <Typography
+              variant="body2"
+              sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}
+            >
               {request.boardOpinion}
             </Typography>
           </Box>
         </Collapse>
       </Box>
-    )
+    );
   }
 
-  return null
+  return null;
 }

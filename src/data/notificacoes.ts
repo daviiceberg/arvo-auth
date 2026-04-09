@@ -4,16 +4,16 @@ export type NotificationType =
   | 'processamento_erro'
   | 'devolutiva'
   | 'sla_risco'
-  | 'urgencia'
+  | 'urgencia';
 
 export interface Notification {
-  id: string
-  type: NotificationType
-  title: string
-  message: string
-  time: string
-  read: boolean
-  href: string
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  href: string;
 }
 
 export const NOTIFICACOES: Notification[] = [
@@ -71,4 +71,4 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/analise?id=ATH-2026-00431',
   },
-]
+];

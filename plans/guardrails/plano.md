@@ -8,20 +8,20 @@
 
 ## 1. Decisões Técnicas
 
-| Decisão | Escolha | Justificativa |
-|---------|---------|---------------|
-| ESLint format | Flat config (`eslint.config.mjs`) | Formato novo (ESLint 9+), `.eslintrc` está deprecated |
-| Type-checked linting | Sim (`typescript-eslint` type-aware) | Detecta promises não tratadas, tipos inseguros, narrowing incorreto |
-| Prettier printWidth | `100` | MUI é verboso — 80 gera scroll excessivo |
-| Console policy | `no-console: error` + logger dedicado | Sem console.log em produção. Logger com níveis e desligamento automático |
-| Logger lib | `loglevel` (~1KB) | Leve, simples, suporta níveis (debug/info/warn/error), desabilita em prod |
-| Commit format | Conventional Commits | Padrão universal, compatível com changelogs e semantic-release |
-| Commit scope | Recomendado (não obrigatório) | Sempre que possível usar scope, mas não bloquear se ausente |
-| Branch naming | `type/TICKET-short-description` | Alinhado com types do commit: `feat/`, `fix/`, `refactor/`, `chore/`, etc. |
-| PR format | Bullet points diretos | Sem checkboxes — objetivo e informativo |
-| Import sorting | Automático via ESLint | Ordem fixa: react → libs → @/core → @/shared → @/modules → relativos |
-| Path aliases | Enforced via ESLint | Proibir `../../../`, forçar `@/` |
-| EditorConfig | Sim | Padroniza indentação/charset/line endings entre editores |
+| Decisão              | Escolha                               | Justificativa                                                              |
+| -------------------- | ------------------------------------- | -------------------------------------------------------------------------- |
+| ESLint format        | Flat config (`eslint.config.mjs`)     | Formato novo (ESLint 9+), `.eslintrc` está deprecated                      |
+| Type-checked linting | Sim (`typescript-eslint` type-aware)  | Detecta promises não tratadas, tipos inseguros, narrowing incorreto        |
+| Prettier printWidth  | `100`                                 | MUI é verboso — 80 gera scroll excessivo                                   |
+| Console policy       | `no-console: error` + logger dedicado | Sem console.log em produção. Logger com níveis e desligamento automático   |
+| Logger lib           | `loglevel` (~1KB)                     | Leve, simples, suporta níveis (debug/info/warn/error), desabilita em prod  |
+| Commit format        | Conventional Commits                  | Padrão universal, compatível com changelogs e semantic-release             |
+| Commit scope         | Recomendado (não obrigatório)         | Sempre que possível usar scope, mas não bloquear se ausente                |
+| Branch naming        | `type/TICKET-short-description`       | Alinhado com types do commit: `feat/`, `fix/`, `refactor/`, `chore/`, etc. |
+| PR format            | Bullet points diretos                 | Sem checkboxes — objetivo e informativo                                    |
+| Import sorting       | Automático via ESLint                 | Ordem fixa: react → libs → @/core → @/shared → @/modules → relativos       |
+| Path aliases         | Enforced via ESLint                   | Proibir `../../../`, forçar `@/`                                           |
+| EditorConfig         | Sim                                   | Padroniza indentação/charset/line endings entre editores                   |
 
 ---
 
@@ -41,22 +41,23 @@ type(scope): description
 
 **Types permitidos:**
 
-| Type | Quando usar | Exemplo |
-|------|-------------|---------|
-| `feat` | Nova funcionalidade | `feat(dashboard): add KPI trend chart` |
-| `fix` | Correção de bug | `fix(fila): correct SLA color mapping` |
+| Type       | Quando usar                       | Exemplo                                              |
+| ---------- | --------------------------------- | ---------------------------------------------------- |
+| `feat`     | Nova funcionalidade               | `feat(dashboard): add KPI trend chart`               |
+| `fix`      | Correção de bug                   | `fix(fila): correct SLA color mapping`               |
 | `refactor` | Mudança sem alterar comportamento | `refactor(analise): extract DecisionModal component` |
-| `style` | Formatação (não é CSS) | `style: apply prettier formatting` |
-| `chore` | Configs, dependências, build | `chore(core): configure ESLint and Prettier` |
-| `docs` | Documentação | `docs: update CLAUDE.md with git conventions` |
-| `test` | Testes | `test(shared): add StatusChip unit tests` |
-| `ci` | CI/CD | `ci: add GitHub Actions lint workflow` |
-| `perf` | Performance | `perf(fila): memoize filtered results` |
+| `style`    | Formatação (não é CSS)            | `style: apply prettier formatting`                   |
+| `chore`    | Configs, dependências, build      | `chore(core): configure ESLint and Prettier`         |
+| `docs`     | Documentação                      | `docs: update CLAUDE.md with git conventions`        |
+| `test`     | Testes                            | `test(shared): add StatusChip unit tests`            |
+| `ci`       | CI/CD                             | `ci: add GitHub Actions lint workflow`               |
+| `perf`     | Performance                       | `perf(fila): memoize filtered results`               |
 
 **Scopes do projeto:**
 `analise`, `fila`, `dashboard`, `historico`, `usuarios`, `nova-solicitacao`, `auth`, `shared`, `core`, `ci`, `deps`
 
 **Regras:**
+
 - Description em inglês, lowercase, sem ponto final
 - Máximo 72 caracteres na primeira linha
 - Body opcional: explicar o "porquê", não o "o quê"
@@ -71,6 +72,7 @@ type/TICKET-short-description
 **Prefixes permitidos:** `feat/`, `fix/`, `refactor/`, `chore/`, `docs/`, `test/`, `ci/`
 
 **Exemplos:**
+
 ```
 feat/NEW-779-setup-code-quality-guardrails
 fix/NEW-780-status-chip-color-mapping
@@ -79,6 +81,7 @@ chore/NEW-779-configure-eslint
 ```
 
 **Regras:**
+
 - Sempre em inglês
 - Sempre com ticket do Linear quando houver
 - Lowercase, palavras separadas por `-`
@@ -90,19 +93,24 @@ Template `.github/PULL_REQUEST_TEMPLATE.md`:
 
 ```markdown
 ## Summary
+
 <!-- What this PR does and why -->
 
 ## Ticket
+
 <!-- Linear link: NEW-XXX -->
 
 ## Changes
+
 <!-- Bullet points — direct and objective -->
 
 ## Screenshots (if applicable)
+
 <!-- Before/after for visual changes -->
 ```
 
 **Regras:**
+
 - Título curto (max 70 chars), em inglês
 - Começar com o type: `feat: ...`, `fix: ...`, `refactor: ...`
 - Descrição em bullet points — direto ao ponto
@@ -209,14 +217,7 @@ export default tseslint.config(
       'import-x/order': [
         'error',
         {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-          ],
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
           pathGroups: [
             { pattern: 'react', group: 'builtin', position: 'before' },
             { pattern: 'next/**', group: 'builtin', position: 'before' },
@@ -266,7 +267,8 @@ export default tseslint.config(
           patterns: [
             {
               group: ['../../*'],
-              message: 'Use path aliases (@/core, @/shared, @/modules, @/types, @/mocks) instead of deep relative imports.',
+              message:
+                'Use path aliases (@/core, @/shared, @/modules, @/types, @/mocks) instead of deep relative imports.',
             },
           ],
         },
@@ -282,16 +284,16 @@ export default tseslint.config(
 
 ### 3.3 Regras Importantes Explicadas
 
-| Regra | O que faz | Por quê |
-|-------|-----------|---------|
-| `no-console: error` | Bloqueia `console.log/warn/error` | Força uso do logger. Sem lixo em produção |
-| `no-explicit-any: error` | Bloqueia `any` | TypeScript strict — types devem ser explícitos |
-| `consistent-type-imports` | Força `import { type Foo }` | Tree-shaking correto, imports de tipo não vão pro bundle |
-| `no-floating-promises` | Bloqueia promises sem `await` ou `.catch()` | Previne erros silenciosos (type-checked rule) |
-| `no-misused-promises` | Bloqueia promise onde void é esperado | Ex: `onClick={async () => ...}` sem handler correto |
-| `jsx-no-leaked-render` | Bloqueia `{count && <Comp />}` | Quando count=0, renderiza "0" na tela — bug comum |
-| `no-restricted-imports` | Bloqueia `../../` | Força uso de `@/` path aliases |
-| `import-x/order` | Auto-ordena imports | Ordem consistente: react → libs → internal → relative |
+| Regra                     | O que faz                                   | Por quê                                                  |
+| ------------------------- | ------------------------------------------- | -------------------------------------------------------- |
+| `no-console: error`       | Bloqueia `console.log/warn/error`           | Força uso do logger. Sem lixo em produção                |
+| `no-explicit-any: error`  | Bloqueia `any`                              | TypeScript strict — types devem ser explícitos           |
+| `consistent-type-imports` | Força `import { type Foo }`                 | Tree-shaking correto, imports de tipo não vão pro bundle |
+| `no-floating-promises`    | Bloqueia promises sem `await` ou `.catch()` | Previne erros silenciosos (type-checked rule)            |
+| `no-misused-promises`     | Bloqueia promise onde void é esperado       | Ex: `onClick={async () => ...}` sem handler correto      |
+| `jsx-no-leaked-render`    | Bloqueia `{count && <Comp />}`              | Quando count=0, renderiza "0" na tela — bug comum        |
+| `no-restricted-imports`   | Bloqueia `../../`                           | Força uso de `@/` path aliases                           |
+| `import-x/order`          | Auto-ordena imports                         | Ordem consistente: react → libs → internal → relative    |
 
 ---
 
@@ -366,13 +368,8 @@ npx lint-staged
 ```json
 {
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,css}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,css}": ["prettier --write"]
   }
 }
 ```

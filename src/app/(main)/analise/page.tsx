@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { AnalysisPage } from '@/modules/analysis'
+import { AnalysisPage } from '@/modules/analysis';
 
 export default function AnalisePage() {
-  return <AnalysisPage />
+  return <AnalysisPage />;
 }

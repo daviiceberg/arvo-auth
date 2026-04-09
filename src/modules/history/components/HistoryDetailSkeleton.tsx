@@ -7,9 +7,24 @@ import Skeleton from '@mui/material/Skeleton';
 
 export default function HistoryDetailSkeleton() {
   return (
-    <Box sx={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'background.default' }}>
+    <Box
+      sx={{
+        height: 'calc(100vh - 60px)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        backgroundColor: 'background.default',
+      }}
+    >
       {/* Header */}
-      <Box sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
+      <Box
+        sx={{
+          px: 3,
+          py: 1.75,
+          backgroundColor: '#fff',
+          borderBottom: '1px solid rgba(0,0,0,0.07)',
+        }}
+      >
         <Skeleton variant="text" width={80} height={18} sx={{ mb: 0.75 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
           <Skeleton variant="text" width={160} height={32} />

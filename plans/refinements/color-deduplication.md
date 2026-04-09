@@ -16,7 +16,8 @@ A auditoria identificou 2 lugares onde color configs são definidos inline nos m
 
 **Diferença:** O inline não tem `bg` (background) — usa só text color + icon. O shared `originConfigMap` tem bg + color + label mas não tem icon (icons estão no `OriginChip`).
 
-**Solução:** 
+**Solução:**
+
 1. Importar `originConfigMap` de `@/shared/constants`
 2. Importar icons do `OriginChip` (ou extrair icon map pra shared constants)
 3. Compor: `const config = originConfigMap[origem]` + icon do map local
@@ -28,6 +29,7 @@ A auditoria identificou 2 lugares onde color configs são definidos inline nos m
 **Problema:** Funções `getDecisaoStyle()` definem cores inline pra decisões (aprovado verde, negado vermelho, ajustado âmbar). Deveria usar `decisionActionConfigMap` de `@/shared/constants`.
 
 **Solução:**
+
 1. Importar `decisionActionConfigMap` de `@/shared/constants`
 2. Mapear os valores lowercase (`'aprovado'` → `'Aprovado'`) pro formato do config map
 3. Substituir a função inline pelo lookup no map

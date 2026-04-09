@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
-import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes'
-import { type FormData, type TerapiaProcedimento } from '../types'
+import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
+import { type FormData, type TerapiaProcedimento } from '../types';
 
 const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcedimento => ({
   id: crypto.randomUUID(),
@@ -14,7 +14,7 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
   dataTermino: base?.dataTermino ?? '',
   frequenciaSemanal: '3x por semana',
   duracaoSessao: '50',
-})
+});
 
 export const initialForm: FormData = {
   tipoSolicitacao: '',
@@ -29,7 +29,8 @@ export const initialForm: FormData = {
   caraterAtendimento: 'Eletivo',
   medicoSolicitante: 'Dr. João Oliveira',
   crm: 'CRM/SP 123456',
-  indicacaoClinica: 'Paciente com gonartrose primária bilateral com indicação funcional e dor intensa ao deambular e repouso, sem resposta ao tratamento conservador.',
+  indicacaoClinica:
+    'Paciente com gonartrose primária bilateral com indicação funcional e dor intensa ao deambular e repouso, sem resposta ao tratamento conservador.',
   prestador: '',
   cnpjPrestador: '',
   tipoAcomodacao: 'Apartamento',
@@ -56,65 +57,92 @@ export const initialForm: FormData = {
   registroAnvisa: '',
   fabricanteMaterial: '',
   justificativaTecnica: '',
-  cotacoes: [{ fornecedor: '', valor: '' }, { fornecedor: '', valor: '' }, { fornecedor: '', valor: '' }],
+  cotacoes: [
+    { fornecedor: '', valor: '' },
+    { fornecedor: '', valor: '' },
+    { fornecedor: '', valor: '' },
+  ],
   exames: [{ codigoTUSS: '', descricao: '', tipo: '', qtd: '1' }],
   procedimentos: [{ codigoTUSS: '30719138', descricao: 'Artroplastia total do joelho', qtd: '1' }],
-  opme: [{ codigoTUSS: '93000007', descricao: 'Prótese total joelho, não cimentada', fabricante: '', qtd: '1', valorUnit: '' }],
+  opme: [
+    {
+      codigoTUSS: '93000007',
+      descricao: 'Prótese total joelho, não cimentada',
+      fabricante: '',
+      qtd: '1',
+      valorUnit: '',
+    },
+  ],
   modalidadeHomeCare: 'AD2',
   periodoSolicitado: '',
   cuidadosNecessarios: '',
-}
+};
 
 export function useNewRequestForm(moduloParam: string) {
   const [form, setForm] = useState({
     ...initialForm,
     tipoSolicitacao: (moduloParam || '') as FormData['tipoSolicitacao'],
-  })
+  });
 
-  const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()])
-  const [cidSecundarioInput, setCidSecundarioInput] = useState('')
+  const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
+  const [cidSecundarioInput, setCidSecundarioInput] = useState('');
 
-  const set = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    { setForm((f) => ({ ...f, [field]: e.target.value })); }
+  const set =
+    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((f) => ({ ...f, [field]: e.target.value }));
+    };
 
-  const setSelect = (field: keyof FormData) => (value: string) =>
-    { setForm((f) => ({ ...f, [field]: value })); }
+  const setSelect = (field: keyof FormData) => (value: string) => {
+    setForm((f) => ({ ...f, [field]: value }));
+  };
 
   const handleAddTerapiaProc = () => {
-    if (terapiaProcedimentos.length >= 5) return
-    const first = terapiaProcedimentos[0]
-    setTerapiaProcedimentos(prev => [...prev, newTerapiaProc({ dataInicio: first?.dataInicio, dataTermino: first?.dataTermino })])
-  }
+    if (terapiaProcedimentos.length >= 5) return;
+    const first = terapiaProcedimentos[0];
+    setTerapiaProcedimentos((prev) => [
+      ...prev,
+      newTerapiaProc({ dataInicio: first?.dataInicio, dataTermino: first?.dataTermino }),
+    ]);
+  };
 
   const handleRemoveTerapiaProc = (id: string) => {
-    if (terapiaProcedimentos.length <= 1) return
-    setTerapiaProcedimentos(prev => prev.filter(p => p.id !== id))
-  }
+    if (terapiaProcedimentos.length <= 1) return;
+    setTerapiaProcedimentos((prev) => prev.filter((p) => p.id !== id));
+  };
 
-  const handleUpdateTerapiaProc = (id: string, field: keyof Omit<TerapiaProcedimento, 'id'>, value: string) => {
-    setTerapiaProcedimentos(prev => prev.map(p => {
-      if (p.id !== id) return p
-      const updated = { ...p, [field]: value }
-      if (field === 'tipoTerapia') updated.codigoTUSS = TUSS_POR_TERAPIA[value] ?? p.codigoTUSS
-      return updated
-    }))
-  }
+  const handleUpdateTerapiaProc = (
+    id: string,
+    field: keyof Omit<TerapiaProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setTerapiaProcedimentos((prev) =>
+      prev.map((p) => {
+        if (p.id !== id) return p;
+        const updated = { ...p, [field]: value };
+        if (field === 'tipoTerapia') updated.codigoTUSS = TUSS_POR_TERAPIA[value] ?? p.codigoTUSS;
+        return updated;
+      }),
+    );
+  };
 
   const addCidSecundario = (cid: string) => {
-    if (!cid.trim()) return
-    setForm(f => ({ ...f, cidsSecundarios: [...f.cidsSecundarios, cid.trim()] }))
-    setCidSecundarioInput('')
-  }
+    if (!cid.trim()) return;
+    setForm((f) => ({ ...f, cidsSecundarios: [...f.cidsSecundarios, cid.trim()] }));
+    setCidSecundarioInput('');
+  };
 
   const removeCidSecundario = (index: number) => {
-    setForm(f => ({ ...f, cidsSecundarios: f.cidsSecundarios.filter((_, i) => i !== index) }))
-  }
+    setForm((f) => ({ ...f, cidsSecundarios: f.cidsSecundarios.filter((_, i) => i !== index) }));
+  };
 
   const resetForm = (moduloParamValue: string) => {
-    setForm({ ...initialForm, tipoSolicitacao: (moduloParamValue || '') as FormData['tipoSolicitacao'] })
-    setTerapiaProcedimentos([newTerapiaProc()])
-    setCidSecundarioInput('')
-  }
+    setForm({
+      ...initialForm,
+      tipoSolicitacao: (moduloParamValue || '') as FormData['tipoSolicitacao'],
+    });
+    setTerapiaProcedimentos([newTerapiaProc()]);
+    setCidSecundarioInput('');
+  };
 
   return {
     form,
@@ -130,5 +158,5 @@ export function useNewRequestForm(moduloParam: string) {
     addCidSecundario,
     removeCidSecundario,
     resetForm,
-  }
+  };
 }

@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import { NewRequestPage } from '@/modules/new-request'
+import { NewRequestPage } from '@/modules/new-request';
 
 export default function NovaSolicitacaoPage() {
-  return <NewRequestPage />
+  return <NewRequestPage />;
 }

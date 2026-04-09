@@ -29,12 +29,12 @@ export { logger };
 
 ## Níveis
 
-| Nível | Quando usar | Visível em prod? |
-|-------|-------------|------------------|
-| `logger.debug()` | Dados de debug, valores de variáveis | Não |
-| `logger.info()` | Eventos importantes (login, navegação) | Não |
-| `logger.warn()` | Situações inesperadas mas não críticas | Sim |
-| `logger.error()` | Erros que impactam o usuário | Sim |
+| Nível            | Quando usar                            | Visível em prod? |
+| ---------------- | -------------------------------------- | ---------------- |
+| `logger.debug()` | Dados de debug, valores de variáveis   | Não              |
+| `logger.info()`  | Eventos importantes (login, navegação) | Não              |
+| `logger.warn()`  | Situações inesperadas mas não críticas | Sim              |
+| `logger.error()` | Erros que impactam o usuário           | Sim              |
 
 ## Exemplos de Uso
 
@@ -57,10 +57,12 @@ logger.error('Failed to fetch queue data', { error: err.message, endpoint });
 ## Rules
 
 ### Language
+
 - **All log messages must be written in English** — no exceptions
 - Log keys and values must also be in English
 
 ### Sensitive Data — CRITICAL
+
 - **NEVER log**: tokens, passwords, CPF, patient data, card numbers, personal health information
 - **NEVER log full API responses** — filter only relevant, non-sensitive fields
 - **NEVER log request/response bodies** that may contain PII (Personally Identifiable Information)
@@ -84,12 +86,14 @@ logger.debug('API response received', { status: response.status, count: response
 ```
 
 ### Log Levels — Use Appropriately
+
 - `debug` — **Development only**: variable values, filter states, data flow tracing
 - `info` — **Relevant events**: authentication, navigation, successful operations
 - `warn` — **Unexpected but non-critical**: SLA near violation, retry attempts, deprecation notices
 - `error` — **User-impacting failures**: API errors, render failures, auth failures
 
 ### Message Format
+
 - First argument: descriptive string of what happened
 - Second argument: object with contextual data (filtered, non-sensitive)
 - Keep messages concise and searchable

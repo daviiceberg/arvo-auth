@@ -44,7 +44,13 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
         <Typography
           variant="h6"
           fontWeight={700}
-          sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}
+          sx={{
+            mb: 2,
+            fontSize: 15,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            color: 'text.secondary',
+          }}
         >
           Procedimentos ({procs.length})
         </Typography>
@@ -62,22 +68,44 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                   '&:hover': { backgroundColor: 'transparent' },
                 }}
               >
-                <TableCell sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
+                <TableCell
+                  sx={{
+                    pl: 0,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    width: 120,
+                    verticalAlign: 'top',
+                    pt: 1.5,
+                  }}
+                >
                   {proc.tuss}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
                   {proc.description}
                 </TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                <TableCell
+                  sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}
+                >
                   Qtd: {proc.qty}
                   {proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}
                 </TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+                <TableCell
+                  sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}
+                >
                   {proc.startDate} → {proc.endDate}
                 </TableCell>
                 <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
-                    {proc.cid ? <Chip
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                      gap: 0.5,
+                    }}
+                  >
+                    {proc.cid ? (
+                      <Chip
                         label={`CID ${proc.cid}`}
                         size="small"
                         sx={{
@@ -87,7 +115,8 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                           fontSize: 12,
                           height: 20,
                         }}
-                      /> : null}
+                      />
+                    ) : null}
                     <Chip
                       label={proc.auditLevel}
                       size="small"
@@ -105,7 +134,11 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                   <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
                     {proc.decisao === 'aprovado' ? (
                       <Chip
-                        icon={<CheckCircleIcon sx={{ fontSize: 12, ml: '4px !important', color: '#16a34a !important' }} />}
+                        icon={
+                          <CheckCircleIcon
+                            sx={{ fontSize: 12, ml: '4px !important', color: '#16a34a !important' }}
+                          />
+                        }
                         label="Aprovado"
                         size="small"
                         sx={{
@@ -119,7 +152,15 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                     ) : proc.decisao === 'negado' ? (
                       <Box>
                         <Chip
-                          icon={<CancelIcon sx={{ fontSize: 12, ml: '4px !important', color: '#d4183d !important' }} />}
+                          icon={
+                            <CancelIcon
+                              sx={{
+                                fontSize: 12,
+                                ml: '4px !important',
+                                color: '#d4183d !important',
+                              }}
+                            />
+                          }
                           label="Negado"
                           size="small"
                           sx={{
@@ -131,9 +172,14 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                             mb: 0.5,
                           }}
                         />
-                        {proc.motivoDecisao ? <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}>
+                        {proc.motivoDecisao ? (
+                          <Typography
+                            variant="caption"
+                            sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}
+                          >
                             {proc.motivoDecisao}
-                          </Typography> : null}
+                          </Typography>
+                        ) : null}
                       </Box>
                     ) : null}
                   </TableCell>
@@ -142,10 +188,17 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
             ))}
           </TableBody>
         </Table>
-        {entry.secondaryCids && entry.secondaryCids.length > 0 ? <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
+        {entry.secondaryCids && entry.secondaryCids.length > 0 ? (
+          <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
             <Typography
               variant="caption"
-              sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}
+              sx={{
+                color: '#64748b',
+                fontSize: 11,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: 0.4,
+              }}
             >
               CIDs Secundários
             </Typography>
@@ -165,8 +218,18 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                 />
               ))}
             </Box>
-          </Box> : null}
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+          </Box>
+        ) : null}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 4,
+            flexWrap: 'wrap',
+            pt: 2.5,
+            mt: 2,
+            borderTop: '1px solid rgba(0,0,0,0.08)',
+          }}
+        >
           {[
             { label: 'Prestador', value: entry.provider },
             { label: 'Médico Solicitante', value: entry.requestingDoctor },

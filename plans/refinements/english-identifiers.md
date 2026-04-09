@@ -11,6 +11,7 @@ A auditoria técnica encontrou ~40 identificadores em português no código (var
 ### Hooks — renomear estados e parâmetros
 
 **`src/modules/queue/hooks/useQueueFilters.ts`:**
+
 - `categoriaFilter` → `categoryFilter`
 - `setCategoriaFilter` → `setCategoryFilter`
 - `slaFilter` → já ok
@@ -23,6 +24,7 @@ A auditoria técnica encontrou ~40 identificadores em português no código (var
 - `initialCategoria` → `initialCategory`
 
 **`src/modules/analysis/hooks/useDecisionState.ts`:**
+
 - `aprovacaoMotivo` → `approvalReason`
 - `aprovacaoJustificativa` → `approvalJustification`
 - `negacaoMotivoIdx` → `denialReasonIdx`
@@ -36,6 +38,7 @@ A auditoria técnica encontrou ~40 identificadores em português no código (var
 - `parcialNegJustMap` → `partialDenialJustificationMap`
 
 **`src/modules/analysis/hooks/useAdjustmentState.ts`:**
+
 - `ajusteDrawerOpen` → `drawerOpen` (já pode estar)
 - `localAjustes` → `localAdjustments`
 

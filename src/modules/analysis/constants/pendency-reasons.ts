@@ -7,4 +7,4 @@ export const PENDENCY_REASONS = [
   'Exames laboratoriais ausentes',
   'Exames de imagem ausentes',
   'Relatório médico detalhado ausente',
-]
+];

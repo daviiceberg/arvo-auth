@@ -80,14 +80,18 @@ export default function QueuePage() {
   return (
     <Box ref={scrollContainerRef} sx={{ p: 3, height: '100%', overflowY: 'auto' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
+      >
         <Typography variant="h4" fontWeight={700}>
           {filters.categoryFilter === 'Todas' ? 'Fila Operacional' : filters.categoryFilter}
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => { router.push('/nova-solicitacao'); }}
+          onClick={() => {
+            router.push('/nova-solicitacao');
+          }}
           sx={{ mt: 0.5, minHeight: 44 }}
           aria-label="Nova solicitação"
         >

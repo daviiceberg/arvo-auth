@@ -16,7 +16,6 @@ import Typography from '@mui/material/Typography';
 import { StatusChip, SLAChip } from '@/shared/components';
 import { type Request } from '@/types/pedido';
 
-
 interface RecentRequestsTableProps {
   pedidos: Request[];
   loading: boolean;
@@ -31,7 +30,8 @@ function urgencyScore(p: Request): number {
   if (p.slaStatus === 'violated') return 1;
   if (p.slaStatus === 'warning' && hasAnyAlert) return 2;
   if (p.slaStatus === 'warning') return 3;
-  if (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO') return 4;
+  if (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO')
+    return 4;
   return 5;
 }
 
@@ -55,7 +55,9 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
         <Button
           size="small"
           endIcon={<ChevronRightIcon fontSize="small" />}
-          onClick={() => { router.push('/fila'); }}
+          onClick={() => {
+            router.push('/fila');
+          }}
           sx={{ fontSize: 12, color: 'primary.main' }}
           aria-label="Ver todas as solicitações"
         >
@@ -72,11 +74,62 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
         <Table size="small" aria-label="Pedidos que requerem atenção">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ pl: 0.5, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>ID</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Beneficiário</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>SLA</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary' }}>Data</TableCell>
+              <TableCell
+                sx={{
+                  pl: 0.5,
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                }}
+              >
+                ID
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                }}
+              >
+                Status
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                }}
+              >
+                Beneficiário
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                }}
+              >
+                SLA
+              </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                }}
+              >
+                Data
+              </TableCell>
               <TableCell sx={{ width: 32 }} />
             </TableRow>
           </TableHead>
@@ -85,13 +138,28 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
               <TableRow
                 key={pedido.id}
                 tabIndex={0}
-                onClick={() => { router.push(`/analise?id=${pedido.id}`); }}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/analise?id=${pedido.id}`); } }}
+                onClick={() => {
+                  router.push(`/analise?id=${pedido.id}`);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    router.push(`/analise?id=${pedido.id}`);
+                  }
+                }}
                 aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiary.name}`}
-                sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' }, '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 } }}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
+                  '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 },
+                }}
               >
                 <TableCell sx={{ pl: 0.5 }}>
-                  <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={700}
+                    sx={{ color: 'primary.main', fontSize: 12 }}
+                  >
                     {pedido.id}
                   </Typography>
                 </TableCell>
@@ -107,12 +175,18 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
                   <SLAChip status={pedido.slaStatus} label={pedido.slaText} />
                 </TableCell>
                 <TableCell>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ fontSize: 12, whiteSpace: 'nowrap' }}
+                  >
                     {pedido.protocolDate.split(' ')[0]}
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <ChevronRightIcon sx={{ fontSize: 16, color: 'text.secondary', verticalAlign: 'middle' }} />
+                  <ChevronRightIcon
+                    sx={{ fontSize: 16, color: 'text.secondary', verticalAlign: 'middle' }}
+                  />
                 </TableCell>
               </TableRow>
             ))}

@@ -34,11 +34,26 @@ export default function SlaWidget({ slaOk, slaWarning, slaViolados }: SlaWidgetP
         ))}
       </Box>
       <Box sx={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden', gap: '2px' }}>
-        <Box sx={{ width: `${String(pctOk)}%`, backgroundColor: '#16a34a', borderRadius: '4px 0 0 4px' }} />
+        <Box
+          sx={{
+            width: `${String(pctOk)}%`,
+            backgroundColor: '#16a34a',
+            borderRadius: '4px 0 0 4px',
+          }}
+        />
         <Box sx={{ width: `${String(pctWarn)}%`, backgroundColor: '#f59e0b' }} />
-        <Box sx={{ width: `${String(pctViol)}%`, backgroundColor: '#d4183d', borderRadius: '0 4px 4px 0' }} />
+        <Box
+          sx={{
+            width: `${String(pctViol)}%`,
+            backgroundColor: '#d4183d',
+            borderRadius: '0 4px 4px 0',
+          }}
+        />
       </Box>
-      <Typography variant="caption" sx={{ fontSize: 12, color: '#6b7280', mt: 0.75, display: 'block' }}>
+      <Typography
+        variant="caption"
+        sx={{ fontSize: 12, color: '#6b7280', mt: 0.75, display: 'block' }}
+      >
         {String(total)} pedidos ativos · {String(slaViolados)} violações de prazo
       </Typography>
     </Box>

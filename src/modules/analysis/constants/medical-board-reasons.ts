@@ -4,4 +4,4 @@ export const MEDICAL_BOARD_REASONS = [
   'Oncologia — protocolo oncológico em avaliação',
   'Procedimento experimental sob análise',
   'Solicitação de segunda opinião médica',
-]
+];

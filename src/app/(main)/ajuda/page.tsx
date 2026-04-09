@@ -1,25 +1,25 @@
-'use client'
-import { useState } from 'react'
+'use client';
+import { useState } from 'react';
 
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import RestartAltIcon from '@mui/icons-material/RestartAlt'
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
-import Accordion from '@mui/material/Accordion'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const faqs = [
   {
@@ -82,45 +82,45 @@ const faqs = [
     answer:
       'A seção "Links Úteis" fica na parte inferior da barra lateral esquerda e contém acesso direto ao Rol de Procedimentos da ANS, Consulta de Medicamentos da ANVISA, Árvore de Códigos TUSS e ao Padrão TISS 2026. Todos os links abrem em nova aba.',
   },
-]
+];
 
-const TIPO_OPTIONS = ['Bug', 'Sugestão', 'Dúvida', 'Performance', 'Outro']
-const MAX_DESC = 1000
-const MAX_ASSUNTO = 100
+const TIPO_OPTIONS = ['Bug', 'Sugestão', 'Dúvida', 'Performance', 'Outro'];
+const MAX_DESC = 1000;
+const MAX_ASSUNTO = 100;
 
 export default function AjudaPage() {
-  const [expanded, setExpanded] = useState<string | false>(false)
+  const [expanded, setExpanded] = useState<string | false>(false);
 
   // Form state
-  const [tipo, setTipo] = useState('')
-  const [emailContato, setEmailContato] = useState('')
-  const [assunto, setAssunto] = useState('')
-  const [descricao, setDescricao] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [tipo, setTipo] = useState('');
+  const [emailContato, setEmailContato] = useState('');
+  const [assunto, setAssunto] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleAccordion = (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false)
-  }
+    setExpanded(isExpanded ? panel : false);
+  };
 
   const handleSubmit = () => {
-    setSubmitted(true)
+    setSubmitted(true);
     setTimeout(() => {
-      setSubmitted(false)
-      setTipo('')
-      setEmailContato('')
-      setAssunto('')
-      setDescricao('')
-    }, 3000)
-  }
+      setSubmitted(false);
+      setTipo('');
+      setEmailContato('');
+      setAssunto('');
+      setDescricao('');
+    }, 3000);
+  };
 
   const handleLimpar = () => {
-    setTipo('')
-    setEmailContato('')
-    setAssunto('')
-    setDescricao('')
-  }
+    setTipo('');
+    setEmailContato('');
+    setAssunto('');
+    setDescricao('');
+  };
 
-  const isFormValid = tipo.trim() !== '' && assunto.trim() !== '' && descricao.trim() !== ''
+  const isFormValid = tipo.trim() !== '' && assunto.trim() !== '' && descricao.trim() !== '';
 
   return (
     <Box sx={{ p: 3, maxWidth: 820, mx: 'auto' }}>
@@ -183,7 +183,11 @@ export default function AjudaPage() {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0, pt: 0, pb: 1.5 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13, lineHeight: 1.65 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: 13, lineHeight: 1.65 }}
+                >
                   {faq.answer}
                 </Typography>
               </AccordionDetails>
@@ -234,7 +238,9 @@ export default function AjudaPage() {
                   <Select
                     label="Tipo"
                     value={tipo}
-                    onChange={(e) => { setTipo(e.target.value); }}
+                    onChange={(e) => {
+                      setTipo(e.target.value);
+                    }}
                   >
                     {TIPO_OPTIONS.map((opt) => (
                       <MenuItem key={opt} value={opt}>
@@ -246,7 +252,9 @@ export default function AjudaPage() {
                 <TextField
                   label="E-mail para contato (opcional)"
                   value={emailContato}
-                  onChange={(e) => { setEmailContato(e.target.value); }}
+                  onChange={(e) => {
+                    setEmailContato(e.target.value);
+                  }}
                   size="small"
                   fullWidth
                   type="email"
@@ -256,7 +264,9 @@ export default function AjudaPage() {
               <TextField
                 label="Assunto"
                 value={assunto}
-                onChange={(e) => { setAssunto(e.target.value.slice(0, MAX_ASSUNTO)); }}
+                onChange={(e) => {
+                  setAssunto(e.target.value.slice(0, MAX_ASSUNTO));
+                }}
                 size="small"
                 fullWidth
                 helperText={`${String(assunto.length)}/${String(MAX_ASSUNTO)} caracteres`}
@@ -266,7 +276,9 @@ export default function AjudaPage() {
               <TextField
                 label="Descrição"
                 value={descricao}
-                onChange={(e) => { setDescricao(e.target.value.slice(0, MAX_DESC)); }}
+                onChange={(e) => {
+                  setDescricao(e.target.value.slice(0, MAX_DESC));
+                }}
                 size="small"
                 fullWidth
                 multiline
@@ -316,10 +328,12 @@ export default function AjudaPage() {
             Precisa de ajuda imediata?
           </Typography>
           <Typography variant="body2" sx={{ color: '#1e40af', fontSize: 13 }}>
-            Para questões urgentes relacionadas à análise de solicitações, entre em contato com sua coordenação ou gestor imediato. Para dúvidas técnicas sobre o sistema, utilize o formulário acima — nossa equipe retornará em até 24 horas úteis.
+            Para questões urgentes relacionadas à análise de solicitações, entre em contato com sua
+            coordenação ou gestor imediato. Para dúvidas técnicas sobre o sistema, utilize o
+            formulário acima — nossa equipe retornará em até 24 horas úteis.
           </Typography>
         </Box>
       </Box>
     </Box>
-  )
+  );
 }

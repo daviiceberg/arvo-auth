@@ -44,13 +44,23 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
     <Card sx={{ mb: 2.5 }}>
       <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', flex: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', flex: 1 }}
+          >
             Alertas que requerem atenção
           </Typography>
           <Chip
             label={`${String(totalCount)} no total`}
             size="small"
-            sx={{ height: 20, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(212,24,61,0.08)', color: '#d4183d', '& .MuiChip-label': { px: 1 } }}
+            sx={{
+              height: 20,
+              fontSize: 12,
+              fontWeight: 700,
+              backgroundColor: 'rgba(212,24,61,0.08)',
+              color: '#d4183d',
+              '& .MuiChip-label': { px: 1 },
+            }}
           />
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
@@ -61,8 +71,15 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
                 key={alerta.tipo}
                 role="button"
                 tabIndex={0}
-                onClick={() => { router.push(url); }}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(url); } }}
+                onClick={() => {
+                  router.push(url);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    router.push(url);
+                  }
+                }}
                 aria-label={`Ver ${String(alerta.count)} pedidos: ${alerta.tipo}`}
                 sx={{
                   flex: 1,
@@ -85,16 +102,38 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
                   <AlertIcon tipo={alerta.tipo} color={alerta.color} />
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="caption" sx={{ fontSize: 12, color: alerta.color, fontWeight: 700, lineHeight: 1.2, display: 'block' }} noWrap>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontSize: 12,
+                      color: alerta.color,
+                      fontWeight: 700,
+                      lineHeight: 1.2,
+                      display: 'block',
+                    }}
+                    noWrap
+                  >
                     {alerta.tipo}
                   </Typography>
-                  <Typography variant="h6" fontWeight={800} sx={{ fontSize: 20, color: alerta.color, lineHeight: 1.1 }}>
+                  <Typography
+                    variant="h6"
+                    fontWeight={800}
+                    sx={{ fontSize: 20, color: alerta.color, lineHeight: 1.1 }}
+                  >
                     {alerta.count}
                   </Typography>
                 </Box>
                 <Typography
                   variant="caption"
-                  sx={{ fontSize: 12, color: alerta.color, display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0, fontWeight: 600 }}
+                  sx={{
+                    fontSize: 12,
+                    color: alerta.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.25,
+                    flexShrink: 0,
+                    fontWeight: 600,
+                  }}
                 >
                   Ver pedidos <ChevronRightIcon sx={{ fontSize: 14 }} />
                 </Typography>

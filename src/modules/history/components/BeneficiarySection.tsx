@@ -29,13 +29,27 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
         <Typography
           variant="h6"
           fontWeight={700}
-          sx={{ mb: 2, fontSize: 15, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}
+          sx={{
+            mb: 2,
+            fontSize: 15,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            color: 'text.secondary',
+          }}
         >
           Beneficiário
         </Typography>
 
         {/* Row 1: name + chips | button */}
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 2,
+            mb: 2,
+          }}
+        >
           <Box>
             <Typography variant="h5" fontWeight={800} sx={{ mb: 0.75 }}>
               {entry.beneficiary}
@@ -75,7 +89,9 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
           <Button
             size="small"
             variant="outlined"
-            onClick={() => { router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiary)}`); }}
+            onClick={() => {
+              router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiary)}`);
+            }}
             sx={{
               fontSize: 12,
               py: 0.5,
@@ -90,7 +106,16 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
         </Box>
 
         {/* Row 2: data grid */}
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 4,
+            flexWrap: 'wrap',
+            pt: 2.5,
+            mt: 2,
+            borderTop: '1px solid rgba(0,0,0,0.08)',
+          }}
+        >
           {[
             { label: 'Carteirinha', value: entry.cardNumber },
             { label: 'CPF', value: entry.cpf ?? '—' },

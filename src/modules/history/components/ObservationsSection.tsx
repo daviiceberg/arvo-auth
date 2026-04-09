@@ -19,7 +19,13 @@ export default function ObservationsSection({ entry }: ObservationsSectionProps)
         <Typography
           variant="h6"
           fontWeight={700}
-          sx={{ mb: 1.5, fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5, color: 'text.secondary' }}
+          sx={{
+            mb: 1.5,
+            fontSize: 14,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            color: 'text.secondary',
+          }}
         >
           Observações
         </Typography>

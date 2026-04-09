@@ -32,15 +32,25 @@ export default function useProcessingQueue() {
   );
 
   const counts = useMemo(() => {
-    const processing = pedidosEmProcessamento.filter((p) => p.statusProcessamento === 'em_processamento').length;
-    const waiting = pedidosEmProcessamento.filter((p) => p.statusProcessamento === 'aguardando_processamento').length;
-    const error = pedidosEmProcessamento.filter((p) => p.statusProcessamento === 'erro_processamento').length;
+    const processing = pedidosEmProcessamento.filter(
+      (p) => p.statusProcessamento === 'em_processamento',
+    ).length;
+    const waiting = pedidosEmProcessamento.filter(
+      (p) => p.statusProcessamento === 'aguardando_processamento',
+    ).length;
+    const error = pedidosEmProcessamento.filter(
+      (p) => p.statusProcessamento === 'erro_processamento',
+    ).length;
     return { processing, waiting, error };
   }, []);
 
-  const handlePageChange = (_: unknown, newPage: number) => { setPage(newPage); };
+  const handlePageChange = (_: unknown, newPage: number) => {
+    setPage(newPage);
+  };
 
-  const handleRowsPerPageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleRowsPerPageChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setRowsPerPage(parseInt(e.target.value, 10));
     setPage(0);
   };

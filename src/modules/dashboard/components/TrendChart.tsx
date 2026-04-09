@@ -16,8 +16,27 @@ export default function TrendChart({ data }: TrendChartProps) {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: 0.75, minHeight: 160 }}>
         {data.map((d) => (
-          <Box key={d.mes} sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.25, height: '100%', justifyContent: 'flex-end' }}>
-            <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '2px', justifyContent: 'flex-end' }}>
+          <Box
+            key={d.mes}
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 0.25,
+              height: '100%',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Box
+              sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px',
+                justifyContent: 'flex-end',
+              }}
+            >
               <Box
                 sx={{
                   width: '100%',
@@ -49,11 +68,15 @@ export default function TrendChart({ data }: TrendChartProps) {
       <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#16a34a' }} />
-          <Typography variant="caption" sx={{ fontSize: 12 }}>Aprovações</Typography>
+          <Typography variant="caption" sx={{ fontSize: 12 }}>
+            Aprovações
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#d4183d' }} />
-          <Typography variant="caption" sx={{ fontSize: 12 }}>Negações</Typography>
+          <Typography variant="caption" sx={{ fontSize: 12 }}>
+            Negações
+          </Typography>
         </Box>
       </Box>
     </Box>

@@ -1,1 +1,1 @@
-export { NewRequestPage } from './components/NewRequestPage'
+export { NewRequestPage } from './components/NewRequestPage';

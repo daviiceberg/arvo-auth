@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
 
 interface ShortcutsHelpDialogProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 export default function ShortcutsHelpDialog({ open, onClose }: ShortcutsHelpDialogProps) {
@@ -28,11 +28,33 @@ export default function ShortcutsHelpDialog({ open, onClose }: ShortcutsHelpDial
           { keys: 'P', desc: 'Pendenciar pedido' },
           { keys: '?', desc: 'Mostrar esta ajuda' },
         ].map(({ keys, desc }) => (
-          <Box key={keys} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.75, borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-            <Typography variant="body2" color="text.secondary">{desc}</Typography>
+          <Box
+            key={keys}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              py: 0.75,
+              borderBottom: '1px solid rgba(0,0,0,0.06)',
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              {desc}
+            </Typography>
             <Box sx={{ display: 'flex', gap: 0.5 }}>
-              {keys.split(' / ').map(k => (
-                <Box key={k} sx={{ px: 1, py: 0.25, backgroundColor: 'rgba(0,0,0,0.07)', borderRadius: 1, fontFamily: 'monospace', fontSize: 12, fontWeight: 700 }}>
+              {keys.split(' / ').map((k) => (
+                <Box
+                  key={k}
+                  sx={{
+                    px: 1,
+                    py: 0.25,
+                    backgroundColor: 'rgba(0,0,0,0.07)',
+                    borderRadius: 1,
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
                   {k}
                 </Box>
               ))}
@@ -44,8 +66,10 @@ export default function ShortcutsHelpDialog({ open, onClose }: ShortcutsHelpDial
         </Typography>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button variant="contained" onClick={onClose}>Fechar</Button>
+        <Button variant="contained" onClick={onClose}>
+          Fechar
+        </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

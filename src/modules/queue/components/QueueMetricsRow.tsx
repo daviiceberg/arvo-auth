@@ -41,7 +41,9 @@ export default function QueueMetricsRow({
             label="Na Fila de Análise"
             sublabel="Total de pedidos ativos"
             linkLabel="Ver todos os pedidos"
-            onLinkClick={() => { onTabChange(0); }}
+            onLinkClick={() => {
+              onTabChange(0);
+            }}
             icon={<FormatListBulletedIcon sx={{ fontSize: 18, color: '#902B29' }} />}
             iconBg="rgba(144,43,41,0.1)"
           />
@@ -50,7 +52,9 @@ export default function QueueMetricsRow({
             label="Urgência / Emergência"
             sublabel="Requerem atenção imediata"
             linkLabel="Ver pedidos em U/E"
-            onLinkClick={() => { onTabChange(1); }}
+            onLinkClick={() => {
+              onTabChange(1);
+            }}
             valueColor="#d4183d"
             icon={<EmergencyIcon sx={{ fontSize: 18, color: '#d4183d' }} />}
             iconBg="rgba(212,24,61,0.1)"
@@ -60,7 +64,9 @@ export default function QueueMetricsRow({
             label="Devolutivas"
             sublabel="Aguardando complemento"
             linkLabel="Ver as devolutivas"
-            onLinkClick={() => { onTabChange(2); }}
+            onLinkClick={() => {
+              onTabChange(2);
+            }}
             valueColor="#b45309"
             icon={<ReplayIcon sx={{ fontSize: 18, color: '#b45309' }} />}
             iconBg="rgba(245,158,11,0.12)"
@@ -70,7 +76,9 @@ export default function QueueMetricsRow({
             label="Parados há mais de 12h"
             sublabel="SLA em risco"
             linkLabel="Ver pedidos"
-            onLinkClick={() => { onTabChange(3); }}
+            onLinkClick={() => {
+              onTabChange(3);
+            }}
             valueColor="#ea580c"
             icon={<TimerOffIcon sx={{ fontSize: 18, color: '#ea580c' }} />}
             iconBg="rgba(234,88,12,0.1)"

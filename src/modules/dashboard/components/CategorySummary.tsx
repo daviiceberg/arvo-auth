@@ -53,8 +53,15 @@ export default function CategorySummary({ categories, loading }: CategorySummary
           key={cat.categoria}
           role="button"
           tabIndex={0}
-          onClick={() => { router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`); }}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`); } }}
+          onClick={() => {
+            router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              router.push(`/fila?categoria=${encodeURIComponent(cat.categoria)}`);
+            }
+          }}
           aria-label={`Filtrar por categoria ${cat.categoria}: ${String(cat.total)} pedidos`}
           sx={{
             display: 'flex',
@@ -74,13 +81,27 @@ export default function CategorySummary({ categories, loading }: CategorySummary
           <Box sx={{ color: cat.color, display: 'flex', alignItems: 'center' }}>
             {categoryIcons[cat.categoria]}
           </Box>
-          <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: 'text.primary' }}>
-            {cat.categoria.replace('Urgência/Emergência', 'U/E').replace('Exames Alta Complexidade', 'Exames').replace('Cirurgias Eletivas', 'Cirurgias').replace('Terapias Especiais', 'Terapias')}
+          <Typography
+            variant="caption"
+            sx={{ fontSize: 12, fontWeight: 600, color: 'text.primary' }}
+          >
+            {cat.categoria
+              .replace('Urgência/Emergência', 'U/E')
+              .replace('Exames Alta Complexidade', 'Exames')
+              .replace('Cirurgias Eletivas', 'Cirurgias')
+              .replace('Terapias Especiais', 'Terapias')}
           </Typography>
           <Chip
             label={cat.total}
             size="small"
-            sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: `${cat.color}20`, color: 'text.primary', '& .MuiChip-label': { px: 0.5 } }}
+            sx={{
+              height: 18,
+              fontSize: 12,
+              fontWeight: 700,
+              backgroundColor: `${cat.color}20`,
+              color: 'text.primary',
+              '& .MuiChip-label': { px: 0.5 },
+            }}
           />
         </Box>
       ))}

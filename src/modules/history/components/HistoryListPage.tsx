@@ -62,7 +62,9 @@ export default function HistoryListPage() {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
+      >
         <Box>
           <Typography variant="h4" fontWeight={700}>
             Histórico
@@ -77,8 +79,17 @@ export default function HistoryListPage() {
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         {kpis.map((kpi) => (
           <Card key={kpi.label} sx={{ flex: 1, minWidth: 140 }}>
-            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 }, transition: 'box-shadow 0.15s ease' }}>
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1.5 }}>
+            <CardContent
+              sx={{ p: 2.5, '&:last-child': { pb: 2.5 }, transition: 'box-shadow 0.15s ease' }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between',
+                  mb: 1.5,
+                }}
+              >
                 <Typography
                   variant="body2"
                   fontWeight={600}
@@ -101,7 +112,10 @@ export default function HistoryListPage() {
                   {kpi.icon}
                 </Box>
               </Box>
-              <Typography variant="h5" sx={{ fontWeight: 800, lineHeight: 1, color: kpi.color, fontSize: 24 }}>
+              <Typography
+                variant="h5"
+                sx={{ fontWeight: 800, lineHeight: 1, color: kpi.color, fontSize: 24 }}
+              >
                 {kpi.value}
               </Typography>
             </CardContent>
@@ -124,7 +138,9 @@ export default function HistoryListPage() {
         categories={vm.categories}
         hasFilters={vm.hasFilters}
         onClearFilters={vm.clearFilters}
-        onResetPage={() => { vm.setPage(0); }}
+        onResetPage={() => {
+          vm.setPage(0);
+        }}
       />
 
       {/* Table */}
@@ -136,7 +152,9 @@ export default function HistoryListPage() {
         sortDirection={vm.sortDirection}
         onToggleSort={vm.toggleSortDirection}
         onPageChange={vm.setPage}
-        onNavigate={(id) => { router.push('/historico/' + id); }}
+        onNavigate={(id) => {
+          router.push('/historico/' + id);
+        }}
       />
     </Box>
   );

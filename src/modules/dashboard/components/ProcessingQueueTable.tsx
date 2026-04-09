@@ -87,15 +87,23 @@ export default function ProcessingQueueTable() {
               color="primary"
               sx={{
                 fontSize: 18,
-                '@keyframes spin': { from: { transform: 'rotate(0deg)' }, to: { transform: 'rotate(360deg)' } },
+                '@keyframes spin': {
+                  from: { transform: 'rotate(0deg)' },
+                  to: { transform: 'rotate(360deg)' },
+                },
                 animation: 'spin 2s linear infinite',
               }}
             />
-            <Typography variant="subtitle2" sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary' }}
+            >
               Entrando no sistema
             </Typography>
           </Box>
-          <Tooltip title={`${String(counts.processing)} em processamento · ${String(counts.waiting)} aguardando · ${String(counts.error)} com erro`}>
+          <Tooltip
+            title={`${String(counts.processing)} em processamento · ${String(counts.waiting)} aguardando · ${String(counts.error)} com erro`}
+          >
             <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
               {total} pedidos aguardando processamento da IA
             </Typography>
@@ -110,7 +118,9 @@ export default function ProcessingQueueTable() {
                 <TableCell sx={thSx}>Beneficiário</TableCell>
                 <TableCell sx={{ ...thSx, width: 130 }}>Origem</TableCell>
                 <TableCell sx={{ ...thSx, width: 140 }}>Categoria</TableCell>
-                <TableCell sx={{ ...thSx, width: 110, minWidth: 110, whiteSpace: 'nowrap' }}>Tempo em fila</TableCell>
+                <TableCell sx={{ ...thSx, width: 110, minWidth: 110, whiteSpace: 'nowrap' }}>
+                  Tempo em fila
+                </TableCell>
                 <TableCell sx={{ ...thSx, width: 180 }}>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -118,18 +128,36 @@ export default function ProcessingQueueTable() {
               {pagedItems.map((p) => (
                 <TableRow key={p.id} sx={{ '&:last-child td': { borderBottom: 0 } }}>
                   <TableCell sx={{ py: '4px', px: '12px', width: 150, minWidth: 150 }}>
-                    <Typography variant="caption" color="primary" fontWeight={600} sx={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}>
+                    <Typography
+                      variant="caption"
+                      color="primary"
+                      fontWeight={600}
+                      sx={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}
+                    >
                       {p.id}
                     </Typography>
-                    <Typography variant="caption" color="text.disabled" sx={{ fontSize: 11, whiteSpace: 'nowrap', display: 'block' }}>
+                    <Typography
+                      variant="caption"
+                      color="text.disabled"
+                      sx={{ fontSize: 11, whiteSpace: 'nowrap', display: 'block' }}
+                    >
                       {formatEntryTime(p.entradaEm)}
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px' }}>
-                    <Typography variant="body2" fontWeight={600} noWrap sx={{ fontSize: 13, lineHeight: 1.3 }}>
+                    <Typography
+                      variant="body2"
+                      fontWeight={600}
+                      noWrap
+                      sx={{ fontSize: 13, lineHeight: 1.3 }}
+                    >
                       {p.beneficiary}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, lineHeight: 1.3 }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ fontSize: 11, lineHeight: 1.3 }}
+                    >
                       {p.plan}
                     </Typography>
                   </TableCell>
@@ -166,7 +194,9 @@ export default function ProcessingQueueTable() {
               onRowsPerPageChange={handleRowsPerPageChange}
               rowsPerPageOptions={[5, 10, 25]}
               labelRowsPerPage="Por página:"
-              labelDisplayedRows={({ from, to, count }) => `${String(from)}–${String(to)} de ${String(count)}`}
+              labelDisplayedRows={({ from, to, count }) =>
+                `${String(from)}–${String(to)} de ${String(count)}`
+              }
               sx={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
             />
           )}

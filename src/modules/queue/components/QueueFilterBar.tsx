@@ -55,7 +55,9 @@ export default function QueueFilterBar({
         placeholder="Buscar (ID, nome, carteirinha...)"
         size="small"
         value={search}
-        onChange={(e) => { onSearchChange(e.target.value); }}
+        onChange={(e) => {
+          onSearchChange(e.target.value);
+        }}
         slotProps={{
           input: {
             startAdornment: (
@@ -72,7 +74,9 @@ export default function QueueFilterBar({
         <Select
           value={categoryFilter}
           label="Categoria"
-          onChange={(e) => { onCategoryFilterChange(e.target.value); }}
+          onChange={(e) => {
+            onCategoryFilterChange(e.target.value);
+          }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Internação">Internação</MenuItem>
@@ -90,7 +94,9 @@ export default function QueueFilterBar({
         <Select
           value={slaFilter}
           label="Situação SLA"
-          onChange={(e) => { onSlaFilterChange(e.target.value); }}
+          onChange={(e) => {
+            onSlaFilterChange(e.target.value);
+          }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="No prazo">No prazo</MenuItem>
@@ -103,7 +109,9 @@ export default function QueueFilterBar({
         <Select
           value={providerFilter}
           label="Prestador"
-          onChange={(e) => { onProviderFilterChange(e.target.value); }}
+          onChange={(e) => {
+            onProviderFilterChange(e.target.value);
+          }}
         >
           <MenuItem value="Todos">Todos</MenuItem>
           <MenuItem value="Hospital São Lucas">Hospital São Lucas</MenuItem>
@@ -117,7 +125,9 @@ export default function QueueFilterBar({
         <Select
           value={iaSuggestionFilter}
           label="Sugestão IA"
-          onChange={(e) => { onIaSuggestionFilterChange(e.target.value); }}
+          onChange={(e) => {
+            onIaSuggestionFilterChange(e.target.value);
+          }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>

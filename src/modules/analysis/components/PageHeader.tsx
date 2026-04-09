@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import GavelIcon from '@mui/icons-material/Gavel'
-import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore'
-import NavigateNextIcon from '@mui/icons-material/NavigateNext'
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid'
-import WarningAmberIcon from '@mui/icons-material/WarningAmber'
-import WhatsAppIcon from '@mui/icons-material/WhatsApp'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Chip from '@mui/material/Chip'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import GavelIcon from '@mui/icons-material/Gavel';
+import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 
-import { type Request, type RequestOrigin } from '@/data/pedidos'
-import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants'
+import { type Request, type RequestOrigin } from '@/data/pedidos';
+import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants';
 
 // ---- OrigemLabel (module-level inline component) ----
 const originIconMap: Record<RequestOrigin, React.ReactNode> = {
@@ -28,11 +28,11 @@ const originIconMap: Record<RequestOrigin, React.ReactNode> = {
   email: <EmailOutlinedIcon sx={{ fontSize: 13 }} />,
   prestador: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} />,
   call_center: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
-}
+};
 
 function OrigemLabel({ origem }: { origem: RequestOrigin }) {
-  const { label, color } = originConfigMap[origem]
-  const icon = originIconMap[origem]
+  const { label, color } = originConfigMap[origem];
+  const icon = originIconMap[origem];
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
       <Box sx={{ color, display: 'flex', alignItems: 'center' }}>{icon}</Box>
@@ -40,16 +40,16 @@ function OrigemLabel({ origem }: { origem: RequestOrigin }) {
         {label}
       </Typography>
     </Box>
-  )
+  );
 }
 
 interface PageHeaderProps {
-  request: Request
-  onBack: () => void
-  currentIndex: number
-  total: number
-  onPrev: () => void
-  onNext: () => void
+  request: Request;
+  onBack: () => void;
+  currentIndex: number;
+  total: number;
+  onPrev: () => void;
+  onNext: () => void;
 }
 
 export default function PageHeader({
@@ -60,8 +60,8 @@ export default function PageHeader({
   onPrev,
   onNext,
 }: PageHeaderProps) {
-  const sc = statusColorMap[request.status]
-  const tc = guideTypeColorMap[request.guideType]
+  const sc = statusColorMap[request.status];
+  const tc = guideTypeColorMap[request.guideType];
   return (
     <Box
       sx={{
@@ -77,7 +77,14 @@ export default function PageHeader({
         startIcon={<ArrowBackIcon sx={{ fontSize: 13 }} />}
         size="small"
         onClick={onBack}
-        sx={{ color: 'text.secondary', mb: 0.75, p: 0, minHeight: 'auto', fontSize: 12, '&:hover': { backgroundColor: 'transparent', color: 'primary.main' } }}
+        sx={{
+          color: 'text.secondary',
+          mb: 0.75,
+          p: 0,
+          minHeight: 'auto',
+          fontSize: 12,
+          '&:hover': { backgroundColor: 'transparent', color: 'primary.main' },
+        }}
       >
         Fila de Análise
       </Button>
@@ -103,7 +110,12 @@ export default function PageHeader({
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA Violado"
               size="small"
-              sx={{ backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d', fontWeight: 700, height: 22 }}
+              sx={{
+                backgroundColor: 'rgba(212,24,61,0.1)',
+                color: '#d4183d',
+                fontWeight: 700,
+                height: 22,
+              }}
             />
           )}
           {request.slaStatus === 'warning' && (
@@ -111,7 +123,12 @@ export default function PageHeader({
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA em Risco"
               size="small"
-              sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontWeight: 700, height: 22 }}
+              sx={{
+                backgroundColor: 'rgba(245,158,11,0.12)',
+                color: '#b45309',
+                fontWeight: 700,
+                height: 22,
+              }}
             />
           )}
           {request.alerts.includes('Liminar Judicial') && (
@@ -119,7 +136,12 @@ export default function PageHeader({
               icon={<GavelIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="Liminar Judicial"
               size="small"
-              sx={{ backgroundColor: 'rgba(124,58,237,0.1)', color: '#7c3aed', fontWeight: 700, height: 22 }}
+              sx={{
+                backgroundColor: 'rgba(124,58,237,0.1)',
+                color: '#7c3aed',
+                fontWeight: 700,
+                height: 22,
+              }}
             />
           )}
         </Box>
@@ -147,7 +169,10 @@ export default function PageHeader({
               px: 1,
               py: 0.75,
               color: 'text.secondary',
-              '&:not(:disabled):hover': { backgroundColor: 'rgba(144,43,41,0.06)', color: 'primary.main' },
+              '&:not(:disabled):hover': {
+                backgroundColor: 'rgba(144,43,41,0.06)',
+                color: 'primary.main',
+              },
               '&:disabled': { opacity: 0.35 },
             }}
           >
@@ -163,9 +188,20 @@ export default function PageHeader({
               height: '100%',
             }}
           >
-            <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'text.primary', whiteSpace: 'nowrap', lineHeight: '30px' }}>
+            <Typography
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'text.primary',
+                whiteSpace: 'nowrap',
+                lineHeight: '30px',
+              }}
+            >
               {currentIndex + 1}
-              <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}> de {total}</Box>
+              <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>
+                {' '}
+                de {total}
+              </Box>
             </Typography>
           </Box>
           <IconButton
@@ -177,7 +213,10 @@ export default function PageHeader({
               px: 1,
               py: 0.75,
               color: 'text.secondary',
-              '&:not(:disabled):hover': { backgroundColor: 'rgba(144,43,41,0.06)', color: 'primary.main' },
+              '&:not(:disabled):hover': {
+                backgroundColor: 'rgba(144,43,41,0.06)',
+                color: 'primary.main',
+              },
               '&:disabled': { opacity: 0.35 },
             }}
           >
@@ -187,7 +226,9 @@ export default function PageHeader({
       </Box>
 
       {/* Row 2: hospital + entry date + origem | shortcuts hint (right) */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.75 }}>
+      <Box
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 0.75 }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
@@ -206,14 +247,34 @@ export default function PageHeader({
 
         {/* Keyboard shortcuts hint -- aligned below navigator */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexShrink: 0 }}>
-          {[['← →', 'Navegar'], ['A', 'Aprovar'], ['N', 'Negar'], ['P', 'Pendenciar'], ['?', 'Ajuda']].map(([key, label]) => (
+          {[
+            ['← →', 'Navegar'],
+            ['A', 'Aprovar'],
+            ['N', 'Negar'],
+            ['P', 'Pendenciar'],
+            ['?', 'Ajuda'],
+          ].map(([key, label]) => (
             <Box key={key} sx={{ display: 'flex', alignItems: 'center', gap: 0.4 }}>
-              <Box sx={{ px: 0.6, py: 0.1, backgroundColor: 'rgba(0,0,0,0.07)', borderRadius: 0.75, fontFamily: 'monospace', fontSize: 10, fontWeight: 700, color: 'text.secondary', lineHeight: '16px' }}>{key}</Box>
+              <Box
+                sx={{
+                  px: 0.6,
+                  py: 0.1,
+                  backgroundColor: 'rgba(0,0,0,0.07)',
+                  borderRadius: 0.75,
+                  fontFamily: 'monospace',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: 'text.secondary',
+                  lineHeight: '16px',
+                }}
+              >
+                {key}
+              </Box>
               <Typography sx={{ fontSize: 10, color: 'text.disabled' }}>{label}</Typography>
             </Box>
           ))}
         </Box>
       </Box>
     </Box>
-  )
+  );
 }

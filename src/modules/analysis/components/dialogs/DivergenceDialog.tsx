@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import SmartToyIcon from '@mui/icons-material/SmartToy'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import DialogActions from '@mui/material/DialogActions'
-import DialogContent from '@mui/material/DialogContent'
-import DialogTitle from '@mui/material/DialogTitle'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-import { type IASuggestion } from '@/data/pedidos'
+import { type IASuggestion } from '@/data/pedidos';
 
 interface DivergenceDialogProps {
-  open: boolean
-  iaSuggestion: IASuggestion
-  divergenceReason: string
-  onDivergenceReasonChange: (value: string) => void
-  onContinue: () => void
-  onClose: () => void
+  open: boolean;
+  iaSuggestion: IASuggestion;
+  divergenceReason: string;
+  onDivergenceReasonChange: (value: string) => void;
+  onContinue: () => void;
+  onClose: () => void;
 }
 
 export default function DivergenceDialog({
@@ -46,24 +46,32 @@ export default function DivergenceDialog({
         </Box>
         <TextField
           label="Motivo da Divergência *"
-          multiline rows={4} fullWidth size="small"
+          multiline
+          rows={4}
+          fullWidth
+          size="small"
           placeholder="Explique por que você está tomando uma decisão diferente da IA..."
           value={divergenceReason}
-          onChange={e => { onDivergenceReasonChange(e.target.value); }}
+          onChange={(e) => {
+            onDivergenceReasonChange(e.target.value);
+          }}
           error={divergenceReason.trim() === ''}
           helperText={divergenceReason.trim() === '' ? 'Campo obrigatório' : ''}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2.5 }}>
-        <Button onClick={() => { onClose(); onDivergenceReasonChange('') }}>Cancelar</Button>
         <Button
-          variant="contained"
-          disabled={!divergenceReason.trim()}
-          onClick={onContinue}
+          onClick={() => {
+            onClose();
+            onDivergenceReasonChange('');
+          }}
         >
+          Cancelar
+        </Button>
+        <Button variant="contained" disabled={!divergenceReason.trim()} onClick={onContinue}>
           Continuar
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

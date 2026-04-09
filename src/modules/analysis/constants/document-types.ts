@@ -7,7 +7,7 @@ export const DOCUMENT_TYPES = [
   'Orçamento / Cotação',
   'Pedido Médico',
   'Outro',
-]
+];
 
 export const DOCUMENT_REQUEST_TYPES = [
   'Laudo Médico Atualizado',
@@ -18,4 +18,4 @@ export const DOCUMENT_REQUEST_TYPES = [
   'Orçamento / Cotação',
   'Declaração do Beneficiário',
   'Outro',
-]
+];

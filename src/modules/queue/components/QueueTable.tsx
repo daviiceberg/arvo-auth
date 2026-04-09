@@ -50,8 +50,21 @@ export default function QueueTable({
     <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0 }}>
       <Table aria-label="Tabela da fila operacional" size="small">
         <TableHead>
-          <TableRow sx={{ '& .MuiTableCell-head': { fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, color: 'text.secondary', px: 1.5 } }}>
-            <TableCell align="center" sx={{ width: 44 }}>Prio.</TableCell>
+          <TableRow
+            sx={{
+              '& .MuiTableCell-head': {
+                fontWeight: 700,
+                fontSize: 12,
+                textTransform: 'uppercase',
+                letterSpacing: 0.4,
+                color: 'text.secondary',
+                px: 1.5,
+              },
+            }}
+          >
+            <TableCell align="center" sx={{ width: 44 }}>
+              Prio.
+            </TableCell>
             <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
             <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
@@ -68,25 +81,46 @@ export default function QueueTable({
           {items.length === 0 ? (
             <TableRow>
               <TableCell colSpan={11} sx={{ py: 6, border: 0 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                  <Box sx={{ width: 48, height: 48, borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Box
+                  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}
+                >
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(0,0,0,0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
                     <SearchIcon sx={{ fontSize: 24, color: 'text.disabled' }} />
                   </Box>
                   <Typography variant="body2" fontWeight={600} color="text.secondary">
                     Nenhum pedido encontrado
                   </Typography>
                   <Typography variant="caption" color="text.disabled">
-                    {hasFilters ? 'Tente ajustar ou limpar os filtros aplicados.' : 'A fila está vazia no momento.'}
+                    {hasFilters
+                      ? 'Tente ajustar ou limpar os filtros aplicados.'
+                      : 'A fila está vazia no momento.'}
                   </Typography>
-                  {hasFilters ? <Button
+                  {hasFilters ? (
+                    <Button
                       size="small"
                       variant="outlined"
                       color="inherit"
-                      sx={{ mt: 0.5, fontSize: 12, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary' }}
+                      sx={{
+                        mt: 0.5,
+                        fontSize: 12,
+                        borderColor: 'rgba(0,0,0,0.2)',
+                        color: 'text.secondary',
+                      }}
                       onClick={onClearFilters}
                     >
                       Limpar filtros
-                    </Button> : null}
+                    </Button>
+                  ) : null}
                 </Box>
               </TableCell>
             </TableRow>

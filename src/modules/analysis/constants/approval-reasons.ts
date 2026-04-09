@@ -4,4 +4,4 @@ export const APPROVAL_REASONS = [
   'Documentação completa e correta',
   'Alinhado com protocolo clínico ANS',
   'Urgência/Emergência caracterizada',
-]
+];

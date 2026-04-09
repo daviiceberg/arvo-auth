@@ -11,7 +11,12 @@ interface QueuePaginationProps {
   onPageChange: (newPage: number) => void;
 }
 
-export default function QueuePagination({ filteredCount, page, rowsPerPage, onPageChange }: QueuePaginationProps) {
+export default function QueuePagination({
+  filteredCount,
+  page,
+  rowsPerPage,
+  onPageChange,
+}: QueuePaginationProps) {
   return (
     <Box
       sx={{
@@ -24,14 +29,17 @@ export default function QueuePagination({ filteredCount, page, rowsPerPage, onPa
       }}
     >
       <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, py: 1.5 }}>
-        Exibindo {Math.min(page * rowsPerPage + 1, filteredCount)}–{Math.min((page + 1) * rowsPerPage, filteredCount)} de {filteredCount} solicitações
+        Exibindo {Math.min(page * rowsPerPage + 1, filteredCount)}–
+        {Math.min((page + 1) * rowsPerPage, filteredCount)} de {filteredCount} solicitações
       </Typography>
       <TablePagination
         component="div"
         count={filteredCount}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={(_e, newPage) => { onPageChange(newPage); }}
+        onPageChange={(_e, newPage) => {
+          onPageChange(newPage);
+        }}
         rowsPerPageOptions={[rowsPerPage]}
         labelDisplayedRows={() => ''}
         sx={{
