@@ -12,20 +12,20 @@ import Typography from '@mui/material/Typography'
 
 import { type Ajuste } from '@/data/pedidos'
 
-function formatAjusteTimestamp(ts: string): string {
+function formatAdjustmentTimestamp(ts: string): string {
   const d = new Date(ts)
   return `${d.toLocaleDateString('pt-BR')} · ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
 }
 
 interface RegisteredAdjustmentsSectionProps {
-  ajustes: Ajuste[]
+  adjustments: Ajuste[]
 }
 
-export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdjustmentsSectionProps) {
+export default function RegisteredAdjustmentsSection({ adjustments }: RegisteredAdjustmentsSectionProps) {
   const [collapsed, setCollapsed] = useState(true)
-  if (ajustes.length === 0) return null
+  if (adjustments.length === 0) return null
 
-  const campoLabel: Record<Ajuste['campo'], string> = {
+  const fieldLabel: Record<Ajuste['campo'], string> = {
     quantidade: 'Qtd. autorizada alterada',
     prestador: 'Prestador executante alterado',
     codigo: 'Código do procedimento alterado',
@@ -43,7 +43,7 @@ export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdju
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <EditIcon sx={{ fontSize: 15, color: 'primary.main' }} />
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'primary.main' }}>
-              Ajustes Registrados ({ajustes.length})
+              Ajustes Registrados ({adjustments.length})
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -55,7 +55,7 @@ export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdju
         </Box>
         <Collapse in={!collapsed}>
           <Box sx={{ px: 3, pb: 2, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            {ajustes.map((aj) => (
+            {adjustments.map((aj) => (
               <Box
                 key={aj.id}
                 sx={{ backgroundColor: 'rgba(255,255,255,0.8)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 1.5, p: 1.75 }}
@@ -63,10 +63,10 @@ export default function RegisteredAdjustmentsSection({ ajustes }: RegisteredAdju
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.75 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                     <EditIcon sx={{ fontSize: 13, color: 'primary.main' }} />
-                    <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{campoLabel[aj.campo]}</Typography>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{fieldLabel[aj.campo]}</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, flexShrink: 0, ml: 1 }}>
-                    {formatAjusteTimestamp(aj.timestamp)}
+                    {formatAdjustmentTimestamp(aj.timestamp)}
                   </Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.5 }}>

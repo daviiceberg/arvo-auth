@@ -19,19 +19,20 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 import { type Pedido, type OrigemPedido } from '@/data/pedidos'
-import { statusColorMap, guideTypeColorMap } from '@/shared/constants'
+import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants'
 
 // ---- OrigemLabel (module-level inline component) ----
-const origemConfig: Record<OrigemPedido, { label: string; color: string; icon: React.ReactNode }> = {
-  app: { label: 'App', color: '#2563eb', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
-  whatsapp: { label: 'WhatsApp', color: '#16a34a', icon: <WhatsAppIcon sx={{ fontSize: 13 }} /> },
-  email: { label: 'E-mail', color: '#0891b2', icon: <EmailOutlinedIcon sx={{ fontSize: 13 }} /> },
-  prestador: { label: 'Prestador', color: '#902B29', icon: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} /> },
-  call_center: { label: 'Call Center', color: '#6366f1', icon: <PhoneAndroidIcon sx={{ fontSize: 13 }} /> },
+const originIconMap: Record<OrigemPedido, React.ReactNode> = {
+  app: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
+  whatsapp: <WhatsAppIcon sx={{ fontSize: 13 }} />,
+  email: <EmailOutlinedIcon sx={{ fontSize: 13 }} />,
+  prestador: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} />,
+  call_center: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
 }
 
 function OrigemLabel({ origem }: { origem: OrigemPedido }) {
-  const { label, color, icon } = origemConfig[origem]
+  const { label, color } = originConfigMap[origem]
+  const icon = originIconMap[origem]
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
       <Box sx={{ color, display: 'flex', alignItems: 'center' }}>{icon}</Box>
@@ -43,7 +44,7 @@ function OrigemLabel({ origem }: { origem: OrigemPedido }) {
 }
 
 interface PageHeaderProps {
-  pedido: Pedido
+  request: Pedido
   onBack: () => void
   currentIndex: number
   total: number
@@ -52,15 +53,15 @@ interface PageHeaderProps {
 }
 
 export default function PageHeader({
-  pedido,
+  request,
   onBack,
   currentIndex,
   total,
   onPrev,
   onNext,
 }: PageHeaderProps) {
-  const sc = statusColorMap[pedido.status]
-  const tc = guideTypeColorMap[pedido.tipoGuia]
+  const sc = statusColorMap[request.status]
+  const tc = guideTypeColorMap[request.tipoGuia]
   return (
     <Box
       sx={{
@@ -85,19 +86,19 @@ export default function PageHeader({
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, flexWrap: 'wrap' }}>
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
-            {pedido.id}
+            {request.id}
           </Typography>
           <Chip
-            label={pedido.tipoGuia}
+            label={request.tipoGuia}
             size="small"
             sx={{ backgroundColor: tc.bg, color: tc.color, fontWeight: 700, height: 22 }}
           />
           <Chip
-            label={pedido.status}
+            label={request.status}
             size="small"
             sx={{ backgroundColor: sc.bg, color: sc.color, fontWeight: 700, height: 22 }}
           />
-          {pedido.slaStatus === 'violated' && (
+          {request.slaStatus === 'violated' && (
             <Chip
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA Violado"
@@ -105,7 +106,7 @@ export default function PageHeader({
               sx={{ backgroundColor: 'rgba(212,24,61,0.1)', color: '#d4183d', fontWeight: 700, height: 22 }}
             />
           )}
-          {pedido.slaStatus === 'warning' && (
+          {request.slaStatus === 'warning' && (
             <Chip
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA em Risco"
@@ -113,7 +114,7 @@ export default function PageHeader({
               sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontWeight: 700, height: 22 }}
             />
           )}
-          {pedido.alertas.includes('Liminar Judicial') && (
+          {request.alertas.includes('Liminar Judicial') && (
             <Chip
               icon={<GavelIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="Liminar Judicial"
@@ -191,16 +192,16 @@ export default function PageHeader({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              {pedido.prestador.hospital}
+              {request.prestador.hospital}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              Entrada: {pedido.dataProtocolo}
+              Entrada: {request.dataProtocolo}
             </Typography>
           </Box>
-          <OrigemLabel origem={pedido.origem} />
+          <OrigemLabel origem={request.origem} />
         </Box>
 
         {/* Keyboard shortcuts hint -- aligned below navigator */}

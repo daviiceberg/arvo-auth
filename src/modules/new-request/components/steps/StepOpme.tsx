@@ -58,11 +58,11 @@ export function StepOpme({ form, setForm, set }: StepOpmeProps) {
           <TableBody>
             {form.materiais.map((m, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={m.codigo} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i], codigo: e.target.value }; return { ...f, materiais: a } }); }} sx={{ width: 100 }} /></TableCell>
-                <TableCell><TextField size="small" value={m.descricao} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i], descricao: e.target.value }; return { ...f, materiais: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" value={m.fabricante} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i], fabricante: e.target.value }; return { ...f, materiais: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" type="number" value={m.qtd} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i], qtd: e.target.value }; return { ...f, materiais: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" value={m.valor} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i], valor: e.target.value }; return { ...f, materiais: a } }); }} placeholder="R$ 0,00" /></TableCell>
+                <TableCell><TextField size="small" value={m.codigo} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i]!, codigo: e.target.value }; return { ...f, materiais: a } }); }} sx={{ width: 100 }} /></TableCell>
+                <TableCell><TextField size="small" value={m.descricao} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, materiais: a } }); }} fullWidth /></TableCell>
+                <TableCell><TextField size="small" value={m.fabricante} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i]!, fabricante: e.target.value }; return { ...f, materiais: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" type="number" value={m.qtd} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, materiais: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" value={m.valor} onChange={(e) => { setForm(f => { const a = [...f.materiais]; a[i] = { ...a[i]!, valor: e.target.value }; return { ...f, materiais: a } }); }} placeholder="R$ 0,00" /></TableCell>
                 <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, materiais: f.materiais.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
               </TableRow>
             ))}
@@ -90,8 +90,8 @@ export function StepOpme({ form, setForm, set }: StepOpmeProps) {
           <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5, fontSize: 13 }}>3 Cotações de Preço</Typography>
           {form.cotacoes.map((c, i) => (
             <Box key={i} sx={{ display: 'flex', gap: 2, mb: 1.5 }}>
-              <TextField size="small" label={`Fornecedor ${String(i + 1)}`} value={c.fornecedor} onChange={(e) => { setForm(f => { const a = [...f.cotacoes]; a[i] = { ...a[i], fornecedor: e.target.value }; return { ...f, cotacoes: a } }); }} sx={{ flex: 1 }} />
-              <TextField size="small" label="Valor (R$)" value={c.valor} onChange={(e) => { setForm(f => { const a = [...f.cotacoes]; a[i] = { ...a[i], valor: e.target.value }; return { ...f, cotacoes: a } }); }} sx={{ width: 140 }} />
+              <TextField size="small" label={`Fornecedor ${String(i + 1)}`} value={c.fornecedor} onChange={(e) => { setForm(f => { const a = [...f.cotacoes]; a[i] = { ...a[i]!, fornecedor: e.target.value }; return { ...f, cotacoes: a } }); }} sx={{ flex: 1 }} />
+              <TextField size="small" label="Valor (R$)" value={c.valor} onChange={(e) => { setForm(f => { const a = [...f.cotacoes]; a[i] = { ...a[i]!, valor: e.target.value }; return { ...f, cotacoes: a } }); }} sx={{ width: 140 }} />
             </Box>
           ))}
         </Grid>

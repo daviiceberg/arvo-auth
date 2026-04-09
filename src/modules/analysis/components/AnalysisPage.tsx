@@ -37,7 +37,7 @@ import SimultaneousGuidesAlert from './SimultaneousGuidesAlert'
 
 function AnalysisInner() {
   const {
-    pedido,
+    request,
     currentIndex,
     total,
     handleNavPrev,
@@ -48,10 +48,10 @@ function AnalysisInner() {
     closeSnackbar,
   } = useAnalysis()
 
-  const adjustment = useAdjustmentState({ pedido, showSnackbar })
+  const adjustment = useAdjustmentState({ request, showSnackbar })
 
   const decision = useDecisionState({
-    pedido,
+    request,
     allAdjustments: adjustment.allAdjustments,
     showSnackbar,
   })
@@ -72,7 +72,7 @@ function AnalysisInner() {
   return (
     <Box sx={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'background.default' }}>
       <PageHeader
-        pedido={pedido}
+        request={request}
         onBack={handleBack}
         currentIndex={currentIndex}
         total={total}
@@ -83,23 +83,23 @@ function AnalysisInner() {
         {/* Left content -- scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <PendencyBanner pedido={pedido} />
-            <AlertsBanner pedido={pedido} />
-            <InjunctionBanner pedido={pedido} />
-            <SimultaneousGuidesAlert pedido={pedido} />
-            <BeneficiarySection pedido={pedido} />
-            <ProceduresSection pedido={pedido} allAjustes={adjustment.allAdjustments} onAjustarClick={adjustment.handleAdjustClick} />
-            <RegisteredAdjustmentsSection ajustes={adjustment.allAdjustments} />
-            <ObservationsSection pedido={pedido} />
-            <ConsolidatedHistorySection pedido={pedido} />
-            <DocumentsSection pedido={pedido} />
+            <PendencyBanner request={request} />
+            <AlertsBanner request={request} />
+            <InjunctionBanner request={request} />
+            <SimultaneousGuidesAlert request={request} />
+            <BeneficiarySection request={request} />
+            <ProceduresSection request={request} allAdjustments={adjustment.allAdjustments} onAdjustClick={adjustment.handleAdjustClick} />
+            <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
+            <ObservationsSection request={request} />
+            <ConsolidatedHistorySection request={request} />
+            <DocumentsSection request={request} />
           </Box>
         </Box>
 
         {/* Right sidebar -- always fully visible, own scroll if needed */}
         <Box sx={{ width: 400, flexShrink: 0, overflowY: 'auto', pb: 2 }}>
           <AssistantSidebar
-            pedido={pedido}
+            request={request}
             onAprovarClick={decision.handleApproveClick}
             onNegarClick={decision.handleDenyClick}
             onPendenciarClick={() => { decision.setShowPendencyDialog(true); }}
@@ -130,10 +130,10 @@ function AnalysisInner() {
       {/* Ajuste Drawer */}
       <AdjustmentDrawer
         open={adjustment.drawerOpen}
-        pedidoId={pedido.id}
-        pedidoStatus={pedido.status}
+        requestId={request.id}
+        requestStatus={request.status}
         proc={adjustment.drawerProc}
-        existingAjustes={adjustment.allAdjustments}
+        existingAdjustments={adjustment.allAdjustments}
         onClose={() => { adjustment.setDrawerOpen(false); }}
         onConfirm={adjustment.handleAdjustConfirm}
       />
@@ -149,7 +149,7 @@ function AnalysisInner() {
       {/* Approval Dialog */}
       <ApprovalDialog
         open={decision.showApprovalDialog}
-        pedidoId={pedido.id}
+        requestId={request.id}
         approvalReason={decision.approvalReason}
         onApprovalReasonChange={decision.setApprovalReason}
         approvalJustification={decision.approvalJustification}
@@ -161,13 +161,13 @@ function AnalysisInner() {
       {/* Denial Dialog */}
       <DenialDialog
         open={decision.showDenialDialog}
-        pedidoId={pedido.id}
-        beneficiarioNome={pedido.beneficiario.nome}
-        iaSugestao={pedido.iaSugestao}
+        requestId={request.id}
+        beneficiaryName={request.beneficiario.nome}
+        iaSuggestion={request.iaSugestao}
         denialReasonIdx={decision.denialReasonIdx}
         onDenialReasonChange={(idx) => {
           decision.setDenialReasonIdx(idx)
-          decision.setDenialJustification(DENIAL_REASONS[idx].texto)
+          decision.setDenialJustification(DENIAL_REASONS[idx]?.texto ?? '')
         }}
         denialJustification={decision.denialJustification}
         onDenialJustificationChange={decision.setDenialJustification}
@@ -200,7 +200,7 @@ function AnalysisInner() {
       {/* Divergence Dialog */}
       <DivergenceDialog
         open={decision.showDivergenceDialog}
-        iaSugestao={pedido.iaSugestao}
+        iaSuggestion={request.iaSugestao}
         divergenceReason={decision.divergenceReason}
         onDivergenceReasonChange={decision.setDivergenceReason}
         onContinue={decision.handleDivergenceContinue}
@@ -210,7 +210,7 @@ function AnalysisInner() {
       {/* Partial Approval Dialog */}
       <PartialApprovalDialog
         open={decision.showPartialDialog}
-        pedido={pedido}
+        request={request}
         procDecisions={decision.procDecisions}
         partialDenialReasonMap={decision.partialDenialReasonMap}
         onPartialDenialReasonMapChange={decision.setPartialDenialReasonMap}

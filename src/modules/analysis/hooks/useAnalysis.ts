@@ -12,16 +12,16 @@ export function useAnalysis() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
-  const pedido = pedidos.find((p) => p.id === id) ?? pedidos[0]
-  const currentIndex = pedidos.findIndex((p) => p.id === pedido.id)
+  const request = pedidos.find((p) => p.id === id) ?? pedidos[0]!
+  const currentIndex = pedidos.findIndex((p) => p.id === request.id)
   const total = pedidos.length
 
   const handleNavPrev = () => {
-    if (currentIndex > 0) router.push(`/analise?id=${pedidos[currentIndex - 1].id}`)
+    if (currentIndex > 0) router.push(`/analise?id=${pedidos[currentIndex - 1]!.id}`)
   }
 
   const handleNavNext = () => {
-    if (currentIndex < total - 1) router.push(`/analise?id=${pedidos[currentIndex + 1].id}`)
+    if (currentIndex < total - 1) router.push(`/analise?id=${pedidos[currentIndex + 1]!.id}`)
   }
 
   const handleBack = () => { router.push('/fila'); }
@@ -42,7 +42,7 @@ export function useAnalysis() {
 
   return {
     router,
-    pedido,
+    request,
     currentIndex,
     total,
     handleNavPrev,

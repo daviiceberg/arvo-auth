@@ -16,6 +16,7 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
+import { decisionActionConfigMap } from '@/shared/constants';
 import { type HistoricoEntry } from '@/types/pedido';
 
 import {
@@ -93,7 +94,7 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
   },
 };
 
-function getHistoricoProfile(entry: HistoricoEntry): 'high_use' | 'primeira_vez' | 'default' {
+function getHistoryProfile(entry: HistoricoEntry): 'high_use' | 'primeira_vez' | 'default' {
   if (entry.divergencia && (entry.categoria === 'Oncologia' || entry.categoria === 'Internação')) return 'high_use';
   if (entry.carencia) return 'primeira_vez';
   return 'default';
@@ -110,7 +111,7 @@ function completenessLabel(c: HistoricoConsolidado['completeness']): { label: st
   }
 }
 
-function padraoLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string {
+function patternLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string {
   switch (p) {
     case 'first_time':
       return 'Primeira solicitação';
@@ -121,19 +122,25 @@ function padraoLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string 
   }
 }
 
-function decisaoIcon(d: 'aprovado' | 'negado' | 'ajustado') {
-  if (d === 'aprovado') return <CheckIcon sx={{ fontSize: 14, color: '#16a34a' }} />;
-  if (d === 'negado') return <CloseIcon sx={{ fontSize: 14, color: '#d4183d' }} />;
-  return <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />;
+const decisionKeyMap: Record<'aprovado' | 'negado' | 'ajustado', keyof typeof decisionActionConfigMap> = {
+  aprovado: 'Aprovado',
+  negado: 'Negado',
+  ajustado: 'Aprovado Parcial',
+};
+
+function decisionIcon(d: 'aprovado' | 'negado' | 'ajustado') {
+  const { color } = decisionActionConfigMap[decisionKeyMap[d]];
+  if (d === 'aprovado') return <CheckIcon sx={{ fontSize: 14, color }} />;
+  if (d === 'negado') return <CloseIcon sx={{ fontSize: 14, color }} />;
+  return <WarningAmberIcon sx={{ fontSize: 14, color }} />;
 }
 
-function decisaoChipColor(d: 'aprovado' | 'negado' | 'ajustado') {
-  if (d === 'aprovado') return { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' };
-  if (d === 'negado') return { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' };
-  return { bg: 'rgba(245,158,11,0.1)', color: '#b45309' };
+function decisionChipColor(d: 'aprovado' | 'negado' | 'ajustado') {
+  const { bg, color } = decisionActionConfigMap[decisionKeyMap[d]];
+  return { bg, color };
 }
 
-function sinaisAtencaoColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 'error' {
+function alertSeverityColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 'error' {
   if (s === 'low') return 'info';
   if (s === 'medium') return 'warning';
   return 'error';
@@ -146,8 +153,8 @@ interface ConsolidatedHistorySectionProps {
 }
 
 export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistorySectionProps) {
-  const key = getHistoricoProfile(entry);
-  const h = mockHistorico[key];
+  const key = getHistoryProfile(entry);
+  const h = mockHistorico[key]!;
   const cp = completenessLabel(h.completeness);
   const [showAllAuth, setShowAllAuth] = useState(false);
   const visibleAuth = showAllAuth ? h.autorizacoesAnteriores : h.autorizacoesAnteriores.slice(0, 3);
@@ -200,7 +207,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
                 Padrão de uso
               </Typography>
               <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13 }}>
-                {padraoLabel(h.linhaDoTempo.padrao)}
+                {patternLabel(h.linhaDoTempo.padrao)}
               </Typography>
             </Box>
           </Box>
@@ -337,7 +344,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
             {visibleAuth.map((auth: AutorizacaoAnterior) => {
-              const dc = decisaoChipColor(auth.decisao);
+              const dc = decisionChipColor(auth.decisao);
               return (
                 <Box
                   key={auth.id}
@@ -351,7 +358,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
                     backgroundColor: auth.destaque ? 'rgba(245,158,11,0.04)' : 'transparent',
                   }}
                 >
-                  <Box sx={{ flexShrink: 0 }}>{decisaoIcon(auth.decisao)}</Box>
+                  <Box sx={{ flexShrink: 0 }}>{decisionIcon(auth.decisao)}</Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12, mb: 0.25 }}>
                       {auth.procedimento}
@@ -399,7 +406,7 @@ export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistor
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
               {h.sinaisAtencao.map((sinal) => (
-                <Alert key={sinal.id} severity={sinaisAtencaoColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
+                <Alert key={sinal.id} severity={alertSeverityColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
                   <Typography variant="caption" fontWeight={700} display="block">
                     {sinal.mensagem}
                   </Typography>

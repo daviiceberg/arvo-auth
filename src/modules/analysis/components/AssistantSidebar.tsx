@@ -26,7 +26,7 @@ import { iaSuggestionColorMap } from '@/shared/constants'
 import { type ProcDecision } from '../types'
 
 interface AssistantSidebarProps {
-  pedido: Pedido
+  request: Pedido
   onAprovarClick: () => void
   onNegarClick: () => void
   onPendenciarClick: () => void
@@ -36,27 +36,27 @@ interface AssistantSidebarProps {
   onConfirmarDecisaoClick: () => void
 }
 
-export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick, procDecisoes, onProcDecisaoChange, onConfirmarDecisaoClick }: AssistantSidebarProps) {
-  const { iaChecklist } = pedido
-  const parecerRecebido = pedido.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!pedido.juntaRecomendacao
-  const iaSugestao = parecerRecebido ? pedido.juntaRecomendacao! : pedido.iaSugestao
-  const iaJustificativa = parecerRecebido ? pedido.juntaParecer! : pedido.iaJustificativa
-  const sc = iaSuggestionColorMap[iaSugestao]
-  const [loadingAprovar, setLoadingAprovar] = useState(false)
-  const [loadingNegar, setLoadingNegar] = useState(false)
-  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(pedido.status)
-  const isJuntaAguardando = pedido.subStatus === 'JUNTA_AGUARDANDO'
+export default function AssistantSidebar({ request, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick, procDecisoes, onProcDecisaoChange, onConfirmarDecisaoClick }: AssistantSidebarProps) {
+  const { iaChecklist } = request
+  const opinionReceived = request.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!request.juntaRecomendacao
+  const iaSuggestion = opinionReceived ? request.juntaRecomendacao! : request.iaSugestao
+  const iaJustification = opinionReceived ? request.juntaParecer! : request.iaJustificativa
+  const sc = iaSuggestionColorMap[iaSuggestion]
+  const [loadingApprove, setLoadingApprove] = useState(false)
+  const [loadingDeny, setLoadingDeny] = useState(false)
+  const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status)
+  const isBoardWaiting = request.subStatus === 'JUNTA_AGUARDANDO'
 
   // Multi-procedure flow
-  const isMultiProc = pedido.procedimentos.length > 1
-  const decisoes = pedido.procedimentos.map(pr => procDecisoes[pr.codigo] ?? 'pendente')
-  const nAprovado = decisoes.filter(d => d === 'aprovado').length
-  const nNegado = decisoes.filter(d => d === 'negado').length
-  const anyPendente = decisoes.some(d => d === 'pendente')
-  const allAprovado = nAprovado === pedido.procedimentos.length
-  const allNegado = nNegado === pedido.procedimentos.length
-  const confirmarBtnColor = allAprovado ? '#16a34a' : allNegado ? '#d4183d' : '#902B29'
-  const confirmarBtnHover = allAprovado ? '#15803d' : allNegado ? '#b91c1c' : '#6e1f1d'
+  const isMultiProc = request.procedimentos.length > 1
+  const decisions = request.procedimentos.map(pr => procDecisoes[pr.codigo] ?? 'pendente')
+  const nApproved = decisions.filter(d => d === 'aprovado').length
+  const nDenied = decisions.filter(d => d === 'negado').length
+  const anyPending = decisions.some(d => d === 'pendente')
+  const allApproved = nApproved === request.procedimentos.length
+  const allDenied = nDenied === request.procedimentos.length
+  const confirmBtnColor = allApproved ? '#16a34a' : allDenied ? '#d4183d' : '#902B29'
+  const confirmBtnHover = allApproved ? '#15803d' : allDenied ? '#b91c1c' : '#6e1f1d'
 
   const pillLabel: Record<string, string> = {
     'Aprovar': 'Critérios atendidos',
@@ -65,13 +65,13 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
   }
 
   const handleAprovarWithLoading = () => {
-    setLoadingAprovar(true)
-    setTimeout(() => { setLoadingAprovar(false); onAprovarClick() }, 600)
+    setLoadingApprove(true)
+    setTimeout(() => { setLoadingApprove(false); onAprovarClick() }, 600)
   }
 
   const handleNegarWithLoading = () => {
-    setLoadingNegar(true)
-    setTimeout(() => { setLoadingNegar(false); onNegarClick() }, 600)
+    setLoadingDeny(true)
+    setTimeout(() => { setLoadingDeny(false); onNegarClick() }, 600)
   }
 
   return (
@@ -112,39 +112,39 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             }}
           >
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 12 }}>
-              {parecerRecebido ? 'Ponto de vista com base no parecer da Junta Médica' : 'Ponto de vista da IA'}
+              {opinionReceived ? 'Ponto de vista com base no parecer da Junta Médica' : 'Ponto de vista da IA'}
             </Typography>
             <Chip
-              label={pillLabel[iaSugestao] ?? iaSugestao}
+              label={pillLabel[iaSuggestion] ?? iaSuggestion}
               size="small"
               sx={{ backgroundColor: sc.bg, color: sc.color, fontWeight: 700, mb: 1 }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 12, lineHeight: 1.5 }}>
-              {iaJustificativa}
+              {iaJustification}
             </Typography>
           </Box>
 
           {/* Checklist */}
           {(() => {
-            const isTerapias = pedido.categoria === 'Terapias Especiais'
-            const isF84 = isTerapias && pedido.procedimentos.some(p => p.cid?.startsWith('F84'))
-            const isContinuidade = pedido.etapaAutorizacao === 'continuidade'
+            const isTerapias = request.categoria === 'Terapias Especiais'
+            const isF84 = isTerapias && request.procedimentos.some(p => p.cid?.startsWith('F84'))
+            const isContinuidade = request.etapaAutorizacao === 'continuidade'
 
             // Extra checklist items for Terapias continuidade
             const extraContinuidadeItems: { texto: string; sub?: string; status: 'ok' | 'warning' | 'error' }[] = isTerapias && isContinuidade ? [
               {
                 texto: 'Relatório de evolução terapêutica anexado',
-                status: pedido.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
+                status: request.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
               },
               {
                 texto: 'Relatório emitido pelo profissional executante',
-                status: pedido.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'warning',
+                status: request.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'warning',
               },
             ] : []
 
             // Extra checklist items for OPME with valorUnitario
-            const isOpme = pedido.categoria === 'OPME'
-            const opmeProcsComValor = pedido.procedimentos.filter(p => p.fabricante !== undefined)
+            const isOpme = request.categoria === 'OPME'
+            const opmeProcsComValor = request.procedimentos.filter(p => p.fabricante !== undefined)
             const extraOpmeItems: { texto: string; status: 'ok' | 'warning' | 'error' }[] = isOpme && opmeProcsComValor.length > 0
               ? opmeProcsComValor.map(p => {
                   if (!p.valorUnitario) return { texto: 'Valor unitário não informado — obrigatório para OPME', status: 'error' as const }
@@ -203,7 +203,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
           })()}
 
           {/* Alertas especiais */}
-          {pedido.alertas.includes('Liminar Judicial') && (
+          {request.alertas.includes('Liminar Judicial') && (
             <Alert severity="warning" icon={<GavelIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
               <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
                 Liminar Judicial Ativa
@@ -214,7 +214,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             </Alert>
           )}
 
-          {pedido.alertas.includes('Fora do Rol ANS') && (
+          {request.alertas.includes('Fora do Rol ANS') && (
             <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
               <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
                 Fora do Rol ANS
@@ -242,7 +242,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                 Decisão por procedimento
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {pedido.procedimentos.map(proc => {
+                {request.procedimentos.map(proc => {
                   const dec = procDecisoes[proc.codigo] ?? 'pendente'
                   const isAprovado = dec === 'aprovado'
                   const isNegado = dec === 'negado'
@@ -260,7 +260,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                             variant={isAprovado ? 'contained' : 'outlined'}
                             startIcon={isAprovado ? <CheckCircleOutlineIcon sx={{ fontSize: 14 }} /> : undefined}
                             onClick={() => { onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado'); }}
-                            disabled={isGuiaFinalizada}
+                            disabled={isGuideFinalized}
                             aria-label={isAprovado ? `Desfazer aprovação de ${proc.descricao}` : `Aprovar ${proc.descricao}`}
                             sx={{
                               minHeight: 32, fontSize: 12, fontWeight: 600,
@@ -282,7 +282,7 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
                             variant={isNegado ? 'contained' : 'outlined'}
                             startIcon={isNegado ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
                             onClick={() => { onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado'); }}
-                            disabled={isGuiaFinalizada}
+                            disabled={isGuideFinalized}
                             aria-label={isNegado ? `Desfazer negativa de ${proc.descricao}` : `Negar ${proc.descricao}`}
                             sx={{
                               minHeight: 32, fontSize: 12, fontWeight: 600,
@@ -304,37 +304,37 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
               </Box>
 
               {/* Consolidated status badge -- only when all decided */}
-              {!anyPendente && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1.25, borderRadius: 1.5, backgroundColor: allAprovado ? 'rgba(22,163,74,0.06)' : allNegado ? 'rgba(212,24,61,0.06)' : 'rgba(217,119,6,0.08)', border: `1px solid ${allAprovado ? 'rgba(22,163,74,0.2)' : allNegado ? 'rgba(212,24,61,0.2)' : 'rgba(217,119,6,0.25)'}` }}>
-                  {allAprovado
+              {!anyPending && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1.25, borderRadius: 1.5, backgroundColor: allApproved ? 'rgba(22,163,74,0.06)' : allDenied ? 'rgba(212,24,61,0.06)' : 'rgba(217,119,6,0.08)', border: `1px solid ${allApproved ? 'rgba(22,163,74,0.2)' : allDenied ? 'rgba(212,24,61,0.2)' : 'rgba(217,119,6,0.25)'}` }}>
+                  {allApproved
                     ? <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a', flexShrink: 0 }} />
-                    : allNegado
+                    : allDenied
                     ? <CloseIcon sx={{ fontSize: 16, color: '#d4183d', flexShrink: 0 }} />
                     : <CallSplitIcon sx={{ fontSize: 16, color: '#b45309', flexShrink: 0 }} />
                   }
-                  <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: allAprovado ? '#16a34a' : allNegado ? '#d4183d' : '#b45309' }}>
-                    {allAprovado
+                  <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 700, color: allApproved ? '#16a34a' : allDenied ? '#d4183d' : '#b45309' }}>
+                    {allApproved
                       ? 'Aprovação Total'
-                      : allNegado
+                      : allDenied
                       ? 'Negativa Total'
-                      : `Aprovação Parcial — ${String(nAprovado)} aprovado(s) · ${String(nNegado)} negado(s)`}
+                      : `Aprovação Parcial — ${String(nApproved)} aprovado(s) · ${String(nDenied)} negado(s)`}
                   </Typography>
                 </Box>
               )}
 
               {/* Confirmar Decisão */}
               <Tooltip
-                title={anyPendente ? 'Defina a decisão para todos os procedimentos' : ''}
+                title={anyPending ? 'Defina a decisão para todos os procedimentos' : ''}
                 placement="top"
-                disableHoverListener={!anyPendente}
+                disableHoverListener={!anyPending}
               >
                 <span style={{ width: '100%' }}>
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={anyPendente || isGuiaFinalizada}
+                    disabled={anyPending || isGuideFinalized}
                     onClick={onConfirmarDecisaoClick}
-                    sx={{ minHeight: 40, backgroundColor: confirmarBtnColor, '&:hover': { backgroundColor: confirmarBtnHover }, '&.Mui-disabled': { backgroundColor: 'rgba(0,0,0,0.12)' } }}
+                    sx={{ minHeight: 40, backgroundColor: confirmBtnColor, '&:hover': { backgroundColor: confirmBtnHover }, '&.Mui-disabled': { backgroundColor: 'rgba(0,0,0,0.12)' } }}
                   >
                     Confirmar Decisão
                   </Button>
@@ -345,46 +345,46 @@ export default function AssistantSidebar({ pedido, onAprovarClick, onNegarClick,
             </>
           ) : (
             <>
-              <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+              <Tooltip title={isBoardWaiting ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isBoardWaiting}>
                 <span style={{ width: '100%' }}>
                   <Button
                     variant="contained"
                     fullWidth
-                    disabled={loadingAprovar || isGuiaFinalizada || isJuntaAguardando}
+                    disabled={loadingApprove || isGuideFinalized || isBoardWaiting}
                     onClick={handleAprovarWithLoading}
-                    startIcon={loadingAprovar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
                     sx={{ minHeight: 40, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } }}
                   >
-                    {loadingAprovar ? 'Processando...' : 'Aprovar'}
+                    {loadingApprove ? 'Processando...' : 'Aprovar'}
                   </Button>
                 </span>
               </Tooltip>
-              <Tooltip title={isJuntaAguardando ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isJuntaAguardando}>
+              <Tooltip title={isBoardWaiting ? 'Aguardando parecer da Junta Médica' : ''} placement="top" disableHoverListener={!isBoardWaiting}>
                 <span style={{ width: '100%' }}>
                   <Button
                     variant="contained"
                     color="error"
                     fullWidth
-                    disabled={loadingNegar || isGuiaFinalizada || isJuntaAguardando}
+                    disabled={loadingDeny || isGuideFinalized || isBoardWaiting}
                     onClick={handleNegarWithLoading}
-                    startIcon={loadingNegar ? <CircularProgress size={14} color="inherit" /> : undefined}
+                    startIcon={loadingDeny ? <CircularProgress size={14} color="inherit" /> : undefined}
                     sx={{ minHeight: 40 }}
                   >
-                    {loadingNegar ? 'Processando...' : 'Negar'}
+                    {loadingDeny ? 'Processando...' : 'Negar'}
                   </Button>
                 </span>
               </Tooltip>
             </>
           )}
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuiaFinalizada} sx={{ minHeight: 36, fontSize: 12 }}>
+            <Button variant="outlined" fullWidth onClick={onPendenciarClick} disabled={isGuideFinalized} sx={{ minHeight: 36, fontSize: 12 }}>
               Pendenciar
             </Button>
             <Button
               variant="outlined"
               fullWidth
               onClick={onJuntaClick}
-              disabled={isGuiaFinalizada}
+              disabled={isGuideFinalized}
               sx={{ minHeight: 36, fontSize: 12, borderColor: '#2563eb', color: '#2563eb', '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' } }}
             >
               Junta Médica

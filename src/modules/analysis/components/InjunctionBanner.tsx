@@ -8,12 +8,12 @@ import Typography from '@mui/material/Typography'
 import { type Pedido } from '@/data/pedidos'
 
 interface InjunctionBannerProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function InjunctionBanner({ pedido }: InjunctionBannerProps) {
-  if (!pedido.liminar?.ativa) return null
-  const { processo, escopo, validade, observacao } = pedido.liminar
+export default function InjunctionBanner({ request }: InjunctionBannerProps) {
+  if (!request.liminar?.ativa) return null
+  const { processo, escopo, validade, observacao } = request.liminar
   return (
     <Box sx={{ border: '1px solid rgba(124,58,237,0.35)', borderRadius: 2, backgroundColor: 'rgba(124,58,237,0.04)', p: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>

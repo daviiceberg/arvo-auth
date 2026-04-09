@@ -9,12 +9,12 @@ import { type Pedido, type Ajuste } from '@/data/pedidos'
 import { type ProcDecision, type SnackbarState } from '../types'
 
 interface UseDecisionStateParams {
-  pedido: Pedido
+  request: Pedido
   allAdjustments: Ajuste[]
   showSnackbar: (msg: string, severity: SnackbarState['severity']) => void
 }
 
-export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDecisionStateParams) {
+export function useDecisionState({ request, allAdjustments, showSnackbar }: UseDecisionStateParams) {
   const router = useRouter()
 
   // Dialog visibility states
@@ -32,7 +32,7 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
 
   // Per-procedure decision state (multi-procedure flow)
   const [procDecisions, setProcDecisions] = useState<Record<string, ProcDecision>>(() =>
-    Object.fromEntries(pedido.procedimentos.map(p => [p.codigo, 'pendente' as ProcDecision]))
+    Object.fromEntries(request.procedimentos.map(p => [p.codigo, 'pendente' as ProcDecision]))
   )
 
   // Partial approval dialog state
@@ -60,11 +60,11 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
   }
 
   const doApprove = () => {
-    if (pedido.iaSugestao !== 'Aprovar') {
+    if (request.iaSugestao !== 'Aprovar') {
       setPendingAction('autorizar')
       setShowDivergenceDialog(true)
     } else {
-      setApprovalJustification(`Justificativa: ${pedido.iaJustificativa}`)
+      setApprovalJustification(`Justificativa: ${request.iaJustificativa}`)
       setShowApprovalDialog(true)
     }
   }
@@ -79,10 +79,10 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
     if (!divergenceReason.trim()) return
     setShowDivergenceDialog(false)
     if (pendingAction === 'autorizar') {
-      setApprovalJustification(`Justificativa: ${pedido.iaJustificativa}`)
+      setApprovalJustification(`Justificativa: ${request.iaJustificativa}`)
       setShowApprovalDialog(true)
     } else {
-      setDenialJustification(`Justificativa: ${pedido.iaJustificativa}`)
+      setDenialJustification(`Justificativa: ${request.iaJustificativa}`)
       setShowDenialDialog(true)
     }
   }
@@ -90,19 +90,19 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
   const confirmApproval = () => {
     if (!approvalReason) return
     setShowApprovalDialog(false)
-    showSnackbar(`Pedido ${pedido.id} aprovado com sucesso`, 'success')
+    showSnackbar(`Pedido ${request.id} aprovado com sucesso`, 'success')
   }
 
   const confirmDenial = () => {
     if (denialReasonIdx === -1 || !denialJustification.trim()) return
     setShowDenialDialog(false)
-    showSnackbar(`Pedido ${pedido.id} negado`, 'error')
+    showSnackbar(`Pedido ${request.id} negado`, 'error')
   }
 
   const confirmPendency = () => {
     if (pendencyItems.length === 0) return
     setShowPendencyDialog(false)
-    router.push('/fila?tab=devolutivas&pendenciado=' + pedido.id)
+    router.push('/fila?tab=devolutivas&pendenciado=' + request.id)
   }
 
   const confirmMedicalBoard = () => {
@@ -117,7 +117,7 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
 
   const handleConfirmDecisionClick = () => {
     const initJust: Record<string, string> = {}
-    pedido.procedimentos.forEach(pr => {
+    request.procedimentos.forEach(pr => {
       if ((procDecisions[pr.codigo] ?? 'pendente') === 'negado') {
         initJust[pr.codigo] = initJust[pr.codigo] ?? ''
       }
@@ -128,18 +128,18 @@ export function useDecisionState({ pedido, allAdjustments, showSnackbar }: UseDe
   }
 
   const confirmPartialDecision = () => {
-    const negados = pedido.procedimentos.filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
-    const allValid = negados.every(pr => partialDenialReasonMap[pr.codigo] !== undefined && partialDenialJustMap[pr.codigo].trim())
+    const denied = request.procedimentos.filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
+    const allValid = denied.every(pr => partialDenialReasonMap[pr.codigo] !== undefined && (partialDenialJustMap[pr.codigo] ?? '').trim())
     if (!allValid) return
     setShowPartialDialog(false)
-    const nAprovado = pedido.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
-    const nNegado = negados.length
-    if (nNegado === 0) {
-      showSnackbar(`Pedido ${pedido.id} aprovado com sucesso`, 'success')
-    } else if (nAprovado === 0) {
-      showSnackbar(`Pedido ${pedido.id} negado`, 'error')
+    const nApproved = request.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
+    const nDenied = denied.length
+    if (nDenied === 0) {
+      showSnackbar(`Pedido ${request.id} aprovado com sucesso`, 'success')
+    } else if (nApproved === 0) {
+      showSnackbar(`Pedido ${request.id} negado`, 'error')
     } else {
-      showSnackbar(`Pedido ${pedido.id} — Aprovação Parcial registrada (${String(nAprovado)} aprovado(s), ${String(nNegado)} negado(s))`, 'warning')
+      showSnackbar(`Pedido ${request.id} — Aprovação Parcial registrada (${String(nApproved)} aprovado(s), ${String(nDenied)} negado(s))`, 'warning')
     }
   }
 

@@ -127,11 +127,11 @@ function IACampoIcon({ status }: { status: IACampoStatus }) {
 
 // ---- Component ----
 interface DocumentsSectionProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
-  const doc = useDocumentViewer(pedido)
+export default function DocumentsSection({ request }: DocumentsSectionProps) {
+  const doc = useDocumentViewer(request)
 
   return (
     <Card>
@@ -165,8 +165,8 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
         </Box>
 
         {/* Terapias Especiais -- missing mandatory doc warning */}
-        {pedido.categoria === 'Terapias Especiais' && (() => {
-          const isContinuidade = pedido.etapaAutorizacao === 'continuidade'
+        {request.categoria === 'Terapias Especiais' && (() => {
+          const isContinuidade = request.etapaAutorizacao === 'continuidade'
           const mandatoryDocName = isContinuidade ? 'Relatório de Evolução Terapêutica' : 'Plano Terapêutico'
           const mandatoryDocKeywords = isContinuidade
             ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
@@ -580,7 +580,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
               startIcon={<DownloadIcon sx={{ fontSize: 14 }} />}
               onClick={() => {
                 const a = document.createElement('a')
-                a.href = '/exemplo-pedido.png'
+                a.href = '/exemplo-request.png'
                 a.download = doc.viewDoc ?? 'documento'
                 a.click()
               }}
@@ -612,7 +612,7 @@ export default function DocumentsSection({ pedido }: DocumentsSectionProps) {
             overflow: 'hidden',
           }}>
             <img
-              src="/exemplo-pedido.png"
+              src="/exemplo-request.png"
               alt={`Visualização do documento: ${doc.viewDoc ?? ''}`}
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />

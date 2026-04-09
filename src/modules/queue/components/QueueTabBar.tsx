@@ -12,26 +12,26 @@ interface QueueTabBarProps {
   tabValue: number;
   totalCount: number;
   urgEmergCount: number;
-  devolutivasCount: number;
-  devolutivasAguardando: number;
-  devolutivasRetorno: number;
-  parados12h: number;
-  devolutivasSubFilter: 'all' | 'aguardando' | 'retorno';
+  returnsCount: number;
+  returnsWaiting: number;
+  returnsReceived: number;
+  stalled12h: number;
+  returnSubFilter: 'all' | 'aguardando' | 'retorno';
   onTabChange: (value: number) => void;
-  onDevolutivasSubFilterChange: (value: 'all' | 'aguardando' | 'retorno') => void;
+  onReturnSubFilterChange: (value: 'all' | 'aguardando' | 'retorno') => void;
 }
 
 export default function QueueTabBar({
   tabValue,
   totalCount,
   urgEmergCount,
-  devolutivasCount,
-  devolutivasAguardando,
-  devolutivasRetorno,
-  parados12h,
-  devolutivasSubFilter,
+  returnsCount,
+  returnsWaiting,
+  returnsReceived,
+  stalled12h,
+  returnSubFilter,
   onTabChange,
-  onDevolutivasSubFilterChange,
+  onReturnSubFilterChange,
 }: QueueTabBarProps) {
   return (
     <>
@@ -74,7 +74,7 @@ export default function QueueTabBar({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 Devolutivas
                 <Chip
-                  label={devolutivasCount}
+                  label={returnsCount}
                   size="small"
                   sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309' }}
                 />
@@ -87,7 +87,7 @@ export default function QueueTabBar({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 SLA em Risco
                 <Chip
-                  label={parados12h}
+                  label={stalled12h}
                   size="small"
                   sx={{ height: 18, fontSize: 12, fontWeight: 700, backgroundColor: 'rgba(234,88,12,0.1)', color: '#ea580c' }}
                 />
@@ -105,9 +105,9 @@ export default function QueueTabBar({
             Filtrar:
           </Typography>
           {([
-            { key: 'all', label: `Todas (${String(devolutivasCount)})`, icon: null },
-            { key: 'aguardando', label: `Aguardando (${String(devolutivasAguardando)})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
-            { key: 'retorno', label: `Retorno recebido (${String(devolutivasRetorno)})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
+            { key: 'all', label: `Todas (${String(returnsCount)})`, icon: null },
+            { key: 'aguardando', label: `Aguardando (${String(returnsWaiting)})`, icon: <HourglassTopIcon sx={{ fontSize: 13 }} /> },
+            { key: 'retorno', label: `Retorno recebido (${String(returnsReceived)})`, icon: <MoveToInboxIcon sx={{ fontSize: 13 }} /> },
           ] as const).map(({ key, label, icon }) => (
             <Chip
               key={key}
@@ -118,14 +118,14 @@ export default function QueueTabBar({
                 </Box>
               }
               size="small"
-              onClick={() => { onDevolutivasSubFilterChange(key); }}
+              onClick={() => { onReturnSubFilterChange(key); }}
               sx={{
                 height: 24,
                 fontSize: 12,
-                fontWeight: devolutivasSubFilter === key ? 700 : 500,
-                backgroundColor: devolutivasSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
-                color: devolutivasSubFilter === key ? '#b45309' : 'text.secondary',
-                border: devolutivasSubFilter === key ? '1px solid rgba(245,158,11,0.4)' : '1px solid transparent',
+                fontWeight: returnSubFilter === key ? 700 : 500,
+                backgroundColor: returnSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
+                color: returnSubFilter === key ? '#b45309' : 'text.secondary',
+                border: returnSubFilter === key ? '1px solid rgba(245,158,11,0.4)' : '1px solid transparent',
                 cursor: 'pointer',
               }}
             />

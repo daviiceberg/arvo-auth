@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 
 import { type Pedido, type Documento } from '@/data/pedidos'
 
-export function useDocumentViewer(pedido: Pedido) {
+export function useDocumentViewer(request: Pedido) {
   const [localDocs, setLocalDocs] = useState<Documento[]>([])
   const [viewDoc, setViewDoc] = useState<string | null>(null)
   const [zoom, setZoom] = useState(100)
@@ -23,7 +23,7 @@ export function useDocumentViewer(pedido: Pedido) {
   const [solicitarPrazo, setSolicitarPrazo] = useState('5')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const allDocs = [...pedido.documentos, ...localDocs]
+  const allDocs = [...request.documentos, ...localDocs]
 
   const handleAddConfirm = () => {
     if (!addTipo) {

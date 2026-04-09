@@ -19,17 +19,17 @@ import QueueTableRow from './QueueTableRow';
 
 interface QueueTableProps {
   items: Pedido[];
-  categoriaFilter: string;
+  categoryFilter: string;
   loading: boolean;
   lastViewedId: string | null;
   hasFilters: boolean;
-  onRowClick: (pedidoId: string) => void;
+  onRowClick: (requestId: string) => void;
   onClearFilters: () => void;
 }
 
 export default function QueueTable({
   items,
-  categoriaFilter,
+  categoryFilter,
   loading,
   lastViewedId,
   hasFilters,
@@ -56,7 +56,7 @@ export default function QueueTable({
             <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
             <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
-            {categoriaFilter === 'Todas' && <TableCell sx={{ minWidth: 155 }}>Categoria</TableCell>}
+            {categoryFilter === 'Todas' && <TableCell sx={{ minWidth: 155 }}>Categoria</TableCell>}
             <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
             <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
             <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
@@ -91,11 +91,11 @@ export default function QueueTable({
               </TableCell>
             </TableRow>
           ) : (
-            items.map((pedido) => (
+            items.map((item) => (
               <QueueTableRow
-                key={pedido.id}
-                pedido={pedido}
-                categoriaFilter={categoriaFilter}
+                key={item.id}
+                request={item}
+                categoryFilter={categoryFilter}
                 lastViewedId={lastViewedId}
                 onRowClick={onRowClick}
               />

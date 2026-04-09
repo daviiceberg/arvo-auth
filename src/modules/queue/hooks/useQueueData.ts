@@ -11,7 +11,7 @@ interface UseQueueDataParams {
   pedidos: Pedido[];
 }
 
-function isParado12h(p: Pedido): boolean {
+function isStalled12h(p: Pedido): boolean {
   const t = parseInt(p.tempoFila);
   return !isNaN(t) && t > 12;
 }
@@ -26,13 +26,13 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const {
     tabValue,
-    devolutivasSubFilter,
+    returnSubFilter,
     search,
-    categoriaFilter,
+    categoryFilter,
     slaFilter,
-    prestadorFilter,
-    iaFilter,
-    alertaFilter,
+    providerFilter,
+    iaSuggestionFilter,
+    alertFilter,
     statusFilter,
     page,
     rowsPerPage,
@@ -44,14 +44,14 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
         if (tabValue === 1) return p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência';
         if (tabValue === 2) {
           if (p.status !== 'Devolutiva') return false;
-          if (devolutivasSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO';
-          if (devolutivasSubFilter === 'retorno') return p.subStatus === 'PENDENTE_RETORNO_RECEBIDO';
+          if (returnSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO';
+          if (returnSubFilter === 'retorno') return p.subStatus === 'PENDENTE_RETORNO_RECEBIDO';
           return true;
         }
-        if (tabValue === 3) return isParado12h(p);
+        if (tabValue === 3) return isStalled12h(p);
         return true;
       }),
-    [pedidos, tabValue, devolutivasSubFilter],
+    [pedidos, tabValue, returnSubFilter],
   );
 
   const filtered = useMemo(
@@ -65,15 +65,15 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
           p.beneficiario.carteirinha.includes(q) ||
           (p.procedimentos[0]?.descricao || '').toLowerCase().includes(q) ||
           words.every((w) => p.beneficiario.nome.toLowerCase().includes(w));
-        const matchCat = categoriaFilter === 'Todas' || p.categoria === categoriaFilter;
+        const matchCat = categoryFilter === 'Todas' || p.categoria === categoryFilter;
         const matchSla =
           slaFilter === 'Todas' ||
           (slaFilter === 'No prazo' && p.slaStatus === 'ok') ||
           (slaFilter === 'Atenção' && p.slaStatus === 'warning') ||
           (slaFilter === 'Violado' && p.slaStatus === 'violated');
-        const matchPrest = prestadorFilter === 'Todos' || p.prestador.hospital === prestadorFilter;
-        const matchIA = iaFilter === 'Todas' || p.iaSugestao === iaFilter;
-        const matchAlerta = alertaFilter === 'Todos' || p.alertas.includes(alertaFilter);
+        const matchPrest = providerFilter === 'Todos' || p.prestador.hospital === providerFilter;
+        const matchIA = iaSuggestionFilter === 'Todas' || p.iaSugestao === iaSuggestionFilter;
+        const matchAlerta = alertFilter === 'Todos' || p.alertas.includes(alertFilter);
         const matchStatus =
           statusFilter === 'Todos' ||
           (statusFilter === 'retorno_recebido' &&
@@ -82,7 +82,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
             (p.subStatus === 'PENDENTE_AGUARDANDO' || p.subStatus === 'JUNTA_AGUARDANDO'));
         return matchSearch && matchCat && matchSla && matchPrest && matchIA && matchAlerta && matchStatus;
       }),
-    [filteredByTab, search, categoriaFilter, slaFilter, prestadorFilter, iaFilter, alertaFilter, statusFilter],
+    [filteredByTab, search, categoryFilter, slaFilter, providerFilter, iaSuggestionFilter, alertFilter, statusFilter],
   );
 
   const pagedItems = useMemo(
@@ -95,23 +95,23 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     [pedidos],
   );
 
-  const devolutivasCount = useMemo(
+  const returnsCount = useMemo(
     () => pedidos.filter((p) => p.status === 'Devolutiva').length,
     [pedidos],
   );
 
-  const devolutivasAguardando = useMemo(
+  const returnsWaiting = useMemo(
     () => pedidos.filter((p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_AGUARDANDO').length,
     [pedidos],
   );
 
-  const devolutivasRetorno = useMemo(
+  const returnsReceived = useMemo(
     () => pedidos.filter((p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_RETORNO_RECEBIDO').length,
     [pedidos],
   );
 
-  const parados12h = useMemo(
-    () => pedidos.filter(isParado12h).length,
+  const stalled12h = useMemo(
+    () => pedidos.filter(isStalled12h).length,
     [pedidos],
   );
 
@@ -121,9 +121,9 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     filtered,
     pagedItems,
     urgEmergCount,
-    devolutivasCount,
-    devolutivasAguardando,
-    devolutivasRetorno,
-    parados12h,
+    returnsCount,
+    returnsWaiting,
+    returnsReceived,
+    stalled12h,
   };
 }

@@ -12,31 +12,31 @@ import TextField from '@mui/material/TextField';
 
 interface QueueFilterBarProps {
   search: string;
-  categoriaFilter: string;
+  categoryFilter: string;
   slaFilter: string;
-  prestadorFilter: string;
-  iaFilter: string;
+  providerFilter: string;
+  iaSuggestionFilter: string;
   hasFilters: boolean;
   onSearchChange: (value: string) => void;
-  onCategoriaFilterChange: (value: string) => void;
+  onCategoryFilterChange: (value: string) => void;
   onSlaFilterChange: (value: string) => void;
-  onPrestadorFilterChange: (value: string) => void;
-  onIaFilterChange: (value: string) => void;
+  onProviderFilterChange: (value: string) => void;
+  onIaSuggestionFilterChange: (value: string) => void;
   onClearFilters: () => void;
 }
 
 export default function QueueFilterBar({
   search,
-  categoriaFilter,
+  categoryFilter,
   slaFilter,
-  prestadorFilter,
-  iaFilter,
+  providerFilter,
+  iaSuggestionFilter,
   hasFilters,
   onSearchChange,
-  onCategoriaFilterChange,
+  onCategoryFilterChange,
   onSlaFilterChange,
-  onPrestadorFilterChange,
-  onIaFilterChange,
+  onProviderFilterChange,
+  onIaSuggestionFilterChange,
   onClearFilters,
 }: QueueFilterBarProps) {
   return (
@@ -70,9 +70,9 @@ export default function QueueFilterBar({
       <FormControl size="small" fullWidth>
         <InputLabel>Categoria</InputLabel>
         <Select
-          value={categoriaFilter}
+          value={categoryFilter}
           label="Categoria"
-          onChange={(e) => { onCategoriaFilterChange(e.target.value); }}
+          onChange={(e) => { onCategoryFilterChange(e.target.value); }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Internação">Internação</MenuItem>
@@ -101,9 +101,9 @@ export default function QueueFilterBar({
       <FormControl size="small" fullWidth>
         <InputLabel>Prestador</InputLabel>
         <Select
-          value={prestadorFilter}
+          value={providerFilter}
           label="Prestador"
-          onChange={(e) => { onPrestadorFilterChange(e.target.value); }}
+          onChange={(e) => { onProviderFilterChange(e.target.value); }}
         >
           <MenuItem value="Todos">Todos</MenuItem>
           <MenuItem value="Hospital São Lucas">Hospital São Lucas</MenuItem>
@@ -115,9 +115,9 @@ export default function QueueFilterBar({
       <FormControl size="small" fullWidth>
         <InputLabel>Sugestão IA</InputLabel>
         <Select
-          value={iaFilter}
+          value={iaSuggestionFilter}
           label="Sugestão IA"
-          onChange={(e) => { onIaFilterChange(e.target.value); }}
+          onChange={(e) => { onIaSuggestionFilterChange(e.target.value); }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>

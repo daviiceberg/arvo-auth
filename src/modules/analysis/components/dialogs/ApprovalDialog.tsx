@@ -16,7 +16,7 @@ import { APPROVAL_REASONS } from '../../constants/approval-reasons'
 
 interface ApprovalDialogProps {
   open: boolean
-  pedidoId: string
+  requestId: string
   approvalReason: string
   onApprovalReasonChange: (value: string) => void
   approvalJustification: string
@@ -27,7 +27,7 @@ interface ApprovalDialogProps {
 
 export default function ApprovalDialog({
   open,
-  pedidoId,
+  requestId,
   approvalReason,
   onApprovalReasonChange,
   approvalJustification,
@@ -40,7 +40,7 @@ export default function ApprovalDialog({
       <DialogTitle sx={{ fontWeight: 700 }}>Confirmar Aprovação</DialogTitle>
       <DialogContent>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Você está prestes a aprovar a solicitação <strong>{pedidoId}</strong>. Esta ação é irreversível.
+          Você está prestes a aprovar a solicitação <strong>{requestId}</strong>. Esta ação é irreversível.
         </Typography>
         <FormControl fullWidth size="small" sx={{ mb: 2 }}>
           <InputLabel>Motivo Estruturado *</InputLabel>

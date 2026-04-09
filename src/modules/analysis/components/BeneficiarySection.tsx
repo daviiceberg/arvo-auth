@@ -14,11 +14,11 @@ import Typography from '@mui/material/Typography'
 import { type Pedido } from '@/data/pedidos'
 
 interface BeneficiarySectionProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function BeneficiarySection({ pedido }: BeneficiarySectionProps) {
-  const b = pedido.beneficiario
+export default function BeneficiarySection({ request }: BeneficiarySectionProps) {
+  const b = request.beneficiario
   const router = useRouter()
   return (
     <Card>

@@ -18,9 +18,9 @@ import { DENIAL_REASONS } from '../../constants/denial-reasons'
 
 interface DenialDialogProps {
   open: boolean
-  pedidoId: string
-  beneficiarioNome: string
-  iaSugestao: IASugestao
+  requestId: string
+  beneficiaryName: string
+  iaSuggestion: IASugestao
   denialReasonIdx: number
   onDenialReasonChange: (idx: number) => void
   denialJustification: string
@@ -31,9 +31,9 @@ interface DenialDialogProps {
 
 export default function DenialDialog({
   open,
-  pedidoId,
-  beneficiarioNome,
-  iaSugestao,
+  requestId,
+  beneficiaryName,
+  iaSuggestion,
   denialReasonIdx,
   onDenialReasonChange,
   denialJustification,
@@ -46,11 +46,11 @@ export default function DenialDialog({
       <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Registrar Negativa</DialogTitle>
       <DialogContent sx={{ pt: 0 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Solicitação <strong>{pedidoId}</strong> · {beneficiarioNome}
+          Solicitação <strong>{requestId}</strong> · {beneficiaryName}
         </Typography>
-        {iaSugestao !== 'Negar' && (
+        {iaSuggestion !== 'Negar' && (
           <Alert severity="warning" sx={{ mb: 2, borderRadius: 1 }}>
-            A IA sugeriu <strong>{iaSugestao}</strong> para este caso. Ao registrar negativa, justifique o motivo da divergência no campo abaixo.
+            A IA sugeriu <strong>{iaSuggestion}</strong> para este caso. Ao registrar negativa, justifique o motivo da divergência no campo abaixo.
           </Alert>
         )}
         <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5 }}>

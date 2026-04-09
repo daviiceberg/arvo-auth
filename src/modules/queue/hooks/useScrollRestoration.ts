@@ -20,11 +20,11 @@ export function useScrollRestoration() {
     sessionStorage.removeItem('fila_last_id');
   }, []);
 
-  const saveScrollPosition = useCallback((pedidoId: string) => {
+  const saveScrollPosition = useCallback((requestId: string) => {
     if (scrollContainerRef.current) {
       sessionStorage.setItem('fila_scroll', String(scrollContainerRef.current.scrollTop));
     }
-    sessionStorage.setItem('fila_last_id', pedidoId);
+    sessionStorage.setItem('fila_last_id', requestId);
   }, []);
 
   return {

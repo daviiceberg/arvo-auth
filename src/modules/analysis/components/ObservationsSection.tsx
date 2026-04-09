@@ -7,11 +7,11 @@ import Typography from '@mui/material/Typography'
 import { type Pedido } from '@/data/pedidos'
 
 interface ObservationsSectionProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function ObservationsSection({ pedido }: ObservationsSectionProps) {
-  if (!pedido.observacoes) return null
+export default function ObservationsSection({ request }: ObservationsSectionProps) {
+  if (!request.observacoes) return null
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
@@ -19,7 +19,7 @@ export default function ObservationsSection({ pedido }: ObservationsSectionProps
           Observações do Solicitante
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-          {pedido.observacoes}
+          {request.observacoes}
         </Typography>
       </CardContent>
     </Card>

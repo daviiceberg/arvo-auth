@@ -15,16 +15,16 @@ import Typography from '@mui/material/Typography'
 import { type Pedido } from '@/data/pedidos'
 
 interface PendencyBannerProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function PendencyBanner({ pedido }: PendencyBannerProps) {
-  const [parecerExpanded, setParecerExpanded] = useState(false)
+export default function PendencyBanner({ request }: PendencyBannerProps) {
+  const [opinionExpanded, setOpinionExpanded] = useState(false)
 
-  const sub = pedido.subStatus
+  const sub = request.subStatus
 
   // Legacy Devolutiva without subStatus
-  if (pedido.status === 'Devolutiva' && !sub && pedido.pendenciaMotivos) {
+  if (request.status === 'Devolutiva' && !sub && request.pendenciaMotivos) {
     return (
       <Box>
         <Alert
@@ -36,10 +36,10 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
             Pedido em pendência — aguardando documentação complementar
           </Typography>
           <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-            Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}
+            Pendenciado por <strong>{request.pendenciaResponsavel}</strong> em {request.pendenciaData}
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {pedido.pendenciaMotivos.map((m) => (
+            {request.pendenciaMotivos.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box>
@@ -58,11 +58,11 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Aguardando retorno — documentação complementar solicitada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
-          Pendenciado por <strong>{pedido.pendenciaResponsavel}</strong> em {pedido.pendenciaData}. Aguardando envio dos documentos pelo beneficiário/prestador.
+        <Typography variant="caption" sx={{ display: 'block', mb: request.pendenciaMotivos ? 0.5 : 0 }}>
+          Pendenciado por <strong>{request.pendenciaResponsavel}</strong> em {request.pendenciaData}. Aguardando envio dos documentos pelo beneficiário/prestador.
         </Typography>
-        {pedido.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {pedido.pendenciaMotivos.map((m) => (
+        {request.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {request.pendenciaMotivos.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box> : null}
@@ -80,11 +80,11 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Retorno recebido — documentação complementar enviada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: pedido.pendenciaMotivos ? 0.5 : 0 }}>
+        <Typography variant="caption" sx={{ display: 'block', mb: request.pendenciaMotivos ? 0.5 : 0 }}>
           A documentação solicitada foi recebida. Revise os itens abaixo e prossiga com a decisão.
         </Typography>
-        {pedido.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {pedido.pendenciaMotivos.map((m) => (
+        {request.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {request.pendenciaMotivos.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box> : null}
@@ -125,14 +125,14 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
           </Typography>
           <Box
             component="span"
-            onClick={() => { setParecerExpanded(v => !v); }}
+            onClick={() => { setOpinionExpanded(v => !v); }}
             sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', color: '#16a34a', fontWeight: 600, fontSize: 12 }}
           >
-            <ExpandMoreIcon sx={{ fontSize: 16, transition: 'transform 0.2s', transform: parecerExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-            {parecerExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
+            <ExpandMoreIcon sx={{ fontSize: 16, transition: 'transform 0.2s', transform: opinionExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            {opinionExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
           </Box>
         </Alert>
-        <Collapse in={parecerExpanded}>
+        <Collapse in={opinionExpanded}>
           <Box
             sx={{
               p: 2,
@@ -145,7 +145,7 @@ export default function PendencyBanner({ pedido }: PendencyBannerProps) {
               Parecer da Junta Médica
             </Typography>
             <Typography variant="body2" sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}>
-              {pedido.juntaParecer}
+              {request.juntaParecer}
             </Typography>
           </Box>
         </Collapse>

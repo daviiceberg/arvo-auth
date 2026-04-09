@@ -30,16 +30,16 @@ export default function QueuePage() {
     filtered,
     pagedItems,
     urgEmergCount,
-    devolutivasCount,
-    devolutivasAguardando,
-    devolutivasRetorno,
-    parados12h,
+    returnsCount,
+    returnsWaiting,
+    returnsReceived,
+    stalled12h,
   } = useQueueData({ filters, pedidos });
   const { scrollContainerRef, lastViewedId, saveScrollPosition } = useScrollRestoration();
 
-  const handleRowClick = (pedidoId: string) => {
-    saveScrollPosition(pedidoId);
-    router.push(`/analise?id=${pedidoId}`);
+  const handleRowClick = (requestId: string) => {
+    saveScrollPosition(requestId);
+    router.push(`/analise?id=${requestId}`);
   };
 
   const handleTabChange = (value: number) => {
@@ -47,8 +47,8 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handleDevolutivasSubFilterChange = (value: 'all' | 'aguardando' | 'retorno') => {
-    filters.setDevolutivasSubFilter(value);
+  const handleReturnSubFilterChange = (value: 'all' | 'aguardando' | 'retorno') => {
+    filters.setReturnSubFilter(value);
     filters.setPage(0);
   };
 
@@ -57,8 +57,8 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handleCategoriaFilterChange = (value: string) => {
-    filters.setCategoriaFilter(value);
+  const handleCategoryFilterChange = (value: string) => {
+    filters.setCategoryFilter(value);
     filters.setPage(0);
   };
 
@@ -67,13 +67,13 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handlePrestadorFilterChange = (value: string) => {
-    filters.setPrestadorFilter(value);
+  const handleProviderFilterChange = (value: string) => {
+    filters.setProviderFilter(value);
     filters.setPage(0);
   };
 
-  const handleIaFilterChange = (value: string) => {
-    filters.setIaFilter(value);
+  const handleIaSuggestionFilterChange = (value: string) => {
+    filters.setIaSuggestionFilter(value);
     filters.setPage(0);
   };
 
@@ -82,7 +82,7 @@ export default function QueuePage() {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4" fontWeight={700}>
-          {filters.categoriaFilter === 'Todas' ? 'Fila Operacional' : filters.categoriaFilter}
+          {filters.categoryFilter === 'Todas' ? 'Fila Operacional' : filters.categoryFilter}
         </Typography>
         <Button
           variant="contained"
@@ -96,12 +96,12 @@ export default function QueuePage() {
       </Box>
 
       {/* Metric Cards Row — only on general queue */}
-      {filters.categoriaFilter === 'Todas' && (
+      {filters.categoryFilter === 'Todas' && (
         <QueueMetricsRow
           totalCount={pedidos.length}
           urgEmergCount={urgEmergCount}
-          devolutivasCount={devolutivasCount}
-          parados12h={parados12h}
+          returnsCount={returnsCount}
+          stalled12h={stalled12h}
           loading={loading}
           onTabChange={handleTabChange}
         />
@@ -114,35 +114,35 @@ export default function QueuePage() {
           tabValue={filters.tabValue}
           totalCount={pedidos.length}
           urgEmergCount={urgEmergCount}
-          devolutivasCount={devolutivasCount}
-          devolutivasAguardando={devolutivasAguardando}
-          devolutivasRetorno={devolutivasRetorno}
-          parados12h={parados12h}
-          devolutivasSubFilter={filters.devolutivasSubFilter}
+          returnsCount={returnsCount}
+          returnsWaiting={returnsWaiting}
+          returnsReceived={returnsReceived}
+          stalled12h={stalled12h}
+          returnSubFilter={filters.returnSubFilter}
           onTabChange={handleTabChange}
-          onDevolutivasSubFilterChange={handleDevolutivasSubFilterChange}
+          onReturnSubFilterChange={handleReturnSubFilterChange}
         />
 
         {/* Filter bar */}
         <QueueFilterBar
           search={filters.search}
-          categoriaFilter={filters.categoriaFilter}
+          categoryFilter={filters.categoryFilter}
           slaFilter={filters.slaFilter}
-          prestadorFilter={filters.prestadorFilter}
-          iaFilter={filters.iaFilter}
+          providerFilter={filters.providerFilter}
+          iaSuggestionFilter={filters.iaSuggestionFilter}
           hasFilters={filters.hasFilters}
           onSearchChange={handleSearchChange}
-          onCategoriaFilterChange={handleCategoriaFilterChange}
+          onCategoryFilterChange={handleCategoryFilterChange}
           onSlaFilterChange={handleSlaFilterChange}
-          onPrestadorFilterChange={handlePrestadorFilterChange}
-          onIaFilterChange={handleIaFilterChange}
+          onProviderFilterChange={handleProviderFilterChange}
+          onIaSuggestionFilterChange={handleIaSuggestionFilterChange}
           onClearFilters={filters.clearFilters}
         />
 
         {/* Table */}
         <QueueTable
           items={pagedItems}
-          categoriaFilter={filters.categoriaFilter}
+          categoryFilter={filters.categoryFilter}
           loading={loading}
           lastViewedId={lastViewedId}
           hasFilters={filters.hasFilters}

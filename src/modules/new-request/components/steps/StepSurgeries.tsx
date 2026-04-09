@@ -40,9 +40,9 @@ export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
           <TableBody>
             {form.procedimentos.map((p, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={p.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i], codigoTUSS: e.target.value }; return { ...f, procedimentos: a } }); }} sx={{ width: 110 }} /></TableCell>
-                <TableCell><TextField size="small" value={p.descricao} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i], descricao: e.target.value }; return { ...f, procedimentos: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" type="number" value={p.qtd} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i], qtd: e.target.value }; return { ...f, procedimentos: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" value={p.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, codigoTUSS: e.target.value }; return { ...f, procedimentos: a } }); }} sx={{ width: 110 }} /></TableCell>
+                <TableCell><TextField size="small" value={p.descricao} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, procedimentos: a } }); }} fullWidth /></TableCell>
+                <TableCell><TextField size="small" type="number" value={p.qtd} onChange={(e) => { setForm(f => { const a = [...f.procedimentos]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, procedimentos: a } }); }} /></TableCell>
                 <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, procedimentos: f.procedimentos.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
               </TableRow>
             ))}
@@ -69,11 +69,11 @@ export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
           <TableBody>
             {form.opme.map((o, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={o.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i], codigoTUSS: e.target.value }; return { ...f, opme: a } }); }} sx={{ width: 100 }} /></TableCell>
-                <TableCell><TextField size="small" value={o.descricao} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i], descricao: e.target.value }; return { ...f, opme: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" value={o.fabricante} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i], fabricante: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" type="number" value={o.qtd} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i], qtd: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
-                <TableCell><TextField size="small" value={o.valorUnit} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i], valorUnit: e.target.value }; return { ...f, opme: a } }); }} placeholder="R$ 0,00" /></TableCell>
+                <TableCell><TextField size="small" value={o.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, codigoTUSS: e.target.value }; return { ...f, opme: a } }); }} sx={{ width: 100 }} /></TableCell>
+                <TableCell><TextField size="small" value={o.descricao} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, opme: a } }); }} fullWidth /></TableCell>
+                <TableCell><TextField size="small" value={o.fabricante} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, fabricante: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" type="number" value={o.qtd} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, opme: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" value={o.valorUnit} onChange={(e) => { setForm(f => { const a = [...f.opme]; a[i] = { ...a[i]!, valorUnit: e.target.value }; return { ...f, opme: a } }); }} placeholder="R$ 0,00" /></TableCell>
                 <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, opme: f.opme.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
               </TableRow>
             ))}

@@ -41,7 +41,7 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
         return
       }
       for (let i = 0; i < terapiaProcedimentos.length; i++) {
-        const p = terapiaProcedimentos[i]
+        const p = terapiaProcedimentos[i]!
         const n = terapiaProcedimentos.length > 1 ? ` no Procedimento ${i + 1}` : ''
         if (!p.tipoTerapia) { alert(`Selecione o tipo de terapia${n}.`); return }
         if (!p.codigoTUSS.trim()) { alert(`Informe o código TUSS${n}.`); return }

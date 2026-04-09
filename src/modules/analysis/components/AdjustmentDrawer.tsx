@@ -26,76 +26,76 @@ import { USER_PROFILE } from '../types'
 
 interface AdjustmentDrawerProps {
   open: boolean
-  pedidoId: string
-  pedidoStatus: string
-  existingAjustes?: Ajuste[]
+  requestId: string
+  requestStatus: string
+  existingAdjustments?: Ajuste[]
   proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number } | null
   onClose: () => void
-  onConfirm: (ajuste: Omit<Ajuste, 'id'>) => void
+  onConfirm: (adjustment: Omit<Ajuste, 'id'>) => void
 }
 
-export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, onClose, onConfirm, existingAjustes = [] }: AdjustmentDrawerProps) {
-  const [campo, setCampo] = useState<'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | ''>('')
-  const [novaQty, setNovaQty] = useState('')
-  const [novoPrestador, setNovoPrestador] = useState('')
-  const [novoCNES, setNovoCNES] = useState('')
-  const [novoCodigo, setNovoCodigo] = useState('')
-  const [novaDesc, setNovaDesc] = useState('')
-  const [novoFabricante, setNovoFabricante] = useState('')
-  const [novoValor, setNovoValor] = useState('')
-  const [motivo, setMotivo] = useState('')
-  const [fundamentacao, setFundamentacao] = useState('')
+export default function AdjustmentDrawer({ open, requestId, requestStatus, proc, onClose, onConfirm, existingAdjustments = [] }: AdjustmentDrawerProps) {
+  const [field, setField] = useState<'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | ''>('')
+  const [newQty, setNewQty] = useState('')
+  const [newProvider, setNewProvider] = useState('')
+  const [newCNES, setNewCNES] = useState('')
+  const [newCode, setNewCode] = useState('')
+  const [newDesc, setNewDesc] = useState('')
+  const [newManufacturer, setNewManufacturer] = useState('')
+  const [newValue, setNewValue] = useState('')
+  const [reason, setReason] = useState('')
+  const [justification, setJustification] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const isOpme = proc?.fabricante !== undefined
 
-  const camposBase = USER_PROFILE === 'Gestor'
+  const fieldsBase = USER_PROFILE === 'Gestor'
     ? [{ value: 'quantidade', label: 'Quantidade autorizada' }, { value: 'prestador', label: 'Prestador executante' }, { value: 'codigo', label: 'Código do procedimento' }]
     : [{ value: 'quantidade', label: 'Quantidade autorizada' }]
 
-  const camposDisponiveis = isOpme
-    ? [...camposBase, { value: 'fabricante', label: 'Fabricante' }, { value: 'valorUnitario', label: 'Valor unitário' }]
-    : camposBase
+  const availableFields = isOpme
+    ? [...fieldsBase, { value: 'fabricante', label: 'Fabricante' }, { value: 'valorUnitario', label: 'Valor unitário' }]
+    : fieldsBase
 
-  const motivosDisponiveis = campo === 'valorUnitario'
+  const availableReasons = field === 'valorUnitario'
     ? [...ADJUSTMENT_REASONS, ...OPME_VALUE_REASONS]
     : ADJUSTMENT_REASONS
 
-  const qtyNum = parseInt(novaQty, 10)
+  const qtyNum = parseInt(newQty, 10)
   const qtyStatus =
-    !novaQty || isNaN(qtyNum) ? null
+    !newQty || isNaN(qtyNum) ? null
     : qtyNum < (proc?.qty ?? 0) ? 'below'
     : qtyNum === (proc?.qty ?? 0) ? 'equal'
     : 'above'
 
-  // Reset (or pre-fill from existing ajuste) when proc changes or drawer opens
+  // Reset (or pre-fill from existing adjustment) when proc changes or drawer opens
   useEffect(() => {
     if (!open) return
-    const lastQtyAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'quantidade').slice(-1)[0]
-    const lastPrestAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'prestador').slice(-1)[0]
-    const lastCodeAjuste = existingAjustes.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'codigo').slice(-1)[0]
-    if (lastQtyAjuste) {
-      setCampo('quantidade')
-      setNovaQty(lastQtyAjuste.valorNovo)
-    } else if (lastPrestAjuste) {
-      setCampo('prestador')
-      setNovoPrestador(lastPrestAjuste.valorNovo.replace(/ \(CNES: .+\)$/, ''))
-      const cnesMatch = /CNES: (.+)\)$/.exec(lastPrestAjuste.valorNovo)
-      setNovoCNES(cnesMatch?.[1] ?? '')
-    } else if (lastCodeAjuste) {
-      setCampo('codigo')
-      setNovoCodigo(lastCodeAjuste.valorNovo.split(' — ')[0])
-      setNovaDesc(lastCodeAjuste.valorNovo.split(' — ')[1] ?? '')
+    const lastQtyAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'quantidade').slice(-1)[0]
+    const lastProviderAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'prestador').slice(-1)[0]
+    const lastCodeAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'codigo').slice(-1)[0]
+    if (lastQtyAdj) {
+      setField('quantidade')
+      setNewQty(lastQtyAdj.valorNovo)
+    } else if (lastProviderAdj) {
+      setField('prestador')
+      setNewProvider(lastProviderAdj.valorNovo.replace(/ \(CNES: .+\)$/, ''))
+      const cnesMatch = /CNES: (.+)\)$/.exec(lastProviderAdj.valorNovo)
+      setNewCNES(cnesMatch?.[1] ?? '')
+    } else if (lastCodeAdj) {
+      setField('codigo')
+      setNewCode(lastCodeAdj.valorNovo.split(' — ')[0] ?? '')
+      setNewDesc(lastCodeAdj.valorNovo.split(' — ')[1] ?? '')
     } else {
-      setCampo('')
-      setNovaQty('')
-      setNovoPrestador('')
-      setNovoCNES('')
-      setNovoCodigo('')
-      setNovaDesc('')
+      setField('')
+      setNewQty('')
+      setNewProvider('')
+      setNewCNES('')
+      setNewCode('')
+      setNewDesc('')
     }
-    setMotivo('')
-    setFundamentacao('')
+    setReason('')
+    setJustification('')
     setErrors({})
   }, [open, proc?.codigo]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -109,57 +109,57 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
 
   const validate = () => {
     const errs: Record<string, string> = {}
-    if (!campo) errs.campo = 'Selecione o campo a ajustar'
-    if (campo === 'quantidade') {
-      if (!novaQty || isNaN(qtyNum) || qtyNum < 1) errs.novaQty = 'Informe uma quantidade válida (mín. 1)'
-      if (qtyStatus === 'above') errs.novaQty = 'Não é possível autorizar mais que o solicitado'
+    if (!field) errs.field = 'Selecione o campo a ajustar'
+    if (field === 'quantidade') {
+      if (!newQty || isNaN(qtyNum) || qtyNum < 1) errs.newQty = 'Informe uma quantidade válida (mín. 1)'
+      if (qtyStatus === 'above') errs.newQty = 'Não é possível autorizar mais que o solicitado'
     }
-    if (campo === 'prestador' && !novoPrestador.trim()) errs.novoPrestador = 'Informe o novo prestador'
-    if (campo === 'codigo') {
-      if (!novoCodigo.trim()) errs.novoCodigo = 'Informe o novo código'
-      if (!novaDesc.trim()) errs.novaDesc = 'Informe a nova descrição'
+    if (field === 'prestador' && !newProvider.trim()) errs.newProvider = 'Informe o novo prestador'
+    if (field === 'codigo') {
+      if (!newCode.trim()) errs.newCode = 'Informe o novo código'
+      if (!newDesc.trim()) errs.newDesc = 'Informe a nova descrição'
     }
-    if (campo === 'fabricante' && !novoFabricante.trim()) errs.novoFabricante = 'Informe o novo fabricante'
-    if (campo === 'valorUnitario') {
-      const v = parseFloat(novoValor)
-      if (!novoValor || isNaN(v) || v <= 0) errs.novoValor = 'Informe um valor válido (> 0)'
+    if (field === 'fabricante' && !newManufacturer.trim()) errs.newManufacturer = 'Informe o novo fabricante'
+    if (field === 'valorUnitario') {
+      const v = parseFloat(newValue)
+      if (!newValue || isNaN(v) || v <= 0) errs.newValue = 'Informe um valor válido (> 0)'
     }
-    if (!motivo) errs.motivo = 'Selecione o motivo'
-    if (motivo === 'Outro (descrever na fundamentação)' && !fundamentacao.trim()) errs.fundamentacao = 'Fundamentação obrigatória quando motivo é "Outro"'
+    if (!reason) errs.motivo = 'Selecione o motivo'
+    if (reason === 'Outro (descrever na fundamentação)' && !justification.trim()) errs.justification = 'Fundamentação obrigatória quando motivo é "Outro"'
     return errs
   }
 
   const handleConfirm = () => {
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
-    if (!proc || !campo) return
+    if (!proc || !field) return
 
     let valorAnterior = ''
     let valorNovo = ''
-    if (campo === 'quantidade') { valorAnterior = String(proc.qty); valorNovo = novaQty }
-    if (campo === 'prestador') { valorAnterior = proc.prestador; valorNovo = novoCNES ? `${novoPrestador} (CNES: ${novoCNES})` : novoPrestador }
-    if (campo === 'codigo') { valorAnterior = proc.codigo; valorNovo = `${novoCodigo} — ${novaDesc}` }
-    if (campo === 'fabricante') { valorAnterior = proc.fabricante ?? ''; valorNovo = novoFabricante }
-    if (campo === 'valorUnitario') {
+    if (field === 'quantidade') { valorAnterior = String(proc.qty); valorNovo = newQty }
+    if (field === 'prestador') { valorAnterior = proc.prestador; valorNovo = newCNES ? `${newProvider} (CNES: ${newCNES})` : newProvider }
+    if (field === 'codigo') { valorAnterior = proc.codigo; valorNovo = `${newCode} — ${newDesc}` }
+    if (field === 'fabricante') { valorAnterior = proc.fabricante ?? ''; valorNovo = newManufacturer }
+    if (field === 'valorUnitario') {
       valorAnterior = proc.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'
-      valorNovo = parseFloat(novoValor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      valorNovo = parseFloat(newValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     }
 
     onConfirm({
       procedimentoCodigo: proc.codigo,
       procedimentoDescricao: proc.descricao,
-      campo: campo,
+      campo: field,
       valorAnterior,
       valorNovo,
-      motivo,
-      fundamentacao: fundamentacao.trim() || undefined,
+      motivo: reason,
+      fundamentacao: justification.trim() || undefined,
       operador: 'Ana Paula Santos',
       perfil: USER_PROFILE,
       timestamp: new Date().toISOString(),
     })
   }
 
-  const isGuiaFinalizada = ['Aprovado', 'Negado'].includes(pedidoStatus)
+  const isGuideFinalized = ['Aprovado', 'Negado'].includes(requestStatus)
 
   return (
     <Drawer
@@ -181,7 +181,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
             <Typography fontWeight={700} sx={{ fontSize: 15 }}>Ajustar Procedimento</Typography>
           </Box>
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {pedidoId} · {proc?.codigo}
+            {requestId} · {proc?.codigo}
           </Typography>
         </Box>
         <IconButton size="small" onClick={onClose} sx={{ mt: -0.5 }}>
@@ -219,35 +219,35 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
             Ajuste Proposto
           </Typography>
 
-          <FormControl fullWidth size="small" sx={{ mb: errors.campo ? 0.5 : 2 }} error={!!errors.campo}>
+          <FormControl fullWidth size="small" sx={{ mb: errors.field ? 0.5 : 2 }} error={!!errors.field}>
             <InputLabel>Campo a ajustar *</InputLabel>
-            <Select value={campo} label="Campo a ajustar *" onChange={e => { setCampo(e.target.value as typeof campo); setErrors(v => ({ ...v, campo: '' })) }} autoFocus>
-              {camposDisponiveis.map(c => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
+            <Select value={field} label="Campo a ajustar *" onChange={e => { setField(e.target.value as typeof field); setErrors(v => ({ ...v, campo: '' })) }} autoFocus>
+              {availableFields.map(c => <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>)}
             </Select>
-            {errors.campo ? <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.campo}</Typography> : null}
+            {errors.field ? <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.field}</Typography> : null}
           </FormControl>
 
           {/* Quantidade */}
-          {campo === 'quantidade' && (
+          {field === 'quantidade' && (
             <Box sx={{ mb: 2 }}>
               <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
                 <TextField size="small" label="Qtd. solicitada" value={proc?.qty ?? ''} disabled sx={{ flex: 1 }} />
                 <TextField
                   size="small"
                   label="Qtd. autorizada *"
-                  value={novaQty}
-                  onChange={e => { setNovaQty(e.target.value.replace(/\D/g, '')); setErrors(v => ({ ...v, novaQty: '' })) }}
+                  value={newQty}
+                  onChange={e => { setNewQty(e.target.value.replace(/\D/g, '')); setErrors(v => ({ ...v, newQty: '' })) }}
                   inputProps={{ min: 1, inputMode: 'numeric' }}
                   placeholder="Ex: 20"
-                  error={!!errors.novaQty}
+                  error={!!errors.newQty}
                   sx={{ flex: 1 }}
                 />
               </Box>
-              {errors.novaQty ? <Typography sx={{ fontSize: 11, color: 'error.main', mb: 0.75 }}>{errors.novaQty}</Typography> : null}
+              {errors.newQty ? <Typography sx={{ fontSize: 11, color: 'error.main', mb: 0.75 }}>{errors.newQty}</Typography> : null}
               {qtyStatus === 'below' && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                   <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309' }} />
-                  <Typography sx={{ fontSize: 12, color: '#b45309' }}>Autorizando menos que o solicitado ({proc?.qty} → {novaQty})</Typography>
+                  <Typography sx={{ fontSize: 12, color: '#b45309' }}>Autorizando menos que o solicitado ({proc?.qty} → {newQty})</Typography>
                 </Box>
               )}
               {qtyStatus === 'equal' && (
@@ -260,25 +260,25 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
           )}
 
           {/* Prestador */}
-          {campo === 'prestador' && (
+          {field === 'prestador' && (
             <Box sx={{ mb: 2 }}>
               <TextField size="small" label="Prestador atual" value={proc?.prestador ?? ''} disabled fullWidth sx={{ mb: 1.5 }} />
               <TextField
                 size="small"
                 label="Novo prestador *"
-                value={novoPrestador}
-                onChange={e => { setNovoPrestador(e.target.value); setErrors(v => ({ ...v, novoPrestador: '' })) }}
+                value={newProvider}
+                onChange={e => { setNewProvider(e.target.value); setErrors(v => ({ ...v, newProvider: '' })) }}
                 placeholder="Nome do prestador credenciado"
-                error={!!errors.novoPrestador}
-                helperText={errors.novoPrestador}
+                error={!!errors.newProvider}
+                helperText={errors.newProvider}
                 fullWidth
                 sx={{ mb: 1.5 }}
               />
               <TextField
                 size="small"
                 label="CNES (opcional)"
-                value={novoCNES}
-                onChange={e => { setNovoCNES(e.target.value.replace(/\D/g, '')); }}
+                value={newCNES}
+                onChange={e => { setNewCNES(e.target.value.replace(/\D/g, '')); }}
                 inputProps={{ inputMode: 'numeric' }}
                 fullWidth
               />
@@ -286,7 +286,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
           )}
 
           {/* Código */}
-          {campo === 'codigo' && (
+          {field === 'codigo' && (
             <Box sx={{ mb: 2 }}>
               <TextField size="small" label="Código atual" value={proc?.codigo ?? ''} disabled fullWidth sx={{ mb: 1.5 }} />
               <Alert severity="warning" sx={{ mb: 1.5, fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
@@ -295,45 +295,45 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
               <TextField
                 size="small"
                 label="Novo código TUSS *"
-                value={novoCodigo}
-                onChange={e => { setNovoCodigo(e.target.value); setErrors(v => ({ ...v, novoCodigo: '' })) }}
+                value={newCode}
+                onChange={e => { setNewCode(e.target.value); setErrors(v => ({ ...v, newCode: '' })) }}
                 placeholder="Código TISS"
-                error={!!errors.novoCodigo}
-                helperText={errors.novoCodigo}
+                error={!!errors.newCode}
+                helperText={errors.newCode}
                 fullWidth
                 sx={{ mb: 1.5 }}
               />
               <TextField
                 size="small"
                 label="Nova descrição *"
-                value={novaDesc}
-                onChange={e => { setNovaDesc(e.target.value); setErrors(v => ({ ...v, novaDesc: '' })) }}
-                error={!!errors.novaDesc}
-                helperText={errors.novaDesc}
+                value={newDesc}
+                onChange={e => { setNewDesc(e.target.value); setErrors(v => ({ ...v, newDesc: '' })) }}
+                error={!!errors.newDesc}
+                helperText={errors.newDesc}
                 fullWidth
               />
             </Box>
           )}
 
           {/* Fabricante */}
-          {campo === 'fabricante' && (
+          {field === 'fabricante' && (
             <Box sx={{ mb: 2 }}>
               <TextField size="small" label="Fabricante atual" value={proc?.fabricante ?? '—'} disabled fullWidth sx={{ mb: 1.5 }} />
               <TextField
                 size="small"
                 label="Novo fabricante *"
-                value={novoFabricante}
-                onChange={e => { setNovoFabricante(e.target.value); setErrors(v => ({ ...v, novoFabricante: '' })) }}
+                value={newManufacturer}
+                onChange={e => { setNewManufacturer(e.target.value); setErrors(v => ({ ...v, newManufacturer: '' })) }}
                 placeholder="Nome do fabricante"
-                error={!!errors.novoFabricante}
-                helperText={errors.novoFabricante}
+                error={!!errors.newManufacturer}
+                helperText={errors.newManufacturer}
                 fullWidth
               />
             </Box>
           )}
 
           {/* Valor unitário */}
-          {campo === 'valorUnitario' && (
+          {field === 'valorUnitario' && (
             <Box sx={{ mb: 2 }}>
               <TextField
                 size="small"
@@ -347,11 +347,11 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
                 size="small"
                 label="Novo valor unitário *"
                 type="number"
-                value={novoValor}
-                onChange={e => { setNovoValor(e.target.value); setErrors(v => ({ ...v, novoValor: '' })) }}
+                value={newValue}
+                onChange={e => { setNewValue(e.target.value); setErrors(v => ({ ...v, newValue: '' })) }}
                 placeholder="0,00"
-                error={!!errors.novoValor}
-                helperText={errors.novoValor}
+                error={!!errors.newValue}
+                helperText={errors.newValue}
                 fullWidth
                 InputProps={{
                   startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -364,27 +364,27 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
           {/* Motivo */}
           <FormControl fullWidth size="small" sx={{ mb: errors.motivo ? 0.5 : 2 }} error={!!errors.motivo}>
             <InputLabel>Motivo do ajuste *</InputLabel>
-            <Select value={motivo} label="Motivo do ajuste *" onChange={e => { setMotivo(e.target.value); setErrors(v => ({ ...v, motivo: '' })) }}>
-              {motivosDisponiveis.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
+            <Select value={reason} label="Motivo do ajuste *" onChange={e => { setReason(e.target.value); setErrors(v => ({ ...v, motivo: '' })) }}>
+              {availableReasons.map(m => <MenuItem key={m} value={m} sx={{ fontSize: 13, whiteSpace: 'normal' }}>{m}</MenuItem>)}
             </Select>
             {errors.motivo ? <Typography sx={{ fontSize: 11, color: 'error.main', mt: 0.5 }}>{errors.motivo}</Typography> : null}
           </FormControl>
 
           <TextField
-            label={`Fundamentação clínica/regulatória${motivo === 'Outro (descrever na fundamentação)' ? ' *' : ' (opcional)'}`}
+            label={`Fundamentação clínica/regulatória${reason === 'Outro (descrever na fundamentação)' ? ' *' : ' (opcional)'}`}
             multiline
             rows={3}
             size="small"
             fullWidth
-            value={fundamentacao}
-            onChange={e => { setFundamentacao(e.target.value); setErrors(v => ({ ...v, fundamentacao: '' })) }}
-            error={!!errors.fundamentacao}
-            helperText={errors.fundamentacao}
+            value={justification}
+            onChange={e => { setJustification(e.target.value); setErrors(v => ({ ...v, justification: '' })) }}
+            error={!!errors.justification}
+            helperText={errors.justification}
           />
         </Box>
 
         {/* Aviso auditoria */}
-        {campo === 'valorUnitario' ? (
+        {field === 'valorUnitario' ? (
           <Alert severity="warning" icon={<WarningAmberIcon sx={{ fontSize: 16 }} />} sx={{ fontSize: 12, '& .MuiAlert-message': { fontSize: 12 } }}>
             Ajustes de valor OPME são auditáveis e exigem fundamentação. O novo valor será registrado com seu nome, data/hora e motivo.
           </Alert>
@@ -404,7 +404,7 @@ export default function AdjustmentDrawer({ open, pedidoId, pedidoStatus, proc, o
           variant="contained"
           fullWidth
           onClick={handleConfirm}
-          disabled={isGuiaFinalizada}
+          disabled={isGuideFinalized}
           sx={{ fontWeight: 600, backgroundColor: '#902B29', '&:hover': { backgroundColor: '#6e1f1d' } }}
         >
           Confirmar Ajuste

@@ -14,7 +14,7 @@ import { type IASugestao } from '@/data/pedidos'
 
 interface DivergenceDialogProps {
   open: boolean
-  iaSugestao: IASugestao
+  iaSuggestion: IASugestao
   divergenceReason: string
   onDivergenceReasonChange: (value: string) => void
   onContinue: () => void
@@ -23,7 +23,7 @@ interface DivergenceDialogProps {
 
 export default function DivergenceDialog({
   open,
-  iaSugestao,
+  iaSuggestion,
   divergenceReason,
   onDivergenceReasonChange,
   onContinue,
@@ -41,7 +41,7 @@ export default function DivergenceDialog({
         </Typography>
         <Box sx={{ p: 1.5, backgroundColor: 'rgba(0,0,0,0.04)', borderRadius: 1, mb: 2 }}>
           <Typography variant="body2">
-            <strong>Sugestão da IA:</strong> {iaSugestao}
+            <strong>Sugestão da IA:</strong> {iaSuggestion}
           </Typography>
         </Box>
         <TextField

@@ -39,13 +39,13 @@ export default function useHistoryDetail() {
   // -- Navigation ----------------------------------------------------------
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
-      router.push('/historico/' + sortedEntries[currentIndex - 1].id);
+      router.push('/historico/' + sortedEntries[currentIndex - 1]!.id);
     }
   }, [currentIndex, sortedEntries, router]);
 
   const handleNext = useCallback(() => {
     if (currentIndex < total - 1) {
-      router.push('/historico/' + sortedEntries[currentIndex + 1].id);
+      router.push('/historico/' + sortedEntries[currentIndex + 1]!.id);
     }
   }, [currentIndex, total, sortedEntries, router]);
 

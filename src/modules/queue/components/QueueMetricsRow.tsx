@@ -12,8 +12,8 @@ import { MetricCard } from '@/shared/components';
 interface QueueMetricsRowProps {
   totalCount: number;
   urgEmergCount: number;
-  devolutivasCount: number;
-  parados12h: number;
+  returnsCount: number;
+  stalled12h: number;
   loading: boolean;
   onTabChange: (tab: number) => void;
 }
@@ -21,8 +21,8 @@ interface QueueMetricsRowProps {
 export default function QueueMetricsRow({
   totalCount,
   urgEmergCount,
-  devolutivasCount,
-  parados12h,
+  returnsCount,
+  stalled12h,
   loading,
   onTabChange,
 }: QueueMetricsRowProps) {
@@ -56,7 +56,7 @@ export default function QueueMetricsRow({
             iconBg="rgba(212,24,61,0.1)"
           />
           <MetricCard
-            value={devolutivasCount}
+            value={returnsCount}
             label="Devolutivas"
             sublabel="Aguardando complemento"
             linkLabel="Ver as devolutivas"
@@ -66,7 +66,7 @@ export default function QueueMetricsRow({
             iconBg="rgba(245,158,11,0.12)"
           />
           <MetricCard
-            value={parados12h}
+            value={stalled12h}
             label="Parados há mais de 12h"
             sublabel="SLA em risco"
             linkLabel="Ver pedidos"

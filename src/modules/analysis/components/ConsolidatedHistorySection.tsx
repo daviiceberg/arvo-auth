@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
 import { type Pedido } from '@/data/pedidos'
+import { decisionActionConfigMap } from '@/shared/constants'
 
 // ---- Types ----
 interface HistoricoConsolidado {
@@ -139,10 +140,10 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
   },
 }
 
-function getHistoricoKey(pedidoId: string): string {
-  if (pedidoId === 'REQ-2026-04797') return 'high_use'
-  if (pedidoId === 'REQ-2026-04801') return 'primeira_vez'
-  if (pedidoId === 'REQ-2026-04905') return 'opme_quadril'
+function getHistoryKey(requestId: string): string {
+  if (requestId === 'REQ-2026-04797') return 'high_use'
+  if (requestId === 'REQ-2026-04801') return 'primeira_vez'
+  if (requestId === 'REQ-2026-04905') return 'opme_quadril'
   return 'default'
 }
 
@@ -155,7 +156,7 @@ function completenessLabel(c: HistoricoConsolidado['completeness']): { label: st
   }
 }
 
-function padraoLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string {
+function patternLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string {
   switch (p) {
     case 'first_time': return 'Primeira solicitação'
     case 'recurrent': return 'Uso recorrente (regular)'
@@ -163,19 +164,25 @@ function padraoLabel(p: HistoricoConsolidado['linhaDoTempo']['padrao']): string 
   }
 }
 
-function decisaoIcon(d: 'aprovado' | 'negado' | 'ajustado') {
-  if (d === 'aprovado') return <CheckIcon sx={{ fontSize: 14, color: '#16a34a' }} />
-  if (d === 'negado') return <CloseIcon sx={{ fontSize: 14, color: '#d4183d' }} />
-  return <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} />
+const decisionKeyMap: Record<'aprovado' | 'negado' | 'ajustado', keyof typeof decisionActionConfigMap> = {
+  aprovado: 'Aprovado',
+  negado: 'Negado',
+  ajustado: 'Aprovado Parcial',
 }
 
-function decisaoChipColor(d: 'aprovado' | 'negado' | 'ajustado') {
-  if (d === 'aprovado') return { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' }
-  if (d === 'negado') return { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' }
-  return { bg: 'rgba(245,158,11,0.1)', color: '#b45309' }
+function decisionIcon(d: 'aprovado' | 'negado' | 'ajustado') {
+  const { color } = decisionActionConfigMap[decisionKeyMap[d]]
+  if (d === 'aprovado') return <CheckIcon sx={{ fontSize: 14, color }} />
+  if (d === 'negado') return <CloseIcon sx={{ fontSize: 14, color }} />
+  return <WarningAmberIcon sx={{ fontSize: 14, color }} />
 }
 
-function sinaisAtencaoColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 'error' {
+function decisionChipColor(d: 'aprovado' | 'negado' | 'ajustado') {
+  const { bg, color } = decisionActionConfigMap[decisionKeyMap[d]]
+  return { bg, color }
+}
+
+function alertSeverityColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 'error' {
   if (s === 'low') return 'info'
   if (s === 'medium') return 'warning'
   return 'error'
@@ -183,12 +190,12 @@ function sinaisAtencaoColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 
 
 // ---- Component ----
 interface ConsolidatedHistorySectionProps {
-  pedido: Pedido
+  request: Pedido
 }
 
-export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHistorySectionProps) {
-  const key = getHistoricoKey(pedido.id)
-  const h = mockHistorico[key]
+export default function ConsolidatedHistorySection({ request }: ConsolidatedHistorySectionProps) {
+  const key = getHistoryKey(request.id)
+  const h = mockHistorico[key]!
   const cp = completenessLabel(h.completeness)
   const [showAllAuth, setShowAllAuth] = useState(false)
   const visibleAuth = showAllAuth ? h.autorizacoesAnteriores : h.autorizacoesAnteriores.slice(0, 3)
@@ -228,7 +235,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
             <Box>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>Padrão de uso</Typography>
               <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13 }}>
-                {padraoLabel(h.linhaDoTempo.padrao)}
+                {patternLabel(h.linhaDoTempo.padrao)}
               </Typography>
             </Box>
           </Box>
@@ -380,7 +387,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
             {visibleAuth.map((auth) => {
-              const dc = decisaoChipColor(auth.decisao)
+              const dc = decisionChipColor(auth.decisao)
               return (
                 <Box
                   key={auth.id}
@@ -394,7 +401,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                     backgroundColor: auth.destaque ? 'rgba(245,158,11,0.04)' : 'transparent',
                   }}
                 >
-                  <Box sx={{ flexShrink: 0 }}>{decisaoIcon(auth.decisao)}</Box>
+                  <Box sx={{ flexShrink: 0 }}>{decisionIcon(auth.decisao)}</Box>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12, mb: 0.25 }}>
                       {auth.procedimento}
@@ -426,8 +433,8 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
 
         {/* Sinais de Atenção */}
         {(() => {
-          const isF84 = pedido.procedimentos.some(p => p.cid?.startsWith('F84'))
-          const isTerapias = pedido.categoria === 'Terapias Especiais'
+          const isF84 = request.procedimentos.some(p => p.cid?.startsWith('F84'))
+          const isTerapias = request.categoria === 'Terapias Especiais'
           const SUPRIMIDOS_F84 = ['alto volume', 'limite de sessões', 'quantidade acima', 'alta utilização']
           const filteredSinais = (isTerapias && isF84)
             ? h.sinaisAtencao.filter(s => !SUPRIMIDOS_F84.some(k => s.mensagem.toLowerCase().includes(k)))
@@ -450,7 +457,7 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
                     </Typography>
                   </Alert> : null}
                 {filteredSinais.map((sinal) => (
-                  <Alert key={sinal.id} severity={sinaisAtencaoColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
+                  <Alert key={sinal.id} severity={alertSeverityColor(sinal.severidade)} sx={{ borderRadius: 1.5, py: 0.5 }}>
                     <Typography variant="caption" fontWeight={700} display="block">
                       {sinal.mensagem}
                     </Typography>
@@ -470,16 +477,16 @@ export default function ConsolidatedHistorySection({ pedido }: ConsolidatedHisto
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
           {/* Etapa da Autorização -- only for Terapias Especiais */}
-          {pedido.categoria === 'Terapias Especiais' && pedido.etapaAutorizacao ? <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
+          {request.categoria === 'Terapias Especiais' && request.etapaAutorizacao ? <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
                 Etapa da Autorização
               </Typography>
               <Chip
-                label={pedido.etapaAutorizacao === 'primeira_solicitacao' ? 'Primeira Solicitação' : 'Continuidade'}
+                label={request.etapaAutorizacao === 'primeira_solicitacao' ? 'Primeira Solicitação' : 'Continuidade'}
                 size="small"
                 sx={{
-                  backgroundColor: pedido.etapaAutorizacao === 'primeira_solicitacao' ? 'rgba(22,163,74,0.1)' : 'rgba(37,99,235,0.1)',
-                  color: pedido.etapaAutorizacao === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
+                  backgroundColor: request.etapaAutorizacao === 'primeira_solicitacao' ? 'rgba(22,163,74,0.1)' : 'rgba(37,99,235,0.1)',
+                  color: request.etapaAutorizacao === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
                   fontWeight: 700,
                   height: 22,
                   fontSize: 12,

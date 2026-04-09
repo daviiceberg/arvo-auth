@@ -8,7 +8,7 @@ const CRITICAL_ALERTS = ['Liminar Judicial', 'NIP Ativa'];
  * Classifies an active request by operational urgency level.
  * Precedence order: critico > aguardando > atencao > em_andamento
  */
-export function classificarUrgencia(p: Pedido): NivelUrgencia {
+export function classifyUrgency(p: Pedido): NivelUrgencia {
   const hasCriticalAlert = p.alertas.some((a) => CRITICAL_ALERTS.includes(a));
 
   if (p.slaStatus === 'violated' || hasCriticalAlert) return 'critico';

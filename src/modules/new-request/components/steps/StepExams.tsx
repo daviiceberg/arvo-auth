@@ -40,10 +40,10 @@ export function StepExams({ form, setForm }: StepExamsProps) {
           <TableBody>
             {form.exames.map((ex, i) => (
               <TableRow key={i}>
-                <TableCell><TextField size="small" value={ex.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i], codigoTUSS: e.target.value }; return { ...f, exames: a } }); }} sx={{ width: 110 }} /></TableCell>
-                <TableCell><TextField size="small" value={ex.descricao} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i], descricao: e.target.value }; return { ...f, exames: a } }); }} fullWidth /></TableCell>
-                <TableCell><TextField size="small" value={ex.tipo} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i], tipo: e.target.value }; return { ...f, exames: a } }); }} placeholder="Lab, Imagem..." /></TableCell>
-                <TableCell><TextField size="small" type="number" value={ex.qtd} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i], qtd: e.target.value }; return { ...f, exames: a } }); }} /></TableCell>
+                <TableCell><TextField size="small" value={ex.codigoTUSS} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i]!, codigoTUSS: e.target.value }; return { ...f, exames: a } }); }} sx={{ width: 110 }} /></TableCell>
+                <TableCell><TextField size="small" value={ex.descricao} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i]!, descricao: e.target.value }; return { ...f, exames: a } }); }} fullWidth /></TableCell>
+                <TableCell><TextField size="small" value={ex.tipo} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i]!, tipo: e.target.value }; return { ...f, exames: a } }); }} placeholder="Lab, Imagem..." /></TableCell>
+                <TableCell><TextField size="small" type="number" value={ex.qtd} onChange={(e) => { setForm(f => { const a = [...f.exames]; a[i] = { ...a[i]!, qtd: e.target.value }; return { ...f, exames: a } }); }} /></TableCell>
                 <TableCell><IconButton size="small" color="error" onClick={() => { setForm(f => ({ ...f, exames: f.exames.filter((_, j) => j !== i) })); }}><DeleteOutlineIcon fontSize="small" /></IconButton></TableCell>
               </TableRow>
             ))}

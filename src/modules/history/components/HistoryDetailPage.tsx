@@ -210,7 +210,7 @@ export default function HistoryDetailPage() {
                         <Divider sx={{ mb: 1.25, borderColor: 'rgba(245,158,11,0.2)' }} />
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                           {(entry.ajustes as Ajuste[]).map((aj) => {
-                            const campoLabel =
+                            const fieldLabel =
                               aj.campo === 'quantidade'
                                 ? 'Quantidade autorizada'
                                 : aj.campo === 'prestador'
@@ -220,7 +220,7 @@ export default function HistoryDetailPage() {
                               <Box key={aj.id}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
                                   <EditIcon sx={{ fontSize: 13, color: '#b45309', flexShrink: 0 }} />
-                                  <Typography sx={{ fontSize: 12, fontWeight: 700 }}>{campoLabel}</Typography>
+                                  <Typography sx={{ fontSize: 12, fontWeight: 700 }}>{fieldLabel}</Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.25, flexWrap: 'wrap' }}>
                                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Solicitado:</Typography>

@@ -21,15 +21,15 @@ import { type Pedido, type Ajuste } from '@/data/pedidos'
 import { USER_PROFILE } from '../types'
 
 interface ProceduresSectionProps {
-  pedido: Pedido
-  allAjustes: Ajuste[]
-  onAjustarClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number }) => void
+  request: Pedido
+  allAdjustments: Ajuste[]
+  onAdjustClick: (proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number }) => void
 }
 
-export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }: ProceduresSectionProps) {
-  const procs = pedido.procedimentos
-  const p = pedido.prestador
-  const isGuiaFinalizada = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(pedido.status)
+export default function ProceduresSection({ request, allAdjustments, onAdjustClick }: ProceduresSectionProps) {
+  const procs = request.procedimentos
+  const p = request.prestador
+  const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status)
 
   return (
     <Card>
@@ -51,10 +51,10 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
           </TableHead>
           <TableBody>
             {procs.map((proc) => {
-              const ajuste = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'quantidade')
-              const ajustePrestador = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'prestador')
-              const ajusteCodigo = allAjustes.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'codigo')
-              const hasAnyAjuste = allAjustes.some(a => a.procedimentoCodigo === proc.codigo)
+              const qtyAdjustment = allAdjustments.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'quantidade')
+              const providerAdjustment = allAdjustments.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'prestador')
+              const codeAdjustment = allAdjustments.find(a => a.procedimentoCodigo === proc.codigo && a.campo === 'codigo')
+              const hasAnyAdjustment = allAdjustments.some(a => a.procedimentoCodigo === proc.codigo)
 
               return (
                 <TableRow
@@ -65,18 +65,18 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                     {proc.fabricante !== undefined && (
                       <Chip label="OPME" size="small" sx={{ fontSize: 10, height: 18, backgroundColor: 'rgba(144,43,41,0.1)', color: 'primary.main', fontWeight: 700, mb: 0.5, display: 'block', width: 'fit-content' }} />
                     )}
-                    {ajusteCodigo ? (
+                    {codeAdjustment ? (
                       <Box>
                         <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.codigo}</Typography>
-                        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[0]}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>{codeAdjustment.valorNovo.split(' — ')[0]}</Typography>
                       </Box>
                     ) : proc.codigo}
                   </TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
-                    {ajusteCodigo ? (
+                    {codeAdjustment ? (
                       <Box>
                         <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>{proc.descricao}</Typography>
-                        <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{ajusteCodigo.valorNovo.split(' — ')[1] ?? ajusteCodigo.valorNovo}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>{codeAdjustment.valorNovo.split(' — ')[1] ?? codeAdjustment.valorNovo}</Typography>
                       </Box>
                     ) : proc.descricao}
                     {(proc.fabricante || proc.valorUnitario) ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
@@ -95,10 +95,10 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                       </Box> : null}
                   </TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}>
-                    {ajuste ? (
+                    {qtyAdjustment ? (
                       <Box>
                         <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty}</Typography>
-                        <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>Aut: {ajuste.valorNovo} ✏</Typography>
+                        <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>Aut: {qtyAdjustment.valorNovo} ✏</Typography>
                       </Box>
                     ) : (
                       <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
@@ -107,15 +107,15 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                     )}
                   </TableCell>
                   <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
-                    {ajustePrestador ? (
+                    {providerAdjustment ? (
                       <Box>
                         <Typography sx={{ fontSize: 11, color: 'text.disabled', textDecoration: 'line-through', lineHeight: 1.3, display: 'block' }}>
-                          {ajustePrestador.valorAnterior}
+                          {providerAdjustment.valorAnterior}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
                           <EditIcon sx={{ fontSize: 11, color: 'primary.main', flexShrink: 0 }} />
                           <Typography sx={{ fontSize: 11, color: 'primary.main', fontWeight: 600, lineHeight: 1.3 }}>
-                            {ajustePrestador.valorNovo}
+                            {providerAdjustment.valorNovo}
                           </Typography>
                         </Box>
                       </Box>
@@ -148,7 +148,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                           />
                         )
                       })()}
-                      {hasAnyAjuste && !isGuiaFinalizada ? <Chip
+                      {hasAnyAdjustment && !isGuideFinalized ? <Chip
                           icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
                           label="Ajustado"
                           size="small"
@@ -158,7 +158,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                   </TableCell>
                   <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
                     {USER_PROFILE !== 'Auditor' && (
-                      isGuiaFinalizada ? (
+                      isGuideFinalized ? (
                         <Tooltip title="Guia já finalizada — edição não permitida">
                           <span>
                             <Button
@@ -177,7 +177,7 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                           size="small"
                           variant="outlined"
                           startIcon={<EditIcon sx={{ fontSize: 12 }} />}
-                          onClick={() => { onAjustarClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario }); }}
+                          onClick={() => { onAdjustClick({ codigo: proc.codigo, descricao: proc.descricao, qty: proc.qty, prestador: p.hospital, fabricante: proc.fabricante, valorUnitario: proc.valorUnitario }); }}
                           sx={{ fontSize: 11, fontWeight: 600, borderColor: 'rgba(0,0,0,0.2)', color: 'text.secondary', py: 0.25, px: 1, '&:hover': { borderColor: '#902B29', color: '#902B29', backgroundColor: 'rgba(144,43,41,0.04)' } }}
                         >
                           Ajustar
@@ -193,20 +193,20 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
             })}
           </TableBody>
         </Table>
-        {pedido.cidsSecundarios && pedido.cidsSecundarios.length > 0 ? <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
+        {request.cidsSecundarios && request.cidsSecundarios.length > 0 ? <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
             <Typography variant="caption" sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}>
               CIDs Secundários
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
-              {pedido.cidsSecundarios.map((cid, i) => (
+              {request.cidsSecundarios.map((cid, i) => (
                 <Chip key={i} label={cid} size="small"
                   sx={{ backgroundColor: 'rgba(100,116,139,0.08)', color: '#475569', fontWeight: 600, fontSize: 12, height: 20 }} />
               ))}
             </Box>
           </Box> : null}
         {(() => {
-          const prestadorAjuste = allAjustes.find(a => a.campo === 'prestador')
-          const hospitalVigente = prestadorAjuste ? prestadorAjuste.valorNovo : p.hospital
+          const providerAdj = allAdjustments.find(a => a.campo === 'prestador')
+          const activeHospital = providerAdj ? providerAdj.valorNovo : p.hospital
           return (
             <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
               <Box>
@@ -214,8 +214,8 @@ export default function ProceduresSection({ pedido, allAjustes, onAjustarClick }
                   Hospital / Clínica
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
-                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{hospitalVigente}</Typography>
-                  {prestadorAjuste ? <Chip
+                  <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>{activeHospital}</Typography>
+                  {providerAdj ? <Chip
                       icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
                       label="Prestador ajustado"
                       size="small"

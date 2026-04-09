@@ -23,7 +23,7 @@ import { type ProcDecision } from '../../types'
 
 interface PartialApprovalDialogProps {
   open: boolean
-  pedido: Pedido
+  request: Pedido
   procDecisions: Record<string, ProcDecision>
   partialDenialReasonMap: Record<string, number>
   onPartialDenialReasonMapChange: (map: Record<string, number>) => void
@@ -35,7 +35,7 @@ interface PartialApprovalDialogProps {
 
 export default function PartialApprovalDialog({
   open,
-  pedido,
+  request,
   procDecisions,
   partialDenialReasonMap,
   onPartialDenialReasonMapChange,
@@ -44,14 +44,14 @@ export default function PartialApprovalDialog({
   onConfirm,
   onClose,
 }: PartialApprovalDialogProps) {
-  const nA = pedido.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
-  const nN = pedido.procedimentos.filter(pr => procDecisions[pr.codigo] === 'negado').length
-  const title = nA === pedido.procedimentos.length ? 'Confirmar Aprovação Total' : nN === pedido.procedimentos.length ? 'Confirmar Negativa Total' : 'Confirmar Aprovação Parcial'
+  const nA = request.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
+  const nN = request.procedimentos.filter(pr => procDecisions[pr.codigo] === 'negado').length
+  const title = nA === request.procedimentos.length ? 'Confirmar Aprovação Total' : nN === request.procedimentos.length ? 'Confirmar Negativa Total' : 'Confirmar Aprovação Parcial'
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>
-        {title} — {pedido.id}
+        {title} — {request.id}
       </DialogTitle>
       <DialogContent sx={{ pt: 0 }}>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: 13 }}>
@@ -66,7 +66,7 @@ export default function PartialApprovalDialog({
             <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4 }}>Procedimento</Typography>
             <Typography variant="caption" fontWeight={700} color="text.secondary" sx={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.4 }}>Decisão</Typography>
           </Box>
-          {pedido.procedimentos.map((proc, idx) => {
+          {request.procedimentos.map((proc, idx) => {
             const dec = procDecisions[proc.codigo] ?? 'pendente'
             const isNegado = dec === 'negado'
             const motivoIdx = partialDenialReasonMap[proc.codigo] ?? -1
@@ -107,7 +107,7 @@ export default function PartialApprovalDialog({
                         onChange={(e) => {
                           const idx2 = Number(e.target.value)
                           onPartialDenialReasonMapChange({ ...partialDenialReasonMap, [proc.codigo]: idx2 })
-                          onPartialDenialJustMapChange({ ...partialDenialJustMap, [proc.codigo]: DENIAL_REASONS[idx2].texto })
+                          onPartialDenialJustMapChange({ ...partialDenialJustMap, [proc.codigo]: DENIAL_REASONS[idx2]?.texto ?? '' })
                         }}
                       >
                         {DENIAL_REASONS.map((m, i) => (
@@ -134,9 +134,9 @@ export default function PartialApprovalDialog({
 
         {/* Summary badge */}
         {(() => {
-          const label = nA === pedido.procedimentos.length ? 'Aprovação Total' : nN === pedido.procedimentos.length ? 'Negativa Total' : 'Aprovação Parcial'
-          const bg = nA === pedido.procedimentos.length ? 'rgba(22,163,74,0.08)' : nN === pedido.procedimentos.length ? 'rgba(212,24,61,0.08)' : 'rgba(217,119,6,0.1)'
-          const color = nA === pedido.procedimentos.length ? '#16a34a' : nN === pedido.procedimentos.length ? '#d4183d' : '#b45309'
+          const label = nA === request.procedimentos.length ? 'Aprovação Total' : nN === request.procedimentos.length ? 'Negativa Total' : 'Aprovação Parcial'
+          const bg = nA === request.procedimentos.length ? 'rgba(22,163,74,0.08)' : nN === request.procedimentos.length ? 'rgba(212,24,61,0.08)' : 'rgba(217,119,6,0.1)'
+          const color = nA === request.procedimentos.length ? '#16a34a' : nN === request.procedimentos.length ? '#d4183d' : '#b45309'
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>Status da solicitação:</Typography>
@@ -149,14 +149,14 @@ export default function PartialApprovalDialog({
         <Button onClick={onClose}>Cancelar</Button>
         <Button
           variant="contained"
-          disabled={pedido.procedimentos
+          disabled={request.procedimentos
             .filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
-            .some(pr => partialDenialReasonMap[pr.codigo] === undefined || !partialDenialJustMap[pr.codigo].trim())}
+            .some(pr => partialDenialReasonMap[pr.codigo] === undefined || !(partialDenialJustMap[pr.codigo] ?? '').trim())}
           onClick={onConfirm}
           sx={{
             fontWeight: 600,
             backgroundColor: (() => {
-              return nA === pedido.procedimentos.length ? '#16a34a' : nN === pedido.procedimentos.length ? undefined : '#b45309'
+              return nA === request.procedimentos.length ? '#16a34a' : nN === request.procedimentos.length ? undefined : '#b45309'
             })(),
           }}
         >
