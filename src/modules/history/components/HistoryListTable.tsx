@@ -11,14 +11,14 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 import { type SortDirection } from '../types';
 
 import HistoryListTableRow from './HistoryListTableRow';
 
 interface HistoryListTableProps {
-  pagedEntries: HistoricoEntry[];
+  pagedEntries: HistoryEntry[];
   filteredCount: number;
   page: number;
   rowsPerPage: number;

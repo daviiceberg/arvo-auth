@@ -1,25 +1,25 @@
 export type {
-  StatusProcessamento,
-  StatusGuia,
+  ProcessingStatus,
+  GuideStatus,
   SubStatus,
-  TipoGuia,
-  OrigemPedido,
-  NivelAuditoria,
+  GuideType,
+  RequestOrigin,
+  AuditLevel,
   SLAStatus,
-  IASugestao,
-  Categoria,
-  Procedimento,
-  Ajuste,
-  OrcamentoDadosExtraidos,
-  Documento,
-  Pedido,
-  PedidoEmProcessamento,
-  DecisaoAcao,
-  DecisaoOrigem,
-  JuntaMedica,
-  HistoricoEntry,
+  IASuggestion,
+  Category,
+  Procedure,
+  Adjustment,
+  BudgetExtractedData,
+  Document,
+  Request,
+  ProcessingRequest,
+  DecisionAction,
+  DecisionOrigin,
+  MedicalBoard,
+  HistoryEntry,
 } from './pedido';
 
 export type { UserRole, UserStatus, UserPermissions, SystemUser } from './usuario';
 
-export type { TipoNotificacao, Notificacao } from './notificacao';
+export type { NotificationType, Notification } from './notificacao';

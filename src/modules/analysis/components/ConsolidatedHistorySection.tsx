@@ -17,7 +17,7 @@ import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-import { type Pedido } from '@/data/pedidos'
+import { type Request } from '@/data/pedidos'
 import { decisionActionConfigMap } from '@/shared/constants'
 
 // ---- Types ----
@@ -190,7 +190,7 @@ function alertSeverityColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 
 
 // ---- Component ----
 interface ConsolidatedHistorySectionProps {
-  request: Pedido
+  request: Request
 }
 
 export default function ConsolidatedHistorySection({ request }: ConsolidatedHistorySectionProps) {
@@ -433,8 +433,8 @@ export default function ConsolidatedHistorySection({ request }: ConsolidatedHist
 
         {/* Sinais de Atenção */}
         {(() => {
-          const isF84 = request.procedimentos.some(p => p.cid?.startsWith('F84'))
-          const isTerapias = request.categoria === 'Terapias Especiais'
+          const isF84 = request.procedures.some(p => p.cid?.startsWith('F84'))
+          const isTerapias = request.category === 'Terapias Especiais'
           const SUPRIMIDOS_F84 = ['alto volume', 'limite de sessões', 'quantidade acima', 'alta utilização']
           const filteredSinais = (isTerapias && isF84)
             ? h.sinaisAtencao.filter(s => !SUPRIMIDOS_F84.some(k => s.mensagem.toLowerCase().includes(k)))
@@ -477,16 +477,16 @@ export default function ConsolidatedHistorySection({ request }: ConsolidatedHist
         </Typography>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
           {/* Etapa da Autorização -- only for Terapias Especiais */}
-          {request.categoria === 'Terapias Especiais' && request.etapaAutorizacao ? <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
+          {request.category === 'Terapias Especiais' && request.authorizationStage ? <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, gridColumn: '1 / -1' }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.4, display: 'block', mb: 0.75 }}>
                 Etapa da Autorização
               </Typography>
               <Chip
-                label={request.etapaAutorizacao === 'primeira_solicitacao' ? 'Primeira Solicitação' : 'Continuidade'}
+                label={request.authorizationStage === 'primeira_solicitacao' ? 'Primeira Solicitação' : 'Continuidade'}
                 size="small"
                 sx={{
-                  backgroundColor: request.etapaAutorizacao === 'primeira_solicitacao' ? 'rgba(22,163,74,0.1)' : 'rgba(37,99,235,0.1)',
-                  color: request.etapaAutorizacao === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
+                  backgroundColor: request.authorizationStage === 'primeira_solicitacao' ? 'rgba(22,163,74,0.1)' : 'rgba(37,99,235,0.1)',
+                  color: request.authorizationStage === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
                   fontWeight: 700,
                   height: 22,
                   fontSize: 12,

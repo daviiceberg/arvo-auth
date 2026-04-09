@@ -12,27 +12,27 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 interface ProceduresSectionProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
 }
 
 export default function ProceduresSection({ entry }: ProceduresSectionProps) {
-  const procs = entry.procedimentosDetalhados ?? [
+  const procs = entry.detailedProcedures ?? [
     {
-      codigo: '00000000',
+      code: '00000000',
       tuss: '00000000',
-      descricao: entry.procedimento,
+      description: entry.procedure,
       qty: 1,
-      qtyAutorizada: entry.acao !== 'Negado' ? 1 : undefined,
-      dataInicio: entry.dataDecisao,
-      dataFim: entry.dataDecisao,
+      authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
+      startDate: entry.decisionDate,
+      endDate: entry.decisionDate,
       cid: entry.cid,
-      nivelAud:
-        entry.categoria === 'Internação' ||
-        entry.categoria === 'Urgência/Emergência' ||
-        entry.categoria === 'Oncologia'
+      auditLevel:
+        entry.category === 'Internação' ||
+        entry.category === 'Urgência/Emergência' ||
+        entry.category === 'Oncologia'
           ? ('HOSPITALAR' as const)
           : ('AMBULATORIAL' as const),
     },
@@ -52,7 +52,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           <TableBody>
             {procs.map((proc, idx) => (
               <TableRow
-                key={proc.codigo + String(idx)}
+                key={proc.code + String(idx)}
                 sx={{
                   cursor: 'default',
                   '& td': {
@@ -66,14 +66,14 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                   {proc.tuss}
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
-                  {proc.descricao}
+                  {proc.description}
                 </TableCell>
                 <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
                   Qtd: {proc.qty}
-                  {proc.qtyAutorizada !== undefined ? ` · Aut: ${String(proc.qtyAutorizada)}` : ''}
+                  {proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}
                 </TableCell>
                 <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
-                  {proc.dataInicio} → {proc.dataFim}
+                  {proc.startDate} → {proc.endDate}
                 </TableCell>
                 <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
                   <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
@@ -89,7 +89,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                         }}
                       /> : null}
                     <Chip
-                      label={proc.nivelAud}
+                      label={proc.auditLevel}
                       size="small"
                       sx={{
                         backgroundColor: 'rgba(0,0,0,0.05)',
@@ -101,7 +101,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                     />
                   </Box>
                 </TableCell>
-                {entry.acao === 'Aprovado Parcial' && (
+                {entry.action === 'Aprovado Parcial' && (
                   <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
                     {proc.decisao === 'aprovado' ? (
                       <Chip
@@ -142,7 +142,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
             ))}
           </TableBody>
         </Table>
-        {entry.cidsSecundarios && entry.cidsSecundarios.length > 0 ? <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
+        {entry.secondaryCids && entry.secondaryCids.length > 0 ? <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
             <Typography
               variant="caption"
               sx={{ color: '#64748b', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.4 }}
@@ -150,7 +150,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
               CIDs Secundários
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
-              {entry.cidsSecundarios.map((cid, i) => (
+              {entry.secondaryCids.map((cid, i) => (
                 <Chip
                   key={i}
                   label={cid}
@@ -168,10 +168,10 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           </Box> : null}
         <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {[
-            { label: 'Prestador', value: entry.prestador },
-            { label: 'Médico Solicitante', value: entry.medicoSolicitante },
-            { label: 'Tipo de Guia', value: entry.tipoGuia },
-            { label: 'Categoria', value: entry.categoria },
+            { label: 'Prestador', value: entry.provider },
+            { label: 'Médico Solicitante', value: entry.requestingDoctor },
+            { label: 'Tipo de Guia', value: entry.guideType },
+            { label: 'Categoria', value: entry.category },
           ].map((f) => (
             <Box key={f.label}>
               <Typography

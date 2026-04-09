@@ -10,11 +10,11 @@ import DialogTitle from '@mui/material/DialogTitle'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import { type IASugestao } from '@/data/pedidos'
+import { type IASuggestion } from '@/data/pedidos'
 
 interface DivergenceDialogProps {
   open: boolean
-  iaSuggestion: IASugestao
+  iaSuggestion: IASuggestion
   divergenceReason: string
   onDivergenceReasonChange: (value: string) => void
   onContinue: () => void

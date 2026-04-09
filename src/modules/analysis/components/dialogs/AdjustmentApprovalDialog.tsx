@@ -9,11 +9,11 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Typography from '@mui/material/Typography'
 
-import { type Ajuste } from '@/data/pedidos'
+import { type Adjustment } from '@/data/pedidos'
 
 interface AdjustmentApprovalDialogProps {
   open: boolean
-  allAdjustments: Ajuste[]
+  allAdjustments: Adjustment[]
   onReview: () => void
   onConfirm: () => void
 }
@@ -35,9 +35,9 @@ export default function AdjustmentApprovalDialog({
           <Box key={aj.id} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
             <EditIcon sx={{ fontSize: 13, color: '#b45309', mt: 0.15, flexShrink: 0 }} />
             <Typography variant="caption" sx={{ fontSize: 12 }}>
-              {aj.campo === 'quantidade' ? `Quantidade reduzida de ${aj.valorAnterior} para ${aj.valorNovo}`
-                : aj.campo === 'prestador' ? `Prestador alterado para ${aj.valorNovo}`
-                : `Código alterado para ${aj.valorNovo}`}
+              {aj.field === 'quantidade' ? `Quantidade reduzida de ${aj.previousValue} para ${aj.newValue}`
+                : aj.field === 'prestador' ? `Prestador alterado para ${aj.newValue}`
+                : `Código alterado para ${aj.newValue}`}
             </Typography>
           </Box>
         ))}

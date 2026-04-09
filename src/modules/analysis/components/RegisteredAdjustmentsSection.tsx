@@ -10,7 +10,7 @@ import CardContent from '@mui/material/CardContent'
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
 
-import { type Ajuste } from '@/data/pedidos'
+import { type Adjustment } from '@/data/pedidos'
 
 function formatAdjustmentTimestamp(ts: string): string {
   const d = new Date(ts)
@@ -18,14 +18,14 @@ function formatAdjustmentTimestamp(ts: string): string {
 }
 
 interface RegisteredAdjustmentsSectionProps {
-  adjustments: Ajuste[]
+  adjustments: Adjustment[]
 }
 
 export default function RegisteredAdjustmentsSection({ adjustments }: RegisteredAdjustmentsSectionProps) {
   const [collapsed, setCollapsed] = useState(true)
   if (adjustments.length === 0) return null
 
-  const fieldLabel: Record<Ajuste['campo'], string> = {
+  const fieldLabel: Record<Adjustment['field'], string> = {
     quantidade: 'Qtd. autorizada alterada',
     prestador: 'Prestador executante alterado',
     codigo: 'Código do procedimento alterado',
@@ -63,29 +63,29 @@ export default function RegisteredAdjustmentsSection({ adjustments }: Registered
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.75 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                     <EditIcon sx={{ fontSize: 13, color: 'primary.main' }} />
-                    <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{fieldLabel[aj.campo]}</Typography>
+                    <Typography sx={{ fontSize: 13, fontWeight: 700 }}>{fieldLabel[aj.field]}</Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, flexShrink: 0, ml: 1 }}>
                     {formatAdjustmentTimestamp(aj.timestamp)}
                   </Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.5 }}>
-                  {aj.procedimentoCodigo} — {aj.procedimentoDescricao}
+                  {aj.procedureCode} — {aj.procedureDescription}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5, flexWrap: 'wrap' }}>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>De:</Typography>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.valorAnterior}</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.previousValue}</Typography>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>→ Para:</Typography>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'primary.main' }}>{aj.valorNovo}</Typography>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'primary.main' }}>{aj.newValue}</Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25 }}>
-                  Motivo: {aj.motivo}
+                  Motivo: {aj.reason}
                 </Typography>
-                {aj.fundamentacao ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25, fontStyle: 'italic' }}>
-                    {aj.fundamentacao}
+                {aj.justification ? <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: 'block', mb: 0.25, fontStyle: 'italic' }}>
+                    {aj.justification}
                   </Typography> : null}
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
-                  Por: {aj.operador} ({aj.perfil})
+                  Por: {aj.operator} ({aj.profile})
                 </Typography>
               </Box>
             ))}

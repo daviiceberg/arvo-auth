@@ -11,17 +11,17 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 interface BeneficiarySectionProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
 }
 
 export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
   const router = useRouter();
-  const sexo = entry.sexo ?? 'M';
-  const idade = entry.idade ?? 45;
-  const carencia = entry.carencia ?? false;
+  const sexo = entry.sex ?? 'M';
+  const idade = entry.age ?? 45;
+  const carencia = entry.waitingPeriod ?? false;
 
   return (
     <Card>
@@ -38,7 +38,7 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2 }}>
           <Box>
             <Typography variant="h5" fontWeight={800} sx={{ mb: 0.75 }}>
-              {entry.beneficiario}
+              {entry.beneficiary}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
@@ -75,7 +75,7 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
           <Button
             size="small"
             variant="outlined"
-            onClick={() => { router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiario)}`); }}
+            onClick={() => { router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiary)}`); }}
             sx={{
               fontSize: 12,
               py: 0.5,
@@ -92,10 +92,10 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
         {/* Row 2: data grid */}
         <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', pt: 2.5, mt: 2, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
           {[
-            { label: 'Carteirinha', value: entry.carteirinha },
+            { label: 'Carteirinha', value: entry.cardNumber },
             { label: 'CPF', value: entry.cpf ?? '—' },
-            { label: 'Nascimento', value: entry.dataNascimento ?? '—' },
-            { label: 'Plano', value: entry.plano },
+            { label: 'Nascimento', value: entry.birthDate ?? '—' },
+            { label: 'Plano', value: entry.plan },
           ].map((f) => (
             <Box key={f.label}>
               <Typography

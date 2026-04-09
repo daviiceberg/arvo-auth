@@ -127,22 +127,22 @@ export default function ProcessingQueueTable() {
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px' }}>
                     <Typography variant="body2" fontWeight={600} noWrap sx={{ fontSize: 13, lineHeight: 1.3 }}>
-                      {p.beneficiario}
+                      {p.beneficiary}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, lineHeight: 1.3 }}>
-                      {p.plano}
+                      {p.plan}
                     </Typography>
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px' }}>
                     <Chip
-                      label={originLabelMap[p.origem]}
+                      label={originLabelMap[p.origin]}
                       size="small"
-                      icon={originIconMap[p.origem] as React.ReactElement}
+                      icon={originIconMap[p.origin] as React.ReactElement}
                       sx={{ height: 22, fontSize: 11 }}
                     />
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px' }}>
-                    <Chip label={p.categoria} size="small" sx={{ height: 22, fontSize: 11 }} />
+                    <Chip label={p.category} size="small" sx={{ height: 22, fontSize: 11 }} />
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px', whiteSpace: 'nowrap', width: 110 }}>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>

@@ -11,7 +11,7 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import ScienceIcon from '@mui/icons-material/Science';
 
-import { type Categoria } from '@/types/pedido';
+import { type Category } from '@/types/pedido';
 
 export interface NavItem {
   label: string;
@@ -65,7 +65,7 @@ export const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   'Home Care': <HomeIcon sx={{ fontSize: 14 }} />,
 };
 
-export const CATEGORY_ORDER: Categoria[] = [
+export const CATEGORY_ORDER: Category[] = [
   'Internação',
   'Urgência/Emergência',
   'Oncologia',

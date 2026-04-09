@@ -14,19 +14,19 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { StatusChip, SLAChip } from '@/shared/components';
-import { type Pedido } from '@/types/pedido';
+import { type Request } from '@/types/pedido';
 
 
 interface RecentRequestsTableProps {
-  pedidos: Pedido[];
+  pedidos: Request[];
   loading: boolean;
 }
 
 const CRITICAL_ALERTS = ['Liminar Judicial', 'NIP Ativa'];
 
-function urgencyScore(p: Pedido): number {
-  const hasCritical = p.alertas.some((a) => CRITICAL_ALERTS.includes(a));
-  const hasAnyAlert = p.alertas.length > 0;
+function urgencyScore(p: Request): number {
+  const hasCritical = p.alerts.some((a) => CRITICAL_ALERTS.includes(a));
+  const hasAnyAlert = p.alerts.length > 0;
   if (p.slaStatus === 'violated' && hasCritical) return 0;
   if (p.slaStatus === 'violated') return 1;
   if (p.slaStatus === 'warning' && hasAnyAlert) return 2;
@@ -42,7 +42,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
     .sort((a, b) => {
       const diff = urgencyScore(a) - urgencyScore(b);
       if (diff !== 0) return diff;
-      return a.dataProtocolo.localeCompare(b.dataProtocolo);
+      return a.protocolDate.localeCompare(b.protocolDate);
     })
     .slice(0, 7);
 
@@ -87,7 +87,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
                 tabIndex={0}
                 onClick={() => { router.push(`/analise?id=${pedido.id}`); }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(`/analise?id=${pedido.id}`); } }}
-                aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiario.nome}`}
+                aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiary.name}`}
                 sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' }, '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 } }}
               >
                 <TableCell sx={{ pl: 0.5 }}>
@@ -100,15 +100,15 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
                 </TableCell>
                 <TableCell>
                   <Typography variant="caption" fontWeight={600} noWrap sx={{ fontSize: 12 }}>
-                    {pedido.beneficiario.nome}
+                    {pedido.beneficiary.name}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <SLAChip status={pedido.slaStatus} label={pedido.slaTexto} />
+                  <SLAChip status={pedido.slaStatus} label={pedido.slaText} />
                 </TableCell>
                 <TableCell>
                   <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-                    {pedido.dataProtocolo.split(' ')[0]}
+                    {pedido.protocolDate.split(' ')[0]}
                   </Typography>
                 </TableCell>
                 <TableCell align="right">

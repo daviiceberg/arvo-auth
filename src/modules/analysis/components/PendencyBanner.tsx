@@ -12,10 +12,10 @@ import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import Typography from '@mui/material/Typography'
 
-import { type Pedido } from '@/data/pedidos'
+import { type Request } from '@/data/pedidos'
 
 interface PendencyBannerProps {
-  request: Pedido
+  request: Request
 }
 
 export default function PendencyBanner({ request }: PendencyBannerProps) {
@@ -24,7 +24,7 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
   const sub = request.subStatus
 
   // Legacy Devolutiva without subStatus
-  if (request.status === 'Devolutiva' && !sub && request.pendenciaMotivos) {
+  if (request.status === 'Devolutiva' && !sub && request.pendencyReasons) {
     return (
       <Box>
         <Alert
@@ -36,10 +36,10 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
             Pedido em pendência — aguardando documentação complementar
           </Typography>
           <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-            Pendenciado por <strong>{request.pendenciaResponsavel}</strong> em {request.pendenciaData}
+            Pendenciado por <strong>{request.pendencyResponsible}</strong> em {request.pendencyDate}
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {request.pendenciaMotivos.map((m) => (
+            {request.pendencyReasons.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box>
@@ -58,11 +58,11 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Aguardando retorno — documentação complementar solicitada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: request.pendenciaMotivos ? 0.5 : 0 }}>
-          Pendenciado por <strong>{request.pendenciaResponsavel}</strong> em {request.pendenciaData}. Aguardando envio dos documentos pelo beneficiário/prestador.
+        <Typography variant="caption" sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}>
+          Pendenciado por <strong>{request.pendencyResponsible}</strong> em {request.pendencyDate}. Aguardando envio dos documentos pelo beneficiário/prestador.
         </Typography>
-        {request.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {request.pendenciaMotivos.map((m) => (
+        {request.pendencyReasons ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {request.pendencyReasons.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box> : null}
@@ -80,11 +80,11 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
         <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
           Retorno recebido — documentação complementar enviada
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: request.pendenciaMotivos ? 0.5 : 0 }}>
+        <Typography variant="caption" sx={{ display: 'block', mb: request.pendencyReasons ? 0.5 : 0 }}>
           A documentação solicitada foi recebida. Revise os itens abaixo e prossiga com a decisão.
         </Typography>
-        {request.pendenciaMotivos ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {request.pendenciaMotivos.map((m) => (
+        {request.pendencyReasons ? <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {request.pendencyReasons.map((m) => (
               <Typography key={m} component="li" variant="caption" sx={{ display: 'list-item' }}>{m}</Typography>
             ))}
           </Box> : null}
@@ -145,7 +145,7 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
               Parecer da Junta Médica
             </Typography>
             <Typography variant="body2" sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}>
-              {request.juntaParecer}
+              {request.boardOpinion}
             </Typography>
           </Box>
         </Collapse>

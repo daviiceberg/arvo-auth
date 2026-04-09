@@ -5,10 +5,10 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import Chip from '@mui/material/Chip';
 
-import { type PedidoEmProcessamento } from '@/types/pedido';
+import { type ProcessingRequest } from '@/types/pedido';
 
 interface ProcessingStatusChipProps {
-  status: PedidoEmProcessamento['statusProcessamento'];
+  status: ProcessingRequest['statusProcessamento'];
 }
 
 export default function ProcessingStatusChip({ status }: ProcessingStatusChipProps) {

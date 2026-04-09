@@ -3,10 +3,10 @@
 import Chip from '@mui/material/Chip';
 
 import { statusColorMap } from '@/shared/constants';
-import { type StatusGuia } from '@/types/pedido';
+import { type GuideStatus } from '@/types/pedido';
 
 interface StatusChipProps {
-  status: StatusGuia;
+  status: GuideStatus;
   size?: 'small' | 'medium';
 }
 

@@ -20,13 +20,13 @@ import Divider from '@mui/material/Divider'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { type Pedido } from '@/data/pedidos'
+import { type Request } from '@/data/pedidos'
 import { iaSuggestionColorMap } from '@/shared/constants'
 
 import { type ProcDecision } from '../types'
 
 interface AssistantSidebarProps {
-  request: Pedido
+  request: Request
   onAprovarClick: () => void
   onNegarClick: () => void
   onPendenciarClick: () => void
@@ -38,9 +38,9 @@ interface AssistantSidebarProps {
 
 export default function AssistantSidebar({ request, onAprovarClick, onNegarClick, onPendenciarClick, onJuntaClick, procDecisoes, onProcDecisaoChange, onConfirmarDecisaoClick }: AssistantSidebarProps) {
   const { iaChecklist } = request
-  const opinionReceived = request.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!request.juntaRecomendacao
-  const iaSuggestion = opinionReceived ? request.juntaRecomendacao! : request.iaSugestao
-  const iaJustification = opinionReceived ? request.juntaParecer! : request.iaJustificativa
+  const opinionReceived = request.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!request.boardRecommendation
+  const iaSuggestion = opinionReceived ? request.boardRecommendation! : request.iaSuggestion
+  const iaJustification = opinionReceived ? request.boardOpinion! : request.iaJustification
   const sc = iaSuggestionColorMap[iaSuggestion]
   const [loadingApprove, setLoadingApprove] = useState(false)
   const [loadingDeny, setLoadingDeny] = useState(false)
@@ -48,13 +48,13 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
   const isBoardWaiting = request.subStatus === 'JUNTA_AGUARDANDO'
 
   // Multi-procedure flow
-  const isMultiProc = request.procedimentos.length > 1
-  const decisions = request.procedimentos.map(pr => procDecisoes[pr.codigo] ?? 'pendente')
+  const isMultiProc = request.procedures.length > 1
+  const decisions = request.procedures.map(pr => procDecisoes[pr.code] ?? 'pendente')
   const nApproved = decisions.filter(d => d === 'aprovado').length
   const nDenied = decisions.filter(d => d === 'negado').length
   const anyPending = decisions.some(d => d === 'pendente')
-  const allApproved = nApproved === request.procedimentos.length
-  const allDenied = nDenied === request.procedimentos.length
+  const allApproved = nApproved === request.procedures.length
+  const allDenied = nDenied === request.procedures.length
   const confirmBtnColor = allApproved ? '#16a34a' : allDenied ? '#d4183d' : '#902B29'
   const confirmBtnHover = allApproved ? '#15803d' : allDenied ? '#b91c1c' : '#6e1f1d'
 
@@ -126,28 +126,28 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
 
           {/* Checklist */}
           {(() => {
-            const isTerapias = request.categoria === 'Terapias Especiais'
-            const isF84 = isTerapias && request.procedimentos.some(p => p.cid?.startsWith('F84'))
-            const isContinuidade = request.etapaAutorizacao === 'continuidade'
+            const isTerapias = request.category === 'Terapias Especiais'
+            const isF84 = isTerapias && request.procedures.some(p => p.cid?.startsWith('F84'))
+            const isContinuidade = request.authorizationStage === 'continuidade'
 
             // Extra checklist items for Terapias continuidade
             const extraContinuidadeItems: { texto: string; sub?: string; status: 'ok' | 'warning' | 'error' }[] = isTerapias && isContinuidade ? [
               {
                 texto: 'Relatório de evolução terapêutica anexado',
-                status: request.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
+                status: request.documents.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'error',
               },
               {
                 texto: 'Relatório emitido pelo profissional executante',
-                status: request.documentos.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'warning',
+                status: request.documents.some(d => d.tipo === 'Relatório de Evolução' || d.nome.toLowerCase().includes('evolucao') || d.nome.toLowerCase().includes('evolução')) ? 'ok' : 'warning',
               },
             ] : []
 
             // Extra checklist items for OPME with valorUnitario
-            const isOpme = request.categoria === 'OPME'
-            const opmeProcsComValor = request.procedimentos.filter(p => p.fabricante !== undefined)
+            const isOpme = request.category === 'OPME'
+            const opmeProcsComValor = request.procedures.filter(p => p.manufacturer !== undefined)
             const extraOpmeItems: { texto: string; status: 'ok' | 'warning' | 'error' }[] = isOpme && opmeProcsComValor.length > 0
               ? opmeProcsComValor.map(p => {
-                  if (!p.valorUnitario) return { texto: 'Valor unitário não informado — obrigatório para OPME', status: 'error' as const }
+                  if (!p.unitValue) return { texto: 'Valor unitário não informado — obrigatório para OPME', status: 'error' as const }
                   const valorAlertaExistente = iaChecklist.some(c => c.status === 'error' && c.texto.toLowerCase().includes('valor'))
                   return valorAlertaExistente
                     ? { texto: 'Valor unitário não verificado — conferir tabela de referência da operadora', status: 'warning' as const }
@@ -203,7 +203,7 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
           })()}
 
           {/* Alertas especiais */}
-          {request.alertas.includes('Liminar Judicial') && (
+          {request.alerts.includes('Liminar Judicial') && (
             <Alert severity="warning" icon={<GavelIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
               <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
                 Liminar Judicial Ativa
@@ -214,7 +214,7 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
             </Alert>
           )}
 
-          {request.alertas.includes('Fora do Rol ANS') && (
+          {request.alerts.includes('Fora do Rol ANS') && (
             <Alert severity="error" icon={<ErrorOutlineIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
               <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
                 Fora do Rol ANS
@@ -242,26 +242,26 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
                 Decisão por procedimento
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                {request.procedimentos.map(proc => {
-                  const dec = procDecisoes[proc.codigo] ?? 'pendente'
+                {request.procedures.map(proc => {
+                  const dec = procDecisoes[proc.code] ?? 'pendente'
                   const isAprovado = dec === 'aprovado'
                   const isNegado = dec === 'negado'
                   return (
-                    <Box key={proc.codigo} sx={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 1.5, p: 1.5 }}>
+                    <Box key={proc.code} sx={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 1.5, p: 1.5 }}>
                       <Typography variant="body2" sx={{ fontSize: 12, lineHeight: 1.4, mb: 0.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         <Box component="span" sx={{ fontWeight: 700 }}>{proc.tuss}</Box>
-                        <Box component="span" sx={{ color: 'text.secondary' }}> · {proc.descricao}</Box>
+                        <Box component="span" sx={{ color: 'text.secondary' }}> · {proc.description}</Box>
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 0.75 }}>
-                        <Tooltip title={isNegado ? `Trocar para Aprovar — ${proc.descricao}` : ''} placement="top" disableHoverListener={!isNegado}>
+                        <Tooltip title={isNegado ? `Trocar para Aprovar — ${proc.description}` : ''} placement="top" disableHoverListener={!isNegado}>
                           <Button
                             size="small"
                             fullWidth
                             variant={isAprovado ? 'contained' : 'outlined'}
                             startIcon={isAprovado ? <CheckCircleOutlineIcon sx={{ fontSize: 14 }} /> : undefined}
-                            onClick={() => { onProcDecisaoChange(proc.codigo, isAprovado ? 'pendente' : 'aprovado'); }}
+                            onClick={() => { onProcDecisaoChange(proc.code, isAprovado ? 'pendente' : 'aprovado'); }}
                             disabled={isGuideFinalized}
-                            aria-label={isAprovado ? `Desfazer aprovação de ${proc.descricao}` : `Aprovar ${proc.descricao}`}
+                            aria-label={isAprovado ? `Desfazer aprovação de ${proc.description}` : `Aprovar ${proc.description}`}
                             sx={{
                               minHeight: 32, fontSize: 12, fontWeight: 600,
                               ...(isAprovado
@@ -275,15 +275,15 @@ export default function AssistantSidebar({ request, onAprovarClick, onNegarClick
                             Aprovar
                           </Button>
                         </Tooltip>
-                        <Tooltip title={isAprovado ? `Trocar para Negar — ${proc.descricao}` : ''} placement="top" disableHoverListener={!isAprovado}>
+                        <Tooltip title={isAprovado ? `Trocar para Negar — ${proc.description}` : ''} placement="top" disableHoverListener={!isAprovado}>
                           <Button
                             size="small"
                             fullWidth
                             variant={isNegado ? 'contained' : 'outlined'}
                             startIcon={isNegado ? <CloseIcon sx={{ fontSize: 14 }} /> : undefined}
-                            onClick={() => { onProcDecisaoChange(proc.codigo, isNegado ? 'pendente' : 'negado'); }}
+                            onClick={() => { onProcDecisaoChange(proc.code, isNegado ? 'pendente' : 'negado'); }}
                             disabled={isGuideFinalized}
-                            aria-label={isNegado ? `Desfazer negativa de ${proc.descricao}` : `Negar ${proc.descricao}`}
+                            aria-label={isNegado ? `Desfazer negativa de ${proc.description}` : `Negar ${proc.description}`}
                             sx={{
                               minHeight: 32, fontSize: 12, fontWeight: 600,
                               ...(isNegado

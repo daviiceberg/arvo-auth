@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 
 import { pedidosEmProcessamento } from '@/data/pedidos';
-import { type PedidoEmProcessamento } from '@/types/pedido';
+import { type ProcessingRequest } from '@/types/pedido';
 
 const statusOrder: Record<string, number> = {
   em_processamento: 0,
@@ -11,7 +11,7 @@ const statusOrder: Record<string, number> = {
   erro_processamento: 2,
 };
 
-function sortQueue(items: PedidoEmProcessamento[]): PedidoEmProcessamento[] {
+function sortQueue(items: ProcessingRequest[]): ProcessingRequest[] {
   return [...items].sort((a, b) => {
     const sa = statusOrder[a.statusProcessamento] ?? 9;
     const sb = statusOrder[b.statusProcessamento] ?? 9;

@@ -3,10 +3,10 @@
 import Chip from '@mui/material/Chip';
 
 import { guideTypeColorMap } from '@/shared/constants';
-import { type TipoGuia } from '@/types/pedido';
+import { type GuideType } from '@/types/pedido';
 
 interface GuideTypeChipProps {
-  type: TipoGuia;
+  type: GuideType;
   size?: 'small' | 'medium';
 }
 

@@ -25,7 +25,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { DecisionActionChip } from '@/shared/components';
-import { type Ajuste } from '@/types/pedido';
+import { type Adjustment } from '@/types/pedido';
 
 import useHistoryDetail from '../hooks/useHistoryDetail';
 
@@ -101,8 +101,8 @@ export default function HistoryDetailPage() {
                   Decisão Registrada
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  <DecisionActionChip action={entry.acao} />
-                  <DecisionOriginChip origin={entry.origem} />
+                  <DecisionActionChip action={entry.action} />
+                  <DecisionOriginChip origin={entry.origin} />
                 </Box>
               </Box>
 
@@ -110,7 +110,7 @@ export default function HistoryDetailPage() {
 
               <Box sx={{ px: 2.5, py: 2 }}>
                 {/* IA automatica */}
-                {entry.origem === 'ia_automatica' && (
+                {entry.origin === 'ia_automatica' && (
                   <Box
                     sx={{
                       backgroundColor: 'rgba(37,99,235,0.04)',
@@ -123,11 +123,11 @@ export default function HistoryDetailPage() {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <SmartToyIcon sx={{ fontSize: 16, color: '#2563eb' }} />
                       <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: '#2563eb' }}>
-                        {entry.acao === 'Aprovado' ? 'Aprovado automaticamente pela IA' : 'Negado automaticamente pela IA'}
+                        {entry.action === 'Aprovado' ? 'Aprovado automaticamente pela IA' : 'Negado automaticamente pela IA'}
                       </Typography>
                     </Box>
                     <Typography variant="caption" sx={{ fontSize: 12, color: '#374151', lineHeight: 1.6, display: 'block' }}>
-                      {entry.motivoDecisao}
+                      {entry.decisionReason}
                     </Typography>
                     <Alert
                       severity="info"
@@ -140,7 +140,7 @@ export default function HistoryDetailPage() {
                 )}
 
                 {/* Analista */}
-                {entry.origem === 'analista' && (
+                {entry.origin === 'analista' && (
                   <Box sx={{ mb: 2 }}>
                     <Box sx={{ display: 'flex', gap: 2.5, mb: 1.5, flexWrap: 'wrap' }}>
                       <Box>
@@ -150,7 +150,7 @@ export default function HistoryDetailPage() {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                           <PersonIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
                           <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
-                            {entry.analista}
+                            {entry.analyst}
                           </Typography>
                         </Box>
                       </Box>
@@ -159,15 +159,15 @@ export default function HistoryDetailPage() {
                           Data da decisão
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: 13 }}>
-                          {entry.dataDecisao}
+                          {entry.decisionDate}
                         </Typography>
                       </Box>
                     </Box>
-                    {entry.tempoAnaliseMin > 0 && (
+                    {entry.analysisTimeMin > 0 && (
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}>
                         <AccessTimeIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
                         <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                          Tempo de análise: <strong>{entry.tempoAnaliseMin} min</strong>
+                          Tempo de análise: <strong>{entry.analysisTimeMin} min</strong>
                         </Typography>
                       </Box>
                     )}
@@ -176,15 +176,15 @@ export default function HistoryDetailPage() {
                         Motivo da Decisão
                       </Typography>
                       <Typography variant="body2" sx={{ fontSize: 13, lineHeight: 1.6 }}>
-                        {entry.motivoDecisao}
+                        {entry.decisionReason}
                       </Typography>
-                      {entry.textoLivre ? <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 1, display: 'block', lineHeight: 1.5 }}>
-                          {entry.textoLivre}
+                      {entry.freeText ? <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary', mt: 1, display: 'block', lineHeight: 1.5 }}>
+                          {entry.freeText}
                         </Typography> : null}
                     </Box>
 
                     {/* Ajustes aplicados */}
-                    {entry.ajustes && entry.ajustes.length > 0 ? <Box
+                    {entry.adjustments && entry.adjustments.length > 0 ? <Box
                         sx={{
                           backgroundColor: 'rgba(255,251,235,0.8)',
                           border: '1px solid rgba(245,158,11,0.3)',
@@ -209,11 +209,11 @@ export default function HistoryDetailPage() {
                         </Typography>
                         <Divider sx={{ mb: 1.25, borderColor: 'rgba(245,158,11,0.2)' }} />
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                          {(entry.ajustes as Ajuste[]).map((aj) => {
+                          {(entry.adjustments as Adjustment[]).map((aj) => {
                             const fieldLabel =
-                              aj.campo === 'quantidade'
+                              aj.field === 'quantidade'
                                 ? 'Quantidade autorizada'
-                                : aj.campo === 'prestador'
+                                : aj.field === 'prestador'
                                   ? 'Prestador executante'
                                   : 'Código do procedimento';
                             return (
@@ -224,15 +224,15 @@ export default function HistoryDetailPage() {
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.25, flexWrap: 'wrap' }}>
                                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>Solicitado:</Typography>
-                                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.valorAnterior}</Typography>
+                                  <Typography sx={{ fontSize: 12, fontWeight: 600 }}>{aj.previousValue}</Typography>
                                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>→ Autorizado:</Typography>
-                                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>{aj.valorNovo}</Typography>
+                                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>{aj.newValue}</Typography>
                                 </Box>
                                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11, display: 'block', mb: 0.25 }}>
-                                  Motivo: {aj.motivo}
+                                  Motivo: {aj.reason}
                                 </Typography>
                                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
-                                  Por: {aj.operador} ·{' '}
+                                  Por: {aj.operator} ·{' '}
                                   {new Date(aj.timestamp).toLocaleDateString('pt-BR')}{' '}
                                   {new Date(aj.timestamp).toLocaleTimeString('pt-BR', {
                                     hour: '2-digit',
@@ -294,22 +294,22 @@ export default function HistoryDetailPage() {
                     Sugestão da IA
                   </Typography>
                   <Chip
-                    label={entry.iaSugestao}
+                    label={entry.iaSuggestion}
                     size="small"
                     sx={{
                       fontSize: 12,
                       fontWeight: 700,
                       height: 22,
                       backgroundColor:
-                        entry.iaSugestao === 'Aprovar'
+                        entry.iaSuggestion === 'Aprovar'
                           ? 'rgba(22,163,74,0.1)'
-                          : entry.iaSugestao === 'Negar'
+                          : entry.iaSuggestion === 'Negar'
                             ? 'rgba(212,24,61,0.1)'
                             : 'rgba(245,158,11,0.12)',
                       color:
-                        entry.iaSugestao === 'Aprovar'
+                        entry.iaSuggestion === 'Aprovar'
                           ? '#16a34a'
-                          : entry.iaSugestao === 'Negar'
+                          : entry.iaSuggestion === 'Negar'
                             ? '#d4183d'
                             : '#b45309',
                     }}
@@ -317,7 +317,7 @@ export default function HistoryDetailPage() {
                 </Box>
 
                 {/* Divergencia */}
-                {entry.divergencia ? (
+                {entry.divergence ? (
                   <Alert
                     severity="warning"
                     icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
@@ -327,7 +327,7 @@ export default function HistoryDetailPage() {
                       Divergência com a IA
                     </Typography>
                     <Typography variant="caption" sx={{ fontSize: 12 }}>
-                      {entry.divergenciaMotivo}
+                      {entry.divergenceReason}
                     </Typography>
                   </Alert>
                 ) : (
@@ -340,7 +340,7 @@ export default function HistoryDetailPage() {
                 )}
 
                 {/* Junta Medica */}
-                {entry.juntaMedica ? <>
+                {entry.medicalBoard ? <>
                     <Divider sx={{ my: 1.5 }} />
                     <Box
                       sx={{
@@ -363,7 +363,7 @@ export default function HistoryDetailPage() {
                             Data da reunião
                           </Typography>
                           <Typography variant="body2" sx={{ fontSize: 13 }}>
-                            {entry.juntaMedica.dataReuniao}
+                            {entry.medicalBoard.dataReuniao}
                           </Typography>
                         </Box>
                         <Box>
@@ -371,7 +371,7 @@ export default function HistoryDetailPage() {
                             N° da ata
                           </Typography>
                           <Typography variant="body2" sx={{ fontSize: 13, fontFamily: 'monospace' }}>
-                            {entry.juntaMedica.numeroAta}
+                            {entry.medicalBoard.numeroAta}
                           </Typography>
                         </Box>
                       </Box>
@@ -379,7 +379,7 @@ export default function HistoryDetailPage() {
                         Membros
                       </Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}>
-                        {entry.juntaMedica.membros.map((m, i) => (
+                        {entry.medicalBoard.membros.map((m, i) => (
                           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
                             <PersonIcon sx={{ fontSize: 13, color: '#7c3aed', flexShrink: 0 }} />
                             <Typography variant="caption" sx={{ fontSize: 12, color: '#374151', lineHeight: 1.4 }}>
@@ -396,7 +396,7 @@ export default function HistoryDetailPage() {
                         Parecer da Junta
                       </Typography>
                       <Typography variant="body2" sx={{ fontSize: 13, lineHeight: 1.6 }}>
-                        {entry.juntaMedica.parecer}
+                        {entry.medicalBoard.parecer}
                       </Typography>
                     </Box>
                   </> : null}

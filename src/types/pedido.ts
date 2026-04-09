@@ -1,10 +1,10 @@
-export type StatusProcessamento =
+export type ProcessingStatus =
   | 'aguardando_processamento'
   | 'em_processamento'
   | 'erro_processamento'
   | 'processado';
 
-export type StatusGuia =
+export type GuideStatus =
   | 'Em Análise'
   | 'Aprovado'
   | 'Negado'
@@ -18,17 +18,17 @@ export type SubStatus =
   | 'JUNTA_AGUARDANDO'
   | 'JUNTA_PARECER_RECEBIDO';
 
-export type TipoGuia = 'Eleitiva' | 'Urgente' | 'Emergência';
+export type GuideType = 'Eleitiva' | 'Urgente' | 'Emergência';
 
-export type OrigemPedido = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
+export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
-export type NivelAuditoria = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
+export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
 
 export type SLAStatus = 'ok' | 'warning' | 'violated';
 
-export type IASugestao = 'Aprovar' | 'Negar' | 'Junta Médica';
+export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica';
 
-export type Categoria =
+export type Category =
   | 'Internação'
   | 'Urgência/Emergência'
   | 'Oncologia'
@@ -39,35 +39,35 @@ export type Categoria =
   | 'Home Care'
   | 'SADT';
 
-export interface Procedimento {
-  codigo: string;
+export interface Procedure {
+  code: string;
   tuss: string;
-  descricao: string;
+  description: string;
   qty: number;
-  qtyAutorizada?: number;
-  dataInicio: string;
-  dataFim: string;
+  authorizedQty?: number;
+  startDate: string;
+  endDate: string;
   cid: string;
-  nivelAud: NivelAuditoria;
-  fabricante?: string;
-  valorUnitario?: number;
+  auditLevel: AuditLevel;
+  manufacturer?: string;
+  unitValue?: number;
 }
 
-export interface Ajuste {
+export interface Adjustment {
   id: string;
-  procedimentoCodigo: string;
-  procedimentoDescricao: string;
-  campo: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario';
-  valorAnterior: string;
-  valorNovo: string;
-  motivo: string;
-  fundamentacao?: string;
-  operador: string;
-  perfil: string;
+  procedureCode: string;
+  procedureDescription: string;
+  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario';
+  previousValue: string;
+  newValue: string;
+  reason: string;
+  justification?: string;
+  operator: string;
+  profile: string;
   timestamp: string;
 }
 
-export interface OrcamentoDadosExtraidos {
+export interface BudgetExtractedData {
   fabricante: string;
   modelo: string;
   valorUnitario: number;
@@ -76,7 +76,7 @@ export interface OrcamentoDadosExtraidos {
   observacao: string;
 }
 
-export interface Documento {
+export interface Document {
   id: string;
   nome: string;
   tipo: string;
@@ -84,130 +84,130 @@ export interface Documento {
   enviadoEm?: string;
   obrigatorio: boolean;
   status: 'enviado' | 'pendente';
-  dadosExtraidos?: OrcamentoDadosExtraidos;
+  dadosExtraidos?: BudgetExtractedData;
 }
 
-export interface Pedido {
+export interface Request {
   id: string;
-  status: StatusGuia;
-  tipoGuia: TipoGuia;
-  categoria: Categoria;
-  nivelAuditoria: NivelAuditoria;
-  prioridade: 'alta' | 'media' | 'baixa';
-  dataProtocolo: string;
-  tempoFila: string;
+  status: GuideStatus;
+  guideType: GuideType;
+  category: Category;
+  auditLevel: AuditLevel;
+  priority: 'alta' | 'media' | 'baixa';
+  protocolDate: string;
+  queueTime: string;
   slaStatus: SLAStatus;
-  slaTexto: string;
-  beneficiario: {
-    nome: string;
-    carteirinha: string;
+  slaText: string;
+  beneficiary: {
+    name: string;
+    cardNumber: string;
     cpf: string;
-    dataNascimento: string;
-    idade: number;
-    sexo: 'M' | 'F';
-    plano: string;
-    carencia: boolean;
+    birthDate: string;
+    age: number;
+    sex: 'M' | 'F';
+    plan: string;
+    waitingPeriod: boolean;
   };
-  prestador: {
+  provider: {
     hospital: string;
-    medico: string;
+    doctor: string;
     crm: string;
-    especialidade: string;
+    specialty: string;
   };
-  origem: OrigemPedido;
-  procedimentos: Procedimento[];
-  alertas: string[];
-  iaSugestao: IASugestao;
-  iaJustificativa: string;
+  origin: RequestOrigin;
+  procedures: Procedure[];
+  alerts: string[];
+  iaSuggestion: IASuggestion;
+  iaJustification: string;
   iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[];
-  observacoes: string;
-  documentos: Documento[];
-  pendenciaMotivos?: string[];
-  pendenciaResponsavel?: string;
-  pendenciaData?: string;
+  observations: string;
+  documents: Document[];
+  pendencyReasons?: string[];
+  pendencyResponsible?: string;
+  pendencyDate?: string;
   subStatus?: SubStatus;
-  juntaParecer?: string;
-  juntaRecomendacao?: 'Aprovar' | 'Negar';
-  etapaAutorizacao?: 'primeira_solicitacao' | 'continuidade';
-  ajustes?: Ajuste[];
-  lockOperador?: { nome: string; desde: string };
-  liminar?: {
+  boardOpinion?: string;
+  boardRecommendation?: 'Aprovar' | 'Negar';
+  authorizationStage?: 'primeira_solicitacao' | 'continuidade';
+  adjustments?: Adjustment[];
+  operatorLock?: { nome: string; desde: string };
+  injunction?: {
     ativa: boolean;
     processo: string;
     escopo: string;
     validade: string;
     observacao?: string;
   };
-  cidsSecundarios?: string[];
+  secondaryCids?: string[];
 }
 
-export interface PedidoEmProcessamento {
+export interface ProcessingRequest {
   id: string;
-  statusProcessamento: Exclude<StatusProcessamento, 'processado'>;
-  origem: OrigemPedido;
-  beneficiario: string;
-  plano: string;
-  categoria: Categoria;
+  statusProcessamento: Exclude<ProcessingStatus, 'processado'>;
+  origin: RequestOrigin;
+  beneficiary: string;
+  plan: string;
+  category: Category;
   entradaEm: Date;
   erroDescricao?: string;
 }
 
-export type DecisaoAcao = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva';
+export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva';
 
-export type DecisaoOrigem = 'ia_automatica' | 'analista';
+export type DecisionOrigin = 'ia_automatica' | 'analista';
 
-export interface JuntaMedica {
+export interface MedicalBoard {
   dataReuniao: string;
   numeroAta: string;
   parecer: string;
   membros: { nome: string; especialidade: string; crm: string }[];
 }
 
-export interface HistoricoEntry {
+export interface HistoryEntry {
   id: string;
-  beneficiario: string;
-  carteirinha: string;
-  plano: string;
-  categoria: Categoria;
-  procedimento: string;
+  beneficiary: string;
+  cardNumber: string;
+  plan: string;
+  category: Category;
+  procedure: string;
   cid: string;
-  prestador: string;
-  medicoSolicitante: string;
-  tipoGuia: TipoGuia;
-  dataProtocolo: string;
-  dataDecisao: string;
-  acao: DecisaoAcao;
-  origem: DecisaoOrigem;
-  analista: string;
-  motivoDecisao: string;
-  textoLivre?: string;
-  iaSugestao: IASugestao;
-  divergencia: boolean;
-  divergenciaMotivo?: string;
-  tempoAnaliseMin: number;
-  observacoes?: string;
-  sexo?: 'M' | 'F';
-  idade?: number;
+  provider: string;
+  requestingDoctor: string;
+  guideType: GuideType;
+  protocolDate: string;
+  decisionDate: string;
+  action: DecisionAction;
+  origin: DecisionOrigin;
+  analyst: string;
+  decisionReason: string;
+  freeText?: string;
+  iaSuggestion: IASuggestion;
+  divergence: boolean;
+  divergenceReason?: string;
+  analysisTimeMin: number;
+  observations?: string;
+  sex?: 'M' | 'F';
+  age?: number;
   cpf?: string;
-  dataNascimento?: string;
-  carencia?: boolean;
-  procedimentosDetalhados?: {
-    codigo: string;
+  birthDate?: string;
+  waitingPeriod?: boolean;
+  detailedProcedures?: {
+    code: string;
     tuss: string;
-    descricao: string;
+    description: string;
     qty: number;
-    qtyAutorizada?: number;
-    dataInicio: string;
-    dataFim: string;
+    authorizedQty?: number;
+    startDate: string;
+    endDate: string;
     cid: string;
-    nivelAud: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
+    auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
     decisao?: 'aprovado' | 'negado';
     motivoDecisao?: string;
   }[];
-  alertas?: string[];
+  alerts?: string[];
   iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[];
-  documentos?: { nome: string; tipo: string; data: string }[];
-  juntaMedica?: JuntaMedica;
-  ajustes?: Ajuste[];
-  cidsSecundarios?: string[];
+  documents?: { nome: string; tipo: string; data: string }[];
+  medicalBoard?: MedicalBoard;
+  adjustments?: Adjustment[];
+  secondaryCids?: string[];
 }

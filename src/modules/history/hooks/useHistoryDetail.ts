@@ -12,7 +12,7 @@ import { type NotifyChannel } from '../types';
 function getSortedEntries() {
   return [...historicoEntries].sort((a, b) => {
     const parse = (d: string) => new Date(d.split('/').reverse().join('-')).getTime();
-    return parse(b.dataDecisao) - parse(a.dataDecisao);
+    return parse(b.decisionDate) - parse(a.decisionDate);
   });
 }
 

@@ -1,8 +1,8 @@
-import { type Categoria } from '@/types/pedido';
+import { type Category } from '@/types/pedido';
 
 import { type ChipColor } from './status-colors';
 
-export const categoryColorMap: Record<Categoria, ChipColor> = {
+export const categoryColorMap: Record<Category, ChipColor> = {
   Internação: { bg: 'rgba(144,43,41,0.1)', color: '#902B29' },
   'Urgência/Emergência': { bg: 'rgba(212,24,61,0.1)', color: '#d4183d' },
   Oncologia: { bg: 'rgba(124,58,237,0.1)', color: '#7c3aed' },

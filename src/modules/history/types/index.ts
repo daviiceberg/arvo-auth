@@ -1,21 +1,21 @@
 /**
  * Module-specific types for the history module.
  *
- * Domain types (HistoricoEntry, DecisaoAcao, DecisaoOrigem, Ajuste, etc.)
+ * Domain types (HistoryEntry, DecisionAction, DecisionOrigin, Adjustment, etc.)
  * live in @/types/pedido and are re-exported here for convenience.
  */
 
-import { type DecisaoAcao } from '@/types/pedido';
+import { type DecisionAction } from '@/types/pedido';
 
 // -- Re-exports from the canonical source --------------------------------
 export type {
-  HistoricoEntry,
-  DecisaoAcao,
-  DecisaoOrigem,
-  Ajuste,
-  Categoria,
-  IASugestao,
-  JuntaMedica,
+  HistoryEntry,
+  DecisionAction,
+  DecisionOrigin,
+  Adjustment,
+  Category,
+  IASuggestion,
+  MedicalBoard,
 } from '@/types/pedido';
 
 // -- Module-specific types -----------------------------------------------
@@ -78,7 +78,7 @@ export type SortDirection = 'asc' | 'desc';
 
 export type OriginFilter = 'Todas' | 'ia_automatica' | 'analista';
 
-export type ActionFilter = 'Todas' | DecisaoAcao;
+export type ActionFilter = 'Todas' | DecisionAction;
 
 export type DivergenceFilter = 'Todas' | 'divergiu';
 

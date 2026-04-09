@@ -1,3 +1,5 @@
+> **STATUS: DONE** — Resolvido na sessão de 08/04/2026
+
 # Eliminar duplicações de color config
 
 ## Contexto

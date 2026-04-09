@@ -4,16 +4,16 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber'
 import Alert from '@mui/material/Alert'
 import Typography from '@mui/material/Typography'
 
-import { pedidos, type Pedido } from '@/data/pedidos'
+import { pedidos, type Request } from '@/data/pedidos'
 
 interface SimultaneousGuidesAlertProps {
-  request: Pedido
+  request: Request
 }
 
 export default function SimultaneousGuidesAlert({ request }: SimultaneousGuidesAlertProps) {
   const otherGuides = pedidos.filter(
     p => p.id !== request.id &&
-    p.beneficiario.carteirinha === request.beneficiario.carteirinha &&
+    p.beneficiary.cardNumber === request.beneficiary.cardNumber &&
     (p.status === 'Em Análise' || p.status === 'Devolutiva')
   )
   if (otherGuides.length === 0) return null

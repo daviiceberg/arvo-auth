@@ -1,4 +1,4 @@
-import { type OrigemPedido } from '@/types/pedido';
+import { type RequestOrigin } from '@/types/pedido';
 
 import { type ChipColor } from './status-colors';
 
@@ -6,7 +6,7 @@ export interface OriginEntry extends ChipColor {
   label: string;
 }
 
-export const originConfigMap: Record<OrigemPedido, OriginEntry> = {
+export const originConfigMap: Record<RequestOrigin, OriginEntry> = {
   app: { label: 'App', bg: 'rgba(37,99,235,0.08)', color: '#2563eb' },
   whatsapp: { label: 'WhatsApp', bg: 'rgba(22,163,74,0.08)', color: '#16a34a' },
   email: { label: 'E-mail', bg: 'rgba(8,145,178,0.08)', color: '#0891b2' },

@@ -16,15 +16,15 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { KpiCard } from '@/shared/components';
-import { type Pedido, type PedidoEmProcessamento } from '@/types/pedido';
+import { type Request, type ProcessingRequest } from '@/types/pedido';
 
 
 import { CardSkeleton } from './DashboardSkeleton';
 
 interface DashboardKpiRowProps {
   loading: boolean;
-  pedidos: Pedido[];
-  pedidosEmProcessamento: PedidoEmProcessamento[];
+  pedidos: Request[];
+  pedidosEmProcessamento: ProcessingRequest[];
   metrics: {
     slaViolados: number;
     slaWarning: number;

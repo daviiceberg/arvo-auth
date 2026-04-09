@@ -65,14 +65,16 @@ export default function LoginPage() {
               fullWidth
               required
               sx={{ mb: 2 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
+                htmlInput: { 'aria-label': 'E-mail' },
               }}
-              inputProps={{ 'aria-label': 'E-mail' }}
             />
             <TextField
               label="Senha"
@@ -82,14 +84,16 @@ export default function LoginPage() {
               fullWidth
               required
               sx={{ mb: 3 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
+                htmlInput: { 'aria-label': 'Senha' },
               }}
-              inputProps={{ 'aria-label': 'Senha' }}
             />
             <Button
               type="submit"

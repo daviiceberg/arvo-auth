@@ -218,7 +218,7 @@ function ProductContent() {
         ))}
       </FeatureItem>
       <FeatureItem name="Modal pós-submissão" route="(componente de /nova-solicitacao)">
-        Exibido após "Enviar Solicitação". Dois cenários: decisão automática pela IA (SADT simples, sem
+        Exibido após &ldquo;Enviar Solicitação&rdquo;. Dois cenários: decisão automática pela IA (SADT simples, sem
         alertas) com link para histórico; ou requer avaliação humana com link direto para a tela de análise
         do pedido criado.
       </FeatureItem>

@@ -162,8 +162,8 @@ function AnalysisInner() {
       <DenialDialog
         open={decision.showDenialDialog}
         requestId={request.id}
-        beneficiaryName={request.beneficiario.nome}
-        iaSuggestion={request.iaSugestao}
+        beneficiaryName={request.beneficiary.name}
+        iaSuggestion={request.iaSuggestion}
         denialReasonIdx={decision.denialReasonIdx}
         onDenialReasonChange={(idx) => {
           decision.setDenialReasonIdx(idx)
@@ -200,7 +200,7 @@ function AnalysisInner() {
       {/* Divergence Dialog */}
       <DivergenceDialog
         open={decision.showDivergenceDialog}
-        iaSuggestion={request.iaSugestao}
+        iaSuggestion={request.iaSuggestion}
         divergenceReason={decision.divergenceReason}
         onDivergenceReasonChange={decision.setDivergenceReason}
         onContinue={decision.handleDivergenceContinue}

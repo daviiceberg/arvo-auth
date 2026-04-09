@@ -19,7 +19,7 @@ import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import { type Ajuste } from '@/data/pedidos'
+import { type Adjustment } from '@/data/pedidos'
 
 import { ADJUSTMENT_REASONS, OPME_VALUE_REASONS } from '../constants/adjustment-reasons'
 import { USER_PROFILE } from '../types'
@@ -28,10 +28,10 @@ interface AdjustmentDrawerProps {
   open: boolean
   requestId: string
   requestStatus: string
-  existingAdjustments?: Ajuste[]
+  existingAdjustments?: Adjustment[]
   proc: { codigo: string; descricao: string; qty: number; prestador: string; fabricante?: string; valorUnitario?: number } | null
   onClose: () => void
-  onConfirm: (adjustment: Omit<Ajuste, 'id'>) => void
+  onConfirm: (adjustment: Omit<Adjustment, 'id'>) => void
 }
 
 export default function AdjustmentDrawer({ open, requestId, requestStatus, proc, onClose, onConfirm, existingAdjustments = [] }: AdjustmentDrawerProps) {
@@ -71,21 +71,21 @@ export default function AdjustmentDrawer({ open, requestId, requestStatus, proc,
   // Reset (or pre-fill from existing adjustment) when proc changes or drawer opens
   useEffect(() => {
     if (!open) return
-    const lastQtyAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'quantidade').slice(-1)[0]
-    const lastProviderAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'prestador').slice(-1)[0]
-    const lastCodeAdj = existingAdjustments.filter(a => a.procedimentoCodigo === proc?.codigo && a.campo === 'codigo').slice(-1)[0]
+    const lastQtyAdj = existingAdjustments.filter(a => a.procedureCode === proc?.codigo && a.field === 'quantidade').slice(-1)[0]
+    const lastProviderAdj = existingAdjustments.filter(a => a.procedureCode === proc?.codigo && a.field === 'prestador').slice(-1)[0]
+    const lastCodeAdj = existingAdjustments.filter(a => a.procedureCode === proc?.codigo && a.field === 'codigo').slice(-1)[0]
     if (lastQtyAdj) {
       setField('quantidade')
-      setNewQty(lastQtyAdj.valorNovo)
+      setNewQty(lastQtyAdj.newValue)
     } else if (lastProviderAdj) {
       setField('prestador')
-      setNewProvider(lastProviderAdj.valorNovo.replace(/ \(CNES: .+\)$/, ''))
-      const cnesMatch = /CNES: (.+)\)$/.exec(lastProviderAdj.valorNovo)
+      setNewProvider(lastProviderAdj.newValue.replace(/ \(CNES: .+\)$/, ''))
+      const cnesMatch = /CNES: (.+)\)$/.exec(lastProviderAdj.newValue)
       setNewCNES(cnesMatch?.[1] ?? '')
     } else if (lastCodeAdj) {
       setField('codigo')
-      setNewCode(lastCodeAdj.valorNovo.split(' — ')[0] ?? '')
-      setNewDesc(lastCodeAdj.valorNovo.split(' — ')[1] ?? '')
+      setNewCode(lastCodeAdj.newValue.split(' — ')[0] ?? '')
+      setNewDesc(lastCodeAdj.newValue.split(' — ')[1] ?? '')
     } else {
       setField('')
       setNewQty('')
@@ -134,27 +134,27 @@ export default function AdjustmentDrawer({ open, requestId, requestStatus, proc,
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     if (!proc || !field) return
 
-    let valorAnterior = ''
-    let valorNovo = ''
-    if (field === 'quantidade') { valorAnterior = String(proc.qty); valorNovo = newQty }
-    if (field === 'prestador') { valorAnterior = proc.prestador; valorNovo = newCNES ? `${newProvider} (CNES: ${newCNES})` : newProvider }
-    if (field === 'codigo') { valorAnterior = proc.codigo; valorNovo = `${newCode} — ${newDesc}` }
-    if (field === 'fabricante') { valorAnterior = proc.fabricante ?? ''; valorNovo = newManufacturer }
+    let prevValue = ''
+    let newVal = ''
+    if (field === 'quantidade') { prevValue = String(proc.qty); newVal = newQty }
+    if (field === 'prestador') { prevValue = proc.prestador; newVal = newCNES ? `${newProvider} (CNES: ${newCNES})` : newProvider }
+    if (field === 'codigo') { prevValue = proc.codigo; newVal = `${newCode} — ${newDesc}` }
+    if (field === 'fabricante') { prevValue = proc.fabricante ?? ''; newVal = newManufacturer }
     if (field === 'valorUnitario') {
-      valorAnterior = proc.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'
-      valorNovo = parseFloat(newValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      prevValue = proc.valorUnitario ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'
+      newVal = parseFloat(newValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     }
 
     onConfirm({
-      procedimentoCodigo: proc.codigo,
-      procedimentoDescricao: proc.descricao,
-      campo: field,
-      valorAnterior,
-      valorNovo,
-      motivo: reason,
-      fundamentacao: justification.trim() || undefined,
-      operador: 'Ana Paula Santos',
-      perfil: USER_PROFILE,
+      procedureCode: proc.codigo,
+      procedureDescription: proc.descricao,
+      field,
+      previousValue: prevValue,
+      newValue: newVal,
+      reason,
+      justification: justification.trim() || undefined,
+      operator: 'Ana Paula Santos',
+      profile: USER_PROFILE,
       timestamp: new Date().toISOString(),
     })
   }

@@ -2,17 +2,17 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
-import { type Pedido } from '@/types/pedido';
+import { type Request } from '@/types/pedido';
 
 import { type QueueFilters } from './useQueueFilters';
 
 interface UseQueueDataParams {
   filters: QueueFilters;
-  pedidos: Pedido[];
+  pedidos: Request[];
 }
 
-function isStalled12h(p: Pedido): boolean {
-  const t = parseInt(p.tempoFila);
+function isStalled12h(p: Request): boolean {
+  const t = parseInt(p.queueTime);
   return !isNaN(t) && t > 12;
 }
 
@@ -41,7 +41,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const filteredByTab = useMemo(
     () =>
       pedidos.filter((p) => {
-        if (tabValue === 1) return p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência';
+        if (tabValue === 1) return p.category === 'Urgência/Emergência' || p.guideType === 'Emergência';
         if (tabValue === 2) {
           if (p.status !== 'Devolutiva') return false;
           if (returnSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO';
@@ -62,18 +62,18 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
         const matchSearch =
           q === '' ||
           p.id.toLowerCase().includes(q) ||
-          p.beneficiario.carteirinha.includes(q) ||
-          (p.procedimentos[0]?.descricao || '').toLowerCase().includes(q) ||
-          words.every((w) => p.beneficiario.nome.toLowerCase().includes(w));
-        const matchCat = categoryFilter === 'Todas' || p.categoria === categoryFilter;
+          p.beneficiary.cardNumber.includes(q) ||
+          (p.procedures[0]?.description || '').toLowerCase().includes(q) ||
+          words.every((w) => p.beneficiary.name.toLowerCase().includes(w));
+        const matchCat = categoryFilter === 'Todas' || p.category === categoryFilter;
         const matchSla =
           slaFilter === 'Todas' ||
           (slaFilter === 'No prazo' && p.slaStatus === 'ok') ||
           (slaFilter === 'Atenção' && p.slaStatus === 'warning') ||
           (slaFilter === 'Violado' && p.slaStatus === 'violated');
-        const matchPrest = providerFilter === 'Todos' || p.prestador.hospital === providerFilter;
-        const matchIA = iaSuggestionFilter === 'Todas' || p.iaSugestao === iaSuggestionFilter;
-        const matchAlerta = alertFilter === 'Todos' || p.alertas.includes(alertFilter);
+        const matchPrest = providerFilter === 'Todos' || p.provider.hospital === providerFilter;
+        const matchIA = iaSuggestionFilter === 'Todas' || p.iaSuggestion === iaSuggestionFilter;
+        const matchAlerta = alertFilter === 'Todos' || p.alerts.includes(alertFilter);
         const matchStatus =
           statusFilter === 'Todos' ||
           (statusFilter === 'retorno_recebido' &&
@@ -91,7 +91,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   );
 
   const urgEmergCount = useMemo(
-    () => pedidos.filter((p) => p.categoria === 'Urgência/Emergência' || p.tipoGuia === 'Emergência').length,
+    () => pedidos.filter((p) => p.category === 'Urgência/Emergência' || p.guideType === 'Emergência').length,
     [pedidos],
   );
 

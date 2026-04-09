@@ -260,7 +260,7 @@ export default function AjudaPage() {
                 size="small"
                 fullWidth
                 helperText={`${String(assunto.length)}/${String(MAX_ASSUNTO)} caracteres`}
-                FormHelperTextProps={{ sx: { textAlign: 'right' } }}
+                slotProps={{ formHelperText: { sx: { textAlign: 'right' } } }}
               />
 
               <TextField
@@ -272,7 +272,7 @@ export default function AjudaPage() {
                 multiline
                 minRows={4}
                 helperText={`${String(descricao.length)}/${String(MAX_DESC)} caracteres`}
-                FormHelperTextProps={{ sx: { textAlign: 'right' } }}
+                slotProps={{ formHelperText: { sx: { textAlign: 'right' } } }}
               />
 
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5 }}>

@@ -21,7 +21,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 function docIcon(tipo: string) {
   if (tipo.toLowerCase().includes('pdf') || tipo.toLowerCase().includes('médico') || tipo.toLowerCase().includes('laudo')) {
@@ -37,12 +37,12 @@ function docIcon(tipo: string) {
 }
 
 interface DocumentsSectionProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
 }
 
 export default function DocumentsSection({ entry }: DocumentsSectionProps) {
-  const docs = entry.documentos ?? [
-    { nome: `Laudo — ${entry.id}.pdf`, tipo: 'Laudo Médico', data: entry.dataProtocolo },
+  const docs: { nome: string; tipo: string; data: string }[] = entry.documents ?? [
+    { nome: `Laudo — ${entry.id}.pdf`, tipo: 'Laudo Médico', data: entry.protocolDate },
   ];
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);

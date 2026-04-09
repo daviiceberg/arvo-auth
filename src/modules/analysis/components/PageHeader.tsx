@@ -18,11 +18,11 @@ import Chip from '@mui/material/Chip'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
-import { type Pedido, type OrigemPedido } from '@/data/pedidos'
+import { type Request, type RequestOrigin } from '@/data/pedidos'
 import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants'
 
 // ---- OrigemLabel (module-level inline component) ----
-const originIconMap: Record<OrigemPedido, React.ReactNode> = {
+const originIconMap: Record<RequestOrigin, React.ReactNode> = {
   app: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
   whatsapp: <WhatsAppIcon sx={{ fontSize: 13 }} />,
   email: <EmailOutlinedIcon sx={{ fontSize: 13 }} />,
@@ -30,7 +30,7 @@ const originIconMap: Record<OrigemPedido, React.ReactNode> = {
   call_center: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
 }
 
-function OrigemLabel({ origem }: { origem: OrigemPedido }) {
+function OrigemLabel({ origem }: { origem: RequestOrigin }) {
   const { label, color } = originConfigMap[origem]
   const icon = originIconMap[origem]
   return (
@@ -44,7 +44,7 @@ function OrigemLabel({ origem }: { origem: OrigemPedido }) {
 }
 
 interface PageHeaderProps {
-  request: Pedido
+  request: Request
   onBack: () => void
   currentIndex: number
   total: number
@@ -61,7 +61,7 @@ export default function PageHeader({
   onNext,
 }: PageHeaderProps) {
   const sc = statusColorMap[request.status]
-  const tc = guideTypeColorMap[request.tipoGuia]
+  const tc = guideTypeColorMap[request.guideType]
   return (
     <Box
       sx={{
@@ -89,7 +89,7 @@ export default function PageHeader({
             {request.id}
           </Typography>
           <Chip
-            label={request.tipoGuia}
+            label={request.guideType}
             size="small"
             sx={{ backgroundColor: tc.bg, color: tc.color, fontWeight: 700, height: 22 }}
           />
@@ -114,7 +114,7 @@ export default function PageHeader({
               sx={{ backgroundColor: 'rgba(245,158,11,0.12)', color: '#b45309', fontWeight: 700, height: 22 }}
             />
           )}
-          {request.alertas.includes('Liminar Judicial') && (
+          {request.alerts.includes('Liminar Judicial') && (
             <Chip
               icon={<GavelIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="Liminar Judicial"
@@ -192,16 +192,16 @@ export default function PageHeader({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              {request.prestador.hospital}
+              {request.provider.hospital}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              Entrada: {request.dataProtocolo}
+              Entrada: {request.protocolDate}
             </Typography>
           </Box>
-          <OrigemLabel origem={request.origem} />
+          <OrigemLabel origem={request.origin} />
         </Box>
 
         {/* Keyboard shortcuts hint -- aligned below navigator */}

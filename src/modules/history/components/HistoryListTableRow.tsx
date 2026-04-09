@@ -7,12 +7,12 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { CategoryChip, DecisionActionChip } from '@/shared/components';
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
 
 interface HistoryListTableRowProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
   onNavigate: (id: string) => void;
 }
 
@@ -23,7 +23,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         cursor: 'pointer',
         transition: 'background-color 0.15s ease',
         '&:hover': { backgroundColor: 'rgba(144,43,41,0.03)' },
-        ...(entry.acao === 'Devolutiva' && {
+        ...(entry.action === 'Devolutiva' && {
           borderLeft: '3px solid #f59e0b',
         }),
       }}
@@ -39,17 +39,17 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, fontWeight: 600 }}>
-          {entry.beneficiario}
+          {entry.beneficiary}
         </Typography>
         <Typography
           variant="caption"
           sx={{ fontSize: 11, color: 'text.disabled', fontFamily: 'monospace' }}
         >
-          …{entry.carteirinha.slice(-8)}
+          …{entry.cardNumber.slice(-8)}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <CategoryChip category={entry.categoria} />
+        <CategoryChip category={entry.category} />
       </TableCell>
       <TableCell sx={{ maxWidth: 280, px: 1.5 }}>
         <Typography
@@ -63,31 +63,31 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
             whiteSpace: 'normal',
           }}
         >
-          {entry.procedimento}
+          {entry.procedure}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <DecisionActionChip action={entry.acao} />
+        <DecisionActionChip action={entry.action} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <DecisionOriginChip origin={entry.origem} />
-        {entry.origem === 'analista' && (
+        <DecisionOriginChip origin={entry.origin} />
+        {entry.origin === 'analista' && (
           <Typography
             variant="caption"
             sx={{ display: 'block', fontSize: 12, color: 'text.secondary', mt: 0.5 }}
           >
-            {entry.analista}
+            {entry.analyst}
           </Typography>
         )}
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        {entry.origem === 'ia_automatica' ? (
+        {entry.origin === 'ia_automatica' ? (
           <Typography variant="caption" sx={{ fontSize: 12, color: 'text.disabled' }}>
             —
           </Typography>
         ) : (
           <Chip
-            label={entry.iaSugestao}
+            label={entry.iaSuggestion}
             size="small"
             variant="outlined"
             sx={{
@@ -95,21 +95,21 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
               fontWeight: 600,
               height: 20,
               borderColor:
-                entry.iaSugestao === 'Aprovar'
+                entry.iaSuggestion === 'Aprovar'
                   ? '#16a34a'
-                  : entry.iaSugestao === 'Negar'
+                  : entry.iaSuggestion === 'Negar'
                     ? '#d4183d'
                     : '#b45309',
               color:
-                entry.iaSugestao === 'Aprovar'
+                entry.iaSuggestion === 'Aprovar'
                   ? '#16a34a'
-                  : entry.iaSugestao === 'Negar'
+                  : entry.iaSuggestion === 'Negar'
                     ? '#d4183d'
                     : '#b45309',
             }}
           />
         )}
-        {entry.divergencia ? (
+        {entry.divergence ? (
           <Typography
             variant="caption"
             sx={{ display: 'block', fontSize: 11, color: '#b45309', fontWeight: 600, mt: 0.4 }}
@@ -127,7 +127,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-          {`${entry.dataDecisao.slice(0, 5)}/${entry.dataDecisao.slice(8, 10)} · ${entry.dataDecisao.split(' ')[1]}`}
+          {`${entry.decisionDate.slice(0, 5)}/${entry.decisionDate.slice(8, 10)} · ${entry.decisionDate.split(' ')[1]}`}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>

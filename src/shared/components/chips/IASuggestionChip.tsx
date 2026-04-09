@@ -3,10 +3,10 @@
 import Chip from '@mui/material/Chip';
 
 import { iaSuggestionColorMap } from '@/shared/constants';
-import { type IASugestao } from '@/types/pedido';
+import { type IASuggestion } from '@/types/pedido';
 
 interface IASuggestionChipProps {
-  suggestion: IASugestao;
+  suggestion: IASuggestion;
   size?: 'small' | 'medium';
 }
 

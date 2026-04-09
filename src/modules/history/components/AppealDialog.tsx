@@ -19,14 +19,14 @@ import Select from '@mui/material/Select';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 import { type NotifyChannel } from '../types';
 
 interface AppealDialogProps {
   open: boolean;
   onClose: () => void;
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
   notifyChannel: NotifyChannel;
   onNotifyChannelChange: (channel: NotifyChannel) => void;
   onSend: () => void;
@@ -60,7 +60,7 @@ export default function AppealDialog({
             </Box>{' '}
             a{' '}
             <Box component="span" sx={{ fontWeight: 700, color: 'text.primary' }}>
-              {entry.beneficiario}
+              {entry.beneficiary}
             </Box>
             .
           </Typography>
@@ -96,7 +96,7 @@ export default function AppealDialog({
             sx={{ mt: 2, '& .MuiAlert-message': { fontSize: 12 } }}
             icon={<InfoOutlinedIcon sx={{ fontSize: 15 }} />}
           >
-            A mensagem incluirá o resultado ({entry.acao}), o número do protocolo e instruções ao beneficiário.
+            A mensagem incluirá o resultado ({entry.action}), o número do protocolo e instruções ao beneficiário.
           </Alert>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>

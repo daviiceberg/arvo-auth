@@ -21,13 +21,13 @@ import Popover from '@mui/material/Popover';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
-import { type Notificacao } from '@/types/notificacao';
+import { type Notification } from '@/types/notificacao';
 
 import { REGIONAL_OPTIONS, type Regional } from '../constants/navigation';
 
 interface TopbarProps {
   // Notifications
-  notifications: Notificacao[];
+  notifications: Notification[];
   notifAnchor: HTMLElement | null;
   notifOpen: boolean;
   unreadCount: number;

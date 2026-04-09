@@ -7,9 +7,9 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import Chip from '@mui/material/Chip';
 
 import { decisionActionConfigMap } from '@/shared/constants/decision-action-colors';
-import { type DecisaoAcao } from '@/types/pedido';
+import { type DecisionAction } from '@/types/pedido';
 
-const decisionIconMap: Record<DecisaoAcao, React.ReactNode> = {
+const decisionIconMap: Record<DecisionAction, React.ReactNode> = {
   Aprovado: <CheckCircleIcon sx={{ fontSize: 13 }} />,
   Negado: <CancelIcon sx={{ fontSize: 13 }} />,
   'Aprovado Parcial': <CallSplitIcon sx={{ fontSize: 13 }} />,
@@ -17,7 +17,7 @@ const decisionIconMap: Record<DecisaoAcao, React.ReactNode> = {
 };
 
 interface DecisionActionChipProps {
-  action: DecisaoAcao;
+  action: DecisionAction;
   size?: 'small' | 'medium';
 }
 

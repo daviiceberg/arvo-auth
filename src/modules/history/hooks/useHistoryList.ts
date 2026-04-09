@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import { historicoEntries } from '@/data/pedidos';
 
 import {
-  type DecisaoAcao,
+  type DecisionAction,
   type SortDirection,
   type OriginFilter,
   type ActionFilter,
@@ -29,7 +29,7 @@ export default function useHistoryList() {
 
   // -- Derived: available categories ---------------------------------------
   const categories = useMemo(
-    () => ['Todas', ...Array.from(new Set(historicoEntries.map((e) => e.categoria)))],
+    () => ['Todas', ...Array.from(new Set(historicoEntries.map((e) => e.category)))],
     [],
   );
 
@@ -41,19 +41,19 @@ export default function useHistoryList() {
         const matchSearch =
           search === '' ||
           e.id.toLowerCase().includes(lowerSearch) ||
-          e.beneficiario.toLowerCase().includes(lowerSearch) ||
-          e.procedimento.toLowerCase().includes(lowerSearch) ||
-          e.analista.toLowerCase().includes(lowerSearch);
-        const matchOrigin = originFilter === 'Todas' || e.origem === originFilter;
-        const matchAction = actionFilter === 'Todas' || e.acao === actionFilter;
-        const matchCategory = categoryFilter === 'Todas' || e.categoria === categoryFilter;
+          e.beneficiary.toLowerCase().includes(lowerSearch) ||
+          e.procedure.toLowerCase().includes(lowerSearch) ||
+          e.analyst.toLowerCase().includes(lowerSearch);
+        const matchOrigin = originFilter === 'Todas' || e.origin === originFilter;
+        const matchAction = actionFilter === 'Todas' || e.action === actionFilter;
+        const matchCategory = categoryFilter === 'Todas' || e.category === categoryFilter;
         const matchDivergence =
-          divergenceFilter === 'Todas' || (divergenceFilter === 'divergiu' && e.divergencia);
+          divergenceFilter === 'Todas' || (divergenceFilter === 'divergiu' && e.divergence);
         return matchSearch && matchOrigin && matchAction && matchCategory && matchDivergence;
       })
       .sort((a, b) => {
-        const dateA = new Date(a.dataDecisao.split('/').reverse().join('-')).getTime();
-        const dateB = new Date(b.dataDecisao.split('/').reverse().join('-')).getTime();
+        const dateA = new Date(a.decisionDate.split('/').reverse().join('-')).getTime();
+        const dateB = new Date(b.decisionDate.split('/').reverse().join('-')).getTime();
         return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
       });
   }, [search, originFilter, actionFilter, categoryFilter, divergenceFilter, sortDirection]);
@@ -87,10 +87,10 @@ export default function useHistoryList() {
 
   // -- Aggregation counts --------------------------------------------------
   const totalEntries = historicoEntries.length;
-  const totalIA = historicoEntries.filter((e) => e.origem === 'ia_automatica').length;
-  const totalAnalyst = historicoEntries.filter((e) => e.origem === 'analista').length;
-  const totalApproved = historicoEntries.filter((e) => e.acao === 'Aprovado').length;
-  const totalDivergences = historicoEntries.filter((e) => e.divergencia).length;
+  const totalIA = historicoEntries.filter((e) => e.origin === 'ia_automatica').length;
+  const totalAnalyst = historicoEntries.filter((e) => e.origin === 'analista').length;
+  const totalApproved = historicoEntries.filter((e) => e.action === 'Aprovado').length;
+  const totalDivergences = historicoEntries.filter((e) => e.divergence).length;
   const approvalRate = Math.round((totalApproved / totalEntries) * 100);
 
   return {
@@ -100,7 +100,7 @@ export default function useHistoryList() {
     originFilter,
     setOriginFilter,
     actionFilter,
-    setActionFilter: setActionFilter as (v: 'Todas' | DecisaoAcao) => void,
+    setActionFilter: setActionFilter as (v: 'Todas' | DecisionAction) => void,
     categoryFilter,
     setCategoryFilter,
     divergenceFilter,

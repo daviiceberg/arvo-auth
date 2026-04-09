@@ -2,10 +2,10 @@
 
 import { useState, useRef } from 'react'
 
-import { type Pedido, type Documento } from '@/data/pedidos'
+import { type Request, type Document } from '@/data/pedidos'
 
-export function useDocumentViewer(request: Pedido) {
-  const [localDocs, setLocalDocs] = useState<Documento[]>([])
+export function useDocumentViewer(request: Request) {
+  const [localDocs, setLocalDocs] = useState<Document[]>([])
   const [viewDoc, setViewDoc] = useState<string | null>(null)
   const [zoom, setZoom] = useState(100)
   const [expandedIA, setExpandedIA] = useState<Record<string, boolean>>({ '0': true })
@@ -23,7 +23,7 @@ export function useDocumentViewer(request: Pedido) {
   const [solicitarPrazo, setSolicitarPrazo] = useState('5')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const allDocs = [...request.documentos, ...localDocs]
+  const allDocs = [...request.documents, ...localDocs]
 
   const handleAddConfirm = () => {
     if (!addTipo) {
@@ -36,7 +36,7 @@ export function useDocumentViewer(request: Pedido) {
     }
     setAddError('')
     const newId = `DOC-LOCAL-${String(Date.now())}`
-    const newDoc: Documento = {
+    const newDoc: Document = {
       id: newId,
       nome: addFile.name,
       tipo: addTipo,

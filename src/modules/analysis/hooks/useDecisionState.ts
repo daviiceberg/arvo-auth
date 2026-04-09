@@ -4,13 +4,13 @@ import { useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { type Pedido, type Ajuste } from '@/data/pedidos'
+import { type Request, type Adjustment } from '@/data/pedidos'
 
 import { type ProcDecision, type SnackbarState } from '../types'
 
 interface UseDecisionStateParams {
-  request: Pedido
-  allAdjustments: Ajuste[]
+  request: Request
+  allAdjustments: Adjustment[]
   showSnackbar: (msg: string, severity: SnackbarState['severity']) => void
 }
 
@@ -32,7 +32,7 @@ export function useDecisionState({ request, allAdjustments, showSnackbar }: UseD
 
   // Per-procedure decision state (multi-procedure flow)
   const [procDecisions, setProcDecisions] = useState<Record<string, ProcDecision>>(() =>
-    Object.fromEntries(request.procedimentos.map(p => [p.codigo, 'pendente' as ProcDecision]))
+    Object.fromEntries(request.procedures.map(p => [p.code, 'pendente' as ProcDecision]))
   )
 
   // Partial approval dialog state
@@ -60,11 +60,11 @@ export function useDecisionState({ request, allAdjustments, showSnackbar }: UseD
   }
 
   const doApprove = () => {
-    if (request.iaSugestao !== 'Aprovar') {
+    if (request.iaSuggestion !== 'Aprovar') {
       setPendingAction('autorizar')
       setShowDivergenceDialog(true)
     } else {
-      setApprovalJustification(`Justificativa: ${request.iaJustificativa}`)
+      setApprovalJustification(`Justificativa: ${request.iaJustification}`)
       setShowApprovalDialog(true)
     }
   }
@@ -79,10 +79,10 @@ export function useDecisionState({ request, allAdjustments, showSnackbar }: UseD
     if (!divergenceReason.trim()) return
     setShowDivergenceDialog(false)
     if (pendingAction === 'autorizar') {
-      setApprovalJustification(`Justificativa: ${request.iaJustificativa}`)
+      setApprovalJustification(`Justificativa: ${request.iaJustification}`)
       setShowApprovalDialog(true)
     } else {
-      setDenialJustification(`Justificativa: ${request.iaJustificativa}`)
+      setDenialJustification(`Justificativa: ${request.iaJustification}`)
       setShowDenialDialog(true)
     }
   }
@@ -117,9 +117,9 @@ export function useDecisionState({ request, allAdjustments, showSnackbar }: UseD
 
   const handleConfirmDecisionClick = () => {
     const initJust: Record<string, string> = {}
-    request.procedimentos.forEach(pr => {
-      if ((procDecisions[pr.codigo] ?? 'pendente') === 'negado') {
-        initJust[pr.codigo] = initJust[pr.codigo] ?? ''
+    request.procedures.forEach(pr => {
+      if ((procDecisions[pr.code] ?? 'pendente') === 'negado') {
+        initJust[pr.code] = initJust[pr.code] ?? ''
       }
     })
     setPartialDenialJustMap(initJust)
@@ -128,11 +128,11 @@ export function useDecisionState({ request, allAdjustments, showSnackbar }: UseD
   }
 
   const confirmPartialDecision = () => {
-    const denied = request.procedimentos.filter(pr => (procDecisions[pr.codigo] ?? 'pendente') === 'negado')
-    const allValid = denied.every(pr => partialDenialReasonMap[pr.codigo] !== undefined && (partialDenialJustMap[pr.codigo] ?? '').trim())
+    const denied = request.procedures.filter(pr => (procDecisions[pr.code] ?? 'pendente') === 'negado')
+    const allValid = denied.every(pr => partialDenialReasonMap[pr.code] !== undefined && (partialDenialJustMap[pr.code] ?? '').trim())
     if (!allValid) return
     setShowPartialDialog(false)
-    const nApproved = request.procedimentos.filter(pr => procDecisions[pr.codigo] === 'aprovado').length
+    const nApproved = request.procedures.filter(pr => procDecisions[pr.code] === 'aprovado').length
     const nDenied = denied.length
     if (nDenied === 0) {
       showSnackbar(`Pedido ${request.id} aprovado com sucesso`, 'success')

@@ -4,14 +4,14 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 interface ObservationsSectionProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
 }
 
 export default function ObservationsSection({ entry }: ObservationsSectionProps) {
-  if (!entry.observacoes) return null;
+  if (!entry.observations) return null;
 
   return (
     <Card>
@@ -24,7 +24,7 @@ export default function ObservationsSection({ entry }: ObservationsSectionProps)
           Observações
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-          {entry.observacoes}
+          {entry.observations}
         </Typography>
       </CardContent>
     </Card>

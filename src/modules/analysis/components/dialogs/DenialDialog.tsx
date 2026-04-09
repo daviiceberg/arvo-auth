@@ -12,7 +12,7 @@ import RadioGroup from '@mui/material/RadioGroup'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 
-import { type IASugestao } from '@/data/pedidos'
+import { type IASuggestion } from '@/data/pedidos'
 
 import { DENIAL_REASONS } from '../../constants/denial-reasons'
 
@@ -20,7 +20,7 @@ interface DenialDialogProps {
   open: boolean
   requestId: string
   beneficiaryName: string
-  iaSuggestion: IASugestao
+  iaSuggestion: IASuggestion
   denialReasonIdx: number
   onDenialReasonChange: (idx: number) => void
   denialJustification: string

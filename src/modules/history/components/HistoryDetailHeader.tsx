@@ -14,10 +14,10 @@ import Typography from '@mui/material/Typography';
 
 import { DecisionActionChip } from '@/shared/components';
 import { categoryColorMap } from '@/shared/constants';
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 interface HistoryDetailHeaderProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
   currentIndex: number;
   total: number;
   onBack: () => void;
@@ -33,7 +33,7 @@ export default function HistoryDetailHeader({
   onPrev,
   onNext,
 }: HistoryDetailHeaderProps) {
-  const catStyle = categoryColorMap[entry.categoria] ?? { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' };
+  const catStyle = categoryColorMap[entry.category] ?? { bg: 'rgba(0,0,0,0.06)', color: '#5a6070' };
 
   return (
     <Box sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
@@ -59,21 +59,21 @@ export default function HistoryDetailHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {entry.id}
           </Typography>
-          <DecisionActionChip action={entry.acao} />
+          <DecisionActionChip action={entry.action} />
           <Chip
-            label={entry.tipoGuia}
+            label={entry.guideType}
             size="small"
             sx={{
               backgroundColor:
-                entry.tipoGuia === 'Emergência'
+                entry.guideType === 'Emergência'
                   ? 'rgba(212,24,61,0.1)'
-                  : entry.tipoGuia === 'Urgente'
+                  : entry.guideType === 'Urgente'
                     ? 'rgba(245,158,11,0.12)'
                     : 'rgba(37,99,235,0.1)',
               color:
-                entry.tipoGuia === 'Emergência'
+                entry.guideType === 'Emergência'
                   ? '#d4183d'
-                  : entry.tipoGuia === 'Urgente'
+                  : entry.guideType === 'Urgente'
                     ? '#b45309'
                     : '#2563eb',
               fontWeight: 700,
@@ -81,12 +81,12 @@ export default function HistoryDetailHeader({
             }}
           />
           <Chip
-            label={entry.categoria}
+            label={entry.category}
             size="small"
             sx={{ backgroundColor: catStyle.bg, color: catStyle.color, fontWeight: 600, height: 22 }}
           />
-          {entry.alertas &&
-            entry.alertas.length > 0 ? entry.alertas.map((alerta) => (
+          {entry.alerts &&
+            entry.alerts.length > 0 ? entry.alerts.map((alerta) => (
               <Chip
                 key={alerta}
                 icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
@@ -174,19 +174,19 @@ export default function HistoryDetailHeader({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {entry.prestador}
+            {entry.provider}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            Protocolo: {entry.dataProtocolo}
+            Protocolo: {entry.protocolDate}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <CalendarTodayOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            Decisão: {entry.dataDecisao}
+            Decisão: {entry.decisionDate}
           </Typography>
         </Box>
       </Box>

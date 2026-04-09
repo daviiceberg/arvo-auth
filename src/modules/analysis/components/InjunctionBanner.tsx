@@ -5,15 +5,15 @@ import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 
-import { type Pedido } from '@/data/pedidos'
+import { type Request } from '@/data/pedidos'
 
 interface InjunctionBannerProps {
-  request: Pedido
+  request: Request
 }
 
 export default function InjunctionBanner({ request }: InjunctionBannerProps) {
-  if (!request.liminar?.ativa) return null
-  const { processo, escopo, validade, observacao } = request.liminar
+  if (!request.injunction?.ativa) return null
+  const { processo, escopo, validade, observacao } = request.injunction
   return (
     <Box sx={{ border: '1px solid rgba(124,58,237,0.35)', borderRadius: 2, backgroundColor: 'rgba(124,58,237,0.04)', p: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>

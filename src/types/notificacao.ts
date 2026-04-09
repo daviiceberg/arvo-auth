@@ -1,4 +1,4 @@
-export type TipoNotificacao =
+export type NotificationType =
   | 'processamento_ok'
   | 'processamento_auto'
   | 'processamento_erro'
@@ -6,9 +6,9 @@ export type TipoNotificacao =
   | 'sla_risco'
   | 'urgencia';
 
-export interface Notificacao {
+export interface Notification {
   id: string;
-  type: TipoNotificacao;
+  type: NotificationType;
   title: string;
   message: string;
   time: string;

@@ -39,6 +39,18 @@ import {
   type SystemUser, type UserRole, type UserStatus, type UserPermissions,
 } from '@/data/usuarios'
 
+// ── Permission row (extracted from UserDialog to avoid creating components during render) ──
+function PermRow({ label, k, perms, onToggle }: { label: string; k: keyof UserPermissions; perms: UserPermissions; onToggle: (k: keyof UserPermissions) => void }) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.75 }}>
+      <Typography variant="body2" sx={{ fontSize: 13 }}>{label}</Typography>
+      <Switch size="small" checked={perms[k]} onChange={() => { onToggle(k); }}
+        sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#902B29' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#902B29' } }}
+      />
+    </Box>
+  );
+}
+
 // ── Role chip ─────────────────────────────────────────────────────────
 const roleColors: Record<UserRole, { bg: string; color: string }> = {
   gestor:      { bg: 'rgba(144,43,41,0.1)',  color: '#902B29' },
@@ -79,7 +91,7 @@ interface DialogProps {
 
 function UserDialog({ open, user, onClose, onSave }: DialogProps) {
   const isEditing = user !== null
-  const [nome, setNome] = useState(user?.nome ?? '')
+  const [nome, setNome] = useState(user?.name ?? '')
   const [email, setEmail] = useState(user?.email ?? '')
   const [senha, setSenha] = useState('')
   const [role, setRole] = useState<UserRole>(user?.role ?? 'autorizador')
@@ -92,7 +104,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
   // Sync state when dialog reopens with different user
   useEffect(() => {
     if (open) {
-      setNome(user?.nome ?? '')
+      setNome(user?.name ?? '')
       setEmail(user?.email ?? '')
       setSenha('')
       setRole(user?.role ?? 'autorizador')
@@ -122,17 +134,8 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
     if (!nome || !email) return
     if (!isEditing && !validateSenha(senha)) return
     if (isEditing && senha && !validateSenha(senha)) return
-    onSave({ nome, email, role, status, permissions: perms })
+    onSave({ name: nome, email, role, status, permissions: perms })
   }
-
-  const PermRow = ({ label, k }: { label: string; k: keyof UserPermissions }) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.75 }}>
-      <Typography variant="body2" sx={{ fontSize: 13 }}>{label}</Typography>
-      <Switch size="small" checked={perms[k]} onChange={() => { togglePerm(k); }}
-        sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#902B29' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#902B29' } }}
-      />
-    </Box>
-  )
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -188,17 +191,17 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
           Permissões — {roleLabels[role]}
         </Typography>
         <Box sx={{ backgroundColor: '#faf6f2', borderRadius: 2, px: 2, py: 0.5 }}>
-          <PermRow label="Pode aprovar solicitações" k="podeAprovar" />
+          <PermRow label="Pode aprovar solicitações" k="canApprove" perms={perms} onToggle={togglePerm} />
           <Divider />
-          <PermRow label="Pode negar solicitações" k="podeNegar" />
+          <PermRow label="Pode negar solicitações" k="canDeny" perms={perms} onToggle={togglePerm} />
           <Divider />
-          <PermRow label="Pode visualizar relatórios" k="podeVisualizarRelatorios" />
+          <PermRow label="Pode visualizar relatórios" k="canViewReports" perms={perms} onToggle={togglePerm} />
           <Divider />
-          <PermRow label="Pode visualizar histórico" k="podeVisualizarHistorico" />
+          <PermRow label="Pode visualizar histórico" k="canViewHistory" perms={perms} onToggle={togglePerm} />
           <Divider />
-          <PermRow label="Pode criar e gerenciar usuários" k="podeCriarUsuarios" />
+          <PermRow label="Pode criar e gerenciar usuários" k="canCreateUsers" perms={perms} onToggle={togglePerm} />
           <Divider />
-          <PermRow label="Pode configurar o sistema" k="podeConfigurarSistema" />
+          <PermRow label="Pode configurar o sistema" k="canConfigureSystem" perms={perms} onToggle={togglePerm} />
         </Box>
       </DialogContent>
       <Divider />
@@ -223,7 +226,7 @@ export default function UsuariosPage() {
 
   const filtered = users.filter(u => {
     const matchSearch = search === '' ||
-      u.nome.toLowerCase().includes(search.toLowerCase()) ||
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase())
     const matchRole = roleFilter === 'Todos' || u.role === roleFilter
     const matchStatus = statusFilter === 'Todos' || u.status === statusFilter
@@ -244,11 +247,11 @@ export default function UsuariosPage() {
     } else {
       setUsers(prev => [...prev, {
         id: `u-${String(Date.now())}`,
-        nome: data.nome!,
+        name: data.name!,
         email: data.email!,
         role: data.role!,
         status: data.status!,
-        criadoEm: new Date().toLocaleDateString('pt-BR'),
+        createdAt: new Date().toLocaleDateString('pt-BR'),
         permissions: data.permissions!,
       }])
     }
@@ -310,7 +313,7 @@ export default function UsuariosPage() {
               size="small" placeholder="Buscar por nome ou e-mail..."
               value={search} onChange={e => { setSearch(e.target.value); }}
               sx={{ flex: 2, minWidth: 220 }}
-              InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} /></InputAdornment> }}
+              slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} /></InputAdornment> } }}
             />
             <FormControl size="small" sx={{ minWidth: 150 }}>
               <InputLabel>Perfil</InputLabel>
@@ -363,9 +366,9 @@ export default function UsuariosPage() {
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <Avatar sx={{ width: 32, height: 32, fontSize: 12, fontWeight: 700, bgcolor: roleColors[u.role].bg, color: roleColors[u.role].color }}>
-                      {initials(u.nome)}
+                      {initials(u.name)}
                     </Avatar>
-                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>{u.nome}</Typography>
+                    <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>{u.name}</Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
@@ -375,11 +378,11 @@ export default function UsuariosPage() {
                 <TableCell><StatusChip status={u.status} /></TableCell>
                 <TableCell>
                   <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                    {u.ultimoAcesso ?? '—'}
+                    {u.lastAccess ?? '—'}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>{u.criadoEm}</Typography>
+                  <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>{u.createdAt}</Typography>
                 </TableCell>
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>

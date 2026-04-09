@@ -4,10 +4,10 @@ import PersonIcon from '@mui/icons-material/Person';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Chip from '@mui/material/Chip';
 
-import { type DecisaoOrigem } from '@/types/pedido';
+import { type DecisionOrigin } from '@/types/pedido';
 
 interface DecisionOriginChipProps {
-  origin: DecisaoOrigem;
+  origin: DecisionOrigin;
 }
 
 export default function DecisionOriginChip({ origin }: DecisionOriginChipProps) {

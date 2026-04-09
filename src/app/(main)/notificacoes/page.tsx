@@ -11,7 +11,7 @@ import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
-import { NOTIFICACOES, type Notificacao } from '@/data/notificacoes'
+import { NOTIFICACOES, type Notification } from '@/data/notificacoes'
 
 export default function NotificacoesPage() {
   const router = useRouter()
@@ -23,7 +23,7 @@ export default function NotificacoesPage() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
   }
 
-  const handleClick = (n: Notificacao) => {
+  const handleClick = (n: Notification) => {
     setNotifications((prev) =>
       prev.map((item) => (item.id === n.id ? { ...item, read: true } : item))
     )

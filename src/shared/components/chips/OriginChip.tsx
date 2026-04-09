@@ -7,9 +7,9 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Chip from '@mui/material/Chip';
 
 import { originConfigMap } from '@/shared/constants';
-import { type OrigemPedido } from '@/types/pedido';
+import { type RequestOrigin } from '@/types/pedido';
 
-const originIconMap: Record<OrigemPedido, React.ReactNode> = {
+const originIconMap: Record<RequestOrigin, React.ReactNode> = {
   app: <PhoneAndroidIcon sx={{ fontSize: 11 }} />,
   whatsapp: <WhatsAppIcon sx={{ fontSize: 11 }} />,
   email: <EmailOutlinedIcon sx={{ fontSize: 11 }} />,
@@ -18,7 +18,7 @@ const originIconMap: Record<OrigemPedido, React.ReactNode> = {
 };
 
 interface OriginChipProps {
-  origin: OrigemPedido;
+  origin: RequestOrigin;
   size?: 'small' | 'medium';
 }
 

@@ -3,8 +3,8 @@
 import { useState } from 'react';
 
 import { categoryColorMap } from '@/shared/constants';
-import { type Notificacao } from '@/types/notificacao';
-import { type Pedido } from '@/types/pedido';
+import { type Notification } from '@/types/notificacao';
+import { type Request } from '@/types/pedido';
 
 import {
   CATEGORY_ICON_MAP,
@@ -21,10 +21,10 @@ export interface CategoryEntry {
   icon: React.ReactNode;
 }
 
-function buildCategories(requests: Pedido[]): CategoryEntry[] {
+function buildCategories(requests: Request[]): CategoryEntry[] {
   const counts: Record<string, number> = {};
   for (const r of requests) {
-    counts[r.categoria] = (counts[r.categoria] ?? 0) + 1;
+    counts[r.category] = (counts[r.category] ?? 0) + 1;
   }
 
   return CATEGORY_ORDER.filter((cat) => (counts[cat] ?? 0) > 0).map((cat) => ({
@@ -35,13 +35,13 @@ function buildCategories(requests: Pedido[]): CategoryEntry[] {
   }));
 }
 
-function buildNavItems(requests: Pedido[]): NavItem[] {
+function buildNavItems(requests: Request[]): NavItem[] {
   return NAV_ITEMS.map((item) =>
     item.path === '/fila' ? { ...item, badge: requests.length } : item,
   );
 }
 
-export default function useAppShell(requests: Pedido[], notifications: Notificacao[]) {
+export default function useAppShell(requests: Request[], notifications: Notification[]) {
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);

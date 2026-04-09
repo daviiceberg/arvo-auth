@@ -17,7 +17,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { decisionActionConfigMap } from '@/shared/constants';
-import { type HistoricoEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 import {
   type HistoricoConsolidado,
@@ -94,9 +94,9 @@ const mockHistorico: Record<string, HistoricoConsolidado> = {
   },
 };
 
-function getHistoryProfile(entry: HistoricoEntry): 'high_use' | 'primeira_vez' | 'default' {
-  if (entry.divergencia && (entry.categoria === 'Oncologia' || entry.categoria === 'Internação')) return 'high_use';
-  if (entry.carencia) return 'primeira_vez';
+function getHistoryProfile(entry: HistoryEntry): 'high_use' | 'primeira_vez' | 'default' {
+  if (entry.divergence && (entry.category === 'Oncologia' || entry.category === 'Internação')) return 'high_use';
+  if (entry.waitingPeriod) return 'primeira_vez';
   return 'default';
 }
 
@@ -149,7 +149,7 @@ function alertSeverityColor(s: 'low' | 'medium' | 'high'): 'info' | 'warning' | 
 // -- Component -------------------------------------------------------------
 
 interface ConsolidatedHistorySectionProps {
-  entry: HistoricoEntry;
+  entry: HistoryEntry;
 }
 
 export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistorySectionProps) {

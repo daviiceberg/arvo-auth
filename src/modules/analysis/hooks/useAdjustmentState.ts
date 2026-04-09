@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 
-import { type Pedido, type Ajuste } from '@/data/pedidos'
+import { type Request, type Adjustment } from '@/data/pedidos'
 
 import { type SnackbarState } from '../types'
 
 interface UseAdjustmentStateParams {
-  request: Pedido
+  request: Request
   showSnackbar: (msg: string, severity: SnackbarState['severity']) => void
 }
 
@@ -21,9 +21,9 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
     fabricante?: string
     valorUnitario?: number
   } | null>(null)
-  const [localAdjustments, setLocalAdjustments] = useState<Ajuste[]>([])
+  const [localAdjustments, setLocalAdjustments] = useState<Adjustment[]>([])
 
-  const allAdjustments: Ajuste[] = [...(request.ajustes ?? []), ...localAdjustments]
+  const allAdjustments: Adjustment[] = [...(request.adjustments ?? []), ...localAdjustments]
 
   const handleAdjustClick = (proc: {
     codigo: string
@@ -37,20 +37,20 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
     setDrawerOpen(true)
   }
 
-  const handleAdjustConfirm = (adjustment: Omit<Ajuste, 'id'>) => {
-    const newAdj: Ajuste = { id: `ADJ-${String(Date.now())}`, ...adjustment }
+  const handleAdjustConfirm = (adjustment: Omit<Adjustment, 'id'>) => {
+    const newAdj: Adjustment = { id: `ADJ-${String(Date.now())}`, ...adjustment }
     setLocalAdjustments(prev => [...prev, newAdj])
     setDrawerOpen(false)
     const fieldLabel =
-      adjustment.campo === 'quantidade'
-        ? `Qtd. autorizada alterada de ${adjustment.valorAnterior} para ${adjustment.valorNovo}`
-        : adjustment.campo === 'prestador'
-          ? `Prestador alterado para ${adjustment.valorNovo}`
-          : adjustment.campo === 'fabricante'
-            ? `Fabricante alterado para ${adjustment.valorNovo}`
-            : adjustment.campo === 'valorUnitario'
-              ? `Valor unitário alterado para ${adjustment.valorNovo}`
-              : `Código alterado para ${adjustment.valorNovo}`
+      adjustment.field === 'quantidade'
+        ? `Qtd. autorizada alterada de ${adjustment.previousValue} para ${adjustment.newValue}`
+        : adjustment.field === 'prestador'
+          ? `Prestador alterado para ${adjustment.newValue}`
+          : adjustment.field === 'fabricante'
+            ? `Fabricante alterado para ${adjustment.newValue}`
+            : adjustment.field === 'valorUnitario'
+              ? `Valor unitário alterado para ${adjustment.newValue}`
+              : `Código alterado para ${adjustment.newValue}`
     showSnackbar(`✓ Ajuste registrado — ${fieldLabel}`, 'warning')
   }
 

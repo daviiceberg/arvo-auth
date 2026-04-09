@@ -3,21 +3,21 @@ export type UserRole = 'gestor' | 'autorizador' | 'auditor';
 export type UserStatus = 'ativo' | 'inativo';
 
 export interface UserPermissions {
-  podeAprovar: boolean;
-  podeNegar: boolean;
-  podeVisualizarRelatorios: boolean;
-  podeCriarUsuarios: boolean;
-  podeVisualizarHistorico: boolean;
-  podeConfigurarSistema: boolean;
+  canApprove: boolean;
+  canDeny: boolean;
+  canViewReports: boolean;
+  canCreateUsers: boolean;
+  canViewHistory: boolean;
+  canConfigureSystem: boolean;
 }
 
 export interface SystemUser {
   id: string;
-  nome: string;
+  name: string;
   email: string;
   role: UserRole;
   status: UserStatus;
-  ultimoAcesso?: string;
-  criadoEm: string;
+  lastAccess?: string;
+  createdAt: string;
   permissions: UserPermissions;
 }

@@ -13,12 +13,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { type Pedido } from '@/types/pedido';
+import { type Request } from '@/types/pedido';
 
 import QueueTableRow from './QueueTableRow';
 
 interface QueueTableProps {
-  items: Pedido[];
+  items: Request[];
   categoryFilter: string;
   loading: boolean;
   lastViewedId: string | null;

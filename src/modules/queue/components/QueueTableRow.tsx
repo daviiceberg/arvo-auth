@@ -21,12 +21,12 @@ import {
 } from '@/shared/components';
 
 import SubStatusLabel from './SubStatusLabel';
-import { type Pedido } from '@/types/pedido';
+import { type Request } from '@/types/pedido';
 
 import { REQUEST_TYPE_MAP } from '../constants/request-type-map';
 
 interface QueueTableRowProps {
-  request: Pedido;
+  request: Request;
   categoryFilter: string;
   lastViewedId: string | null;
   onRowClick: (requestId: string) => void;
@@ -64,49 +64,49 @@ export default function QueueTableRow({ request, categoryFilter, lastViewedId, o
       }}
     >
       <TableCell align="center" sx={{ px: 1.5 }}>
-        <PrioDot prioridade={request.prioridade} />
+        <PrioDot prioridade={request.priority} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
           {request.id}
         </Typography>
         <Typography variant="caption" color="text.disabled" sx={{ fontSize: 11, whiteSpace: 'nowrap' }}>
-          {`${request.dataProtocolo.slice(0, 5)} · ${request.dataProtocolo.split(' ')[1]}`}
+          {`${request.protocolDate.slice(0, 5)} · ${request.protocolDate.split(' ')[1]}`}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <OriginChip origin={request.origem} />
+        <OriginChip origin={request.origin} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
-          {request.beneficiario.nome}
+          {request.beneficiary.name}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-          {request.beneficiario.plano}
+          {request.beneficiary.plan}
         </Typography>
         <Box sx={{ mt: 0.5, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
           <RequestTypeChip type={requestType} />
-          <GuideTypeChip type={request.tipoGuia} />
+          <GuideTypeChip type={request.guideType} />
         </Box>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12 }}>
-          {request.prestador.hospital}
+          {request.provider.hospital}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-          {request.prestador.medico}
+          {request.provider.doctor}
         </Typography>
       </TableCell>
       {categoryFilter === 'Todas' && (
         <TableCell sx={{ px: 1.5 }}>
-          <CategoryChip category={request.categoria} />
+          <CategoryChip category={request.category} />
         </TableCell>
       )}
       <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
-        {request.procedimentos.length > 1 ? (
+        {request.procedures.length > 1 ? (
           <>
             <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12 }}>
-              {request.procedimentos.length} procedimentos
+              {request.procedures.length} procedimentos
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
               Clique para ver detalhes
@@ -115,10 +115,10 @@ export default function QueueTableRow({ request, categoryFilter, lastViewedId, o
         ) : (
           <>
             <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
-              {request.procedimentos[0]?.tuss || '—'}
+              {request.procedures[0]?.tuss || '—'}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', whiteSpace: 'normal' }}>
-              {request.procedimentos[0]?.descricao || '—'}
+              {request.procedures[0]?.description || '—'}
             </Typography>
           </>
         )}
@@ -127,12 +127,12 @@ export default function QueueTableRow({ request, categoryFilter, lastViewedId, o
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <AccessTimeIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {request.tempoFila}
+            {request.queueTime}
           </Typography>
         </Box>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <SLAChip status={request.slaStatus} label={request.slaTexto} />
+        <SLAChip status={request.slaStatus} label={request.slaText} />
         {request.status === 'Devolutiva' && (
           <Tooltip title="Devolutiva não interrompe o prazo ANS — SLA continua em contagem" placement="top">
             <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.4, fontSize: 10, color: '#b45309', fontWeight: 600, cursor: 'default' }}>
@@ -143,35 +143,35 @@ export default function QueueTableRow({ request, categoryFilter, lastViewedId, o
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Tooltip title="Ponto de vista da análise da IA — a decisão final é do analista" placement="top">
-          <span><IASuggestionChip suggestion={request.iaSugestao} /></span>
+          <span><IASuggestionChip suggestion={request.iaSuggestion} /></span>
         </Tooltip>
       </TableCell>
       <TableCell sx={{ px: 1.5 }} onClick={(e) => { e.stopPropagation(); }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <Tooltip
-            title={request.lockOperador ? `Em análise por ${request.lockOperador.nome} desde ${request.lockOperador.desde}` : ''}
+            title={request.operatorLock ? `Em análise por ${request.operatorLock.nome} desde ${request.operatorLock.desde}` : ''}
             placement="top"
-            disableHoverListener={!request.lockOperador}
+            disableHoverListener={!request.operatorLock}
           >
             <span>
               <Button
                 size="small"
-                variant={request.lockOperador ? 'outlined' : 'contained'}
+                variant={request.operatorLock ? 'outlined' : 'contained'}
                 onClick={() => { onRowClick(request.id); }}
                 aria-label={`Analisar pedido ${request.id}`}
-                sx={{ minHeight: 28, fontSize: 12, px: 1.5, ...(request.lockOperador && { color: 'text.secondary', borderColor: 'rgba(0,0,0,0.2)' }) }}
+                sx={{ minHeight: 28, fontSize: 12, px: 1.5, ...(request.operatorLock && { color: 'text.secondary', borderColor: 'rgba(0,0,0,0.2)' }) }}
               >
-                {request.lockOperador ? 'Observar' : 'Analisar'}
+                {request.operatorLock ? 'Observar' : 'Analisar'}
               </Button>
             </span>
           </Tooltip>
-          {request.lockOperador ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
+          {request.operatorLock ? <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
               <LockOutlinedIcon sx={{ fontSize: 11, color: 'text.disabled' }} />
               <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
-                {request.lockOperador.nome}
+                {request.operatorLock.nome}
               </Typography>
             </Box> : null}
-          {!request.lockOperador && request.subStatus ? <Box sx={{ mt: 0.75 }}>
+          {!request.operatorLock && request.subStatus ? <Box sx={{ mt: 0.75 }}>
               <SubStatusLabel subStatus={request.subStatus} />
             </Box> : null}
         </Box>

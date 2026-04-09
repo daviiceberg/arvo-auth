@@ -3,10 +3,10 @@
 import Chip from '@mui/material/Chip';
 
 import { categoryColorMap } from '@/shared/constants';
-import { type Categoria } from '@/types/pedido';
+import { type Category } from '@/types/pedido';
 
 interface CategoryChipProps {
-  category: Categoria;
+  category: Category;
   size?: 'small' | 'medium';
 }
 
