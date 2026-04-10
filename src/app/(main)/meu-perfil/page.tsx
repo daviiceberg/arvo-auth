@@ -1,56 +1,58 @@
-'use client'
-import { useState } from 'react'
-import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import InputLabel from '@mui/material/InputLabel'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
-import Divider from '@mui/material/Divider'
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import SaveIcon from '@mui/icons-material/Save'
+'use client';
+import { useState } from 'react';
+
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import SaveIcon from '@mui/icons-material/Save';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import Snackbar from '@mui/material/Snackbar';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 export default function MeuPerfilPage() {
   // Personal info state
-  const [nome, setNome] = useState('Ana Paula Santos')
-  const [perfil, setPerfil] = useState('Autorizador')
-  const [operadora, setOperadora] = useState('Operadora')
+  const [nome, setNome] = useState('Ana Paula Santos');
+  const [perfil, setPerfil] = useState('Autorizador');
+  const [operadora, setOperadora] = useState('Operadora');
 
   // Security state
-  const [senhaAtual, setSenhaAtual] = useState('')
-  const [novaSenha, setNovaSenha] = useState('')
-  const [confirmarSenha, setConfirmarSenha] = useState('')
+  const [senhaAtual, setSenhaAtual] = useState('');
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
 
   // Snackbar state
   const [snackbar, setSnackbar] = useState<{
-    open: boolean
-    message: string
-    severity: 'success' | 'error'
-  }>({ open: false, message: '', severity: 'success' })
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
-  const handleCloseSnackbar = () => setSnackbar((prev) => ({ ...prev, open: false }))
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   const handleSavePerfil = () => {
-    setSnackbar({ open: true, message: 'Perfil atualizado com sucesso!', severity: 'success' })
-  }
+    setSnackbar({ open: true, message: 'Perfil atualizado com sucesso!', severity: 'success' });
+  };
 
   const handleAlterarSenha = () => {
     if (novaSenha !== confirmarSenha) {
-      setSnackbar({ open: true, message: 'As senhas não coincidem', severity: 'error' })
-      return
+      setSnackbar({ open: true, message: 'As senhas não coincidem', severity: 'error' });
+      return;
     }
-    setSenhaAtual('')
-    setNovaSenha('')
-    setConfirmarSenha('')
-    setSnackbar({ open: true, message: 'Senha alterada com sucesso!', severity: 'success' })
-  }
+    setSenhaAtual('');
+    setNovaSenha('');
+    setConfirmarSenha('');
+    setSnackbar({ open: true, message: 'Senha alterada com sucesso!', severity: 'success' });
+  };
 
   return (
     <Box sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
@@ -105,7 +107,9 @@ export default function MeuPerfilPage() {
             <TextField
               label="Nome Completo"
               value={nome}
-              onChange={(e) => setNome(e.target.value)}
+              onChange={(e) => {
+                setNome(e.target.value);
+              }}
               size="small"
               fullWidth
             />
@@ -122,7 +126,9 @@ export default function MeuPerfilPage() {
               <Select
                 label="Perfil"
                 value={perfil}
-                onChange={(e) => setPerfil(e.target.value)}
+                onChange={(e) => {
+                  setPerfil(e.target.value);
+                }}
               >
                 <MenuItem value="Gestor">Gestor</MenuItem>
                 <MenuItem value="Autorizador">Autorizador</MenuItem>
@@ -134,7 +140,9 @@ export default function MeuPerfilPage() {
               <Select
                 label="Operadora"
                 value={operadora}
-                onChange={(e) => setOperadora(e.target.value)}
+                onChange={(e) => {
+                  setOperadora(e.target.value);
+                }}
               >
                 <MenuItem value="Operadora">Operadora</MenuItem>
                 <MenuItem value="Unimed">Unimed</MenuItem>
@@ -200,7 +208,9 @@ export default function MeuPerfilPage() {
               label="Senha Atual"
               type="password"
               value={senhaAtual}
-              onChange={(e) => setSenhaAtual(e.target.value)}
+              onChange={(e) => {
+                setSenhaAtual(e.target.value);
+              }}
               size="small"
               fullWidth
               autoComplete="current-password"
@@ -209,7 +219,9 @@ export default function MeuPerfilPage() {
               label="Nova Senha"
               type="password"
               value={novaSenha}
-              onChange={(e) => setNovaSenha(e.target.value)}
+              onChange={(e) => {
+                setNovaSenha(e.target.value);
+              }}
               size="small"
               fullWidth
               autoComplete="new-password"
@@ -218,7 +230,9 @@ export default function MeuPerfilPage() {
               label="Confirmar Nova Senha"
               type="password"
               value={confirmarSenha}
-              onChange={(e) => setConfirmarSenha(e.target.value)}
+              onChange={(e) => {
+                setConfirmarSenha(e.target.value);
+              }}
               size="small"
               fullWidth
               autoComplete="new-password"
@@ -256,5 +270,5 @@ export default function MeuPerfilPage() {
         </Alert>
       </Snackbar>
     </Box>
-  )
+  );
 }

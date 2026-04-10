@@ -1,22 +1,22 @@
-export type TipoNotificacao =
+export type NotificationType =
   | 'processamento_ok'
   | 'processamento_auto'
   | 'processamento_erro'
   | 'devolutiva'
   | 'sla_risco'
-  | 'urgencia'
+  | 'urgencia';
 
-export interface Notificacao {
-  id: string
-  type: TipoNotificacao
-  title: string
-  message: string
-  time: string
-  read: boolean
-  href: string
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  href: string;
 }
 
-export const NOTIFICACOES: Notificacao[] = [
+export const NOTIFICACOES: Notification[] = [
   {
     id: 'REQ-2026-04810',
     type: 'processamento_ok',
@@ -71,4 +71,4 @@ export const NOTIFICACOES: Notificacao[] = [
     read: true,
     href: '/analise?id=ATH-2026-00431',
   },
-]
+];

@@ -1,177 +1,124 @@
 # Arvo Auth Frontend
 
-Frontend module of the **Arvo Authorizator** system — a medical procedure authorization platform for health plan operators. Integrates with the `arvo-auth-api` backend via a contract-driven REST API.
+Intelligent medical authorization system for health insurance operators. Receives procedure requests, runs intelligence checks, and presents structured analysis to support human decision-making. Integrates with `arvo-auth-api` via a contract-driven REST API.
 
-## Tech Stack
-
-| Layer       | Technology                               |
-| ----------- | ---------------------------------------- |
-| Framework   | Next.js 16 (App Router)                  |
-| UI          | React 19 + MUI 7 (Material UI) + Emotion |
-| Language    | TypeScript 5 (strict mode)               |
-| State       | Redux Toolkit                            |
-| HTTP Client | Axios                                    |
-| Logging     | loglevel (`@/shared/utils/logger.ts`)    |
-| Font        | Space Grotesk                            |
-
-## Prerequisites
-
-- Node.js 20+
-- npm
+**Stack:** Next.js 16 · React 19 · TypeScript 5 (strict) · MUI v7 · Emotion · Space Grotesk
 
 ## Quick Start
 
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:3000
 ```
-
-Access [http://localhost:3000](http://localhost:3000). The app redirects to `/dashboard`.
 
 ## Scripts
 
-| Command                | Description                           |
-| ---------------------- | ------------------------------------- |
-| `npm run dev`          | Development server                    |
-| `npm run build`        | Production build                      |
-| `npm start`            | Serve production build                |
-| `npm run lint`         | Run ESLint                            |
-| `npm run lint:fix`     | Run ESLint with auto-fix              |
-| `npm run format`       | Format all source files with Prettier |
-| `npm run format:check` | Check formatting without writing      |
-| `npm run typecheck`    | TypeScript type check (no emit)       |
-| `npm run validate`     | Run typecheck + lint + format:check   |
+| Command                | Description                                             |
+| ---------------------- | ------------------------------------------------------- |
+| `npm run dev`          | Development server (Turbopack)                          |
+| `npm run build`        | Production build (TypeScript check + static generation) |
+| `npm start`            | Serve production build                                  |
+| `npm run lint`         | ESLint check                                            |
+| `npm run lint:fix`     | ESLint with auto-fix                                    |
+| `npm run lint:strict`  | ESLint with `--max-warnings 0` (CI gate)                |
+| `npm run format`       | Format all files with Prettier                          |
+| `npm run format:check` | Check formatting without writing                        |
+| `npm run typecheck`    | TypeScript type check (no emit)                         |
+| `npm run validate`     | Run typecheck + lint:strict + format:check              |
+| `npm run clean`        | Remove `.next` and `out` build artifacts                |
 
-## Architecture
-
-This project follows **MVVM** (Model–View–ViewModel) layered over a **feature-based module structure**:
-
-- **Model** — API layer + Redux store (server state + global state)
-- **View** — React components (presentational, MUI-based, no business logic)
-- **ViewModel** — Custom hooks (orchestrate state, validation, side effects)
-
-### Project Structure
+## Project Structure
 
 ```
 src/
-├── app/                     # Next.js App Router — routing and layout only
-│   ├── login/
-│   ├── nova-solicitacao/
-│   └── (main)/              # Authenticated layout (AppShell)
-│       ├── dashboard/
-│       ├── fila/
-│       ├── analise/
-│       ├── historico/
-│       │   └── [id]/
-│       ├── usuarios/
-│       ├── meu-perfil/
-│       ├── notificacoes/
-│       └── ajuda/
-├── core/                    # Store (Redux), Theme (MUI), API client (Axios)
-├── shared/                  # Reusable UI components, global hooks, utilities
-├── modules/                 # Feature-based modules
-│   └── {feature}/
-│       ├── api/             # API calls (axios, typed contracts)
-│       ├── hooks/           # ViewModel — business logic, state orchestration
-│       ├── components/      # View — presentational components
-│       ├── store/           # Redux slice (if needed)
-│       └── types/           # TypeScript types for the module
-└── services/                # Service layer (used in Prototyping Mode)
-    └── {domain}/
-        ├── {domain}.service.ts    # Single entry point for consumers
-        ├── {domain}.types.ts      # Shared request/response types
-        ├── {domain}.api.ts        # Real API implementation
-        ├── {domain}.fake.ts       # Fake implementation (prototype only)
-        └── {domain}.fake-data.ts  # Seed data (prototype only)
+├── app/                    → Next.js App Router (routing only, no business logic)
+│   ├── login/              → Login page
+│   ├── nova-solicitacao/   → Multi-step new request form
+│   ├── docs/               → Product docs & design system
+│   └── (main)/             → Authenticated layout (AppShell)
+│       ├── dashboard/      → KPIs, charts, metrics
+│       ├── fila/           → Operational queue (pending requests)
+│       ├── analise/        → Request analysis (IA + analyst decision)
+│       ├── historico/      → Decision history (audit trail)
+│       │   └── [id]/       → Individual decision detail
+│       ├── usuarios/       → User management (admin)
+│       ├── meu-perfil/     → User profile
+│       ├── notificacoes/   → Notifications
+│       └── ajuda/          → Help & keyboard shortcuts
+├── core/                   → Theme (MUI), Providers, API client (Axios)
+├── shared/
+│   ├── components/         → Reusable chips (Category, SLA, Status...) + cards (KPI, Metric)
+│   ├── constants/          → Centralized color maps (9 domain mappings)
+│   └── utils/              → Logger (loglevel), urgency helpers
+├── modules/
+│   ├── analysis/           → Request analysis module (largest — 40+ components)
+│   ├── queue/              → Operational queue with filters and tabs
+│   ├── history/            → Decision history and audit trail
+│   ├── new-request/        → Multi-step request form (8 event types)
+│   ├── dashboard/          → KPI dashboard and charts
+│   └── shell/              → AppShell layout (sidebar + topbar)
+├── services/               → Service layer (Implementation & Prototyping modes)
+│   └── {domain}/           → .service.ts, .types.ts, .api.ts, .fake.ts, .fake-data.ts
+├── types/                  → Domain types (pedido, usuario, notificacao)
+└── data/                   → Mock data (will be replaced by API integration)
 ```
 
-## Operating Modes
+## Architecture
 
-This project supports two distinct development modes. The correct mode is determined by whether the required backend endpoint exists in the [Swagger](https://authz-api.sandbox.arvohealth.com/docs).
+**Pattern:** MVVM — Hooks (ViewModel) · Components (View) · Constants · Types
 
-### Implementation Mode (default)
+Each module follows the same structure:
 
-Used when the backend endpoint already exists in the Swagger.
+- `components/` — React components (View layer, no business logic)
+- `hooks/` — Custom hooks (ViewModel layer, all state and logic)
+- `types/` — Module-specific type definitions
+- `constants/` — Module-specific constants and mappings
 
-- All API calls derive types and payloads directly from the Swagger contract.
-- No mocks, stubs, or fake data in production/development runtime code.
-- MSW mock handlers are allowed only within unit/integration test files.
-- If a required endpoint is missing or incomplete: stop, notify, and open a GitHub Issue on `arvo-health/arvo-auth` before proceeding.
+### Operating Modes
 
-**API references:**
+This project supports two development modes, determined by backend endpoint availability:
 
-- Swagger UI: https://authz-api.sandbox.arvohealth.com/docs
-- General docs: https://authz-api.sandbox.arvohealth.com/api/docs/
-- Module docs: https://authz-api.sandbox.arvohealth.com/api/docs/{module}/{file}
+- **Implementation Mode** — endpoint exists in [Swagger](https://authz-api.sandbox.arvohealth.com/docs) → full API integration, no mocks
+- **Prototyping Mode** — endpoint missing → Fake Service Layer with same interface, swappable when real API is ready
 
-### Prototyping Mode
+See [AGENTS.md](AGENTS.md) for domain context, decision tree, and mode details.
+See [CLAUDE.md](CLAUDE.md) for code standards and component map.
 
-Used when a feature or screen does not yet have a corresponding backend endpoint.
+## Event Types (Authorization Categories)
 
-Fake services follow the **same interface** as real API modules, making the swap to a real implementation trivial and contained:
-
-1. The `.service.ts` barrel is the **only** import consumers use — they never reference `.fake.ts` or `.api.ts` directly.
-2. The active implementation is controlled by an environment variable (`VITE_USE_FAKE_SERVICES` or a domain-specific flag).
-3. Every fake file must carry a `@prototype` JSDoc marker with `@status`, `@planned-endpoint`, and `@tracking-issue`.
-
-When a prototype is approved and the backend endpoint is available:
-
-1. Create `{domain}.api.ts` following the real Swagger contract.
-2. Flip the env var — `.service.ts` switches automatically.
-3. Delete `.fake.ts` and `.fake-data.ts`.
-4. No changes needed in any consuming component, hook, or page.
-
-## Code Quality
-
-The repository enforces quality at multiple stages:
-
-| Gate           | Tool                 | Trigger             |
-| -------------- | -------------------- | ------------------- |
-| Type safety    | TypeScript (strict)  | `npm run typecheck` |
-| Linting        | ESLint (flat config) | `npm run lint`      |
-| Formatting     | Prettier             | `npm run format`    |
-| Pre-commit     | Husky + lint-staged  | `git commit`        |
-| Commit message | commitlint           | `git commit`        |
-
-### Key ESLint Rules
-
-- `no-console: error` — use `logger` from `@/shared/utils/logger.ts`
-- No deep relative imports (`../../`) — use path aliases (`@/core/`, `@/shared/`, `@/modules/`)
-- Unused imports are flagged and auto-removed
-
-## Conventions
-
-### Naming
-
-| Artifact   | Convention     |
-| ---------- | -------------- |
-| Components | `PascalCase`   |
-| Hooks      | `useCamelCase` |
-| Files      | `kebab-case`   |
-
-### Commits
-
-Format: `type(scope): description` (max 72 chars)
-
-Types: `feat` `fix` `refactor` `style` `chore` `docs` `test` `ci` `perf`
-
-Scopes: `analise` `fila` `dashboard` `historico` `usuarios` `nova-solicitacao` `auth` `shared` `core` `ci` `deps`
-
-### Branches
-
-Format: `type/TICKET-short-description`
-
-Example: `feat/NEW-779-setup-code-quality-guardrails`
+| Category              | Color     | Description                            |
+| --------------------- | --------- | -------------------------------------- |
+| Hospitalization       | `#902B29` | Clinical and surgical admissions       |
+| Urgency/Emergency     | `#d4183d` | Time-sensitive regulatory flow         |
+| Oncology              | `#7c3aed` | Chemotherapy, immunotherapy, radiation |
+| Special Therapies     | `#2563eb` | ABA, physiotherapy, speech therapy     |
+| OPME                  | `#b45309` | Prosthetics and special materials      |
+| High Complexity Exams | `#0891b2` | Advanced diagnostic imaging            |
+| Elective Surgeries    | `#059669` | Scheduled surgical procedures          |
+| Home Care             | `#16a34a` | Home-based care services               |
 
 ## User Roles
 
-| Role            | Access                                         |
-| --------------- | ---------------------------------------------- |
-| **Gestor**      | Full access (reports, config, user management) |
-| **Autorizador** | Queue analysis and decision                    |
-| **Auditor**     | Read-only (history and reports)                |
+| Role                         | Access                                     |
+| ---------------------------- | ------------------------------------------ |
+| **Manager** (Gestor)         | Full access (reports, config, users)       |
+| **Authorizer** (Autorizador) | Analysis and decision in operational queue |
+| **Auditor**                  | Read-only (history and reports)            |
+
+## Code Quality
+
+| Gate           | Tool                                           | Trigger                |
+| -------------- | ---------------------------------------------- | ---------------------- |
+| Type safety    | TypeScript (strict + noUncheckedIndexedAccess) | `npm run typecheck`    |
+| Linting        | ESLint strictTypeChecked, `--max-warnings 0`   | `npm run lint:strict`  |
+| Formatting     | Prettier (printWidth: 100)                     | `npm run format:check` |
+| Pre-commit     | Husky + lint-staged                            | `git commit`           |
+| Commit message | commitlint (Conventional Commits)              | `git commit`           |
+| CI             | GitHub Actions (4 parallel gates)              | Pull request           |
+
+All code in English. PRs in Portuguese-BR.
 
 ## Testing
 
-- **Unit / Integration:** Vitest + Testing Library. Files follow `*.test.ts` / `*.test.tsx`. MSW for API mocking (test scope only).
+- **Unit/Integration:** Vitest + Testing Library. Files `*.test.ts` / `*.test.tsx`. MSW for API mocking (test scope only).
 - **E2E:** Playwright. Core flows: login, queue listing, new request submission.
