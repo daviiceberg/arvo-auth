@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 import { type ConsolidatedHistory } from '../constants/consolidated-history-data';
 

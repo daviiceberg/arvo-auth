@@ -5,7 +5,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 interface AlertsBannerProps {
   request: Request;

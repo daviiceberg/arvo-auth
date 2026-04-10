@@ -12,7 +12,7 @@ import CardContent from '@mui/material/CardContent';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 import { useDocumentViewer } from '../hooks/useDocumentViewer';
 

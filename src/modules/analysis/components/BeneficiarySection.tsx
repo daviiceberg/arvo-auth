@@ -11,7 +11,7 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 interface BeneficiarySectionProps {
   request: Request;

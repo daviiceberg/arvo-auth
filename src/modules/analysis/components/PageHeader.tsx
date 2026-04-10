@@ -18,8 +18,8 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { type Request, type RequestOrigin } from '@/data/pedidos';
 import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants';
+import { type Request, type RequestOrigin } from '@/types/pedido';
 
 // ---- OrigemLabel (module-level inline component) ----
 const originIconMap: Record<RequestOrigin, React.ReactNode> = {

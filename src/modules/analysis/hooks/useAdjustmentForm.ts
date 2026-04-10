@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-import { type Adjustment } from '@/data/pedidos';
+import { type Adjustment } from '@/types/pedido';
 
 import { ADJUSTMENT_REASONS, OPME_VALUE_REASONS } from '../constants/adjustment-reasons';
 import { USER_PROFILE } from '../types';

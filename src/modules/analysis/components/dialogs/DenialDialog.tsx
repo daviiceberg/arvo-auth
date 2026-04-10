@@ -12,7 +12,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type IASuggestion } from '@/data/pedidos';
+import { type IASuggestion } from '@/types/pedido';
 
 import { DENIAL_REASONS } from '@/modules/analysis/constants/denial-reasons';
 

@@ -17,7 +17,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type Adjustment } from '@/data/pedidos';
+import { type Adjustment } from '@/types/pedido';
 
 import { type UseAdjustmentFormReturn, useAdjustmentForm } from '../hooks/useAdjustmentForm';
 

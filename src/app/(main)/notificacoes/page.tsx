@@ -11,7 +11,8 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import { NOTIFICACOES, type Notification } from '@/data/notificacoes';
+import { NOTIFICACOES } from '@/data/notificacoes';
+import { type Notification } from '@/types/notificacao';
 
 export default function NotificacoesPage() {
   const router = useRouter();

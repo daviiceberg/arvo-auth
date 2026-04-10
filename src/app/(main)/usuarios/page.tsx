@@ -34,15 +34,13 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { defaultPermissions, mockUsers, roleLabels } from '@/data/usuarios';
 import {
-  mockUsers,
-  roleLabels,
-  defaultPermissions,
   type SystemUser,
+  type UserPermissions,
   type UserRole,
   type UserStatus,
-  type UserPermissions,
-} from '@/data/usuarios';
+} from '@/types/usuario';
 
 // ── Permission row (extracted from UserDialog to avoid creating components during render) ──
 function PermRow({

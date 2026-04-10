@@ -8,7 +8,7 @@ import { type SxProps, type Theme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type Procedure } from '@/data/pedidos';
+import { type Procedure } from '@/types/pedido';
 
 import { type ProcDecision } from '../types';
 

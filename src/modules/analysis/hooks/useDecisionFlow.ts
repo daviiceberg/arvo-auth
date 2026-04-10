@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { type Request, type Adjustment } from '@/data/pedidos';
+import { type Adjustment, type Request } from '@/types/pedido';
 
 import { type ProcDecision, type SnackbarState } from '../types';
 

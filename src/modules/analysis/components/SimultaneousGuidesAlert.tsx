@@ -4,7 +4,8 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 
-import { pedidos, type Request } from '@/data/pedidos';
+import { pedidos } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 interface SimultaneousGuidesAlertProps {
   request: Request;
