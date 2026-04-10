@@ -40,7 +40,7 @@ export default function AdjustmentApprovalDialog({
         </Typography>
         {allAdjustments.map((aj) => (
           <Box key={aj.id} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
-            <EditIcon sx={{ fontSize: 13, color: '#b45309', mt: 0.15, flexShrink: 0 }} />
+            <EditIcon sx={{ fontSize: 13, color: 'warning.main', mt: 0.15, flexShrink: 0 }} />
             <Typography variant="caption" sx={{ fontSize: 12 }}>
               {aj.field === 'quantidade'
                 ? `Quantidade reduzida de ${aj.previousValue} para ${aj.newValue}`

@@ -145,7 +145,11 @@ function DocumentsReviewSection({
 
   return (
     <>
-      <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
+      >
         Documentos Anexados
         {total > 0 ? ` (${String(totalEnv)} de ${String(total)} obrigatórios)` : ''}
       </Typography>
@@ -168,9 +172,9 @@ function DocumentsReviewSection({
             }}
           >
             {d.status === 'enviado' ? (
-              <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0 }} />
+              <CheckCircleOutlineIcon sx={{ fontSize: 15, color: 'success.main', flexShrink: 0 }} />
             ) : (
-              <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0 }} />
+              <WarningAmberIcon sx={{ fontSize: 15, color: 'warning.light', flexShrink: 0 }} />
             )}
             <Typography variant="caption" sx={{ flex: 1, fontSize: 12 }}>
               {d.nome}
@@ -179,7 +183,7 @@ function DocumentsReviewSection({
               variant="caption"
               sx={{
                 fontSize: 11,
-                color: d.status === 'enviado' ? '#15803d' : '#b45309',
+                color: d.status === 'enviado' ? '#15803d' : 'warning.main',
                 fontWeight: 600,
               }}
             >
@@ -198,7 +202,7 @@ function DocumentsReviewSection({
               gap: 1,
             }}
           >
-            <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0 }} />
+            <CheckCircleOutlineIcon sx={{ fontSize: 15, color: 'success.main', flexShrink: 0 }} />
             <Typography variant="caption" sx={{ flex: 1, fontSize: 12 }}>
               {d.nome}
             </Typography>
@@ -236,14 +240,18 @@ export function StepReview({
           gap: 1,
         }}
       >
-        <CheckCircleOutlineIcon sx={{ color: '#16a34a', fontSize: 18 }} />
+        <CheckCircleOutlineIcon sx={{ color: 'success.main', fontSize: 18 }} />
         <Typography variant="body2" sx={{ fontSize: 13, color: '#15803d', fontWeight: 500 }}>
           Revise as informações antes de enviar. Após o envio a solicitação entrará na fila de
           análise.
         </Typography>
       </Box>
       {/* Beneficiário */}
-      <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
+      >
         Dados do Beneficiário
       </Typography>
       <Box sx={{ mb: 3 }}>
@@ -259,7 +267,11 @@ export function StepReview({
         <ReviewRow label="Validade da Carteirinha" value={form.validadeCarteirinha} />
       </Box>
       {/* Dados Clínicos */}
-      <Typography variant="body2" fontWeight={700} sx={{ mb: 1, fontSize: 13, color: '#902B29' }}>
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
+      >
         Dados Clínicos
       </Typography>
       <Box sx={{ mb: 3 }}>
@@ -288,7 +300,7 @@ export function StepReview({
                   size="small"
                   sx={{
                     backgroundColor: 'rgba(37,99,235,0.08)',
-                    color: '#2563eb',
+                    color: 'info.main',
                     fontWeight: 700,
                     fontSize: 11,
                     height: 20,
@@ -309,7 +321,7 @@ export function StepReview({
           <Typography
             variant="body2"
             fontWeight={700}
-            sx={{ mb: 1, fontSize: 13, color: '#902B29' }}
+            sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
           >
             {getStep3Label(form.tipoSolicitacao)}
           </Typography>

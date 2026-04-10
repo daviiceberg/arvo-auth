@@ -90,7 +90,7 @@ export function StepUpload({
           cursor: uploadState === 'idle' ? 'pointer' : 'default',
           '&:hover':
             uploadState === 'idle'
-              ? { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' }
+              ? { borderColor: 'primary.main', backgroundColor: 'rgba(144,43,41,0.03)' }
               : {},
         }}
       >
@@ -112,8 +112,8 @@ export function StepUpload({
         )}
         {uploadState === 'loading' && (
           <>
-            <CircularProgress size={40} thickness={3} sx={{ color: '#2563eb' }} />
-            <Typography variant="body1" fontWeight={700} sx={{ color: '#2563eb' }}>
+            <CircularProgress size={40} thickness={3} sx={{ color: 'info.main' }} />
+            <Typography variant="body1" fontWeight={700} sx={{ color: 'info.main' }}>
               Lendo documento com IA...
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -127,7 +127,7 @@ export function StepUpload({
                   height: 6,
                   borderRadius: 3,
                   backgroundColor: 'rgba(37,99,235,0.12)',
-                  '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: '#2563eb' },
+                  '& .MuiLinearProgress-bar': { borderRadius: 3, backgroundColor: 'info.main' },
                 }}
               />
               <Typography
@@ -141,8 +141,8 @@ export function StepUpload({
         )}
         {uploadState === 'done' && (
           <>
-            <CheckCircleOutlineIcon sx={{ fontSize: 44, color: '#16a34a' }} />
-            <Typography variant="body1" fontWeight={700} sx={{ color: '#16a34a' }}>
+            <CheckCircleOutlineIcon sx={{ fontSize: 44, color: 'success.main' }} />
+            <Typography variant="body1" fontWeight={700} sx={{ color: 'success.main' }}>
               Documento processado!
             </Typography>
           </>

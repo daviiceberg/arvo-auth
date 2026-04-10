@@ -3,8 +3,11 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: { main: '#902B29', dark: '#6e1f1d', contrastText: '#ffffff' },
-    warning: { main: '#902B29', dark: '#6e1f1d', light: '#b03533', contrastText: '#ffffff' },
+    secondary: { main: '#7c3aed', dark: '#6d28d9', contrastText: '#ffffff' },
     error: { main: '#d4183d' },
+    warning: { main: '#b45309', light: '#f59e0b', contrastText: '#ffffff' },
+    info: { main: '#2563eb', dark: '#1d4ed8', contrastText: '#ffffff' },
+    success: { main: '#16a34a', dark: '#166534', contrastText: '#ffffff' },
     background: { default: '#FAF6F2', paper: '#ffffff' },
     text: { primary: '#1a1a1a', secondary: '#5a6070' },
     divider: 'rgba(0,0,0,0.08)',
@@ -61,7 +64,7 @@ const theme = createTheme({
     MuiTableRow: {
       styleOverrides: {
         root: {
-          '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
+          '&:hover': { backgroundColor: 'rgba(144,43,41,0.03)' },
           cursor: 'pointer',
         },
       },

@@ -88,13 +88,13 @@ export default function DashboardKpiRow({
             {/* Card 1 — Awaiting decision */}
             <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<FormatListBulletedIcon sx={{ fontSize: 20, color: '#902B29' }} />}
+                icon={<FormatListBulletedIcon sx={{ fontSize: 20, color: 'primary.main' }} />}
                 iconBg="rgba(144,43,41,0.1)"
                 value={pedidos.length}
                 label="Aguardam Decisão"
                 sublabel={
                   <>
-                    <Box component="span" sx={{ color: '#d4183d', fontWeight: 700 }}>
+                    <Box component="span" sx={{ color: 'error.main', fontWeight: 700 }}>
                       {metrics.slaViolados} violados
                     </Box>
                     {` · ${String(metrics.slaWarning)} atenção · ${String(metrics.slaOk)} no prazo`}
@@ -125,7 +125,7 @@ export default function DashboardKpiRow({
             {/* Card 2 — Irregularities detected */}
             <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<WarningAmberIcon sx={{ fontSize: 20, color: '#b45309' }} />}
+                icon={<WarningAmberIcon sx={{ fontSize: 20, color: 'warning.main' }} />}
                 iconBg="rgba(245,158,11,0.12)"
                 value={metrics.totalAlertasAtivos}
                 label="Irregularidades Detectadas"
@@ -136,40 +136,40 @@ export default function DashboardKpiRow({
                       `${String(a.count)} ${a.tipo === 'Liminar Judicial' ? 'liminares' : a.tipo === 'NIP Ativa' ? 'NIP ativas' : a.tipo.toLowerCase()}`,
                   )
                   .join(' · ')}
-                valueColor="#b45309"
+                valueColor="warning.main"
               />
             </Grid>
             {/* Card 3 — Savings generated */}
             <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<SavingsIcon sx={{ fontSize: 20, color: '#16a34a' }} />}
+                icon={<SavingsIcon sx={{ fontSize: 20, color: 'success.main' }} />}
                 iconBg="rgba(22,163,74,0.1)"
                 value={metrics.valorNegado}
                 label="Economia Gerada"
                 sublabel={`${String(metrics.negados)} negativas · taxa ${String(metrics.taxaNegacao)}%`}
-                valueColor="#16a34a"
+                valueColor="success.main"
               />
             </Grid>
             {/* Card 4 — AI effectiveness */}
             <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<SmartToyIcon sx={{ fontSize: 20, color: '#7c3aed' }} />}
+                icon={<SmartToyIcon sx={{ fontSize: 20, color: 'secondary.main' }} />}
                 iconBg="rgba(124,58,237,0.1)"
                 value={`${String(metrics.taxaDeteccaoIA)}%`}
                 label="Efetividade da IA"
                 sublabel={`IA antecipou ${String(metrics.iaSinalizouCriticos)} de ${String(metrics.totalCriticosHist)} negativas`}
-                valueColor="#7c3aed"
+                valueColor="secondary.main"
               />
             </Grid>
             {/* Card 5 — Value at risk */}
             <Grid size={{ xs: 12, sm: 6, md: 'grow' }}>
               <KpiCard
-                icon={<AttachMoneyIcon sx={{ fontSize: 20, color: '#2563eb' }} />}
+                icon={<AttachMoneyIcon sx={{ fontSize: 20, color: 'info.main' }} />}
                 iconBg="rgba(37,99,235,0.1)"
                 value={metrics.valorTotal}
                 label="Valor em Risco"
                 sublabel={`${String(pedidos.length)} pedidos aguardam decisão`}
-                valueColor="#2563eb"
+                valueColor="info.main"
               />
             </Grid>
           </>

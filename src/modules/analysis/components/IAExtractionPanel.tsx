@@ -16,10 +16,10 @@ import { type IAFieldStatus, type IAExtractionField } from '../utils/ia-extracti
 // ---- Helpers ----
 function IAFieldIcon({ status }: { status: IAFieldStatus }) {
   if (status === 'ok')
-    return <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a', flexShrink: 0 }} />;
+    return <CheckCircleOutlineIcon sx={{ fontSize: 14, color: 'success.main', flexShrink: 0 }} />;
   if (status === 'warning')
-    return <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309', flexShrink: 0 }} />;
-  return <ErrorOutlineIcon sx={{ fontSize: 14, color: '#d4183d', flexShrink: 0 }} />;
+    return <WarningAmberIcon sx={{ fontSize: 14, color: 'warning.main', flexShrink: 0 }} />;
+  return <ErrorOutlineIcon sx={{ fontSize: 14, color: 'error.main', flexShrink: 0 }} />;
 }
 
 // ---- Component ----
@@ -54,8 +54,8 @@ export default function IAExtractionPanel({
           transition: 'background-color 0.12s ease',
         }}
       >
-        <SmartToyIcon sx={{ fontSize: 13, color: '#2563eb' }} />
-        <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#2563eb', flex: 1 }}>
+        <SmartToyIcon sx={{ fontSize: 13, color: 'info.main' }} />
+        <Typography sx={{ fontSize: 12, fontWeight: 700, color: 'info.main', flex: 1 }}>
           {isProcessing ? 'IA processando...' : 'IA extraiu'}
         </Typography>
         <Box
@@ -82,7 +82,7 @@ export default function IAExtractionPanel({
           }}
         >
           {isProcessing ? (
-            <Typography sx={{ fontSize: 12, color: '#2563eb', fontStyle: 'italic' }}>
+            <Typography sx={{ fontSize: 12, color: 'info.main', fontStyle: 'italic' }}>
               Analisando documento... aguarde.
             </Typography>
           ) : (

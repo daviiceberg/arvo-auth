@@ -102,12 +102,14 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
                   mb: 1.5,
                 }}
               >
-                <WarningAmberIcon sx={{ fontSize: 20, color: '#f59e0b', flexShrink: 0, mt: 0.1 }} />
+                <WarningAmberIcon
+                  sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0, mt: 0.1 }}
+                />
                 <Box sx={{ flex: 1 }}>
                   <Typography
                     variant="body2"
                     fontWeight={700}
-                    sx={{ fontSize: 13, color: '#b45309' }}
+                    sx={{ fontSize: 13, color: 'warning.main' }}
                   >
                     Documento obrigatório ausente: {mandatoryDocName}
                   </Typography>

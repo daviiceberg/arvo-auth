@@ -159,10 +159,10 @@ export default function HistoryDetailPage() {
                             : 'rgba(245,158,11,0.12)',
                       color:
                         entry.iaSuggestion === 'Aprovar'
-                          ? '#16a34a'
+                          ? 'success.main'
                           : entry.iaSuggestion === 'Negar'
-                            ? '#d4183d'
-                            : '#b45309',
+                            ? 'error.main'
+                            : 'warning.main',
                     }}
                   />
                 </Box>
@@ -187,10 +187,10 @@ export default function HistoryDetailPage() {
                   </Alert>
                 ) : (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 2 }}>
-                    <CheckCircleIcon sx={{ fontSize: 14, color: '#16a34a' }} />
+                    <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
                     <Typography
                       variant="caption"
-                      sx={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}
+                      sx={{ fontSize: 12, color: 'success.main', fontWeight: 600 }}
                     >
                       Decisão alinhada com a sugestão da IA
                     </Typography>
@@ -211,11 +211,11 @@ export default function HistoryDetailPage() {
                       }}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                        <GroupsIcon sx={{ fontSize: 17, color: '#7c3aed' }} />
+                        <GroupsIcon sx={{ fontSize: 17, color: 'secondary.main' }} />
                         <Typography
                           variant="body2"
                           fontWeight={700}
-                          sx={{ fontSize: 13, color: '#7c3aed' }}
+                          sx={{ fontSize: 13, color: 'secondary.main' }}
                         >
                           Junta Médica Realizada
                         </Typography>
@@ -274,7 +274,9 @@ export default function HistoryDetailPage() {
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}>
                         {entry.medicalBoard.membros.map((m, i) => (
                           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                            <PersonIcon sx={{ fontSize: 13, color: '#7c3aed', flexShrink: 0 }} />
+                            <PersonIcon
+                              sx={{ fontSize: 13, color: 'secondary.main', flexShrink: 0 }}
+                            />
                             <Typography
                               variant="caption"
                               sx={{ fontSize: 12, color: '#374151', lineHeight: 1.4 }}

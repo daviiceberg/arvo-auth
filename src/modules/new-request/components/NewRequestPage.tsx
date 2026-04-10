@@ -63,7 +63,7 @@ function StepIcon({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: completed ? '#16a34a' : active ? '#902B29' : '#e5e7eb',
+        backgroundColor: completed ? 'success.main' : active ? 'primary.main' : '#e5e7eb',
         color: completed || active ? '#fff' : '#6b7280',
         fontSize: 12,
         fontWeight: 700,
@@ -269,7 +269,7 @@ function NewRequestInner() {
                 fontWeight: 600,
                 fontSize: 11,
                 backgroundColor: 'rgba(144,43,41,0.08)',
-                color: '#902B29',
+                color: 'primary.main',
               }}
             />
           ) : null}
@@ -322,8 +322,8 @@ function NewRequestInner() {
               fontFamily: '"Space Grotesk", sans-serif',
               fontWeight: 500,
             },
-            '& .MuiStepLabel-label.Mui-active': { fontWeight: 700, color: '#902B29' },
-            '& .MuiStepLabel-label.Mui-completed': { color: '#16a34a' },
+            '& .MuiStepLabel-label.Mui-active': { fontWeight: 700, color: 'primary.main' },
+            '& .MuiStepLabel-label.Mui-completed': { color: 'success.main' },
           }}
         >
           {steps.map((step, i) => (

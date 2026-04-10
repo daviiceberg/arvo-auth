@@ -14,12 +14,12 @@ export default function DecisionOriginChip({ origin }: DecisionOriginChipProps) 
   if (origin === 'ia_automatica') {
     return (
       <Chip
-        icon={<SmartToyIcon sx={{ fontSize: 13, color: '#2563eb !important' }} />}
+        icon={<SmartToyIcon sx={{ fontSize: 13, color: 'info.main' }} />}
         label="IA Automática"
         size="small"
         sx={{
           backgroundColor: 'rgba(37,99,235,0.08)',
-          color: '#2563eb',
+          color: 'info.main',
           fontSize: 12,
           fontWeight: 700,
           height: 22,

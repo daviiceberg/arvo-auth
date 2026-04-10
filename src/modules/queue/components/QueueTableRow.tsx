@@ -241,7 +241,7 @@ export default function QueueTableRow({
                 gap: 0.4,
                 mt: 0.4,
                 fontSize: 10,
-                color: '#b45309',
+                color: 'warning.main',
                 fontWeight: 600,
                 cursor: 'default',
               }}

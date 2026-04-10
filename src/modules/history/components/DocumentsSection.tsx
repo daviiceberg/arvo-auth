@@ -31,13 +31,13 @@ function docIcon(tipo: string) {
     tipo.toLowerCase().includes('médico') ||
     tipo.toLowerCase().includes('laudo')
   ) {
-    return <PictureAsPdfIcon sx={{ color: '#d4183d', fontSize: 28 }} />;
+    return <PictureAsPdfIcon sx={{ color: 'error.main', fontSize: 28 }} />;
   }
   if (tipo.toLowerCase().includes('judicial') || tipo.toLowerCase().includes('jurídico')) {
-    return <GavelIcon sx={{ color: '#7c3aed', fontSize: 28 }} />;
+    return <GavelIcon sx={{ color: 'secondary.main', fontSize: 28 }} />;
   }
   if (tipo.toLowerCase().includes('imagem') || tipo.toLowerCase().includes('exame')) {
-    return <ImageOutlinedIcon sx={{ color: '#2563eb', fontSize: 28 }} />;
+    return <ImageOutlinedIcon sx={{ color: 'info.main', fontSize: 28 }} />;
   }
   return <DescriptionOutlinedIcon sx={{ color: '#6b7280', fontSize: 28 }} />;
 }

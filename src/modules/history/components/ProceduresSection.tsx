@@ -110,7 +110,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                         size="small"
                         sx={{
                           backgroundColor: 'rgba(37,99,235,0.08)',
-                          color: '#2563eb',
+                          color: 'info.main',
                           fontWeight: 700,
                           fontSize: 12,
                           height: 20,
@@ -136,14 +136,14 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                       <Chip
                         icon={
                           <CheckCircleIcon
-                            sx={{ fontSize: 12, ml: '4px !important', color: '#16a34a !important' }}
+                            sx={{ fontSize: 12, ml: '4px !important', color: 'success.main' }}
                           />
                         }
                         label="Aprovado"
                         size="small"
                         sx={{
                           backgroundColor: 'rgba(22,163,74,0.1)',
-                          color: '#16a34a',
+                          color: 'success.main',
                           fontWeight: 700,
                           fontSize: 11,
                           height: 20,
@@ -157,7 +157,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                               sx={{
                                 fontSize: 12,
                                 ml: '4px !important',
-                                color: '#d4183d !important',
+                                color: 'error.main',
                               }}
                             />
                           }
@@ -165,7 +165,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                           size="small"
                           sx={{
                             backgroundColor: 'rgba(212,24,61,0.1)',
-                            color: '#d4183d',
+                            color: 'error.main',
                             fontWeight: 700,
                             fontSize: 11,
                             height: 20,

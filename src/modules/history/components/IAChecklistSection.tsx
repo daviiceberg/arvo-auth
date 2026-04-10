@@ -14,15 +14,19 @@ interface ChecklistItem {
 }
 
 const STATUS_ICON_MAP: Record<ChecklistStatus, React.ReactNode> = {
-  ok: <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />,
-  warning: <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />,
-  error: <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />,
+  ok: (
+    <CheckCircleOutlineIcon sx={{ fontSize: 15, color: 'success.main', flexShrink: 0, mt: 0.15 }} />
+  ),
+  warning: (
+    <WarningAmberIcon sx={{ fontSize: 15, color: 'warning.light', flexShrink: 0, mt: 0.15 }} />
+  ),
+  error: <CloseIcon sx={{ fontSize: 15, color: 'error.main', flexShrink: 0, mt: 0.15 }} />,
 };
 
 const STATUS_TEXT_COLOR: Record<ChecklistStatus, string> = {
   ok: 'text.primary',
-  warning: '#b45309',
-  error: '#d4183d',
+  warning: 'warning.main',
+  error: 'error.main',
 };
 
 interface IAChecklistSectionProps {

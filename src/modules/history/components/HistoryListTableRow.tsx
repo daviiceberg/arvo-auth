@@ -98,30 +98,30 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
               height: 20,
               borderColor:
                 entry.iaSuggestion === 'Aprovar'
-                  ? '#16a34a'
+                  ? 'success.main'
                   : entry.iaSuggestion === 'Negar'
-                    ? '#d4183d'
-                    : '#b45309',
+                    ? 'error.main'
+                    : 'warning.main',
               color:
                 entry.iaSuggestion === 'Aprovar'
-                  ? '#16a34a'
+                  ? 'success.main'
                   : entry.iaSuggestion === 'Negar'
-                    ? '#d4183d'
-                    : '#b45309',
+                    ? 'error.main'
+                    : 'warning.main',
             }}
           />
         )}
         {entry.divergence ? (
           <Typography
             variant="caption"
-            sx={{ display: 'block', fontSize: 11, color: '#b45309', fontWeight: 600, mt: 0.4 }}
+            sx={{ display: 'block', fontSize: 11, color: 'warning.main', fontWeight: 600, mt: 0.4 }}
           >
             ⚠ Divergiu
           </Typography>
         ) : (
           <Typography
             variant="caption"
-            sx={{ display: 'block', fontSize: 11, color: '#16a34a', fontWeight: 600, mt: 0.4 }}
+            sx={{ display: 'block', fontSize: 11, color: 'success.main', fontWeight: 600, mt: 0.4 }}
           >
             ✓ Alinhado
           </Typography>

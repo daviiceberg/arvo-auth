@@ -72,8 +72,8 @@ export default function DecisionButtons(props: DecisionButtonsProps) {
           sx={{
             minHeight: 36,
             fontSize: 12,
-            borderColor: '#2563eb',
-            color: '#2563eb',
+            borderColor: 'info.main',
+            color: 'info.main',
             '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' },
           }}
         >
@@ -163,7 +163,7 @@ function SingleProcApprovalButtons({
             startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
             sx={{
               minHeight: 40,
-              backgroundColor: '#16a34a',
+              backgroundColor: 'success.main',
               '&:hover': { backgroundColor: '#15803d' },
             }}
           >

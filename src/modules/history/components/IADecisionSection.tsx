@@ -24,8 +24,8 @@ export default function IADecisionSection({ entry }: IADecisionSectionProps) {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <SmartToyIcon sx={{ fontSize: 16, color: '#2563eb' }} />
-        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: '#2563eb' }}>
+        <SmartToyIcon sx={{ fontSize: 16, color: 'info.main' }} />
+        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: 'info.main' }}>
           {entry.action === 'Aprovado'
             ? 'Aprovado automaticamente pela IA'
             : 'Negado automaticamente pela IA'}

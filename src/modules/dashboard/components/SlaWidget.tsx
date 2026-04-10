@@ -37,15 +37,15 @@ export default function SlaWidget({ slaOk, slaWarning, slaViolados }: SlaWidgetP
         <Box
           sx={{
             width: `${String(pctOk)}%`,
-            backgroundColor: '#16a34a',
+            backgroundColor: 'success.main',
             borderRadius: '4px 0 0 4px',
           }}
         />
-        <Box sx={{ width: `${String(pctWarn)}%`, backgroundColor: '#f59e0b' }} />
+        <Box sx={{ width: `${String(pctWarn)}%`, backgroundColor: 'warning.light' }} />
         <Box
           sx={{
             width: `${String(pctViol)}%`,
-            backgroundColor: '#d4183d',
+            backgroundColor: 'error.main',
             borderRadius: '0 4px 4px 0',
           }}
         />

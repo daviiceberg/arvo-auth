@@ -138,7 +138,7 @@ export default function DocumentRequestModal({
           color="primary"
           disabled={selectedDocs.length === 0}
           onClick={onConfirm}
-          sx={{ backgroundColor: '#902B29', '&:hover': { backgroundColor: '#6e1f1d' } }}
+          sx={{ backgroundColor: 'primary.main', '&:hover': { backgroundColor: 'primary.dark' } }}
         >
           Pendenciar e Notificar
         </Button>

@@ -44,7 +44,7 @@ export default function QueueMetricsRow({
             onLinkClick={() => {
               onTabChange(0);
             }}
-            icon={<FormatListBulletedIcon sx={{ fontSize: 18, color: '#902B29' }} />}
+            icon={<FormatListBulletedIcon sx={{ fontSize: 18, color: 'primary.main' }} />}
             iconBg="rgba(144,43,41,0.1)"
           />
           <MetricCard
@@ -55,8 +55,8 @@ export default function QueueMetricsRow({
             onLinkClick={() => {
               onTabChange(1);
             }}
-            valueColor="#d4183d"
-            icon={<EmergencyIcon sx={{ fontSize: 18, color: '#d4183d' }} />}
+            valueColor="error.main"
+            icon={<EmergencyIcon sx={{ fontSize: 18, color: 'error.main' }} />}
             iconBg="rgba(212,24,61,0.1)"
           />
           <MetricCard
@@ -67,8 +67,8 @@ export default function QueueMetricsRow({
             onLinkClick={() => {
               onTabChange(2);
             }}
-            valueColor="#b45309"
-            icon={<ReplayIcon sx={{ fontSize: 18, color: '#b45309' }} />}
+            valueColor="warning.main"
+            icon={<ReplayIcon sx={{ fontSize: 18, color: 'warning.main' }} />}
             iconBg="rgba(245,158,11,0.12)"
           />
           <MetricCard

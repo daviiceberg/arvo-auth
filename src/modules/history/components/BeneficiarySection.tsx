@@ -160,7 +160,7 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
             <Typography
               variant="body2"
               fontWeight={600}
-              sx={{ fontSize: 13, color: carencia ? '#b45309' : '#16a34a' }}
+              sx={{ fontSize: 13, color: carencia ? 'warning.main' : 'success.main' }}
             >
               {carencia ? 'Em carência' : 'Sem carência'}
             </Typography>

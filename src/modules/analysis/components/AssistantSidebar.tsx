@@ -58,28 +58,28 @@ function getConsolidatedBadgeProps(
 ): BadgeProps {
   if (allApproved) {
     return {
-      icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a', flexShrink: 0 }} />,
+      icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: 'success.main', flexShrink: 0 }} />,
       text: 'Aprovação Total',
       bgColor: 'rgba(22,163,74,0.06)',
       borderColor: 'rgba(22,163,74,0.2)',
-      textColor: '#16a34a',
+      textColor: 'success.main',
     };
   }
   if (allDenied) {
     return {
-      icon: <CloseIcon sx={{ fontSize: 16, color: '#d4183d', flexShrink: 0 }} />,
+      icon: <CloseIcon sx={{ fontSize: 16, color: 'error.main', flexShrink: 0 }} />,
       text: 'Negativa Total',
       bgColor: 'rgba(212,24,61,0.06)',
       borderColor: 'rgba(212,24,61,0.2)',
-      textColor: '#d4183d',
+      textColor: 'error.main',
     };
   }
   return {
-    icon: <CallSplitIcon sx={{ fontSize: 16, color: '#b45309', flexShrink: 0 }} />,
+    icon: <CallSplitIcon sx={{ fontSize: 16, color: 'warning.main', flexShrink: 0 }} />,
     text: `Aprovação Parcial — ${String(nApproved)} aprovado(s) · ${String(nDenied)} negado(s)`,
     bgColor: 'rgba(217,119,6,0.08)',
     borderColor: 'rgba(217,119,6,0.25)',
-    textColor: '#b45309',
+    textColor: 'warning.main',
   };
 }
 
@@ -342,8 +342,8 @@ export default function AssistantSidebar({
   const anyPending = decisions.some((d) => d === 'pendente');
   const allApproved = nApproved === request.procedures.length;
   const allDenied = nDenied === request.procedures.length;
-  const confirmBtnColor = allApproved ? '#16a34a' : allDenied ? '#d4183d' : '#902B29';
-  const confirmBtnHover = allApproved ? '#15803d' : allDenied ? '#b91c1c' : '#6e1f1d';
+  const confirmBtnColor = allApproved ? 'success.main' : allDenied ? 'error.main' : 'primary.main';
+  const confirmBtnHover = allApproved ? '#15803d' : allDenied ? '#b91c1c' : 'primary.dark';
 
   const handleApproveWithLoading = () => {
     setLoadingApprove(true);

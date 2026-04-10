@@ -201,9 +201,9 @@ function completenessLabel(c: HistoricoConsolidado['completeness']): {
 } {
   switch (c) {
     case 'complete':
-      return { label: 'Histórico Completo', color: '#16a34a', bg: 'rgba(22,163,74,0.1)' };
+      return { label: 'Histórico Completo', color: 'success.main', bg: 'rgba(22,163,74,0.1)' };
     case 'partial':
-      return { label: 'Histórico Parcial', color: '#b45309', bg: 'rgba(245,158,11,0.1)' };
+      return { label: 'Histórico Parcial', color: 'warning.main', bg: 'rgba(245,158,11,0.1)' };
     case 'limited':
       return { label: 'Histórico Limitado', color: '#ea580c', bg: 'rgba(234,88,12,0.1)' };
   }

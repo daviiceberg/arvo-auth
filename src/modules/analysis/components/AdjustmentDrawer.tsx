@@ -349,7 +349,7 @@ export default function AdjustmentDrawer({
       >
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
-            <EditIcon sx={{ fontSize: 16, color: '#b45309' }} />
+            <EditIcon sx={{ fontSize: 16, color: 'warning.main' }} />
             <Typography fontWeight={700} sx={{ fontSize: 15 }}>
               Ajustar Procedimento
             </Typography>
@@ -386,8 +386,8 @@ export default function AdjustmentDrawer({
           disabled={isGuideFinalized}
           sx={{
             fontWeight: 600,
-            backgroundColor: '#902B29',
-            '&:hover': { backgroundColor: '#6e1f1d' },
+            backgroundColor: 'primary.main',
+            '&:hover': { backgroundColor: 'primary.dark' },
           }}
         >
           Confirmar Ajuste

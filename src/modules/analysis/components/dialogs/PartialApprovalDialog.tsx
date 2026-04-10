@@ -142,14 +142,14 @@ export default function PartialApprovalDialog({
                       <Chip
                         icon={
                           <CheckIcon
-                            sx={{ fontSize: 13, ml: '4px !important', color: '#16a34a !important' }}
+                            sx={{ fontSize: 13, ml: '4px !important', color: 'success.main' }}
                           />
                         }
                         label="Aprovado"
                         size="small"
                         sx={{
                           backgroundColor: 'rgba(22,163,74,0.1)',
-                          color: '#16a34a',
+                          color: 'success.main',
                           fontWeight: 700,
                           fontSize: 12,
                           height: 22,
@@ -159,14 +159,14 @@ export default function PartialApprovalDialog({
                       <Chip
                         icon={
                           <CloseIcon
-                            sx={{ fontSize: 13, ml: '4px !important', color: '#d4183d !important' }}
+                            sx={{ fontSize: 13, ml: '4px !important', color: 'error.main' }}
                           />
                         }
                         label="Negado"
                         size="small"
                         sx={{
                           backgroundColor: 'rgba(212,24,61,0.1)',
-                          color: '#d4183d',
+                          color: 'error.main',
                           fontWeight: 700,
                           fontSize: 12,
                           height: 22,
@@ -245,10 +245,10 @@ export default function PartialApprovalDialog({
                 : 'rgba(217,119,6,0.1)';
           const color =
             nA === request.procedures.length
-              ? '#16a34a'
+              ? 'success.main'
               : nN === request.procedures.length
-                ? '#d4183d'
-                : '#b45309';
+                ? 'error.main'
+                : 'warning.main';
           return (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
@@ -279,10 +279,10 @@ export default function PartialApprovalDialog({
             fontWeight: 600,
             backgroundColor: (() => {
               return nA === request.procedures.length
-                ? '#16a34a'
+                ? 'success.main'
                 : nN === request.procedures.length
                   ? undefined
-                  : '#b45309';
+                  : 'warning.main';
             })(),
           }}
         >

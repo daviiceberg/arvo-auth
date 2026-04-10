@@ -56,16 +56,16 @@ export default function AdjustmentFieldQuantity({
       ) : null}
       {qtyStatus === 'below' && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <WarningAmberIcon sx={{ fontSize: 14, color: '#b45309' }} />
-          <Typography sx={{ fontSize: 12, color: '#b45309' }}>
+          <WarningAmberIcon sx={{ fontSize: 14, color: 'warning.main' }} />
+          <Typography sx={{ fontSize: 12, color: 'warning.main' }}>
             Autorizando menos que o solicitado ({currentQty} → {newQty})
           </Typography>
         </Box>
       )}
       {qtyStatus === 'equal' && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} />
-          <Typography sx={{ fontSize: 12, color: '#16a34a' }}>
+          <CheckCircleOutlineIcon sx={{ fontSize: 14, color: 'success.main' }} />
+          <Typography sx={{ fontSize: 12, color: 'success.main' }}>
             Mantendo a quantidade solicitada
           </Typography>
         </Box>

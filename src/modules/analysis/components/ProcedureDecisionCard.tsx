@@ -22,46 +22,46 @@ interface ProcedureDecisionCardProps {
 function getApproveButtonSx(isApproved: boolean, isDenied: boolean): SxProps<Theme> {
   const base = { minHeight: 32, fontSize: 12, fontWeight: 600 };
   if (isApproved)
-    return { ...base, backgroundColor: '#16a34a', '&:hover': { backgroundColor: '#15803d' } };
+    return { ...base, backgroundColor: 'success.main', '&:hover': { backgroundColor: '#15803d' } };
   if (isDenied)
     return {
       ...base,
       borderColor: 'rgba(0,0,0,0.2)',
       color: 'text.disabled',
       '&:hover': {
-        borderColor: '#16a34a',
-        color: '#16a34a',
+        borderColor: 'success.main',
+        color: 'success.main',
         backgroundColor: 'rgba(22,163,74,0.04)',
       },
     };
   return {
     ...base,
-    borderColor: '#16a34a',
-    color: '#16a34a',
-    '&:hover': { backgroundColor: 'rgba(22,163,74,0.06)', borderColor: '#16a34a' },
+    borderColor: 'success.main',
+    color: 'success.main',
+    '&:hover': { backgroundColor: 'rgba(22,163,74,0.06)', borderColor: 'success.main' },
   };
 }
 
 function getDenyButtonSx(isApproved: boolean, isDenied: boolean): SxProps<Theme> {
   const base = { minHeight: 32, fontSize: 12, fontWeight: 600 };
   if (isDenied)
-    return { ...base, backgroundColor: '#d4183d', '&:hover': { backgroundColor: '#b91c1c' } };
+    return { ...base, backgroundColor: 'error.main', '&:hover': { backgroundColor: '#b91c1c' } };
   if (isApproved)
     return {
       ...base,
       borderColor: 'rgba(0,0,0,0.2)',
       color: 'text.disabled',
       '&:hover': {
-        borderColor: '#d4183d',
-        color: '#d4183d',
+        borderColor: 'error.main',
+        color: 'error.main',
         backgroundColor: 'rgba(212,24,61,0.04)',
       },
     };
   return {
     ...base,
-    borderColor: '#d4183d',
-    color: '#d4183d',
-    '&:hover': { backgroundColor: 'rgba(212,24,61,0.06)', borderColor: '#d4183d' },
+    borderColor: 'error.main',
+    color: 'error.main',
+    '&:hover': { backgroundColor: 'rgba(212,24,61,0.06)', borderColor: 'error.main' },
   };
 }
 

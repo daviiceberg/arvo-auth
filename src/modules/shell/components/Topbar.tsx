@@ -240,16 +240,16 @@ export default function Topbar({
             transition: 'background-color 0.12s ease',
           }}
         >
-          <LocationOnIcon sx={{ fontSize: 14, color: '#902B29' }} />
+          <LocationOnIcon sx={{ fontSize: 14, color: 'primary.main' }} />
           <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
-            <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>
+            <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
               Regional:
             </Box>{' '}
-            <Box component="span" sx={{ fontWeight: 700, color: '#902B29' }}>
+            <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
               {regional}
             </Box>
           </Typography>
-          <KeyboardArrowDownIcon sx={{ fontSize: 14, color: '#902B29', ml: 0.25 }} />
+          <KeyboardArrowDownIcon sx={{ fontSize: 14, color: 'primary.main', ml: 0.25 }} />
         </Box>
         <Menu
           anchorEl={regionalAnchor}
