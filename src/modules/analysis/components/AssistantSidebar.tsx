@@ -14,8 +14,8 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-import { type IASuggestion, type Request } from '@/data/pedidos';
 import { type ChipColor, iaSuggestionColorMap } from '@/shared/constants';
+import { type IASuggestion, type Request } from '@/types/pedido';
 
 import { type ProcDecision } from '../types';
 

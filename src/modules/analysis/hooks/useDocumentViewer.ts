@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { type Request, type Document } from '@/data/pedidos';
+import { type Document, type Request } from '@/types/pedido';
 
 import { useDocumentModals } from './useDocumentModals';
 

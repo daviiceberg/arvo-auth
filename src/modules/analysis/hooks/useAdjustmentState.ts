@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { type Request, type Adjustment } from '@/data/pedidos';
+import { type Adjustment, type Request } from '@/types/pedido';
 
 import { type SnackbarState } from '../types';
 

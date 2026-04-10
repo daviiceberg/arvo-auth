@@ -16,7 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type Request, type Adjustment, type Procedure } from '@/data/pedidos';
+import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
 
 import { USER_PROFILE } from '../types';
 

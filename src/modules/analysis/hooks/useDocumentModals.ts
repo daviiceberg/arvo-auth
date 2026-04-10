@@ -2,7 +2,7 @@
 
 import { useState, useRef, type Dispatch, type SetStateAction } from 'react';
 
-import { type Document } from '@/data/pedidos';
+import { type Document } from '@/types/pedido';
 
 interface UseDocumentModalsParams {
   setLocalDocs: Dispatch<SetStateAction<Document[]>>;

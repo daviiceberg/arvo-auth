@@ -16,7 +16,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 import { DENIAL_REASONS } from '@/modules/analysis/constants/denial-reasons';
 import { type ProcDecision } from '@/modules/analysis/types';

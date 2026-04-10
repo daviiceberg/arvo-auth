@@ -5,7 +5,7 @@ import React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
-import { type Request } from '@/data/pedidos';
+import { type Request } from '@/types/pedido';
 
 import {
   DEFAULT_HISTORY,

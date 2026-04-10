@@ -10,7 +10,7 @@ import CardContent from '@mui/material/CardContent';
 import Collapse from '@mui/material/Collapse';
 import Typography from '@mui/material/Typography';
 
-import { type Adjustment } from '@/data/pedidos';
+import { type Adjustment } from '@/types/pedido';
 
 function formatAdjustmentTimestamp(ts: string): string {
   const d = new Date(ts);

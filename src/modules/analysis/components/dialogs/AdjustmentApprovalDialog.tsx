@@ -9,7 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 
-import { type Adjustment } from '@/data/pedidos';
+import { type Adjustment } from '@/types/pedido';
 
 interface AdjustmentApprovalDialogProps {
   open: boolean;

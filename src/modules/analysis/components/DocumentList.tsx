@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-import { type Document } from '@/data/pedidos';
+import { type Document } from '@/types/pedido';
 
 import { getIAExtractionFields } from '../utils/ia-extraction';
 

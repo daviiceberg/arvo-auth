@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type IASuggestion } from '@/data/pedidos';
+import { type IASuggestion } from '@/types/pedido';
 
 interface DivergenceDialogProps {
   open: boolean;

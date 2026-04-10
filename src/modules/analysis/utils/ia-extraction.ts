@@ -1,4 +1,4 @@
-import { type BudgetExtractedData } from '@/data/pedidos';
+import { type BudgetExtractedData } from '@/types/pedido';
 
 // ---- Types ----
 export type IAFieldStatus = 'ok' | 'warning' | 'error';
