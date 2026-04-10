@@ -77,6 +77,7 @@ export const CATEGORY_ORDER: Category[] = [
 ];
 
 export const SIDEBAR_WIDTH = 240;
+export const SIDEBAR_COLLAPSED_WIDTH = 64;
 
 export type Regional = 'Sul' | 'Sudeste' | 'Nordeste';
 

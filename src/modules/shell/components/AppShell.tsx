@@ -47,7 +47,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           navItems={shell.navItems}
           categories={shell.categories}
           categoriesOpen={shell.categoriesOpen}
+          collapsed={shell.sidebarCollapsed}
           onToggleCategories={shell.toggleCategories}
+          onToggleCollapse={shell.toggleSidebar}
           onOpenHelp={shell.openHelpDrawer}
         />
 

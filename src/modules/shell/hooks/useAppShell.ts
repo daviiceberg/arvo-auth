@@ -49,6 +49,7 @@ export default function useAppShell(requests: Request[], notifications: Notifica
   const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null);
   const [regionalSnackbar, setRegionalSnackbar] = useState('');
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const notifOpen = Boolean(notifAnchor);
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -115,5 +116,11 @@ export default function useAppShell(requests: Request[], notifications: Notifica
 
     // Nav
     navItems,
+
+    // Sidebar collapse
+    sidebarCollapsed,
+    toggleSidebar: () => {
+      setSidebarCollapsed((prev) => !prev);
+    },
   };
 }
