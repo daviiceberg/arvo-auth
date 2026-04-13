@@ -2678,6 +2678,8 @@ export const dashboardMetrics = (() => {
   const _taxaDeteccaoIA =
     _criticosHist.length > 0 ? Math.round((_iaSinalizouCriticos / _criticosHist.length) * 100) : 0;
   const _slaViolados = pedidos.filter((p) => p.slaStatus === 'violated').length;
+  const _liminaresAtivas = pedidos.filter((p) => p.alerts.includes('Liminar Judicial')).length;
+  const _nipsAtivas = pedidos.filter((p) => p.alerts.includes('NIP Ativa')).length;
   // Aprovadas sem alertas (genuinamente limpas)
   const _aprovadosHist = historicoEntries.filter((h) => h.action === 'Aprovado');
   const _aprovadosSemAlerta =
@@ -2778,8 +2780,8 @@ export const dashboardMetrics = (() => {
     ultimasSolicitacoes: pedidos.slice(0, 5),
     retornosRecebidos: _retornosRecebidos,
     alertasAtivos: [
-      { tipo: 'Liminar Judicial', count: 3, color: '#d4183d' }, // jurídico — maior risco
-      { tipo: 'NIP Ativa', count: 2, color: '#b45309' }, // notificação regulatória
+      { tipo: 'Liminar Judicial', count: _liminaresAtivas, color: '#d4183d' }, // jurídico — maior risco
+      { tipo: 'NIP Ativa', count: _nipsAtivas, color: '#b45309' }, // notificação regulatória
       { tipo: 'SLA Violado', count: _slaViolados, color: '#d4183d' }, // prazo vencido
       { tipo: 'Retornos recebidos', count: _retornosRecebidos, color: '#7c3aed' }, // retomada imediata
     ],
