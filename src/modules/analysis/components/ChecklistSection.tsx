@@ -63,14 +63,18 @@ function buildOpmeItems(request: Request): ChecklistItem[] {
 }
 
 const STATUS_ICON_MAP = {
-  ok: <CheckCircleOutlineIcon sx={{ fontSize: 15, color: '#16a34a', flexShrink: 0, mt: 0.15 }} />,
-  warning: <WarningAmberIcon sx={{ fontSize: 15, color: '#f59e0b', flexShrink: 0, mt: 0.15 }} />,
-  error: <CloseIcon sx={{ fontSize: 15, color: '#d4183d', flexShrink: 0, mt: 0.15 }} />,
+  ok: (
+    <CheckCircleOutlineIcon sx={{ fontSize: 15, color: 'success.main', flexShrink: 0, mt: 0.15 }} />
+  ),
+  warning: (
+    <WarningAmberIcon sx={{ fontSize: 15, color: 'warning.light', flexShrink: 0, mt: 0.15 }} />
+  ),
+  error: <CloseIcon sx={{ fontSize: 15, color: 'error.main', flexShrink: 0, mt: 0.15 }} />,
 } as const;
 
 function getItemTextColor(status: ChecklistItem['status']): string {
-  if (status === 'error') return '#d4183d';
-  if (status === 'warning') return '#b45309';
+  if (status === 'error') return 'error.main';
+  if (status === 'warning') return 'warning.main';
   return 'text.primary';
 }
 
@@ -108,7 +112,7 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
           <Typography
             component="span"
             variant="caption"
-            sx={{ fontSize: 11, textTransform: 'none', color: '#2563eb', fontWeight: 600 }}
+            sx={{ fontSize: 11, textTransform: 'none', color: 'info.main', fontWeight: 600 }}
           >
             — Continuidade
           </Typography>
@@ -129,7 +133,7 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
               mb: 0.75,
             }}
           >
-            <InfoOutlinedIcon sx={{ fontSize: 15, color: '#2563eb', flexShrink: 0, mt: 0.15 }} />
+            <InfoOutlinedIcon sx={{ fontSize: 15, color: 'info.main', flexShrink: 0, mt: 0.15 }} />
             <Box>
               <Typography
                 variant="body2"
@@ -139,7 +143,13 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
               </Typography>
               <Typography
                 variant="caption"
-                sx={{ fontSize: 11, color: '#2563eb', lineHeight: 1.4, display: 'block', mt: 0.25 }}
+                sx={{
+                  fontSize: 11,
+                  color: 'info.main',
+                  lineHeight: 1.4,
+                  display: 'block',
+                  mt: 0.25,
+                }}
               >
                 Operadora não pode negar por limite de sessões nem por escolha de método
                 terapêutico. Espaço de negativa restrito a questões administrativas.

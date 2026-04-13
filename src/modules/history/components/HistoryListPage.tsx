@@ -26,14 +26,14 @@ export default function HistoryListPage() {
       label: 'Total de Solicitações',
       value: vm.totalEntries,
       color: 'text.primary',
-      icon: <ScienceIcon sx={{ fontSize: 18, color: '#902B29' }} />,
+      icon: <ScienceIcon sx={{ fontSize: 18, color: 'primary.main' }} />,
       bg: 'rgba(144,43,41,0.1)',
     },
     {
       label: 'Processadas por IA',
       value: vm.totalIA,
-      color: '#2563eb',
-      icon: <SmartToyIcon sx={{ fontSize: 18, color: '#2563eb' }} />,
+      color: 'info.main',
+      icon: <SmartToyIcon sx={{ fontSize: 18, color: 'info.main' }} />,
       bg: 'rgba(37,99,235,0.1)',
     },
     {
@@ -46,15 +46,15 @@ export default function HistoryListPage() {
     {
       label: 'Taxa de Aprovação',
       value: `${String(vm.approvalRate)}%`,
-      color: '#16a34a',
-      icon: <CheckCircleIcon sx={{ fontSize: 18, color: '#16a34a' }} />,
+      color: 'success.main',
+      icon: <CheckCircleIcon sx={{ fontSize: 18, color: 'success.main' }} />,
       bg: 'rgba(22,163,74,0.1)',
     },
     {
       label: 'Analista divergiu da sugestão',
       value: vm.totalDivergences,
-      color: '#b45309',
-      icon: <WarningAmberIcon sx={{ fontSize: 18, color: '#b45309' }} />,
+      color: 'warning.main',
+      icon: <WarningAmberIcon sx={{ fontSize: 18, color: 'warning.main' }} />,
       bg: 'rgba(245,158,11,0.12)',
     },
   ];

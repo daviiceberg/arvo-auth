@@ -47,7 +47,7 @@ export function SuccessDialog({
             mb: 2.5,
           }}
         >
-          <AssignmentTurnedInOutlinedIcon sx={{ fontSize: 32, color: '#902B29' }} />
+          <AssignmentTurnedInOutlinedIcon sx={{ fontSize: 32, color: 'primary.main' }} />
         </Box>
 
         <Typography variant="h6" fontWeight={700} sx={{ mb: 1, fontSize: 18 }}>
@@ -98,7 +98,7 @@ export function SuccessDialog({
             sx={{ color: '#64748b', fontSize: 12, lineHeight: 1.8, display: 'block' }}
           >
             {'\u2022'}{' '}
-            <Box component="span" sx={{ fontWeight: 600, color: '#902B29' }}>
+            <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
               Encaminhado para a Fila Operacional
             </Box>{' '}
             — quando a IA identificar necessidade de análise&nbsp;humana
@@ -118,7 +118,7 @@ export function SuccessDialog({
           <Typography
             variant="caption"
             sx={{
-              color: '#902B29',
+              color: 'primary.main',
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: 0.5,

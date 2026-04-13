@@ -131,8 +131,8 @@ function ProcedureActionCell({
               py: 0.25,
               px: 1,
               '&:hover': {
-                borderColor: '#902B29',
-                color: '#902B29',
+                borderColor: 'primary.main',
+                color: 'primary.main',
                 backgroundColor: 'rgba(144,43,41,0.04)',
               },
             }}
@@ -215,7 +215,7 @@ function ProcedureRow({
             >
               {proc.code}
             </Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#b45309' }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'warning.main' }}>
               {codeAdjustment.newValue.split(' — ')[0]}
             </Typography>
           </Box>
@@ -231,7 +231,7 @@ function ProcedureRow({
             >
               {proc.description}
             </Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'warning.main' }}>
               {codeAdjustment.newValue.split(' — ')[1] ?? codeAdjustment.newValue}
             </Typography>
           </Box>
@@ -304,7 +304,7 @@ function ProcedureRow({
               size="small"
               sx={{
                 backgroundColor: 'rgba(37,99,235,0.08)',
-                color: '#2563eb',
+                color: 'info.main',
                 fontWeight: 700,
                 fontSize: 12,
                 height: 20,
@@ -316,7 +316,7 @@ function ProcedureRow({
             size="small"
             sx={{
               backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
-              color: credOk ? '#16a34a' : '#d4183d',
+              color: credOk ? 'success.main' : 'error.main',
               fontWeight: 700,
               fontSize: 11,
               height: 20,

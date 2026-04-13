@@ -112,7 +112,7 @@ export default function PageHeader({
               size="small"
               sx={{
                 backgroundColor: 'rgba(212,24,61,0.1)',
-                color: '#d4183d',
+                color: 'error.main',
                 fontWeight: 700,
                 height: 22,
               }}
@@ -125,7 +125,7 @@ export default function PageHeader({
               size="small"
               sx={{
                 backgroundColor: 'rgba(245,158,11,0.12)',
-                color: '#b45309',
+                color: 'warning.main',
                 fontWeight: 700,
                 height: 22,
               }}
@@ -138,7 +138,7 @@ export default function PageHeader({
               size="small"
               sx={{
                 backgroundColor: 'rgba(124,58,237,0.1)',
-                color: '#7c3aed',
+                color: 'secondary.main',
                 fontWeight: 700,
                 height: 22,
               }}

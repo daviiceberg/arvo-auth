@@ -66,8 +66,10 @@ function PermRow({
           onToggle(k);
         }}
         sx={{
-          '& .MuiSwitch-switchBase.Mui-checked': { color: '#902B29' },
-          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#902B29' },
+          '& .MuiSwitch-switchBase.Mui-checked': { color: 'primary.main' },
+          '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+            backgroundColor: 'primary.main',
+          },
         }}
       />
     </Box>
@@ -76,8 +78,8 @@ function PermRow({
 
 // ── Role chip ─────────────────────────────────────────────────────────
 const roleColors: Record<UserRole, { bg: string; color: string }> = {
-  gestor: { bg: 'rgba(144,43,41,0.1)', color: '#902B29' },
-  autorizador: { bg: 'rgba(37,99,235,0.1)', color: '#2563eb' },
+  gestor: { bg: 'rgba(144,43,41,0.1)', color: 'primary.main' },
+  autorizador: { bg: 'rgba(37,99,235,0.1)', color: 'info.main' },
   auditor: { bg: 'rgba(100,116,139,0.1)', color: '#475569' },
 };
 
@@ -99,7 +101,7 @@ function StatusChip({ status }: { status: UserStatus }) {
       size="small"
       sx={{
         backgroundColor: status === 'ativo' ? 'rgba(22,163,74,0.1)' : 'rgba(107,114,128,0.1)',
-        color: status === 'ativo' ? '#16a34a' : '#6b7280',
+        color: status === 'ativo' ? 'success.main' : '#6b7280',
         fontSize: 12,
         fontWeight: 700,
         height: 22,
@@ -210,7 +212,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
           sx={{
             fontSize: 12,
             fontWeight: 700,
-            color: '#902B29',
+            color: 'primary.main',
             textTransform: 'uppercase',
             letterSpacing: 0.5,
             display: 'block',
@@ -292,7 +294,7 @@ function UserDialog({ open, user, onClose, onSave }: DialogProps) {
           sx={{
             fontSize: 12,
             fontWeight: 700,
-            color: '#902B29',
+            color: 'primary.main',
             textTransform: 'uppercase',
             letterSpacing: 0.5,
             display: 'block',
@@ -453,9 +455,9 @@ export default function UsuariosPage() {
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         {[
           { label: 'Total de Usuários', value: users.length },
-          { label: 'Usuários Ativos', value: ativos, color: '#16a34a' },
-          { label: 'Gestores', value: gestores, color: '#902B29' },
-          { label: 'Autorizadores', value: autorizadores, color: '#2563eb' },
+          { label: 'Usuários Ativos', value: ativos, color: 'success.main' },
+          { label: 'Gestores', value: gestores, color: 'primary.main' },
+          { label: 'Autorizadores', value: autorizadores, color: 'info.main' },
           { label: 'Auditores', value: auditores, color: '#475569' },
         ].map((k) => (
           <Card key={k.label} sx={{ flex: 1, minWidth: 120 }}>

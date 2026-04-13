@@ -42,7 +42,7 @@ export default function TrendChart({ data }: TrendChartProps) {
                   width: '100%',
                   height: `${String((d.negados / maxVal) * 140)}px`,
                   minHeight: 3,
-                  backgroundColor: '#d4183d',
+                  backgroundColor: 'error.main',
                   borderRadius: '2px 2px 0 0',
                   opacity: 0.8,
                 }}
@@ -53,7 +53,7 @@ export default function TrendChart({ data }: TrendChartProps) {
                   width: '100%',
                   height: `${String((d.aprovados / maxVal) * 140)}px`,
                   minHeight: 4,
-                  backgroundColor: '#16a34a',
+                  backgroundColor: 'success.main',
                   borderRadius: '2px 2px 0 0',
                 }}
                 title={`Aprovados: ${String(d.aprovados)}`}
@@ -67,13 +67,15 @@ export default function TrendChart({ data }: TrendChartProps) {
       </Box>
       <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#16a34a' }} />
+          <Box
+            sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: 'success.main' }}
+          />
           <Typography variant="caption" sx={{ fontSize: 12 }}>
             Aprovações
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: '#d4183d' }} />
+          <Box sx={{ width: 10, height: 10, borderRadius: '3px', backgroundColor: 'error.main' }} />
           <Typography variant="caption" sx={{ fontSize: 12 }}>
             Negações
           </Typography>

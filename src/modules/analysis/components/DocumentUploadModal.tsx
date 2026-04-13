@@ -66,7 +66,7 @@ export default function DocumentUploadModal({
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <AttachFileIcon sx={{ fontSize: 18, color: '#902B29' }} />
+          <AttachFileIcon sx={{ fontSize: 18, color: 'primary.main' }} />
           <Typography fontWeight={700} sx={{ fontSize: 15 }}>
             Adicionar Documento
           </Typography>
@@ -147,7 +147,7 @@ export default function DocumentUploadModal({
             cursor: 'pointer',
             transition: 'all 0.15s ease',
             mb: 2.5,
-            '&:hover': { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' },
+            '&:hover': { borderColor: 'primary.main', backgroundColor: 'rgba(144,43,41,0.03)' },
           }}
         >
           <input
@@ -162,7 +162,7 @@ export default function DocumentUploadModal({
           />
           {addFile ? (
             <>
-              <CheckCircleOutlineIcon sx={{ fontSize: 32, color: '#16a34a' }} />
+              <CheckCircleOutlineIcon sx={{ fontSize: 32, color: 'success.main' }} />
               <Typography variant="body2" fontWeight={600} sx={{ color: '#15803d' }}>
                 {addFile.name}
               </Typography>

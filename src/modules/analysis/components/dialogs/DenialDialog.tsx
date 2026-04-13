@@ -82,7 +82,7 @@ export default function DenialDialog({
                   cursor: 'pointer',
                   backgroundColor: denialReasonIdx === idx ? 'rgba(212,24,61,0.04)' : '#fff',
                   transition: 'all 0.12s ease',
-                  '&:hover': { borderColor: '#d4183d', backgroundColor: 'rgba(212,24,61,0.02)' },
+                  '&:hover': { borderColor: 'error.main', backgroundColor: 'rgba(212,24,61,0.02)' },
                 }}
               >
                 <Radio
@@ -92,8 +92,8 @@ export default function DenialDialog({
                   onChange={() => undefined}
                   sx={{
                     p: 0,
-                    color: denialReasonIdx === idx ? '#d4183d' : undefined,
-                    '&.Mui-checked': { color: '#d4183d' },
+                    color: denialReasonIdx === idx ? 'error.main' : undefined,
+                    '&.Mui-checked': { color: 'error.main' },
                   }}
                 />
                 <Typography

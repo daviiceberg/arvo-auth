@@ -75,10 +75,10 @@ export default function HistoryDetailHeader({
                     : 'rgba(37,99,235,0.1)',
               color:
                 entry.guideType === 'Emergência'
-                  ? '#d4183d'
+                  ? 'error.main'
                   : entry.guideType === 'Urgente'
-                    ? '#b45309'
-                    : '#2563eb',
+                    ? 'warning.main'
+                    : 'info.main',
               fontWeight: 700,
               height: 22,
             }}
@@ -102,7 +102,7 @@ export default function HistoryDetailHeader({
                   size="small"
                   sx={{
                     backgroundColor: 'rgba(245,158,11,0.12)',
-                    color: '#b45309',
+                    color: 'warning.main',
                     fontWeight: 700,
                     height: 22,
                   }}

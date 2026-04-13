@@ -27,13 +27,13 @@ function docIcon(tipo: string) {
     tipo.toLowerCase().includes('médico') ||
     tipo.toLowerCase().includes('laudo')
   ) {
-    return <PictureAsPdfIcon sx={{ color: '#d4183d', fontSize: 28 }} />;
+    return <PictureAsPdfIcon sx={{ color: 'error.main', fontSize: 28 }} />;
   }
   if (tipo.toLowerCase().includes('judicial') || tipo.toLowerCase().includes('jurídico')) {
-    return <GavelIcon sx={{ color: '#7c3aed', fontSize: 28 }} />;
+    return <GavelIcon sx={{ color: 'secondary.main', fontSize: 28 }} />;
   }
   if (tipo.toLowerCase().includes('imagem') || tipo.toLowerCase().includes('exame')) {
-    return <ImageOutlinedIcon sx={{ color: '#2563eb', fontSize: 28 }} />;
+    return <ImageOutlinedIcon sx={{ color: 'info.main', fontSize: 28 }} />;
   }
   return <DescriptionOutlinedIcon sx={{ color: '#6b7280', fontSize: 28 }} />;
 }
@@ -75,7 +75,7 @@ export default function DocumentList({
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
-                <WarningAmberIcon sx={{ fontSize: 20, color: '#f59e0b', flexShrink: 0 }} />
+                <WarningAmberIcon sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0 }} />
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography variant="body2" fontWeight={600}>
@@ -88,7 +88,7 @@ export default function DocumentList({
                         fontSize: 11,
                         fontWeight: 700,
                         backgroundColor: 'rgba(245,158,11,0.15)',
-                        color: '#b45309',
+                        color: 'warning.main',
                         height: 20,
                       }}
                     />
@@ -105,9 +105,12 @@ export default function DocumentList({
                   onClick={onAddDocument}
                   sx={{
                     fontSize: 12,
-                    borderColor: '#902B29',
-                    color: '#902B29',
-                    '&:hover': { borderColor: '#6e1f1d', backgroundColor: 'rgba(144,43,41,0.04)' },
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    '&:hover': {
+                      borderColor: 'primary.dark',
+                      backgroundColor: 'rgba(144,43,41,0.04)',
+                    },
                   }}
                 >
                   Adicionar documento
@@ -152,7 +155,7 @@ export default function DocumentList({
                       size="small"
                       sx={{
                         backgroundColor: 'rgba(245,158,11,0.1)',
-                        color: '#b45309',
+                        color: 'warning.main',
                         fontWeight: 700,
                         fontSize: 11,
                         height: 20,

@@ -122,7 +122,7 @@ export default function AnalystDecisionSection({ entry }: AnalystDecisionSection
             sx={{
               fontSize: 12,
               fontWeight: 700,
-              color: '#b45309',
+              color: 'warning.main',
               textTransform: 'uppercase',
               letterSpacing: 0.5,
               display: 'block',
@@ -136,7 +136,7 @@ export default function AnalystDecisionSection({ entry }: AnalystDecisionSection
             {entry.adjustments.map((aj) => (
               <Box key={aj.id}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
-                  <EditIcon sx={{ fontSize: 13, color: '#b45309', flexShrink: 0 }} />
+                  <EditIcon sx={{ fontSize: 13, color: 'warning.main', flexShrink: 0 }} />
                   <Typography sx={{ fontSize: 12, fontWeight: 700 }}>
                     {getFieldLabel(aj.field)}
                   </Typography>
@@ -157,7 +157,7 @@ export default function AnalystDecisionSection({ entry }: AnalystDecisionSection
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                     → Autorizado:
                   </Typography>
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: '#b45309' }}>
+                  <Typography sx={{ fontSize: 12, fontWeight: 600, color: 'warning.main' }}>
                     {aj.newValue}
                   </Typography>
                 </Box>

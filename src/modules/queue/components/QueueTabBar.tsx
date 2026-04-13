@@ -74,7 +74,7 @@ export default function QueueTabBar({
                     fontSize: 12,
                     fontWeight: 700,
                     backgroundColor: 'rgba(212,24,61,0.1)',
-                    color: '#d4183d',
+                    color: 'error.main',
                   }}
                 />
               </Box>
@@ -93,7 +93,7 @@ export default function QueueTabBar({
                     fontSize: 12,
                     fontWeight: 700,
                     backgroundColor: 'rgba(245,158,11,0.12)',
-                    color: '#b45309',
+                    color: 'warning.main',
                   }}
                 />
               </Box>
@@ -181,7 +181,7 @@ export default function QueueTabBar({
                 fontWeight: returnSubFilter === key ? 700 : 500,
                 backgroundColor:
                   returnSubFilter === key ? 'rgba(245,158,11,0.2)' : 'rgba(0,0,0,0.05)',
-                color: returnSubFilter === key ? '#b45309' : 'text.secondary',
+                color: returnSubFilter === key ? 'warning.main' : 'text.secondary',
                 border:
                   returnSubFilter === key
                     ? '1px solid rgba(245,158,11,0.4)'

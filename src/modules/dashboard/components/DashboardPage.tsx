@@ -178,7 +178,9 @@ export default function DashboardPage() {
                         textColor: '#d4183d',
                         bg: 'rgba(212,24,61,0.08)',
                         hoverBg: 'rgba(212,24,61,0.13)',
-                        icon: <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: '#d4183d' }} />,
+                        icon: (
+                          <RemoveCircleOutlineIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                        ),
                         ia: 'Negar',
                         microcopy: 'com bloqueio identificado',
                       },
@@ -189,7 +191,7 @@ export default function DashboardPage() {
                         textColor: '#b45309',
                         bg: 'rgba(180,83,9,0.08)',
                         hoverBg: 'rgba(180,83,9,0.13)',
-                        icon: <GroupsOutlinedIcon sx={{ fontSize: 16, color: '#b45309' }} />,
+                        icon: <GroupsOutlinedIcon sx={{ fontSize: 16, color: 'warning.main' }} />,
                         ia: 'Junta Médica',
                         microcopy: 'para revisão clínica',
                       },
@@ -200,7 +202,9 @@ export default function DashboardPage() {
                         textColor: '#166534',
                         bg: 'rgba(22,163,74,0.08)',
                         hoverBg: 'rgba(22,163,74,0.13)',
-                        icon: <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#16a34a' }} />,
+                        icon: (
+                          <CheckCircleOutlineIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                        ),
                         ia: 'Aprovar',
                         microcopy: 'com critérios atendidos',
                       },
@@ -374,7 +378,7 @@ export default function DashboardPage() {
                     <Typography
                       variant="h3"
                       fontWeight={800}
-                      sx={{ fontSize: 40, color: '#902B29', lineHeight: 1 }}
+                      sx={{ fontSize: 40, color: 'primary.main', lineHeight: 1 }}
                     >
                       {metrics.negados}
                     </Typography>
@@ -402,7 +406,12 @@ export default function DashboardPage() {
                   >
                     <Typography
                       variant="caption"
-                      sx={{ fontSize: 12, color: '#902B29', fontWeight: 600, display: 'block' }}
+                      sx={{
+                        fontSize: 12,
+                        color: 'primary.main',
+                        fontWeight: 600,
+                        display: 'block',
+                      }}
                     >
                       {metrics.iaSinalizouCriticos} de {metrics.totalCriticosHist} com alerta da IA
                       identificado

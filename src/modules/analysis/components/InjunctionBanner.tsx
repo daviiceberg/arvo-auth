@@ -24,10 +24,14 @@ export default function InjunctionBanner({ request }: InjunctionBannerProps) {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-        <GavelIcon sx={{ fontSize: 20, color: '#7c3aed', flexShrink: 0, mt: 0.1 }} />
+        <GavelIcon sx={{ fontSize: 20, color: 'secondary.main', flexShrink: 0, mt: 0.1 }} />
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
-            <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: '#7c3aed' }}>
+            <Typography
+              variant="body2"
+              fontWeight={700}
+              sx={{ fontSize: 13, color: 'secondary.main' }}
+            >
               Liminar Judicial Ativa
             </Typography>
             <Chip
@@ -37,7 +41,7 @@ export default function InjunctionBanner({ request }: InjunctionBannerProps) {
                 fontSize: 10,
                 height: 18,
                 backgroundColor: 'rgba(124,58,237,0.12)',
-                color: '#7c3aed',
+                color: 'secondary.main',
                 fontWeight: 700,
               }}
             />

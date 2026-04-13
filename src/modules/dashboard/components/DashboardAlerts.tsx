@@ -58,7 +58,7 @@ export default function DashboardAlerts({ alertas, loading }: DashboardAlertsPro
               fontSize: 12,
               fontWeight: 700,
               backgroundColor: 'rgba(212,24,61,0.08)',
-              color: '#d4183d',
+              color: 'error.main',
               '& .MuiChip-label': { px: 1 },
             }}
           />

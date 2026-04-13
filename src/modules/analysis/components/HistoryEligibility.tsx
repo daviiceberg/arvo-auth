@@ -73,7 +73,9 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
                     ? 'rgba(22,163,74,0.1)'
                     : 'rgba(37,99,235,0.1)',
                 color:
-                  request.authorizationStage === 'primeira_solicitacao' ? '#16a34a' : '#2563eb',
+                  request.authorizationStage === 'primeira_solicitacao'
+                    ? 'success.main'
+                    : 'info.main',
                 fontWeight: 700,
                 height: 22,
                 fontSize: 12,
@@ -114,10 +116,10 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
                     : 'rgba(245,158,11,0.1)',
               color:
                 eligibility.status === 'ativo'
-                  ? '#16a34a'
+                  ? 'success.main'
                   : eligibility.status === 'suspenso'
-                    ? '#d4183d'
-                    : '#b45309',
+                    ? 'error.main'
+                    : 'warning.main',
               fontWeight: 700,
               height: 22,
               fontSize: 12,

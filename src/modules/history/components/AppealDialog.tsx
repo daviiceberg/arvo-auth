@@ -81,13 +81,13 @@ export default function AppealDialog({
             >
               <MenuItem value="app">
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <PhoneAndroidIcon sx={{ fontSize: 16, color: '#2563eb' }} />
+                  <PhoneAndroidIcon sx={{ fontSize: 16, color: 'info.main' }} />
                   App
                 </Box>
               </MenuItem>
               <MenuItem value="whatsapp">
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <WhatsAppIcon sx={{ fontSize: 16, color: '#16a34a' }} />
+                  <WhatsAppIcon sx={{ fontSize: 16, color: 'success.main' }} />
                   WhatsApp
                 </Box>
               </MenuItem>

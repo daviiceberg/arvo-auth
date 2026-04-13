@@ -109,16 +109,16 @@ export default function KpiCard({
           {trend && trendLabel ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
               {trend === 'up' ? (
-                <TrendingUpIcon sx={{ fontSize: 13, color: '#16a34a' }} />
+                <TrendingUpIcon sx={{ fontSize: 13, color: 'success.main' }} />
               ) : (
-                <TrendingDownIcon sx={{ fontSize: 13, color: '#d4183d' }} />
+                <TrendingDownIcon sx={{ fontSize: 13, color: 'error.main' }} />
               )}
               <Typography
                 variant="caption"
                 sx={{
                   fontSize: 12,
                   fontWeight: 700,
-                  color: trend === 'up' ? '#16a34a' : '#d4183d',
+                  color: trend === 'up' ? 'success.main' : 'error.main',
                 }}
               >
                 {trendLabel}

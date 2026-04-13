@@ -33,8 +33,8 @@ function FieldLabel({
       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
         {children}
       </Typography>
-      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
-      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: 'success.main' }} /> : null}
+      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: 'warning.light' }} /> : null}
     </Box>
   );
 }
@@ -43,7 +43,7 @@ const inputSx = (validated?: boolean, warning?: boolean) => ({
   '& .MuiOutlinedInput-root': {
     backgroundColor: validated ? '#f0fdf4' : warning ? '#fffbeb' : '#fff',
     '& fieldset': {
-      borderColor: validated ? '#16a34a' : warning ? '#f59e0b' : undefined,
+      borderColor: validated ? 'success.main' : warning ? 'warning.light' : undefined,
     },
   },
 });
@@ -112,7 +112,7 @@ export function StepClinical({
                   }}
                   sx={{
                     backgroundColor: 'rgba(37,99,235,0.08)',
-                    color: '#2563eb',
+                    color: 'info.main',
                     fontWeight: 700,
                     fontSize: 12,
                   }}
@@ -143,7 +143,13 @@ export function StepClinical({
               onClick={() => {
                 addCidSecundario(cidSecundarioInput);
               }}
-              sx={{ color: '#902B29', textTransform: 'none', fontWeight: 600, fontSize: 13, px: 1 }}
+              sx={{
+                color: 'primary.main',
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: 13,
+                px: 1,
+              }}
             >
               + Adicionar
             </Button>
@@ -164,7 +170,7 @@ export function StepClinical({
               onChange={(e) => {
                 setSelect('caraterAtendimento')(e.target.value);
               }}
-              sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: '#f59e0b' } }}
+              sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: 'warning.light' } }}
             >
               <MenuItem value="Eletivo">Eletivo</MenuItem>
               <MenuItem value="Urgência">Urgência</MenuItem>

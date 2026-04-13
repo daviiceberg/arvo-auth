@@ -36,8 +36,8 @@ function FieldLabel({
       <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
         {children}
       </Typography>
-      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
-      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: 'success.main' }} /> : null}
+      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: 'warning.light' }} /> : null}
     </Box>
   );
 }

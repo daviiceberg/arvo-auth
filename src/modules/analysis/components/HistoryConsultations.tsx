@@ -223,7 +223,7 @@ export default function HistoryConsultations({
                               fontSize: 10,
                               height: 18,
                               backgroundColor: 'rgba(37,99,235,0.1)',
-                              color: '#2563eb',
+                              color: 'info.main',
                               fontWeight: 600,
                               '& .MuiChip-label': { px: 0.75 },
                             }}
@@ -237,7 +237,7 @@ export default function HistoryConsultations({
                           fontSize: 10,
                           height: 18,
                           backgroundColor: 'rgba(37,99,235,0.1)',
-                          color: '#2563eb',
+                          color: 'info.main',
                           fontWeight: 700,
                           '& .MuiChip-label': { px: 0.75 },
                         }}
@@ -245,7 +245,7 @@ export default function HistoryConsultations({
                     </Box>
                     <Typography
                       variant="caption"
-                      sx={{ fontSize: 11, color: '#2563eb', fontWeight: 500 }}
+                      sx={{ fontSize: 11, color: 'info.main', fontWeight: 500 }}
                     >
                       {s.utilizadas} sessões utilizadas · Sem limite contratual — RN 539/2022
                     </Typography>
@@ -262,7 +262,7 @@ export default function HistoryConsultations({
                           height: '100%',
                           width: '100%',
                           borderRadius: 3,
-                          backgroundColor: '#2563eb',
+                          backgroundColor: 'info.main',
                           opacity: 0.5,
                         }}
                       />
@@ -271,7 +271,8 @@ export default function HistoryConsultations({
                 );
               }
               const pct = Math.min((s.utilizadas / s.autorizadas) * 100, 100);
-              const barColor = pct >= 100 ? '#d4183d' : pct >= 80 ? '#f59e0b' : '#16a34a';
+              const barColor =
+                pct >= 100 ? 'error.main' : pct >= 80 ? 'warning.light' : 'success.main';
               return (
                 <Box
                   key={s.tipo}

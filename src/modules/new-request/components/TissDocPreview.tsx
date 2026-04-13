@@ -69,7 +69,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
       {/* Header faixa */}
       <Box
         sx={{
-          backgroundColor: '#902B29',
+          backgroundColor: 'primary.main',
           px: 2,
           py: 1,
           display: 'flex',
@@ -89,7 +89,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
           Guia de Solicitação / Autorização de Procedimentos — TISS 3.06
         </Typography>
         <Box sx={{ backgroundColor: '#fef9c3', px: 1, py: 0.25, borderRadius: 0.5 }}>
-          <Typography sx={{ ...tsBold, fontSize: 9, color: '#b45309' }}>ATIVO</Typography>
+          <Typography sx={{ ...tsBold, fontSize: 9, color: 'warning.main' }}>ATIVO</Typography>
         </Box>
       </Box>
 
@@ -114,7 +114,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
             sx={{
               ...tsBold,
               fontSize: 9,
-              color: '#902B29',
+              color: 'primary.main',
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -151,7 +151,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
             sx={{
               ...tsBold,
               fontSize: 9,
-              color: '#902B29',
+              color: 'primary.main',
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -188,7 +188,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
             sx={{
               ...tsBold,
               fontSize: 9,
-              color: '#902B29',
+              color: 'primary.main',
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -255,7 +255,7 @@ export function TissDocPreview({ zoom, rotation }: TissDocPreviewProps) {
               ml: 0.5,
             }}
           >
-            <Typography sx={{ ...tsBold, fontSize: 9, color: '#b45309' }}>
+            <Typography sx={{ ...tsBold, fontSize: 9, color: 'warning.main' }}>
               PROCEDIMENTO NÃO REALIZADO
             </Typography>
           </Box>

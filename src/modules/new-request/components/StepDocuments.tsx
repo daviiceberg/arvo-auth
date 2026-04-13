@@ -112,7 +112,7 @@ export function StepDocuments({
           <Typography
             variant="body2"
             fontWeight={700}
-            sx={{ mb: 1.5, fontSize: 13, color: '#902B29' }}
+            sx={{ mb: 1.5, fontSize: 13, color: 'primary.main' }}
           >
             Documentos Obrigatórios
           </Typography>
@@ -232,7 +232,11 @@ export function StepDocuments({
       )}
 
       {/* Documentos adicionais */}
-      <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5, fontSize: 13, color: '#902B29' }}>
+      <Typography
+        variant="body2"
+        fontWeight={700}
+        sx={{ mb: 0.5, fontSize: 13, color: 'primary.main' }}
+      >
         Documentos Adicionais{' '}
         <Typography component="span" variant="caption" color="text.secondary">
           (opcional)
@@ -262,7 +266,7 @@ export function StepDocuments({
                 backgroundColor: 'rgba(22,163,74,0.04)',
               }}
             >
-              <CheckCircleOutlineIcon sx={{ fontSize: 18, color: '#16a34a', flexShrink: 0 }} />
+              <CheckCircleOutlineIcon sx={{ fontSize: 18, color: 'success.main', flexShrink: 0 }} />
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
                   {doc.nome}
@@ -361,7 +365,7 @@ export function StepDocuments({
               display: 'flex',
               alignItems: 'center',
               gap: 1.5,
-              '&:hover': { borderColor: '#902B29', backgroundColor: 'rgba(144,43,41,0.03)' },
+              '&:hover': { borderColor: 'primary.main', backgroundColor: 'rgba(144,43,41,0.03)' },
               transition: 'all 0.15s ease',
             }}
           >
@@ -377,7 +381,7 @@ export function StepDocuments({
             />
             {newDocFile ? (
               <>
-                <CheckCircleOutlineIcon sx={{ color: '#16a34a', fontSize: 20 }} />
+                <CheckCircleOutlineIcon sx={{ color: 'success.main', fontSize: 20 }} />
                 <Typography variant="body2" fontWeight={600} sx={{ color: '#15803d' }}>
                   {newDocFile.name}
                 </Typography>

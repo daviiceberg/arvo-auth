@@ -67,7 +67,7 @@ export default function Sidebar({
           px: 1.5,
           justifyContent: collapsed ? 'center' : 'flex-start',
           ...(isActive && {
-            backgroundColor: '#902B29 !important',
+            backgroundColor: 'primary.main',
             color: '#ffffff !important',
             '& .MuiListItemIcon-root': { color: '#ffffff !important' },
             '& .MuiListItemText-primary': { color: '#ffffff !important' },
