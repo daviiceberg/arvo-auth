@@ -42,7 +42,7 @@ export const EXTERNAL_LINKS: ExternalLink[] = [
   },
   {
     label: 'Consulta ANVISA',
-    href: 'https://consultas.anvisa.gov.br/#/medicamentos/',
+    href: 'https://consultas.anvisa.gov.br/',
   },
   {
     label: 'Árvore de Códigos',
