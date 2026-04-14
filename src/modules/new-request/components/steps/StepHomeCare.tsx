@@ -12,7 +12,11 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData } from '@/modules/new-request/types';
+
+import { ProceduresStepSection } from './ProceduresStepSection';
 
 function FieldLabel({
   children,
@@ -40,9 +44,17 @@ interface StepHomeCareProps {
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   setSelect: (field: keyof FormData) => (value: string) => void;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepHomeCare({ form, set, setSelect }: StepHomeCareProps) {
+export function StepHomeCare({
+  form,
+  set,
+  setSelect,
+  guiaProcedures,
+  onGuiaProceduresChange,
+}: StepHomeCareProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -87,6 +99,13 @@ export function StepHomeCare({ form, set, setSelect }: StepHomeCareProps) {
           />
         </Grid>
       </Grid>
+
+      <ProceduresStepSection
+        guiaProcedures={guiaProcedures}
+        onGuiaProceduresChange={onGuiaProceduresChange}
+        showPeriod
+        showQuantity
+      />
     </Box>
   );
 }

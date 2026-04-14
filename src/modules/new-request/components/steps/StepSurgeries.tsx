@@ -16,14 +16,25 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData } from '@/modules/new-request/types';
+
+import { ProceduresStepSection } from './ProceduresStepSection';
 
 interface StepSurgeriesProps {
   form: FormData;
   setForm: React.Dispatch<React.SetStateAction<FormData>>;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
+export function StepSurgeries({
+  form,
+  setForm,
+  guiaProcedures,
+  onGuiaProceduresChange,
+}: StepSurgeriesProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -242,6 +253,13 @@ export function StepSurgeries({ form, setForm }: StepSurgeriesProps) {
       >
         Adicionar Material / OPME
       </Button>
+
+      <ProceduresStepSection
+        guiaProcedures={guiaProcedures}
+        onGuiaProceduresChange={onGuiaProceduresChange}
+        showPeriod
+        showQuantity
+      />
     </Box>
   );
 }

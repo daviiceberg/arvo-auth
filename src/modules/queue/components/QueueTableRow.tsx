@@ -20,6 +20,7 @@ import {
   RequestTypeChip,
   SLAChip,
 } from '@/shared/components';
+import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type Request } from '@/types/pedido';
 
 import { REQUEST_TYPE_MAP } from '../constants/request-type-map';
@@ -54,12 +55,18 @@ function getRowSx(request: Request, lastViewedId: string | null): SxProps<Theme>
 
 // ── Procedures cell ──────────────────────────────────────────────────
 function ProceduresCell({ procedures }: { procedures: Request['procedures'] }) {
+  const first = procedures[0];
+  const codeType = first?.codeType ?? 'TUSS';
+
   if (procedures.length > 1) {
     return (
       <>
-        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12 }}>
-          {procedures.length} procedimentos
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
+          <CodeTypeChip codeType={codeType} />
+          <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12 }}>
+            {procedures.length} procedimentos
+          </Typography>
+        </Box>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
           Clique para ver detalhes
         </Typography>
@@ -69,9 +76,12 @@ function ProceduresCell({ procedures }: { procedures: Request['procedures'] }) {
 
   return (
     <>
-      <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
-        {procedures[0]?.tuss ?? '—'}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
+        <CodeTypeChip codeType={codeType} />
+        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12, fontFamily: 'monospace' }}>
+          {first?.tuss ?? '—'}
+        </Typography>
+      </Box>
       <Typography
         variant="caption"
         color="text.secondary"
@@ -84,7 +94,9 @@ function ProceduresCell({ procedures }: { procedures: Request['procedures'] }) {
           whiteSpace: 'normal',
         }}
       >
-        {procedures[0]?.description ?? '—'}
+        {codeType === 'PACKAGE' && first?.tussCodesIncluded
+          ? `${first.description} (${String(first.tussCodesIncluded.length)} TUSS)`
+          : (first?.description ?? '—')}
       </Typography>
     </>
   );

@@ -8,6 +8,7 @@ import { type SxProps, type Theme } from '@mui/material/styles';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type Procedure } from '@/types/pedido';
 
 import { type ProcDecision } from '../types';
@@ -73,28 +74,41 @@ export default function ProcedureDecisionCard({
 }: ProcedureDecisionCardProps) {
   const isApproved = decision === 'aprovado';
   const isDenied = decision === 'negado';
+  const codeType = procedure.codeType ?? 'TUSS';
+  const isPackage = codeType === 'PACKAGE';
 
   return (
     <Box sx={{ border: '1px solid rgba(0,0,0,0.12)', borderRadius: 1.5, p: 1.5 }}>
-      <Typography
-        variant="body2"
-        sx={{
-          fontSize: 12,
-          lineHeight: 1.4,
-          mb: 0.5,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        <Box component="span" sx={{ fontWeight: 700 }}>
-          {procedure.tuss}
-        </Box>
-        <Box component="span" sx={{ color: 'text.secondary' }}>
-          {' '}
-          · {procedure.description}
-        </Box>
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+        <CodeTypeChip codeType={codeType} />
+        <Typography
+          variant="body2"
+          sx={{
+            fontSize: 12,
+            lineHeight: 1.4,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flex: 1,
+          }}
+        >
+          <Box component="span" sx={{ fontWeight: 700 }}>
+            {procedure.tuss}
+          </Box>
+          <Box component="span" sx={{ color: 'text.secondary' }}>
+            {' '}
+            · {procedure.description}
+          </Box>
+        </Typography>
+      </Box>
+      {isPackage && procedure.tussCodesIncluded && procedure.tussCodesIncluded.length > 0 ? (
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', fontSize: 11, display: 'block', mb: 0.75 }}
+        >
+          Inclui: {procedure.tussCodesIncluded.map((t) => t.code).join(', ')}
+        </Typography>
+      ) : null}
       <Box sx={{ display: 'flex', gap: 0.75 }}>
         <Tooltip
           title={isDenied ? `Trocar para Aprovar — ${procedure.description}` : ''}

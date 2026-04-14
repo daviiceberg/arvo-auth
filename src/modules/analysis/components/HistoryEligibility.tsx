@@ -7,6 +7,9 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
+import DutLink from '@/shared/components/dut-modal/DutLink';
+import DutModal from '@/shared/components/dut-modal/DutModal';
+import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
 import { type Request } from '@/types/pedido';
 
 import { type ConsolidatedHistory } from '../constants/consolidated-history-data';
@@ -18,6 +21,8 @@ interface HistoryEligibilityProps {
 }
 
 export default function HistoryEligibility({ eligibility, request }: HistoryEligibilityProps) {
+  const dutModal = useDutModal();
+
   return (
     <>
       <Divider sx={{ mb: 2.5 }} />
@@ -186,19 +191,14 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {eligibility.dutRelevantes.map((dut) => (
-              <Typography
-                component="li"
-                key={dut}
-                variant="caption"
-                color="text.secondary"
-                sx={{ fontSize: 12 }}
-              >
-                {dut}
-              </Typography>
+              <Box component="li" key={dut} sx={{ fontSize: 12, mb: 0.25 }}>
+                <DutLink text={dut} onDutClick={dutModal.open} />
+              </Box>
             ))}
           </Box>
         </Box>
       </Box>
+      <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />
     </>
   );
 }

@@ -1,18 +1,18 @@
 'use client';
 
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { useState } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { type HistoryEntry } from '@/types/pedido';
+
+import HistoryProcedureRow from './HistoryProcedureRow';
 
 interface ProceduresSectionProps {
   entry: HistoryEntry;
@@ -35,8 +35,20 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
         entry.category === 'Oncologia'
           ? ('HOSPITALAR' as const)
           : ('AMBULATORIAL' as const),
+      codeType: 'TUSS' as const,
     },
   ];
+
+  const [expandedCodes, setExpandedCodes] = useState(new Set<string>());
+
+  const toggleExpand = (code: string) => {
+    setExpandedCodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  };
 
   return (
     <Card>
@@ -57,134 +69,16 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
         <Table size="small">
           <TableBody>
             {procs.map((proc, idx) => (
-              <TableRow
+              <HistoryProcedureRow
                 key={proc.code + String(idx)}
-                sx={{
-                  cursor: 'default',
-                  '& td': {
-                    borderBottom: idx < procs.length - 1 ? '1px solid rgba(0,0,0,0.08)' : 'none',
-                  },
-                  '&:not(:first-of-type) td': { pt: 2 },
-                  '&:hover': { backgroundColor: 'transparent' },
+                proc={proc}
+                isLast={idx === procs.length - 1}
+                isPartial={entry.action === 'Aprovado Parcial'}
+                isExpanded={expandedCodes.has(proc.code)}
+                onToggleExpand={() => {
+                  toggleExpand(proc.code);
                 }}
-              >
-                <TableCell
-                  sx={{
-                    pl: 0,
-                    fontWeight: 700,
-                    fontSize: 13,
-                    width: 120,
-                    verticalAlign: 'top',
-                    pt: 1.5,
-                  }}
-                >
-                  {proc.tuss}
-                </TableCell>
-                <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
-                  {proc.description}
-                </TableCell>
-                <TableCell
-                  sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}
-                >
-                  Qtd: {proc.qty}
-                  {proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}
-                </TableCell>
-                <TableCell
-                  sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}
-                >
-                  {proc.startDate} → {proc.endDate}
-                </TableCell>
-                <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      flexWrap: 'wrap',
-                      alignItems: 'center',
-                      gap: 0.5,
-                    }}
-                  >
-                    {proc.cid ? (
-                      <Chip
-                        label={`CID ${proc.cid}`}
-                        size="small"
-                        sx={{
-                          backgroundColor: 'rgba(37,99,235,0.08)',
-                          color: 'info.main',
-                          fontWeight: 700,
-                          fontSize: 12,
-                          height: 20,
-                        }}
-                      />
-                    ) : null}
-                    <Chip
-                      label={proc.auditLevel}
-                      size="small"
-                      sx={{
-                        backgroundColor: 'rgba(0,0,0,0.05)',
-                        color: '#6b7280',
-                        fontWeight: 600,
-                        fontSize: 11,
-                        height: 20,
-                      }}
-                    />
-                  </Box>
-                </TableCell>
-                {entry.action === 'Aprovado Parcial' && (
-                  <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
-                    {proc.decisao === 'aprovado' ? (
-                      <Chip
-                        icon={
-                          <CheckCircleIcon
-                            sx={{ fontSize: 12, ml: '4px !important', color: 'success.main' }}
-                          />
-                        }
-                        label="Aprovado"
-                        size="small"
-                        sx={{
-                          backgroundColor: 'rgba(22,163,74,0.1)',
-                          color: 'success.main',
-                          fontWeight: 700,
-                          fontSize: 11,
-                          height: 20,
-                        }}
-                      />
-                    ) : proc.decisao === 'negado' ? (
-                      <Box>
-                        <Chip
-                          icon={
-                            <CancelIcon
-                              sx={{
-                                fontSize: 12,
-                                ml: '4px !important',
-                                color: 'error.main',
-                              }}
-                            />
-                          }
-                          label="Negado"
-                          size="small"
-                          sx={{
-                            backgroundColor: 'rgba(212,24,61,0.1)',
-                            color: 'error.main',
-                            fontWeight: 700,
-                            fontSize: 11,
-                            height: 20,
-                            mb: 0.5,
-                          }}
-                        />
-                        {proc.motivoDecisao ? (
-                          <Typography
-                            variant="caption"
-                            sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}
-                          >
-                            {proc.motivoDecisao}
-                          </Typography>
-                        ) : null}
-                      </Box>
-                    ) : null}
-                  </TableCell>
-                )}
-              </TableRow>
+              />
             ))}
           </TableBody>
         </Table>

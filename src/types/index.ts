@@ -23,3 +23,5 @@ export type {
 export type { UserRole, UserStatus, UserPermissions, SystemUser } from './usuario';
 
 export type { NotificationType, Notification } from './notificacao';
+
+export type { CodeType, TussCode, OperatorPackage, GuiaProcedure } from './procedure-codes';
