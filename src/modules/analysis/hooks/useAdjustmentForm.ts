@@ -8,7 +8,14 @@ import { ADJUSTMENT_REASONS, OPME_VALUE_REASONS } from '../constants/adjustment-
 import { USER_PROFILE } from '../types';
 
 // ---- Types ----
-type AdjustmentField = 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | '';
+type AdjustmentField =
+  | 'quantidade'
+  | 'prestador'
+  | 'codigo'
+  | 'fabricante'
+  | 'valorUnitario'
+  | 'dut'
+  | '';
 
 interface ProcedureInfo {
   codigo: string;
@@ -36,6 +43,7 @@ interface FormState {
   newDesc: string;
   newManufacturer: string;
   newValue: string;
+  newDut: string;
   reason: string;
   justification: string;
   errors: Record<string, string>;
@@ -79,6 +87,12 @@ function validateValueField(form: FormState): Record<string, string> {
   return errs;
 }
 
+function validateDutField(form: FormState): Record<string, string> {
+  const errs: Record<string, string> = {};
+  if (!form.newDut.trim()) errs.newDut = 'Informe o número da DUT';
+  return errs;
+}
+
 const FIELD_VALIDATORS: Record<
   AdjustmentField,
   (form: FormState, qtyNum: number, qtyStatus: string | null) => Record<string, string>
@@ -88,6 +102,7 @@ const FIELD_VALIDATORS: Record<
   codigo: (form) => validateCodeField(form),
   fabricante: (form) => validateManufacturerField(form),
   valorUnitario: (form) => validateValueField(form),
+  dut: (form) => validateDutField(form),
   '': () => ({}),
 };
 
@@ -100,6 +115,7 @@ const EMPTY_FORM: FormState = {
   newDesc: '',
   newManufacturer: '',
   newValue: '',
+  newDut: '',
   reason: '',
   justification: '',
   errors: {},
@@ -159,8 +175,12 @@ export function useAdjustmentForm({
           { value: 'quantidade', label: 'Quantidade autorizada' },
           { value: 'prestador', label: 'Prestador executante' },
           { value: 'codigo', label: 'Código do procedimento' },
+          { value: 'dut', label: 'DUT (Diretriz de Utilização)' },
         ]
-      : [{ value: 'quantidade', label: 'Quantidade autorizada' }];
+      : [
+          { value: 'quantidade', label: 'Quantidade autorizada' },
+          { value: 'dut', label: 'DUT (Diretriz de Utilização)' },
+        ];
 
   const availableFields = isOpme
     ? [
@@ -221,6 +241,9 @@ export function useAdjustmentForm({
   const setNewValue = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, newValue: value }));
   }, []);
+  const setNewDut = useCallback((value: string) => {
+    setForm((prev) => ({ ...prev, newDut: value }));
+  }, []);
   const setReason = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, reason: value }));
   }, []);
@@ -277,6 +300,10 @@ export function useAdjustmentForm({
         currency: 'BRL',
       });
     }
+    if (form.field === 'dut') {
+      prevValue = 'Nenhuma';
+      newVal = `DUT ${form.newDut}`;
+    }
 
     onConfirm({
       procedureCode: proc.codigo,
@@ -309,6 +336,8 @@ export function useAdjustmentForm({
     setNewManufacturer,
     newValue: form.newValue,
     setNewValue,
+    newDut: form.newDut,
+    setNewDut,
     reason: form.reason,
     setReason,
     justification: form.justification,

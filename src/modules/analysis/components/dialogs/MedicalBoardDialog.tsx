@@ -74,10 +74,7 @@ export default function MedicalBoardDialog({
           variant="contained"
           disabled={!medicalBoardReason}
           onClick={onConfirm}
-          sx={{
-            backgroundColor: 'secondary.main',
-            '&:hover': { backgroundColor: 'secondary.dark' },
-          }}
+          color="primary"
         >
           Encaminhar para Junta
         </Button>

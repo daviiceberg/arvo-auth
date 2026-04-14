@@ -22,7 +22,11 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
+import DutModal from '@/shared/components/dut-modal/DutModal';
+import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
 import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
+
+import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
 
 import { USER_PROFILE } from '../types';
 
@@ -189,7 +193,7 @@ function PackageTussRow({ code, description }: { code: string; description: stri
       <TableCell>
         <Typography sx={{ fontSize: 11, color: 'text.secondary' }}>{description}</Typography>
       </TableCell>
-      <TableCell colSpan={4} />
+      <TableCell colSpan={5} />
       <TableCell />
     </TableRow>
   );
@@ -412,6 +416,7 @@ interface ProcedureRowProps {
   onAdjustClick: AdjustClickHandler;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  onDutClick: (dutNumber: number) => void;
 }
 
 function ProcedureRow({
@@ -423,6 +428,7 @@ function ProcedureRow({
   onAdjustClick,
   isExpanded,
   onToggleExpand,
+  onDutClick,
 }: ProcedureRowProps) {
   const qtyAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'quantidade');
   const providerAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'prestador');
@@ -432,6 +438,7 @@ function ProcedureRow({
   const codeType = proc.codeType ?? 'TUSS';
   const isPackage = codeType === 'PACKAGE';
   const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
+  const dutNumber = getDutNumberForTuss(proc.code);
 
   return (
     <>
@@ -493,6 +500,34 @@ function ProcedureRow({
           hasAnyAdjustment={hasAnyAdjustment}
           isGuideFinalized={isGuideFinalized}
         />
+        {/* DUT */}
+        <TableCell sx={{ verticalAlign: 'top', pt: 1.5, width: 70, textAlign: 'left' }}>
+          {dutNumber ? (
+            <Typography
+              component="button"
+              onClick={() => {
+                onDutClick(dutNumber);
+              }}
+              sx={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'primary.main',
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                p: 0,
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+                textDecoration: 'none',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              DUT {String(dutNumber)}
+            </Typography>
+          ) : (
+            <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>—</Typography>
+          )}
+        </TableCell>
         <ProcedureActionCell
           isGuideFinalized={isGuideFinalized}
           proc={proc}
@@ -527,6 +562,7 @@ export default function ProceduresSection({
   const p = request.provider;
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
   const [expandedCodes, setExpandedCodes] = useState(new Set());
+  const dutModal = useDutModal();
 
   const toggleExpand = (code: string) => {
     setExpandedCodes((prev) => {
@@ -563,6 +599,7 @@ export default function ProceduresSection({
               <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
               <TableCell sx={{ ...TH_SX, width: 140 }}>Período</TableCell>
               <TableCell sx={TH_SX}>Status</TableCell>
+              <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
               <TableCell sx={{ ...TH_SX, pr: 0 }} />
             </TableRow>
           </TableHead>
@@ -580,6 +617,7 @@ export default function ProceduresSection({
                 onToggleExpand={() => {
                   toggleExpand(proc.code);
                 }}
+                onDutClick={dutModal.open}
               />
             ))}
           </TableBody>
@@ -693,6 +731,7 @@ export default function ProceduresSection({
           );
         })()}
       </CardContent>
+      <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />
     </Card>
   );
 }

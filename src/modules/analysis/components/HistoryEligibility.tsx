@@ -7,9 +7,6 @@ import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
-import DutLink from '@/shared/components/dut-modal/DutLink';
-import DutModal from '@/shared/components/dut-modal/DutModal';
-import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
 import { type Request } from '@/types/pedido';
 
 import { type ConsolidatedHistory } from '../constants/consolidated-history-data';
@@ -21,8 +18,6 @@ interface HistoryEligibilityProps {
 }
 
 export default function HistoryEligibility({ eligibility, request }: HistoryEligibilityProps) {
-  const dutModal = useDutModal();
-
   return (
     <>
       <Divider sx={{ mb: 2.5 }} />
@@ -156,7 +151,14 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
           ) : null}
         </Box>
         {/* Limites contratuais */}
-        <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
+        <Box
+          sx={{
+            p: 1.5,
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: 2,
+            gridColumn: '1 / -1',
+          }}
+        >
           <Typography
             variant="caption"
             color="text.secondary"
@@ -174,31 +176,7 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
             {eligibility.limitesContratuais}
           </Typography>
         </Box>
-        {/* DUTs */}
-        <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{
-              fontSize: 12,
-              textTransform: 'uppercase',
-              letterSpacing: 0.4,
-              display: 'block',
-              mb: 0.5,
-            }}
-          >
-            DUTs Relevantes
-          </Typography>
-          <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {eligibility.dutRelevantes.map((dut) => (
-              <Box component="li" key={dut} sx={{ fontSize: 12, mb: 0.25 }}>
-                <DutLink text={dut} onDutClick={dutModal.open} />
-              </Box>
-            ))}
-          </Box>
-        </Box>
       </Box>
-      <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />
     </>
   );
 }
