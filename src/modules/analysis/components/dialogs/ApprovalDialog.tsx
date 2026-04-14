@@ -77,7 +77,7 @@ export default function ApprovalDialog({
           variant="contained"
           disabled={!approvalReason || !approvalJustification.trim()}
           onClick={onConfirm}
-          sx={{ backgroundColor: 'success.main', '&:hover': { backgroundColor: '#15803d' } }}
+          color="primary"
         >
           Confirmar Aprovação
         </Button>

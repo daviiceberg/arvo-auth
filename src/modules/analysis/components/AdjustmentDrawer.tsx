@@ -22,6 +22,7 @@ import { type Adjustment } from '@/types/pedido';
 import { type UseAdjustmentFormReturn, useAdjustmentForm } from '../hooks/useAdjustmentForm';
 
 import AdjustmentFieldCode from './AdjustmentFieldCode';
+import AdjustmentFieldDut from './AdjustmentFieldDut';
 import AdjustmentFieldManufacturer from './AdjustmentFieldManufacturer';
 import AdjustmentFieldProvider from './AdjustmentFieldProvider';
 import AdjustmentFieldQuantity from './AdjustmentFieldQuantity';
@@ -99,6 +100,14 @@ function buildFieldComponents(
         currentValue={proc?.valorUnitario}
         newValue={form.newValue}
         setNewValue={form.setNewValue}
+        errors={form.errors}
+        setErrors={form.setErrors}
+      />
+    ),
+    dut: (
+      <AdjustmentFieldDut
+        newDut={form.newDut}
+        setNewDut={form.setNewDut}
         errors={form.errors}
         setErrors={form.setErrors}
       />

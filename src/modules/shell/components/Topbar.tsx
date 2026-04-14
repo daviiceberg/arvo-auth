@@ -242,12 +242,20 @@ export default function Topbar({
         >
           <LocationOnIcon sx={{ fontSize: 14, color: 'primary.main' }} />
           <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
-            <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
-              Regional:
-            </Box>{' '}
-            <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
-              {regional}
-            </Box>
+            {regional === 'Todas' ? (
+              <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                Todas as regionais
+              </Box>
+            ) : (
+              <>
+                <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                  Regional:
+                </Box>{' '}
+                <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                  {regional}
+                </Box>
+              </>
+            )}
           </Typography>
           <KeyboardArrowDownIcon sx={{ fontSize: 14, color: 'primary.main', ml: 0.25 }} />
         </Box>
@@ -284,7 +292,7 @@ export default function Topbar({
                 gap: 2,
               }}
             >
-              {r}
+              {r === 'Todas' ? 'Todas as regionais' : r}
               {regional === r && <CheckIcon sx={{ fontSize: 14, color: 'primary.main' }} />}
             </MenuItem>
           ))}

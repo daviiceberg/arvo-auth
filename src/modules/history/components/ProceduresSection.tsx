@@ -10,6 +10,8 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 
+import DutModal from '@/shared/components/dut-modal/DutModal';
+import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
 import { type HistoryEntry } from '@/types/pedido';
 
 import HistoryProcedureRow from './HistoryProcedureRow';
@@ -40,6 +42,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
   ];
 
   const [expandedCodes, setExpandedCodes] = useState(new Set<string>());
+  const dutModal = useDutModal();
 
   const toggleExpand = (code: string) => {
     setExpandedCodes((prev) => {
@@ -78,6 +81,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
                 onToggleExpand={() => {
                   toggleExpand(proc.code);
                 }}
+                onDutClick={dutModal.open}
               />
             ))}
           </TableBody>
@@ -152,6 +156,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           ))}
         </Box>
       </CardContent>
+      <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />
     </Card>
   );
 }

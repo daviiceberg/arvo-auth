@@ -83,7 +83,7 @@ export default function PendencyDialog({
           variant="contained"
           disabled={pendencyItems.length === 0}
           onClick={onConfirm}
-          sx={{ backgroundColor: '#ea580c', '&:hover': { backgroundColor: '#c2410c' } }}
+          color="primary"
         >
           Confirmar Pendenciamento
         </Button>

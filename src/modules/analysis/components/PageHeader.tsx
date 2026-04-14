@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
@@ -20,6 +21,8 @@ import Typography from '@mui/material/Typography';
 
 import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants';
 import { type Request, type RequestOrigin } from '@/types/pedido';
+
+import { formatSlaDisplay } from '../utils/format-sla';
 
 // ---- OrigemLabel (module-level inline component) ----
 const originIconMap: Record<RequestOrigin, React.ReactNode> = {
@@ -243,6 +246,25 @@ export default function PageHeader({
             </Typography>
           </Box>
           <OrigemLabel origem={request.origin} />
+          {(() => {
+            const sla = formatSlaDisplay(
+              request.slaStatus,
+              request.slaText,
+              request.queueTime,
+              request.slaDeadlineHours,
+            );
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <AccessTimeIcon sx={{ fontSize: 13, color: sla.color }} />
+                <Typography
+                  variant="caption"
+                  sx={{ fontSize: 12, fontWeight: 600, color: sla.color }}
+                >
+                  {sla.text}
+                </Typography>
+              </Box>
+            );
+          })()}
         </Box>
 
         {/* Keyboard shortcuts hint -- aligned below navigator */}

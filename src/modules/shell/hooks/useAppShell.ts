@@ -45,7 +45,7 @@ export default function useAppShell(requests: Request[], notifications: Notifica
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
-  const [regional, setRegional] = useState<Regional>('Sul');
+  const [regional, setRegional] = useState<Regional>('Todas');
   const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null);
   const [regionalSnackbar, setRegionalSnackbar] = useState('');
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
