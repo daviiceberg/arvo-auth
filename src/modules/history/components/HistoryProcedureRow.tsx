@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type CodeType, type TussCode } from '@/types/procedure-codes';
 
+import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
+
 interface DetailedProc {
   code: string;
   tuss: string;
@@ -86,12 +88,51 @@ function PartialDecisionCell({ decisao, motivoDecisao }: PartialDecisionCellProp
   return null;
 }
 
+function DutCell({
+  dutNumber,
+  onDutClick,
+}: {
+  dutNumber: number | null;
+  onDutClick: (n: number) => void;
+}) {
+  return (
+    <TableCell sx={{ verticalAlign: 'top', pt: 1.5, width: 70, textAlign: 'left' }}>
+      {dutNumber ? (
+        <Typography
+          component="button"
+          onClick={() => {
+            onDutClick(dutNumber);
+          }}
+          sx={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'primary.main',
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            p: 0,
+            whiteSpace: 'nowrap',
+            textAlign: 'left',
+            textDecoration: 'none',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+        >
+          DUT {String(dutNumber)}
+        </Typography>
+      ) : (
+        <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>—</Typography>
+      )}
+    </TableCell>
+  );
+}
+
 interface HistoryProcedureRowProps {
   proc: DetailedProc;
   isLast: boolean;
   isPartial: boolean;
   isExpanded: boolean;
   onToggleExpand: () => void;
+  onDutClick: (dutNumber: number) => void;
 }
 
 export default function HistoryProcedureRow({
@@ -100,10 +141,12 @@ export default function HistoryProcedureRow({
   isPartial,
   isExpanded,
   onToggleExpand,
+  onDutClick,
 }: HistoryProcedureRowProps) {
   const codeType = proc.codeType ?? 'TUSS';
   const isPackage = codeType === 'PACKAGE';
   const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
+  const dutNumber = getDutNumberForTuss(proc.code);
 
   return (
     <>
@@ -180,6 +223,7 @@ export default function HistoryProcedureRow({
             />
           </Box>
         </TableCell>
+        <DutCell dutNumber={dutNumber} onDutClick={onDutClick} />
         {/* Decisão parcial */}
         {isPartial ? (
           <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
@@ -205,7 +249,7 @@ export default function HistoryProcedureRow({
                   {tuss.description}
                 </Typography>
               </TableCell>
-              <TableCell colSpan={isPartial ? 4 : 3} />
+              <TableCell colSpan={isPartial ? 5 : 4} />
             </TableRow>
           ))
         : null}

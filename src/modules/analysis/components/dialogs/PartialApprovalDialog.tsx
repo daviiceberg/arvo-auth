@@ -275,16 +275,8 @@ export default function PartialApprovalDialog({
                 !(partialDenialJustMap[pr.code] ?? '').trim(),
             )}
           onClick={onConfirm}
-          sx={{
-            fontWeight: 600,
-            backgroundColor: (() => {
-              return nA === request.procedures.length
-                ? 'success.main'
-                : nN === request.procedures.length
-                  ? undefined
-                  : 'warning.main';
-            })(),
-          }}
+          color="primary"
+          sx={{ fontWeight: 600 }}
         >
           Confirmar
         </Button>

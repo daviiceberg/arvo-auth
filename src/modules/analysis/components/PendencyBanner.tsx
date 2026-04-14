@@ -148,71 +148,57 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
 
   if (sub === 'JUNTA_PARECER_RECEBIDO') {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Alert
-          severity="success"
-          icon={<GavelIcon fontSize="small" />}
+      <Alert
+        severity="success"
+        icon={<GavelIcon fontSize="small" />}
+        sx={{
+          borderRadius: 2,
+          alignItems: 'flex-start',
+          border: '1px solid rgba(22,163,74,0.3)',
+          backgroundColor: 'rgba(22,163,74,0.04)',
+        }}
+      >
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
+          Parecer da Junta Médica recebido
+        </Typography>
+        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
+          O parecer foi emitido e está disponível para consulta. Prossiga com a decisão com base na
+          recomendação da junta.
+        </Typography>
+        <Box
+          component="span"
+          onClick={() => {
+            setOpinionExpanded((v) => !v);
+          }}
           sx={{
-            borderRadius: 2,
-            alignItems: 'flex-start',
-            border: '1px solid rgba(22,163,74,0.3)',
-            backgroundColor: 'rgba(22,163,74,0.04)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            cursor: 'pointer',
+            color: '#16a34a',
+            fontWeight: 600,
+            fontSize: 12,
           }}
         >
-          <Typography variant="body2" fontWeight={700} sx={{ mb: 0.25 }}>
-            Parecer da Junta Médica recebido
-          </Typography>
-          <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-            O parecer foi emitido e está disponível para consulta. Prossiga com a decisão com base
-            na recomendação da junta.
-          </Typography>
-          <Box
-            component="span"
-            onClick={() => {
-              setOpinionExpanded((v) => !v);
-            }}
+          <ExpandMoreIcon
             sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 0.5,
-              cursor: 'pointer',
-              color: '#16a34a',
-              fontWeight: 600,
-              fontSize: 12,
+              fontSize: 16,
+              transition: 'transform 0.2s',
+              transform: opinionExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
             }}
-          >
-            <ExpandMoreIcon
-              sx={{
-                fontSize: 16,
-                transition: 'transform 0.2s',
-                transform: opinionExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              }}
-            />
-            {opinionExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
-          </Box>
-        </Alert>
+          />
+          {opinionExpanded ? 'Ocultar parecer' : 'Ver parecer completo'}
+        </Box>
         <Collapse in={opinionExpanded}>
           <Box
             sx={{
+              mt: 1.5,
               p: 2,
-              borderRadius: 2,
-              border: '1px solid rgba(22,163,74,0.25)',
-              backgroundColor: 'rgba(22,163,74,0.03)',
+              backgroundColor: '#fff',
+              borderRadius: 1.5,
+              border: '1px solid rgba(22,163,74,0.15)',
             }}
           >
-            <Typography
-              variant="caption"
-              fontWeight={700}
-              sx={{
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-                color: '#16a34a',
-                display: 'block',
-                mb: 1,
-              }}
-            >
-              Parecer da Junta Médica
-            </Typography>
             <Typography
               variant="body2"
               sx={{ lineHeight: 1.65, color: 'text.primary', fontSize: 13 }}
@@ -221,7 +207,7 @@ export default function PendencyBanner({ request }: PendencyBannerProps) {
             </Typography>
           </Box>
         </Collapse>
-      </Box>
+      </Alert>
     );
   }
 

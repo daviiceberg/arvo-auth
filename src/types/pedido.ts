@@ -62,7 +62,7 @@ export interface Adjustment {
   id: string;
   procedureCode: string;
   procedureDescription: string;
-  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario';
+  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | 'dut';
   previousValue: string;
   newValue: string;
   reason: string;
@@ -103,6 +103,7 @@ export interface Request {
   queueTime: string;
   slaStatus: SLAStatus;
   slaText: string;
+  slaDeadlineHours: number;
   beneficiary: {
     name: string;
     cardNumber: string;

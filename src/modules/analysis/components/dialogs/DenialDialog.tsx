@@ -132,7 +132,7 @@ export default function DenialDialog({
         <Button onClick={onClose}>Cancelar</Button>
         <Button
           variant="contained"
-          color="error"
+          color="primary"
           disabled={denialReasonIdx === -1 || !denialJustification.trim()}
           onClick={onConfirm}
         >
