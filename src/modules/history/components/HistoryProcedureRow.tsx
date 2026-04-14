@@ -30,6 +30,62 @@ interface DetailedProc {
   tussCodesIncluded?: TussCode[];
 }
 
+interface PartialDecisionCellProps {
+  decisao: DetailedProc['decisao'];
+  motivoDecisao: DetailedProc['motivoDecisao'];
+}
+
+function PartialDecisionCell({ decisao, motivoDecisao }: PartialDecisionCellProps) {
+  if (decisao === 'aprovado') {
+    return (
+      <Chip
+        icon={
+          <CheckCircleIcon sx={{ fontSize: 12, ml: '4px !important', color: 'success.main' }} />
+        }
+        label="Aprovado"
+        size="small"
+        sx={{
+          backgroundColor: 'rgba(22,163,74,0.1)',
+          color: 'success.main',
+          fontWeight: 700,
+          fontSize: 11,
+          height: 20,
+        }}
+      />
+    );
+  }
+
+  if (decisao === 'negado') {
+    return (
+      <Box>
+        <Chip
+          icon={<CancelIcon sx={{ fontSize: 12, ml: '4px !important', color: 'error.main' }} />}
+          label="Negado"
+          size="small"
+          sx={{
+            backgroundColor: 'rgba(212,24,61,0.1)',
+            color: 'error.main',
+            fontWeight: 700,
+            fontSize: 11,
+            height: 20,
+            mb: 0.5,
+          }}
+        />
+        {motivoDecisao ? (
+          <Typography
+            variant="caption"
+            sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}
+          >
+            {motivoDecisao}
+          </Typography>
+        ) : null}
+      </Box>
+    );
+  }
+
+  return null;
+}
+
 interface HistoryProcedureRowProps {
   proc: DetailedProc;
   isLast: boolean;
@@ -127,50 +183,7 @@ export default function HistoryProcedureRow({
         {/* Decisão parcial */}
         {isPartial ? (
           <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
-            {proc.decisao === 'aprovado' ? (
-              <Chip
-                icon={
-                  <CheckCircleIcon
-                    sx={{ fontSize: 12, ml: '4px !important', color: 'success.main' }}
-                  />
-                }
-                label="Aprovado"
-                size="small"
-                sx={{
-                  backgroundColor: 'rgba(22,163,74,0.1)',
-                  color: 'success.main',
-                  fontWeight: 700,
-                  fontSize: 11,
-                  height: 20,
-                }}
-              />
-            ) : proc.decisao === 'negado' ? (
-              <Box>
-                <Chip
-                  icon={
-                    <CancelIcon sx={{ fontSize: 12, ml: '4px !important', color: 'error.main' }} />
-                  }
-                  label="Negado"
-                  size="small"
-                  sx={{
-                    backgroundColor: 'rgba(212,24,61,0.1)',
-                    color: 'error.main',
-                    fontWeight: 700,
-                    fontSize: 11,
-                    height: 20,
-                    mb: 0.5,
-                  }}
-                />
-                {proc.motivoDecisao ? (
-                  <Typography
-                    variant="caption"
-                    sx={{ fontSize: 11, color: 'text.secondary', display: 'block' }}
-                  >
-                    {proc.motivoDecisao}
-                  </Typography>
-                ) : null}
-              </Box>
-            ) : null}
+            <PartialDecisionCell decisao={proc.decisao} motivoDecisao={proc.motivoDecisao} />
           </TableCell>
         ) : null}
       </TableRow>

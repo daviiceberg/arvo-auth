@@ -9,9 +9,65 @@ import Typography from '@mui/material/Typography';
 
 import { CategoryChip, DecisionActionChip } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
-import { type HistoryEntry } from '@/types/pedido';
+import { type HistoryEntry, type IASuggestion } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
+
+interface IASuggestionCellProps {
+  origin: HistoryEntry['origin'];
+  iaSuggestion: HistoryEntry['iaSuggestion'];
+  divergence: HistoryEntry['divergence'];
+}
+
+const SUGGESTION_COLOR_MAP: Record<IASuggestion, string> = {
+  Aprovar: 'success.main',
+  Negar: 'error.main',
+  'Junta Médica': 'warning.main',
+};
+
+function IASuggestionCell({ origin, iaSuggestion, divergence }: IASuggestionCellProps) {
+  if (origin === 'ia_automatica') {
+    return (
+      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.disabled' }}>
+        —
+      </Typography>
+    );
+  }
+
+  const suggestionColor = SUGGESTION_COLOR_MAP[iaSuggestion];
+
+  return (
+    <>
+      <Chip
+        label={iaSuggestion}
+        size="small"
+        variant="outlined"
+        sx={{
+          fontSize: 12,
+          fontWeight: 600,
+          height: 20,
+          borderColor: suggestionColor,
+          color: suggestionColor,
+        }}
+      />
+      {divergence ? (
+        <Typography
+          variant="caption"
+          sx={{ display: 'block', fontSize: 11, color: 'warning.main', fontWeight: 600, mt: 0.4 }}
+        >
+          ⚠ Divergiu
+        </Typography>
+      ) : (
+        <Typography
+          variant="caption"
+          sx={{ display: 'block', fontSize: 11, color: 'success.main', fontWeight: 600, mt: 0.4 }}
+        >
+          ✓ Alinhado
+        </Typography>
+      )}
+    </>
+  );
+}
 
 interface HistoryListTableRowProps {
   entry: HistoryEntry;
@@ -93,49 +149,11 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         )}
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        {entry.origin === 'ia_automatica' ? (
-          <Typography variant="caption" sx={{ fontSize: 12, color: 'text.disabled' }}>
-            —
-          </Typography>
-        ) : (
-          <Chip
-            label={entry.iaSuggestion}
-            size="small"
-            variant="outlined"
-            sx={{
-              fontSize: 12,
-              fontWeight: 600,
-              height: 20,
-              borderColor:
-                entry.iaSuggestion === 'Aprovar'
-                  ? 'success.main'
-                  : entry.iaSuggestion === 'Negar'
-                    ? 'error.main'
-                    : 'warning.main',
-              color:
-                entry.iaSuggestion === 'Aprovar'
-                  ? 'success.main'
-                  : entry.iaSuggestion === 'Negar'
-                    ? 'error.main'
-                    : 'warning.main',
-            }}
-          />
-        )}
-        {entry.divergence ? (
-          <Typography
-            variant="caption"
-            sx={{ display: 'block', fontSize: 11, color: 'warning.main', fontWeight: 600, mt: 0.4 }}
-          >
-            ⚠ Divergiu
-          </Typography>
-        ) : (
-          <Typography
-            variant="caption"
-            sx={{ display: 'block', fontSize: 11, color: 'success.main', fontWeight: 600, mt: 0.4 }}
-          >
-            ✓ Alinhado
-          </Typography>
-        )}
+        <IASuggestionCell
+          origin={entry.origin}
+          iaSuggestion={entry.iaSuggestion}
+          divergence={entry.divergence}
+        />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
