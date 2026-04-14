@@ -15,14 +15,25 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData } from '@/modules/new-request/types';
+
+import { ProceduresStepSection } from './ProceduresStepSection';
 
 interface StepExamsProps {
   form: FormData;
   setForm: React.Dispatch<React.SetStateAction<FormData>>;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepExams({ form, setForm }: StepExamsProps) {
+export function StepExams({
+  form,
+  setForm,
+  guiaProcedures,
+  onGuiaProceduresChange,
+}: StepExamsProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -130,6 +141,12 @@ export function StepExams({ form, setForm }: StepExamsProps) {
       >
         Adicionar Exame
       </Button>
+
+      <ProceduresStepSection
+        guiaProcedures={guiaProcedures}
+        onGuiaProceduresChange={onGuiaProceduresChange}
+        showQuantity
+      />
     </Box>
   );
 }

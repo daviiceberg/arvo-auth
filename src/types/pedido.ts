@@ -1,3 +1,5 @@
+import { type CodeType, type TussCode } from './procedure-codes';
+
 export type ProcessingStatus =
   | 'aguardando_processamento'
   | 'em_processamento'
@@ -51,6 +53,9 @@ export interface Procedure {
   auditLevel: AuditLevel;
   manufacturer?: string;
   unitValue?: number;
+  codeType?: CodeType;
+  packageId?: string;
+  tussCodesIncluded?: TussCode[];
 }
 
 export interface Adjustment {
@@ -203,6 +208,9 @@ export interface HistoryEntry {
     auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
     decisao?: 'aprovado' | 'negado';
     motivoDecisao?: string;
+    codeType?: CodeType;
+    packageId?: string;
+    tussCodesIncluded?: TussCode[];
   }[];
   alerts?: string[];
   iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[];

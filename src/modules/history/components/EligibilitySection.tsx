@@ -4,6 +4,10 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
+import DutLink from '@/shared/components/dut-modal/DutLink';
+import DutModal from '@/shared/components/dut-modal/DutModal';
+import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
+
 import { type Elegibilidade } from '../types';
 
 const DEFAULT_COLOR = { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' };
@@ -30,6 +34,7 @@ interface EligibilitySectionProps {
 
 export default function EligibilitySection({ elegibilidade }: EligibilitySectionProps) {
   const statusColor = getEligibilityColor(elegibilidade.status);
+  const dutModal = useDutModal();
 
   return (
     <>
@@ -135,19 +140,14 @@ export default function EligibilitySection({ elegibilidade }: EligibilitySection
           </Typography>
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
             {elegibilidade.dutRelevantes.map((dut) => (
-              <Typography
-                component="li"
-                key={dut}
-                variant="caption"
-                color="text.secondary"
-                sx={{ fontSize: 12 }}
-              >
-                {dut}
-              </Typography>
+              <Box component="li" key={dut} sx={{ fontSize: 12, mb: 0.25 }}>
+                <DutLink text={dut} onDutClick={dutModal.open} />
+              </Box>
             ))}
           </Box>
         </Box>
       </Box>
+      <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />
     </>
   );
 }

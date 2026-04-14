@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -12,7 +12,11 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData } from '@/modules/new-request/types';
+
+import { ProceduresStepSection } from './ProceduresStepSection';
 
 function FieldLabel({
   children,
@@ -34,15 +38,38 @@ function FieldLabel({
   );
 }
 
+const URGENCY_DEFAULT_PROCEDURE: GuiaProcedure = {
+  id: 'ue-default-10101039',
+  codeType: 'TUSS',
+  code: '10101039',
+  description: 'Atendimento de urgência/emergência',
+  quantity: 1,
+};
+
 interface StepUrgencyProps {
   form: FormData;
   set: (
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   setSelect: (field: keyof FormData) => (value: string) => void;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepUrgency({ form, set, setSelect }: StepUrgencyProps) {
+export function StepUrgency({
+  form,
+  set,
+  setSelect,
+  guiaProcedures,
+  onGuiaProceduresChange,
+}: StepUrgencyProps) {
+  const procedures = useMemo(() => {
+    const hasDefault = guiaProcedures.some((p) => p.id === URGENCY_DEFAULT_PROCEDURE.id);
+    return hasDefault ? guiaProcedures : [URGENCY_DEFAULT_PROCEDURE, ...guiaProcedures];
+  }, [guiaProcedures]);
+
+  const fixedIds = useMemo(() => new Set([URGENCY_DEFAULT_PROCEDURE.id]), []);
+
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -93,6 +120,14 @@ export function StepUrgency({ form, set, setSelect }: StepUrgencyProps) {
           />
         </Grid>
       </Grid>
+
+      <ProceduresStepSection
+        guiaProcedures={procedures}
+        onGuiaProceduresChange={onGuiaProceduresChange}
+        showPeriod={false}
+        showQuantity={false}
+        fixedIds={fixedIds}
+      />
     </Box>
   );
 }

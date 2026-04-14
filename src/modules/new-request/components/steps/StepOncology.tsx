@@ -12,7 +12,11 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData } from '@/modules/new-request/types';
+
+import { ProceduresStepSection } from './ProceduresStepSection';
 
 function FieldLabel({
   children,
@@ -49,9 +53,17 @@ interface StepOncologyProps {
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   setSelect: (field: keyof FormData) => (value: string) => void;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepOncology({ form, set, setSelect }: StepOncologyProps) {
+export function StepOncology({
+  form,
+  set,
+  setSelect,
+  guiaProcedures,
+  onGuiaProceduresChange,
+}: StepOncologyProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -118,6 +130,13 @@ export function StepOncology({ form, set, setSelect }: StepOncologyProps) {
           />
         </Grid>
       </Grid>
+
+      <ProceduresStepSection
+        guiaProcedures={guiaProcedures}
+        onGuiaProceduresChange={onGuiaProceduresChange}
+        showPeriod
+        showQuantity
+      />
     </Box>
   );
 }

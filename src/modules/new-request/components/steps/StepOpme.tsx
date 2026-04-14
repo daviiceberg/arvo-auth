@@ -1,250 +1,100 @@
 'use client';
 
-import React from 'react';
-
 import AddIcon from '@mui/icons-material/Add';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type FormData } from '@/modules/new-request/types';
+import ProcedureList from '@/shared/components/procedure-list/ProcedureList';
+import { type GuiaProcedure } from '@/types/procedure-codes';
 
-function FieldLabel({
-  children,
-  validated,
-  warning,
-}: {
-  children: React.ReactNode;
-  validated?: boolean;
-  warning?: boolean;
-}) {
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.75 }}>
-      <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
-        {children}
-      </Typography>
-      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
-      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
-    </Box>
-  );
-}
+import { useStepOpme } from '@/modules/new-request/hooks/useStepOpme';
+
+import OpmeItemCard from '../opme/OpmeItemCard';
+import OpmeResumeCard from '../opme/OpmeResumeCard';
 
 interface StepOpmeProps {
-  form: FormData;
-  setForm: React.Dispatch<React.SetStateAction<FormData>>;
-  set: (
-    field: keyof FormData,
-  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
-export function StepOpme({ form, setForm, set }: StepOpmeProps) {
+export function StepOpme({ guiaProcedures, onGuiaProceduresChange }: StepOpmeProps) {
+  const {
+    opmeItems,
+    handleAddItem,
+    handleRemoveItem,
+    handleUpdateItem,
+    handleConsultAnvisa,
+    summary,
+  } = useStepOpme();
+
   return (
     <Box>
-      <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
-        Materiais e OPME
+      {/* Bloco 1: Procedimento Cirúrgico */}
+      <Typography variant="h6" fontWeight={700} sx={{ mb: 1, fontSize: 15 }}>
+        Procedimento Cirúrgico
       </Typography>
-      <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2, overflow: 'hidden', mb: 2 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ backgroundColor: '#faf6f2' }}>
-              <TableCell sx={{ fontWeight: 700, fontSize: 11 }}>Código</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 11 }}>Descrição</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 11 }}>Fabricante</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 11, width: 70 }}>Qtd</TableCell>
-              <TableCell sx={{ fontWeight: 700, fontSize: 11, width: 100 }}>Valor</TableCell>
-              <TableCell sx={{ width: 48 }} />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {form.materiais.map((m, i) => (
-              <TableRow key={i}>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    value={m.codigo}
-                    onChange={(e) => {
-                      setForm((f) => ({
-                        ...f,
-                        materiais: f.materiais.map((item, idx) =>
-                          idx === i ? { ...item, codigo: e.target.value } : item,
-                        ),
-                      }));
-                    }}
-                    sx={{ width: 100 }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    value={m.descricao}
-                    onChange={(e) => {
-                      setForm((f) => ({
-                        ...f,
-                        materiais: f.materiais.map((item, idx) =>
-                          idx === i ? { ...item, descricao: e.target.value } : item,
-                        ),
-                      }));
-                    }}
-                    fullWidth
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    value={m.fabricante}
-                    onChange={(e) => {
-                      setForm((f) => ({
-                        ...f,
-                        materiais: f.materiais.map((item, idx) =>
-                          idx === i ? { ...item, fabricante: e.target.value } : item,
-                        ),
-                      }));
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    type="number"
-                    value={m.qtd}
-                    onChange={(e) => {
-                      setForm((f) => ({
-                        ...f,
-                        materiais: f.materiais.map((item, idx) =>
-                          idx === i ? { ...item, qtd: e.target.value } : item,
-                        ),
-                      }));
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    value={m.valor}
-                    onChange={(e) => {
-                      setForm((f) => ({
-                        ...f,
-                        materiais: f.materiais.map((item, idx) =>
-                          idx === i ? { ...item, valor: e.target.value } : item,
-                        ),
-                      }));
-                    }}
-                    placeholder="R$ 0,00"
-                  />
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => {
-                      setForm((f) => ({ ...f, materiais: f.materiais.filter((_, j) => j !== i) }));
-                    }}
-                  >
-                    <DeleteOutlineIcon fontSize="small" />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Box>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: 12 }}>
+        Informe os códigos TUSS ou pacotes do procedimento que utilizará o material OPME.
+      </Typography>
+      <ProcedureList
+        procedures={guiaProcedures}
+        onUpdate={onGuiaProceduresChange}
+        showPeriod
+        showQuantity
+      />
+
+      {/* Bloco 2: Materiais e Dispositivos OPME */}
+      <Typography variant="h6" fontWeight={700} sx={{ mt: 4, mb: 1, fontSize: 15 }}>
+        Materiais e Dispositivos OPME
+      </Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2, fontSize: 12 }}>
+        Adicione cada material com seus dados de registro ANVISA e cotações de preço.
+      </Typography>
+      {opmeItems.map((item, i) => (
+        <OpmeItemCard
+          key={item.id}
+          index={i + 1}
+          item={item}
+          onUpdate={(updated) => {
+            handleUpdateItem(i, updated);
+          }}
+          onRemove={() => {
+            handleRemoveItem(i);
+          }}
+          canRemove={opmeItems.length > 1}
+          onConsultAnvisa={() => {
+            handleConsultAnvisa(item);
+          }}
+        />
+      ))}
       <Button
-        size="small"
+        variant="text"
         startIcon={<AddIcon />}
-        onClick={() => {
-          setForm((f) => ({
-            ...f,
-            materiais: [
-              ...f.materiais,
-              { codigo: '', descricao: '', fabricante: '', qtd: '1', valor: '' },
-            ],
-          }));
+        onClick={handleAddItem}
+        sx={{
+          color: 'error.main',
+          fontWeight: 600,
+          fontSize: 13,
+          p: '4px 5px',
+          justifyContent: 'flex-start',
+          '& .MuiButton-startIcon': { color: 'error.main' },
+          '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
         }}
-        sx={{ mb: 3 }}
       >
-        Adicionar Material
+        Adicionar material
       </Button>
-      <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Registro ANVISA</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.registroAnvisa}
-            onChange={set('registroAnvisa')}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Fabricante do Material</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.fabricanteMaterial}
-            onChange={set('fabricanteMaterial')}
-          />
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <FieldLabel>Justificativa Técnica para Marca</FieldLabel>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            size="small"
-            value={form.justificativaTecnica}
-            onChange={set('justificativaTecnica')}
-          />
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="body2" fontWeight={700} sx={{ mb: 1.5, fontSize: 13 }}>
-            3 Cotações de Preço
-          </Typography>
-          {form.cotacoes.map((c, i) => (
-            <Box key={i} sx={{ display: 'flex', gap: 2, mb: 1.5 }}>
-              <TextField
-                size="small"
-                label={`Fornecedor ${String(i + 1)}`}
-                value={c.fornecedor}
-                onChange={(e) => {
-                  setForm((f) => ({
-                    ...f,
-                    cotacoes: f.cotacoes.map((item, idx) =>
-                      idx === i ? { ...item, fornecedor: e.target.value } : item,
-                    ),
-                  }));
-                }}
-                sx={{ flex: 1 }}
-              />
-              <TextField
-                size="small"
-                label="Valor (R$)"
-                value={c.valor}
-                onChange={(e) => {
-                  setForm((f) => ({
-                    ...f,
-                    cotacoes: f.cotacoes.map((item, idx) =>
-                      idx === i ? { ...item, valor: e.target.value } : item,
-                    ),
-                  }));
-                }}
-                sx={{ width: 140 }}
-              />
-            </Box>
-          ))}
-        </Grid>
-      </Grid>
+
+      {/* Bloco 3: Resumo */}
+      {guiaProcedures.length > 0 && opmeItems.length > 0 ? (
+        <OpmeResumeCard
+          procedures={guiaProcedures}
+          totalValue={summary.totalValue}
+          validAnvisa={summary.validAnvisa}
+          totalItems={summary.totalItems}
+          completeQuotations={summary.completeQuotations}
+        />
+      ) : null}
     </Box>
   );
 }

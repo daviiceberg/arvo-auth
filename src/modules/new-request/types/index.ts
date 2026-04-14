@@ -63,6 +63,8 @@ export interface DocUpload {
   file?: File;
 }
 
+export type { GuiaProcedure } from '@/types/procedure-codes';
+
 export interface FormData {
   // Step 1
   tipoSolicitacao: ModuloType | '';

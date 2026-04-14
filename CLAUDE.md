@@ -1,4 +1,5 @@
 @AGENTS.md
+@PRODUCT.md
 
 # Code Quality Standards
 

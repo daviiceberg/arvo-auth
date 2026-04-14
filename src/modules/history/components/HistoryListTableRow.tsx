@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import TableCell from '@mui/material/TableCell';
@@ -7,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { CategoryChip, DecisionActionChip } from '@/shared/components';
+import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type HistoryEntry } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
@@ -54,6 +56,14 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         <CategoryChip category={entry.category} />
       </TableCell>
       <TableCell sx={{ maxWidth: 280, px: 1.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>
+          <CodeTypeChip codeType={entry.detailedProcedures?.[0]?.codeType ?? 'TUSS'} />
+          {(entry.detailedProcedures?.length ?? 0) > 1 ? (
+            <Typography variant="body2" fontWeight={700} sx={{ fontSize: 12 }}>
+              {entry.detailedProcedures?.length} procedimentos
+            </Typography>
+          ) : null}
+        </Box>
         <Typography
           variant="body2"
           sx={{

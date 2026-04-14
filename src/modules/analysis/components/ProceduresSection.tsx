@@ -1,13 +1,18 @@
 'use client';
 
+import { useState } from 'react';
+
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditIcon from '@mui/icons-material/Edit';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,9 +21,12 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
 
 import { USER_PROFILE } from '../types';
+
+// ── Helpers ─────────────────────────────────────────────────────────
 
 function getAdjustmentForField(
   allAdjustments: Adjustment[],
@@ -33,14 +41,16 @@ function getCredentialingStatus(code: string): 'ok' | 'warning' {
   return lastDigit % 2 === 0 ? 'ok' : 'warning';
 }
 
-type AdjustClickHandler = (proc: {
-  codigo: string;
-  descricao: string;
-  qty: number;
-  prestador: string;
-  fabricante?: string;
-  valorUnitario?: number;
-}) => void;
+const TH_SX = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: 'uppercase' as const,
+  letterSpacing: 0.5,
+  color: 'text.secondary',
+  pb: 1,
+};
+
+// ── Sub-components ──────────────────────────────────────────────────
 
 interface OpmeFieldsProps {
   manufacturer: string | undefined;
@@ -70,6 +80,15 @@ function OpmeFields({ manufacturer, unitValue }: OpmeFieldsProps) {
     </Box>
   );
 }
+
+type AdjustClickHandler = (proc: {
+  codigo: string;
+  descricao: string;
+  qty: number;
+  prestador: string;
+  fabricante?: string;
+  valorUnitario?: number;
+}) => void;
 
 interface ProcedureActionCellProps {
   isGuideFinalized: boolean;
@@ -156,6 +175,28 @@ function ProcedureActionCell({
   );
 }
 
+// ── Expanded TUSS sub-row for packages ──────────────────────────────
+
+function PackageTussRow({ code, description }: { code: string; description: string }) {
+  return (
+    <TableRow sx={{ '& td': { borderBottom: '1px solid rgba(0,0,0,0.04)' } }}>
+      <TableCell />
+      <TableCell sx={{ pl: 0 }}>
+        <Typography sx={{ fontSize: 11, fontFamily: 'monospace', color: 'text.secondary', pl: 2 }}>
+          {code}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Typography sx={{ fontSize: 11, color: 'text.secondary' }}>{description}</Typography>
+      </TableCell>
+      <TableCell colSpan={4} />
+      <TableCell />
+    </TableRow>
+  );
+}
+
+// ── Main procedure row ──────────────────────────────────────────────
+
 interface ProcedureRowProps {
   proc: Procedure;
   allAdjustments: Adjustment[];
@@ -163,6 +204,8 @@ interface ProcedureRowProps {
   isLast: boolean;
   hospital: string;
   onAdjustClick: AdjustClickHandler;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
 }
 
 function ProcedureRow({
@@ -172,6 +215,8 @@ function ProcedureRow({
   isLast,
   hospital,
   onAdjustClick,
+  isExpanded,
+  onToggleExpand,
 }: ProcedureRowProps) {
   const qtyAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'quantidade');
   const providerAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'prestador');
@@ -179,174 +224,217 @@ function ProcedureRow({
   const hasAnyAdjustment = allAdjustments.some((a) => a.procedureCode === proc.code);
   const credStatus = getCredentialingStatus(proc.code);
   const credOk = credStatus === 'ok';
+  const codeType = proc.codeType ?? 'TUSS';
+  const isPackage = codeType === 'PACKAGE';
+  const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
 
   return (
-    <TableRow
-      sx={{
-        cursor: 'default',
-        '& td': { borderBottom: isLast ? 'none' : '1px solid rgba(0,0,0,0.08)' },
-        '&:not(:first-of-type) td': { pt: 2 },
-        '&:hover': { backgroundColor: 'transparent' },
-      }}
-    >
-      <TableCell
-        sx={{ pl: 0, fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}
+    <>
+      <TableRow
+        sx={{
+          cursor: 'default',
+          '& td': { borderBottom: isLast && !isExpanded ? 'none' : '1px solid rgba(0,0,0,0.08)' },
+          '&:not(:first-of-type) td': { pt: 2 },
+          '&:hover': { backgroundColor: 'transparent' },
+        }}
       >
-        {proc.manufacturer !== undefined && (
-          <Chip
-            label="OPME"
-            size="small"
-            sx={{
-              fontSize: 10,
-              height: 18,
-              backgroundColor: 'rgba(144,43,41,0.1)',
-              color: 'primary.main',
-              fontWeight: 700,
-              mb: 0.5,
-              display: 'block',
-              width: 'fit-content',
-            }}
-          />
-        )}
-        {codeAdjustment ? (
-          <Box>
-            <Typography
-              sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}
-            >
-              {proc.code}
-            </Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'warning.main' }}>
-              {codeAdjustment.newValue.split(' — ')[0]}
-            </Typography>
+        {/* Tipo */}
+        <TableCell sx={{ pl: 0, verticalAlign: 'top', pt: 1.5, width: 80 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <CodeTypeChip codeType={codeType} onClick={hasTussCodes ? onToggleExpand : undefined} />
+            {hasTussCodes ? (
+              <IconButton size="small" onClick={onToggleExpand} sx={{ p: 0.25 }}>
+                {isExpanded ? (
+                  <ExpandLessIcon sx={{ fontSize: 16 }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                )}
+              </IconButton>
+            ) : null}
           </Box>
-        ) : (
-          proc.code
-        )}
-      </TableCell>
-      <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
-        {codeAdjustment ? (
-          <Box>
-            <Typography
-              sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}
-            >
-              {proc.description}
-            </Typography>
-            <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'warning.main' }}>
-              {codeAdjustment.newValue.split(' — ')[1] ?? codeAdjustment.newValue}
-            </Typography>
-          </Box>
-        ) : (
-          proc.description
-        )}
-        <OpmeFields manufacturer={proc.manufacturer} unitValue={proc.unitValue} />
-      </TableCell>
-      <TableCell
-        sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}
-      >
-        {qtyAdjustment ? (
-          <Box>
-            <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty}</Typography>
-            <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>
-              Aut: {qtyAdjustment.newValue} ✏
-            </Typography>
-          </Box>
-        ) : (
-          <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
-            {`Qtd: ${String(proc.qty)}${proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}`}
-          </Typography>
-        )}
-      </TableCell>
-      <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
-        {providerAdjustment ? (
-          <Box>
-            <Typography
-              sx={{
-                fontSize: 11,
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-                lineHeight: 1.3,
-                display: 'block',
-              }}
-            >
-              {providerAdjustment.previousValue}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
-              <EditIcon sx={{ fontSize: 11, color: 'primary.main', flexShrink: 0 }} />
-              <Typography
-                sx={{ fontSize: 11, color: 'primary.main', fontWeight: 600, lineHeight: 1.3 }}
-              >
-                {providerAdjustment.newValue}
-              </Typography>
-            </Box>
-          </Box>
-        ) : (
-          <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{hospital}</Typography>
-        )}
-      </TableCell>
-      <TableCell
-        sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 140 }}
-      >
-        {proc.startDate} → {proc.endDate}
-      </TableCell>
-      <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: 0.5,
-          }}
+        </TableCell>
+        {/* Código */}
+        <TableCell
+          sx={{ fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}
         >
-          {proc.cid ? (
+          {proc.manufacturer !== undefined && (
             <Chip
-              label={`CID ${proc.cid}`}
+              label="OPME"
               size="small"
               sx={{
-                backgroundColor: 'rgba(37,99,235,0.08)',
-                color: 'info.main',
-                fontWeight: 700,
-                fontSize: 12,
-                height: 20,
-              }}
-            />
-          ) : null}
-          <Chip
-            label={credOk ? 'Credenciado' : 'Não credenciado'}
-            size="small"
-            sx={{
-              backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
-              color: credOk ? 'success.main' : 'error.main',
-              fontWeight: 700,
-              fontSize: 11,
-              height: 20,
-            }}
-          />
-          {hasAnyAdjustment && !isGuideFinalized ? (
-            <Chip
-              icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
-              label="Ajustado"
-              size="small"
-              sx={{
+                fontSize: 10,
+                height: 18,
                 backgroundColor: 'rgba(144,43,41,0.1)',
                 color: 'primary.main',
                 fontWeight: 700,
+                mb: 0.5,
+                display: 'block',
+                width: 'fit-content',
+              }}
+            />
+          )}
+          {codeAdjustment ? (
+            <Box>
+              <Typography
+                sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}
+              >
+                {proc.code}
+              </Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, color: 'warning.main' }}>
+                {codeAdjustment.newValue.split(' — ')[0]}
+              </Typography>
+            </Box>
+          ) : (
+            proc.code
+          )}
+        </TableCell>
+        {/* Descrição */}
+        <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
+          {codeAdjustment ? (
+            <Box>
+              <Typography
+                sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}
+              >
+                {proc.description}
+              </Typography>
+              <Typography sx={{ fontSize: 13, fontWeight: 600, color: 'warning.main' }}>
+                {codeAdjustment.newValue.split(' — ')[1] ?? codeAdjustment.newValue}
+              </Typography>
+            </Box>
+          ) : (
+            proc.description
+          )}
+          <OpmeFields manufacturer={proc.manufacturer} unitValue={proc.unitValue} />
+        </TableCell>
+        {/* Qtd */}
+        <TableCell
+          sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}
+        >
+          {qtyAdjustment ? (
+            <Box>
+              <Typography sx={{ fontSize: 12 }}>Qtd: {proc.qty}</Typography>
+              <Typography sx={{ fontSize: 12, color: 'primary.main', fontWeight: 700 }}>
+                Aut: {qtyAdjustment.newValue} ✏
+              </Typography>
+            </Box>
+          ) : (
+            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+              {`Qtd: ${String(proc.qty)}${proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}`}
+            </Typography>
+          )}
+        </TableCell>
+        {/* Prestador */}
+        <TableCell
+          sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}
+        >
+          {providerAdjustment ? (
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: 11,
+                  color: 'text.disabled',
+                  textDecoration: 'line-through',
+                  lineHeight: 1.3,
+                  display: 'block',
+                }}
+              >
+                {providerAdjustment.previousValue}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
+                <EditIcon sx={{ fontSize: 11, color: 'primary.main', flexShrink: 0 }} />
+                <Typography
+                  sx={{ fontSize: 11, color: 'primary.main', fontWeight: 600, lineHeight: 1.3 }}
+                >
+                  {providerAdjustment.newValue}
+                </Typography>
+              </Box>
+            </Box>
+          ) : (
+            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{hospital}</Typography>
+          )}
+        </TableCell>
+        {/* Período */}
+        <TableCell
+          sx={{
+            color: 'text.secondary',
+            fontSize: 12,
+            verticalAlign: 'top',
+            pt: 1.5,
+            width: 140,
+          }}
+        >
+          {proc.startDate} → {proc.endDate}
+        </TableCell>
+        {/* Status */}
+        <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 0.5,
+            }}
+          >
+            {proc.cid ? (
+              <Chip
+                label={`CID ${proc.cid}`}
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(37,99,235,0.08)',
+                  color: 'info.main',
+                  fontWeight: 700,
+                  fontSize: 12,
+                  height: 20,
+                }}
+              />
+            ) : null}
+            <Chip
+              label={credOk ? 'Credenciado' : 'Não credenciado'}
+              size="small"
+              sx={{
+                backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
+                color: credOk ? 'success.main' : 'error.main',
+                fontWeight: 700,
                 fontSize: 11,
                 height: 20,
               }}
             />
-          ) : null}
-        </Box>
-      </TableCell>
-      <ProcedureActionCell
-        isGuideFinalized={isGuideFinalized}
-        proc={proc}
-        hospital={hospital}
-        onAdjustClick={onAdjustClick}
-      />
-    </TableRow>
+            {hasAnyAdjustment && !isGuideFinalized ? (
+              <Chip
+                icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
+                label="Ajustado"
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(144,43,41,0.1)',
+                  color: 'primary.main',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  height: 20,
+                }}
+              />
+            ) : null}
+          </Box>
+        </TableCell>
+        {/* Ação */}
+        <ProcedureActionCell
+          isGuideFinalized={isGuideFinalized}
+          proc={proc}
+          hospital={hospital}
+          onAdjustClick={onAdjustClick}
+        />
+      </TableRow>
+      {/* Expanded TUSS codes for packages */}
+      {isExpanded
+        ? proc.tussCodesIncluded?.map((tuss) => (
+            <PackageTussRow key={tuss.code} code={tuss.code} description={tuss.description} />
+          ))
+        : null}
+    </>
   );
 }
+
+// ── Main section ────────────────────────────────────────────────────
 
 interface ProceduresSectionProps {
   request: Request;
@@ -362,6 +450,16 @@ export default function ProceduresSection({
   const procs = request.procedures;
   const p = request.provider;
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
+  const [expandedCodes, setExpandedCodes] = useState(new Set());
+
+  const toggleExpand = (code: string) => {
+    setExpandedCodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  };
 
   return (
     <Card>
@@ -382,94 +480,14 @@ export default function ProceduresSection({
         <Table size="small">
           <TableHead>
             <TableRow sx={{ '& th': { borderBottom: '1px solid rgba(0,0,0,0.08)' } }}>
-              <TableCell
-                sx={{
-                  pl: 0,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                  width: 120,
-                }}
-              >
-                Código
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                }}
-              >
-                Descrição
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                  width: 80,
-                }}
-              >
-                Qtd
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                  minWidth: 120,
-                }}
-              >
-                Prestador
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                  width: 140,
-                }}
-              >
-                Período
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                }}
-              >
-                Status
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  color: 'text.secondary',
-                  pb: 1,
-                  pr: 0,
-                }}
-              />
+              <TableCell sx={{ pl: 0, ...TH_SX, width: 80 }}>Tipo</TableCell>
+              <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
+              <TableCell sx={TH_SX}>Descrição</TableCell>
+              <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
+              <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
+              <TableCell sx={{ ...TH_SX, width: 140 }}>Período</TableCell>
+              <TableCell sx={TH_SX}>Status</TableCell>
+              <TableCell sx={{ ...TH_SX, pr: 0 }} />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -482,6 +500,10 @@ export default function ProceduresSection({
                 isLast={index === procs.length - 1}
                 hospital={p.hospital}
                 onAdjustClick={onAdjustClick}
+                isExpanded={expandedCodes.has(proc.code)}
+                onToggleExpand={() => {
+                  toggleExpand(proc.code);
+                }}
               />
             ))}
           </TableBody>

@@ -90,6 +90,8 @@ function NewRequestInner() {
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
+    guiaProcedures,
+    setGuiaProcedures,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
@@ -187,6 +189,8 @@ function NewRequestInner() {
         handleAddTerapiaProc={handleAddTerapiaProc}
         handleRemoveTerapiaProc={handleRemoveTerapiaProc}
         handleUpdateTerapiaProc={handleUpdateTerapiaProc}
+        guiaProcedures={guiaProcedures}
+        onGuiaProceduresChange={setGuiaProcedures}
       />
     ),
     4: (

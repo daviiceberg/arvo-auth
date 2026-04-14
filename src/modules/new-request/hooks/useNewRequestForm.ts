@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
 import { type FormData, type TerapiaProcedimento } from '../types';
 
@@ -85,6 +87,7 @@ export function useNewRequestForm(moduloParam: string) {
   });
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
+  const [guiaProcedures, setGuiaProcedures] = useState<GuiaProcedure[]>([]);
   const [cidSecundarioInput, setCidSecundarioInput] = useState('');
 
   const set =
@@ -141,6 +144,7 @@ export function useNewRequestForm(moduloParam: string) {
       tipoSolicitacao: (moduloParamValue || '') as FormData['tipoSolicitacao'],
     });
     setTerapiaProcedimentos([newTerapiaProc()]);
+    setGuiaProcedures([]);
     setCidSecundarioInput('');
   };
 
@@ -153,6 +157,8 @@ export function useNewRequestForm(moduloParam: string) {
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
+    guiaProcedures,
+    setGuiaProcedures,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,

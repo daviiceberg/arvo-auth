@@ -5,6 +5,8 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { type GuiaProcedure } from '@/types/procedure-codes';
+
 import { type FormData, type TerapiaProcedimento } from '../types';
 
 import { StepExams } from './steps/StepExams';
@@ -31,6 +33,8 @@ interface StepDynamicProps {
     field: keyof Omit<TerapiaProcedimento, 'id'>,
     value: string,
   ) => void;
+  guiaProcedures: GuiaProcedure[];
+  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
 export function StepDynamic({
@@ -42,16 +46,49 @@ export function StepDynamic({
   handleAddTerapiaProc,
   handleRemoveTerapiaProc,
   handleUpdateTerapiaProc,
+  guiaProcedures,
+  onGuiaProceduresChange,
 }: StepDynamicProps) {
   switch (form.tipoSolicitacao) {
     case 'cirurgias':
-      return <StepSurgeries form={form} setForm={setForm} />;
+      return (
+        <StepSurgeries
+          form={form}
+          setForm={setForm}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     case 'internacao':
-      return <StepHospitalization form={form} set={set} setSelect={setSelect} />;
+      return (
+        <StepHospitalization
+          form={form}
+          set={set}
+          setSelect={setSelect}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     case 'urgencia':
-      return <StepUrgency form={form} set={set} setSelect={setSelect} />;
+      return (
+        <StepUrgency
+          form={form}
+          set={set}
+          setSelect={setSelect}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     case 'oncologia':
-      return <StepOncology form={form} set={set} setSelect={setSelect} />;
+      return (
+        <StepOncology
+          form={form}
+          set={set}
+          setSelect={setSelect}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     case 'terapias':
       return (
         <StepTherapies
@@ -61,14 +98,33 @@ export function StepDynamic({
           handleAddTerapiaProc={handleAddTerapiaProc}
           handleRemoveTerapiaProc={handleRemoveTerapiaProc}
           handleUpdateTerapiaProc={handleUpdateTerapiaProc}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
         />
       );
     case 'opme':
-      return <StepOpme form={form} setForm={setForm} set={set} />;
+      return (
+        <StepOpme guiaProcedures={guiaProcedures} onGuiaProceduresChange={onGuiaProceduresChange} />
+      );
     case 'exames':
-      return <StepExams form={form} setForm={setForm} />;
+      return (
+        <StepExams
+          form={form}
+          setForm={setForm}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     case 'homecare':
-      return <StepHomeCare form={form} set={set} setSelect={setSelect} />;
+      return (
+        <StepHomeCare
+          form={form}
+          set={set}
+          setSelect={setSelect}
+          guiaProcedures={guiaProcedures}
+          onGuiaProceduresChange={onGuiaProceduresChange}
+        />
+      );
     default:
       return (
         <Box sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
