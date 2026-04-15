@@ -2,9 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import CheckIcon from '@mui/icons-material/Check';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -23,8 +21,6 @@ import Typography from '@mui/material/Typography';
 
 import { type Notification } from '@/types/notificacao';
 
-import { REGIONAL_OPTIONS, type Regional } from '../constants/navigation';
-
 interface TopbarProps {
   // Notifications
   notifications: Notification[];
@@ -33,12 +29,6 @@ interface TopbarProps {
   unreadCount: number;
   onToggleNotifications: (e: React.MouseEvent<HTMLElement>) => void;
   onCloseNotifications: () => void;
-  // Regional
-  regional: Regional;
-  regionalAnchor: HTMLElement | null;
-  onOpenRegionalMenu: (e: React.MouseEvent<HTMLElement>) => void;
-  onCloseRegionalMenu: () => void;
-  onSelectRegional: (r: Regional) => void;
   // User menu
   userMenuAnchor: HTMLElement | null;
   onOpenUserMenu: (e: React.MouseEvent<HTMLElement>) => void;
@@ -52,11 +42,6 @@ export default function Topbar({
   unreadCount,
   onToggleNotifications,
   onCloseNotifications,
-  regional,
-  regionalAnchor,
-  onOpenRegionalMenu,
-  onCloseRegionalMenu,
-  onSelectRegional,
   userMenuAnchor,
   onOpenUserMenu,
   onCloseUserMenu,
@@ -221,82 +206,6 @@ export default function Topbar({
             </Box>
           </Popover>
         </Box>
-
-        {/* Regional selector */}
-        <Box
-          onClick={onOpenRegionalMenu}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            px: 1.5,
-            py: 0.5,
-            mr: 2,
-            border: '1px solid rgba(144,43,41,0.25)',
-            borderRadius: 1.5,
-            backgroundColor: 'rgba(144,43,41,0.04)',
-            cursor: 'pointer',
-            '&:hover': { backgroundColor: 'rgba(144,43,41,0.08)' },
-            transition: 'background-color 0.12s ease',
-          }}
-        >
-          <LocationOnIcon sx={{ fontSize: 14, color: 'primary.main' }} />
-          <Typography sx={{ fontSize: 12, color: '#5a3030', lineHeight: 1 }}>
-            {regional === 'Todas' ? (
-              <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                Todas as regionais
-              </Box>
-            ) : (
-              <>
-                <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                  Regional:
-                </Box>{' '}
-                <Box component="span" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  {regional}
-                </Box>
-              </>
-            )}
-          </Typography>
-          <KeyboardArrowDownIcon sx={{ fontSize: 14, color: 'primary.main', ml: 0.25 }} />
-        </Box>
-        <Menu
-          anchorEl={regionalAnchor}
-          open={Boolean(regionalAnchor)}
-          onClose={onCloseRegionalMenu}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          slotProps={{
-            paper: {
-              sx: {
-                mt: 0.5,
-                minWidth: 140,
-                borderRadius: 1.5,
-                boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
-              },
-            },
-          }}
-        >
-          {REGIONAL_OPTIONS.map((r) => (
-            <MenuItem
-              key={r}
-              selected={regional === r}
-              onClick={() => {
-                onSelectRegional(r);
-              }}
-              sx={{
-                fontSize: 13,
-                fontWeight: regional === r ? 700 : 400,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 2,
-              }}
-            >
-              {r === 'Todas' ? 'Todas as regionais' : r}
-              {regional === r && <CheckIcon sx={{ fontSize: 14, color: 'primary.main' }} />}
-            </MenuItem>
-          ))}
-        </Menu>
 
         {/* User section */}
         <Button

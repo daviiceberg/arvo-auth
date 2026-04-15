@@ -11,7 +11,6 @@ import {
   CATEGORY_ORDER,
   NAV_ITEMS,
   type NavItem,
-  type Regional,
 } from '../constants/navigation';
 
 export interface CategoryEntry {
@@ -45,9 +44,6 @@ export default function useAppShell(requests: Request[], notifications: Notifica
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
-  const [regional, setRegional] = useState<Regional>('Todas');
-  const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null);
-  const [regionalSnackbar, setRegionalSnackbar] = useState('');
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -82,27 +78,6 @@ export default function useAppShell(requests: Request[], notifications: Notifica
     },
     closeNotifications: () => {
       setNotifAnchor(null);
-    },
-
-    // Regional
-    regional,
-    regionalAnchor,
-    regionalSnackbar,
-    openRegionalMenu: (e: React.MouseEvent<HTMLElement>) => {
-      setRegionalAnchor(e.currentTarget);
-    },
-    closeRegionalMenu: () => {
-      setRegionalAnchor(null);
-    },
-    selectRegional: (r: Regional) => {
-      setRegionalAnchor(null);
-      if (r !== regional) {
-        setRegional(r);
-        setRegionalSnackbar(`Regional changed to ${r}. Reloading data...`);
-      }
-    },
-    closeRegionalSnackbar: () => {
-      setRegionalSnackbar('');
     },
 
     // Help drawer
