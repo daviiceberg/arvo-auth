@@ -31,12 +31,7 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
       startDate: entry.decisionDate,
       endDate: entry.decisionDate,
       cid: entry.cid,
-      auditLevel:
-        entry.category === 'Internação' ||
-        entry.category === 'Urgência/Emergência' ||
-        entry.category === 'Oncologia'
-          ? ('HOSPITALAR' as const)
-          : ('AMBULATORIAL' as const),
+      auditLevel: 'AMBULATORIAL' as const,
       codeType: 'TUSS' as const,
     },
   ];

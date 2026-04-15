@@ -19,71 +19,36 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
 });
 
 export const initialForm: FormData = {
-  tipoSolicitacao: '',
-  nomeBeneficiario: 'Maria Silva Santos',
-  carteirinha: '1234567890123456',
-  dataNascimento: '1956-03-15',
+  tipoSolicitacao: 'terapias',
+  nomeBeneficiario: 'Lucas Martins de Almeida',
+  carteirinha: '9876543210987654',
+  dataNascimento: '2018-07-22',
   cpf: '',
-  operadora: 'Bradesco Saúde',
+  operadora: 'Athena Saúde',
   validadeCarteirinha: '',
-  cidPrincipal: 'M17.1 - Gonartrose primária bilateral',
+  cidPrincipal: 'F84.0 - Autismo infantil',
   cidsSecundarios: [],
   caraterAtendimento: 'Eletivo',
-  medicoSolicitante: 'Dr. João Oliveira',
-  crm: 'CRM/SP 123456',
+  medicoSolicitante: 'Dra. Helena Rocha',
+  crm: 'CRM/SP 98765',
   indicacaoClinica:
-    'Paciente com gonartrose primária bilateral com indicação funcional e dor intensa ao deambular e repouso, sem resposta ao tratamento conservador.',
+    'Paciente pediátrico com diagnóstico de TEA (F84.0) em acompanhamento multidisciplinar. Indicada continuidade do plano terapêutico com Fonoaudiologia, Terapia Ocupacional e Psicologia/ABA.',
   prestador: '',
   cnpjPrestador: '',
-  tipoAcomodacao: 'Apartamento',
-  qtdDiarias: '3',
-  dataInternacao: '',
-  regimeInternacao: 'Hospitalar',
-  classificacaoRisco: 'amarelo',
-  tipoAtendimento: 'Urgência',
-  queixaPrincipal: '',
-  estadiamentoTNM: '',
-  numeroCiclo: '',
-  protocoloQuimio: '',
-  tipoTratamento: 'Quimioterapia',
-  totalCiclos: '',
   etapaAutorizacao: '',
-  tipoTerapia: 'Fisioterapia',
-  codigoTuss: TUSS_POR_TERAPIA.Fisioterapia ?? '',
+  tipoTerapia: 'Fonoaudiologia',
+  codigoTuss: TUSS_POR_TERAPIA.Fonoaudiologia ?? '',
   numSessoes: '',
   terapiaDataInicio: '',
   terapiaDataTermino: '',
   frequenciaSemanal: '3x por semana',
   duracaoSessao: '50',
-  materiais: [{ codigo: '', descricao: '', fabricante: '', qtd: '1', valor: '' }],
-  registroAnvisa: '',
-  fabricanteMaterial: '',
-  justificativaTecnica: '',
-  cotacoes: [
-    { fornecedor: '', valor: '' },
-    { fornecedor: '', valor: '' },
-    { fornecedor: '', valor: '' },
-  ],
-  exames: [{ codigoTUSS: '', descricao: '', tipo: '', qtd: '1' }],
-  procedimentos: [{ codigoTUSS: '30719138', descricao: 'Artroplastia total do joelho', qtd: '1' }],
-  opme: [
-    {
-      codigoTUSS: '93000007',
-      descricao: 'Prótese total joelho, não cimentada',
-      fabricante: '',
-      qtd: '1',
-      valorUnit: '',
-    },
-  ],
-  modalidadeHomeCare: 'AD2',
-  periodoSolicitado: '',
-  cuidadosNecessarios: '',
 };
 
 export function useNewRequestForm(moduloParam: string) {
   const [form, setForm] = useState({
     ...initialForm,
-    tipoSolicitacao: (moduloParam || '') as FormData['tipoSolicitacao'],
+    tipoSolicitacao: (moduloParam || 'terapias') as FormData['tipoSolicitacao'],
   });
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
@@ -141,7 +106,7 @@ export function useNewRequestForm(moduloParam: string) {
   const resetForm = (moduloParamValue: string) => {
     setForm({
       ...initialForm,
-      tipoSolicitacao: (moduloParamValue || '') as FormData['tipoSolicitacao'],
+      tipoSolicitacao: (moduloParamValue || 'terapias') as FormData['tipoSolicitacao'],
     });
     setTerapiaProcedimentos([newTerapiaProc()]);
     setGuiaProcedures([]);

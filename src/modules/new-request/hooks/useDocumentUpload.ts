@@ -3,7 +3,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 
 import {
-  DOCS_OBRIGATORIOS,
   DOCS_TERAPIAS_PRIMEIRA,
   DOCS_TERAPIAS_CONTINUIDADE,
 } from '../constants/mandatory-documents';
@@ -26,11 +25,7 @@ function obrigReducer(state: DocUpload[], action: ObrigAction): DocUpload[] {
 function buildRequiredDocs(activeModulo: ModuloType | '', etapaAutorizacao: string): DocUpload[] {
   if (!activeModulo) return [];
   const reqs =
-    activeModulo === 'terapias'
-      ? etapaAutorizacao === 'continuidade'
-        ? DOCS_TERAPIAS_CONTINUIDADE
-        : DOCS_TERAPIAS_PRIMEIRA
-      : DOCS_OBRIGATORIOS[activeModulo];
+    etapaAutorizacao === 'continuidade' ? DOCS_TERAPIAS_CONTINUIDADE : DOCS_TERAPIAS_PRIMEIRA;
   return reqs.map((r, i) => ({
     id: `OBR-${String(i)}`,
     nome: r.nome,

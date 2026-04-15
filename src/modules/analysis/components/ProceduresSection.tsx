@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -56,42 +54,11 @@ const TH_SX = {
 
 // ── Sub-components ──────────────────────────────────────────────────
 
-interface OpmeFieldsProps {
-  manufacturer: string | undefined;
-  unitValue: number | undefined;
-}
-
-function OpmeFields({ manufacturer, unitValue }: OpmeFieldsProps) {
-  if (!manufacturer && !unitValue) return null;
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
-      {manufacturer ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <BusinessOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
-            {manufacturer}
-          </Typography>
-        </Box>
-      ) : null}
-      {unitValue ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <MonetizationOnOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.primary" sx={{ fontSize: 12, fontWeight: 600 }}>
-            {unitValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </Typography>
-        </Box>
-      ) : null}
-    </Box>
-  );
-}
-
 type AdjustClickHandler = (proc: {
   codigo: string;
   descricao: string;
   qty: number;
   prestador: string;
-  fabricante?: string;
-  valorUnitario?: number;
 }) => void;
 
 interface ProcedureActionCellProps {
@@ -142,8 +109,6 @@ function ProcedureActionCell({
                 descricao: proc.description,
                 qty: proc.qty,
                 prestador: hospital,
-                fabricante: proc.manufacturer,
-                valorUnitario: proc.unitValue,
               });
             }}
             sx={{
@@ -203,29 +168,12 @@ function PackageTussRow({ code, description }: { code: string; description: stri
 
 interface ProcedureCodeCellProps {
   code: string;
-  hasManufacturer: boolean;
   codeAdjustment: Adjustment | undefined;
 }
 
-function ProcedureCodeCell({ code, hasManufacturer, codeAdjustment }: ProcedureCodeCellProps) {
+function ProcedureCodeCell({ code, codeAdjustment }: ProcedureCodeCellProps) {
   return (
     <TableCell sx={{ fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
-      {hasManufacturer ? (
-        <Chip
-          label="OPME"
-          size="small"
-          sx={{
-            fontSize: 10,
-            height: 18,
-            backgroundColor: 'rgba(144,43,41,0.1)',
-            color: 'primary.main',
-            fontWeight: 700,
-            mb: 0.5,
-            display: 'block',
-            width: 'fit-content',
-          }}
-        />
-      ) : null}
       {codeAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>
@@ -244,17 +192,10 @@ function ProcedureCodeCell({ code, hasManufacturer, codeAdjustment }: ProcedureC
 
 interface ProcedureDescCellProps {
   description: string;
-  manufacturer: string | undefined;
-  unitValue: number | undefined;
   codeAdjustment: Adjustment | undefined;
 }
 
-function ProcedureDescCell({
-  description,
-  manufacturer,
-  unitValue,
-  codeAdjustment,
-}: ProcedureDescCellProps) {
+function ProcedureDescCell({ description, codeAdjustment }: ProcedureDescCellProps) {
   return (
     <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
       {codeAdjustment ? (
@@ -269,7 +210,6 @@ function ProcedureDescCell({
       ) : (
         description
       )}
-      <OpmeFields manufacturer={manufacturer} unitValue={unitValue} />
     </TableCell>
   );
 }
@@ -465,17 +405,8 @@ function ProcedureRow({
             ) : null}
           </Box>
         </TableCell>
-        <ProcedureCodeCell
-          code={proc.code}
-          hasManufacturer={proc.manufacturer !== undefined}
-          codeAdjustment={codeAdjustment}
-        />
-        <ProcedureDescCell
-          description={proc.description}
-          manufacturer={proc.manufacturer}
-          unitValue={proc.unitValue}
-          codeAdjustment={codeAdjustment}
-        />
+        <ProcedureCodeCell code={proc.code} codeAdjustment={codeAdjustment} />
+        <ProcedureDescCell description={proc.description} codeAdjustment={codeAdjustment} />
         <ProcedureQtyCell
           qty={proc.qty}
           authorizedQty={proc.authorizedQty}

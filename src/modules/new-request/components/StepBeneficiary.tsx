@@ -6,15 +6,11 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { moduloLabels } from '../constants/module-labels';
-import { type FormData, type ModuloType } from '../types';
+import { type FormData } from '../types';
 
 // ── Field helpers ─────────────────────────────────────────────────────
 function FieldLabel({
@@ -51,10 +47,9 @@ interface StepBeneficiaryProps {
   set: (
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  setSelect: (field: keyof FormData) => (value: string) => void;
 }
 
-export function StepBeneficiary({ form, set, setSelect }: StepBeneficiaryProps) {
+export function StepBeneficiary({ form, set }: StepBeneficiaryProps) {
   return (
     <Box>
       <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
@@ -64,31 +59,6 @@ export function StepBeneficiary({ form, set, setSelect }: StepBeneficiaryProps) 
         Dados do Beneficiário
       </Typography>
       <Grid container spacing={2}>
-        {/* Tipo de Solicitação — always shown */}
-        <Grid size={{ xs: 12 }}>
-          <FieldLabel>
-            Tipo de Solicitação <span style={{ color: '#C62828' }}>*</span>
-          </FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select
-              value={form.tipoSolicitacao}
-              displayEmpty
-              onChange={(e) => {
-                setSelect('tipoSolicitacao')(e.target.value);
-              }}
-              sx={{ backgroundColor: form.tipoSolicitacao ? '#f0fdf4' : '#fff' }}
-            >
-              <MenuItem value="" disabled>
-                <em>Selecione o tipo de solicitação...</em>
-              </MenuItem>
-              {(Object.entries(moduloLabels) as [ModuloType, string][]).map(([k, v]) => (
-                <MenuItem key={k} value={k}>
-                  {v}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel validated>Nome Completo</FieldLabel>
           <TextField

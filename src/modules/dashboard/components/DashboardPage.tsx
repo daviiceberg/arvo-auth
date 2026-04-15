@@ -14,8 +14,6 @@ import Typography from '@mui/material/Typography';
 
 import useDashboardData from '../hooks/useDashboardData';
 
-import CategoryBarChart from './CategoryBarChart';
-import CategorySummary from './CategorySummary';
 import DashboardAlerts from './DashboardAlerts';
 import DashboardKpiRow from './DashboardKpiRow';
 import DonutChart from './DonutChart';
@@ -26,8 +24,7 @@ import TrendChart from './TrendChart';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { loading, metrics, pedidos, pedidosEmProcessamento, barData, maxBar, urgencySegments } =
-    useDashboardData();
+  const { loading, metrics, pedidos, pedidosEmProcessamento, urgencySegments } = useDashboardData();
 
   return (
     <Box sx={{ p: 3 }}>
@@ -45,39 +42,10 @@ export default function DashboardPage() {
       {/* Processing Queue */}
       {!loading && <ProcessingQueueTable />}
 
-      {/* Row 2 — Charts: Bar + Donut + AI Suggestion */}
+      {/* Row 2 — Charts: Donut + AI Suggestion */}
       <Box sx={{ display: 'flex', gap: 2, mb: 2.5 }}>
-        {/* Category Distribution — flex 5 */}
+        {/* General Status — flex 5 */}
         <Card sx={{ flex: 5, display: 'flex', flexDirection: 'column' }}>
-          <CardContent
-            sx={{
-              p: 2,
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              '&:last-child': { pb: 2 },
-            }}
-          >
-            <Typography
-              variant="body2"
-              sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}
-            >
-              Distribuição por Categoria
-            </Typography>
-            {loading ? (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <Skeleton key={i} variant="rectangular" height={18} sx={{ borderRadius: 1 }} />
-                ))}
-              </Box>
-            ) : (
-              <CategoryBarChart barData={barData} maxBar={maxBar} />
-            )}
-          </CardContent>
-        </Card>
-
-        {/* General Status — flex 3 */}
-        <Card sx={{ flex: 3, display: 'flex', flexDirection: 'column' }}>
           <CardContent
             sx={{
               p: 2,
@@ -446,47 +414,31 @@ export default function DashboardPage() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 5 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1 }}>
-            {/* Top Denial Reasons */}
-            <Card sx={{ flex: 2, display: 'flex', flexDirection: 'column' }}>
-              <CardContent
+          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <CardContent
+              sx={{
+                p: 3,
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                '&:last-child': { pb: 3 },
+              }}
+            >
+              <Typography
+                variant="body2"
                 sx={{
-                  p: 3,
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:last-child': { pb: 3 },
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'text.secondary',
+                  mb: 2,
+                  flexShrink: 0,
                 }}
               >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: 'text.secondary',
-                    mb: 2,
-                    flexShrink: 0,
-                  }}
-                >
-                  Principais Motivos de Negativa
-                </Typography>
-                <TopDenialReasons reasons={metrics.topMotivosNegativa} loading={loading} />
-              </CardContent>
-            </Card>
-
-            {/* Category Summary */}
-            <Card>
-              <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-                <Typography
-                  variant="body2"
-                  sx={{ fontSize: 13, fontWeight: 600, color: 'text.secondary', mb: 1.5 }}
-                >
-                  Por Categoria
-                </Typography>
-                <CategorySummary categories={metrics.porCategoria} loading={loading} />
-              </CardContent>
-            </Card>
-          </Box>
+                Principais Motivos de Negativa
+              </Typography>
+              <TopDenialReasons reasons={metrics.topMotivosNegativa} loading={loading} />
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>

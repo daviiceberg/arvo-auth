@@ -1,5 +1,4 @@
 export { default as StatusChip } from './StatusChip';
-export { default as CategoryChip } from './CategoryChip';
 export { default as SLAChip } from './SLAChip';
 export { default as IASuggestionChip } from './IASuggestionChip';
 export { default as GuideTypeChip } from './GuideTypeChip';

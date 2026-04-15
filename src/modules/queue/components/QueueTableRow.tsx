@@ -12,7 +12,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import {
-  CategoryChip,
   GuideTypeChip,
   IASuggestionChip,
   OriginChip,
@@ -162,17 +161,11 @@ function ActionCell({ request, onRowClick }: ActionCellProps) {
 // ── Main component ───────────────────────────────────────────────────
 interface QueueTableRowProps {
   request: Request;
-  categoryFilter: string;
   lastViewedId: string | null;
   onRowClick: (requestId: string) => void;
 }
 
-export default function QueueTableRow({
-  request,
-  categoryFilter,
-  lastViewedId,
-  onRowClick,
-}: QueueTableRowProps) {
+export default function QueueTableRow({ request, lastViewedId, onRowClick }: QueueTableRowProps) {
   const requestType = REQUEST_TYPE_MAP[request.id] ?? 'primeira';
 
   return (
@@ -222,11 +215,6 @@ export default function QueueTableRow({
           {request.provider.doctor}
         </Typography>
       </TableCell>
-      {categoryFilter === 'Todas' && (
-        <TableCell sx={{ px: 1.5 }}>
-          <CategoryChip category={request.category} />
-        </TableCell>
-      )}
       <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
         <ProceduresCell procedures={request.procedures} />
       </TableCell>

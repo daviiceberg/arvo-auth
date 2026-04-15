@@ -1,6 +1,5 @@
 export {
   StatusChip,
-  CategoryChip,
   SLAChip,
   IASuggestionChip,
   GuideTypeChip,

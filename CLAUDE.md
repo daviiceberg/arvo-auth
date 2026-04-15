@@ -133,7 +133,7 @@ AnalysisPage (orchestrator)
 ├── PendencyBanner / AlertsBanner / InjunctionBanner / SimultaneousGuidesAlert
 ├── BeneficiarySection
 ├── ProceduresSection
-│   └── ProcedureRow → ProcedureActionCell, OpmeFields
+│   └── ProcedureRow → ProcedureActionCell
 ├── RegisteredAdjustmentsSection
 ├── ObservationsSection
 ├── ConsolidatedHistorySection
@@ -145,7 +145,7 @@ AnalysisPage (orchestrator)
 │   └── SuggestionSection, ChecklistSection, SpecialAlertsSection
 │   └── AnalystDecisionSection → ProcedureDecisionCard, DecisionButtons
 ├── AdjustmentDrawer
-│   └── AdjustmentFormBody → AdjustmentFieldQuantity/Provider/Code/Manufacturer/Value
+│   └── AdjustmentFormBody → AdjustmentFieldQuantity/Provider/Code
 └── Dialogs: Approval, Denial, Pendency, MedicalBoard, Divergence, PartialApproval, ShortcutsHelp
 ```
 
@@ -186,7 +186,7 @@ NewRequestPage (orchestrator, step-based)
 ├── StepUpload (step 0)
 ├── StepBeneficiary (step 1)
 ├── StepClinical (step 2)
-├── StepDynamic (step 3) → StepHospitalization/Urgency/Oncology/Therapies/HomeCare/Exams/Surgeries/Opme
+├── StepDynamic (step 3) → StepTherapies (única modalidade suportada no MVP)
 ├── StepDocuments (step 4)
 ├── StepReview (step 5) → DocumentsReviewSection
 ├── TissDocPreview (sidebar)
@@ -197,7 +197,7 @@ NewRequestPage (orchestrator, step-based)
 
 ```
 src/shared/components/
-├── chips/ → CategoryChip, DecisionActionChip, GuideTypeChip, IASuggestionChip
+├── chips/ → DecisionActionChip, GuideTypeChip, IASuggestionChip
 │           OriginChip, PrioDot, RequestTypeChip, SLAChip, StatusChip
 └── cards/ → KpiCard, MetricCard
 ```

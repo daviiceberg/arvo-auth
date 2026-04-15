@@ -57,11 +57,6 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handleCategoryFilterChange = (value: string) => {
-    filters.setCategoryFilter(value);
-    filters.setPage(0);
-  };
-
   const handleSlaFilterChange = (value: string) => {
     filters.setSlaFilter(value);
     filters.setPage(0);
@@ -84,7 +79,7 @@ export default function QueuePage() {
         sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
       >
         <Typography variant="h4" fontWeight={700}>
-          {filters.categoryFilter === 'Todas' ? 'Fila Operacional' : filters.categoryFilter}
+          Fila Operacional
         </Typography>
         <Button
           variant="contained"
@@ -99,17 +94,15 @@ export default function QueuePage() {
         </Button>
       </Box>
 
-      {/* Metric Cards Row — only on general queue */}
-      {filters.categoryFilter === 'Todas' && (
-        <QueueMetricsRow
-          totalCount={pedidos.length}
-          urgEmergCount={urgEmergCount}
-          returnsCount={returnsCount}
-          stalled12h={stalled12h}
-          loading={loading}
-          onTabChange={handleTabChange}
-        />
-      )}
+      {/* Metric Cards Row */}
+      <QueueMetricsRow
+        totalCount={pedidos.length}
+        urgEmergCount={urgEmergCount}
+        returnsCount={returnsCount}
+        stalled12h={stalled12h}
+        loading={loading}
+        onTabChange={handleTabChange}
+      />
 
       {/* Table Card */}
       <Card>
@@ -130,13 +123,11 @@ export default function QueuePage() {
         {/* Filter bar */}
         <QueueFilterBar
           search={filters.search}
-          categoryFilter={filters.categoryFilter}
           slaFilter={filters.slaFilter}
           providerFilter={filters.providerFilter}
           iaSuggestionFilter={filters.iaSuggestionFilter}
           hasFilters={filters.hasFilters}
           onSearchChange={handleSearchChange}
-          onCategoryFilterChange={handleCategoryFilterChange}
           onSlaFilterChange={handleSlaFilterChange}
           onProviderFilterChange={handleProviderFilterChange}
           onIaSuggestionFilterChange={handleIaSuggestionFilterChange}
@@ -146,7 +137,6 @@ export default function QueuePage() {
         {/* Table */}
         <QueueTable
           items={pagedItems}
-          categoryFilter={filters.categoryFilter}
           loading={loading}
           lastViewedId={lastViewedId}
           hasFilters={filters.hasFilters}

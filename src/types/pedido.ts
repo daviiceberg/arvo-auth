@@ -30,16 +30,7 @@ export type SLAStatus = 'ok' | 'warning' | 'violated';
 
 export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica';
 
-export type Category =
-  | 'Internação'
-  | 'Urgência/Emergência'
-  | 'Oncologia'
-  | 'Terapias Especiais'
-  | 'OPME'
-  | 'Exames Alta Complexidade'
-  | 'Cirurgias Eletivas'
-  | 'Home Care'
-  | 'SADT';
+export type Category = 'Terapias Especiais';
 
 export interface Procedure {
   code: string;

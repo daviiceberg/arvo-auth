@@ -74,70 +74,69 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
         </Box>
 
         {/* Terapias Especiais -- missing mandatory doc warning */}
-        {request.category === 'Terapias Especiais' &&
-          (() => {
-            const isContinuidade = request.authorizationStage === 'continuidade';
-            const mandatoryDocName = isContinuidade
-              ? 'Relatório de Evolução Terapêutica'
-              : 'Plano Terapêutico';
-            const mandatoryDocKeywords = isContinuidade
-              ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
-              : ['plano terapêutico', 'plano terapeutico', 'plano_terapeutico'];
-            const hasDoc = doc.allDocs.some((d) =>
-              mandatoryDocKeywords.some(
-                (kw) => d.nome.toLowerCase().includes(kw) || d.tipo.toLowerCase().includes(kw),
-              ),
-            );
-            if (hasDoc) return null;
-            return (
-              <Box
-                sx={{
-                  border: '1px solid rgba(245,158,11,0.4)',
-                  borderRadius: 2,
-                  backgroundColor: 'rgba(255,251,235,0.7)',
-                  p: 2,
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 1.5,
-                  mb: 1.5,
-                }}
-              >
-                <WarningAmberIcon
-                  sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0, mt: 0.1 }}
-                />
-                <Box sx={{ flex: 1 }}>
-                  <Typography
-                    variant="body2"
-                    fontWeight={700}
-                    sx={{ fontSize: 13, color: 'warning.main' }}
-                  >
-                    Documento obrigatório ausente: {mandatoryDocName}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
-                  >
-                    {isContinuidade
-                      ? 'Solicitações de continuidade exigem relatório de evolução terapêutica emitido pelo profissional executante.'
-                      : 'Primeiras solicitações de terapia exigem plano terapêutico detalhado emitido pelo profissional responsável.'}
-                  </Typography>
-                </Box>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-                  onClick={() => {
-                    doc.setShowSolicitarModal(true);
-                  }}
-                  sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
+        {(() => {
+          const isContinuidade = request.authorizationStage === 'continuidade';
+          const mandatoryDocName = isContinuidade
+            ? 'Relatório de Evolução Terapêutica'
+            : 'Plano Terapêutico';
+          const mandatoryDocKeywords = isContinuidade
+            ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
+            : ['plano terapêutico', 'plano terapeutico', 'plano_terapeutico'];
+          const hasDoc = doc.allDocs.some((d) =>
+            mandatoryDocKeywords.some(
+              (kw) => d.nome.toLowerCase().includes(kw) || d.tipo.toLowerCase().includes(kw),
+            ),
+          );
+          if (hasDoc) return null;
+          return (
+            <Box
+              sx={{
+                border: '1px solid rgba(245,158,11,0.4)',
+                borderRadius: 2,
+                backgroundColor: 'rgba(255,251,235,0.7)',
+                p: 2,
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 1.5,
+                mb: 1.5,
+              }}
+            >
+              <WarningAmberIcon
+                sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0, mt: 0.1 }}
+              />
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  sx={{ fontSize: 13, color: 'warning.main' }}
                 >
-                  Solicitar complementar
-                </Button>
+                  Documento obrigatório ausente: {mandatoryDocName}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
+                >
+                  {isContinuidade
+                    ? 'Solicitações de continuidade exigem relatório de evolução terapêutica emitido pelo profissional executante.'
+                    : 'Primeiras solicitações de terapia exigem plano terapêutico detalhado emitido pelo profissional responsável.'}
+                </Typography>
               </Box>
-            );
-          })()}
+              <Button
+                size="small"
+                variant="outlined"
+                color="primary"
+                startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
+                onClick={() => {
+                  doc.setShowSolicitarModal(true);
+                }}
+                sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
+              >
+                Solicitar complementar
+              </Button>
+            </Box>
+          );
+        })()}
 
         {/* Document list */}
         <DocumentList

@@ -5,21 +5,7 @@ import { useState, useEffect } from 'react';
 import { dashboardMetrics, pedidos, pedidosEmProcessamento } from '@/data/pedidos';
 import { classifyUrgency } from '@/shared/utils/urgencia';
 
-import { type UrgencySegment, type BarDataItem } from '../types';
-
-// -- Pre-computed bar chart data ------------------------------------------------
-const barData: BarDataItem[] = dashboardMetrics.porCategoria.map((c) => ({
-  label: c.categoria
-    .replace('Urgência/Emergência', 'U/E')
-    .replace('Exames Alta Complexidade', 'Exames')
-    .replace('Cirurgias Eletivas', 'Cirurgias')
-    .replace('Terapias Especiais', 'Terapias'),
-  total: c.total,
-  color: c.color,
-  categoria: c.categoria,
-}));
-
-const maxBar = Math.max(...barData.map((d) => d.total), 1);
+import { type UrgencySegment } from '../types';
 
 // -- Pre-computed urgency segments ----------------------------------------------
 const urgencyCounts = pedidos.reduce<Record<string, number>>((acc, p) => {
@@ -76,8 +62,6 @@ export default function useDashboardData() {
     metrics: dashboardMetrics,
     pedidos,
     pedidosEmProcessamento,
-    barData,
-    maxBar,
     urgencySegments,
   } as const;
 }

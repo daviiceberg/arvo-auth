@@ -117,7 +117,6 @@ export default function ProcessingQueueTable() {
                 <TableCell sx={{ ...thSx, width: 150, minWidth: 150 }}>ID</TableCell>
                 <TableCell sx={thSx}>Beneficiário</TableCell>
                 <TableCell sx={{ ...thSx, width: 130 }}>Origem</TableCell>
-                <TableCell sx={{ ...thSx, width: 140 }}>Categoria</TableCell>
                 <TableCell sx={{ ...thSx, width: 110, minWidth: 110, whiteSpace: 'nowrap' }}>
                   Tempo em fila
                 </TableCell>
@@ -168,9 +167,6 @@ export default function ProcessingQueueTable() {
                       icon={originIconMap[p.origin] as React.ReactElement}
                       sx={{ height: 22, fontSize: 11 }}
                     />
-                  </TableCell>
-                  <TableCell sx={{ py: '4px', px: '12px' }}>
-                    <Chip label={p.category} size="small" sx={{ height: 22, fontSize: 11 }} />
                   </TableCell>
                   <TableCell sx={{ py: '4px', px: '12px', whiteSpace: 'nowrap', width: 110 }}>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>

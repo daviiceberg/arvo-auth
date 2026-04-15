@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { type Adjustment } from '@/types/pedido';
 
-import { ADJUSTMENT_REASONS, OPME_VALUE_REASONS } from '../constants/adjustment-reasons';
+import { ADJUSTMENT_REASONS } from '../constants/adjustment-reasons';
 import { USER_PROFILE } from '../types';
 
 // ---- Types ----
@@ -190,10 +190,7 @@ export function useAdjustmentForm({
       ]
     : fieldsBase;
 
-  const availableReasons =
-    form.field === 'valorUnitario'
-      ? [...ADJUSTMENT_REASONS, ...OPME_VALUE_REASONS]
-      : ADJUSTMENT_REASONS;
+  const availableReasons = ADJUSTMENT_REASONS;
 
   const qtyNum = parseInt(form.newQty, 10);
   const qtyStatus =

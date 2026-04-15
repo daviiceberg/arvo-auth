@@ -38,10 +38,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar
           navItems={shell.navItems}
-          categories={shell.categories}
-          categoriesOpen={shell.categoriesOpen}
           collapsed={shell.sidebarCollapsed}
-          onToggleCategories={shell.toggleCategories}
           onToggleCollapse={shell.toggleSidebar}
           onOpenHelp={shell.openHelpDrawer}
         />

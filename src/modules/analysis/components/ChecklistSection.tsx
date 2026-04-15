@@ -39,29 +39,6 @@ function buildContinuidadeItems(request: Request): ChecklistItem[] {
   ];
 }
 
-function buildOpmeItems(request: Request): ChecklistItem[] {
-  const opmeProcsWithValue = request.procedures.filter((p) => p.manufacturer !== undefined);
-  if (opmeProcsWithValue.length === 0) return [];
-
-  return opmeProcsWithValue.map((p) => {
-    if (!p.unitValue) {
-      return {
-        texto: 'Valor unitário não informado — obrigatório para OPME',
-        status: 'error' as const,
-      };
-    }
-    const hasValueAlert = request.iaChecklist.some(
-      (c) => c.status === 'error' && c.texto.toLowerCase().includes('valor'),
-    );
-    return hasValueAlert
-      ? {
-          texto: 'Valor unitário não verificado — conferir tabela de referência da operadora',
-          status: 'warning' as const,
-        }
-      : { texto: 'Valor unitário dentro da referência contratual', status: 'ok' as const };
-  });
-}
-
 const STATUS_ICON_MAP = {
   ok: (
     <CheckCircleOutlineIcon sx={{ fontSize: 15, color: 'success.main', flexShrink: 0, mt: 0.15 }} />
@@ -79,19 +56,11 @@ function getItemTextColor(status: ChecklistItem['status']): string {
 }
 
 export default function ChecklistSection({ request }: ChecklistSectionProps) {
-  const isTerapias = request.category === 'Terapias Especiais';
-  const isF84 = isTerapias && request.procedures.some((p) => p.cid.startsWith('F84'));
+  const isF84 = request.procedures.some((p) => p.cid.startsWith('F84'));
   const isContinuidade = request.authorizationStage === 'continuidade';
-  const isOpme = request.category === 'OPME';
 
-  const extraContinuidadeItems =
-    isTerapias && isContinuidade ? buildContinuidadeItems(request) : [];
-  const extraOpmeItems = isOpme ? buildOpmeItems(request) : [];
-  const allItems: ChecklistItem[] = [
-    ...request.iaChecklist,
-    ...extraContinuidadeItems,
-    ...extraOpmeItems,
-  ];
+  const extraContinuidadeItems = isContinuidade ? buildContinuidadeItems(request) : [];
+  const allItems: ChecklistItem[] = [...request.iaChecklist, ...extraContinuidadeItems];
 
   return (
     <Box>
@@ -108,7 +77,7 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
         }}
       >
         Checklist{' '}
-        {isTerapias && isContinuidade ? (
+        {isContinuidade ? (
           <Typography
             component="span"
             variant="caption"

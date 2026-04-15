@@ -18,16 +18,11 @@ Arvo builds **authorization infrastructure** for health insurance operators. The
 
 ## Event types govern everything
 
-Different request types have different forms, validations, intelligences, and flows:
+This MVP cobre **uma única categoria**:
 
-| Type                         | Complexity  | System behavior                                |
-| ---------------------------- | ----------- | ---------------------------------------------- |
-| SADT N1 (simple exams)       | Low         | End-to-end automation                          |
-| Special Therapies            | Medium-High | Automation + human-assisted analysis           |
-| Hospitalization              | High        | Automation + human-assisted analysis           |
-| OPME (prosthetics/materials) | High        | Automation + human-assisted analysis           |
-| Oncology                     | High        | Automation + human-assisted analysis           |
-| Urgency/Emergency            | Variable    | Specific regulatory flow (short ANS deadlines) |
+| Type              | Complexity  | System behavior                      |
+| ----------------- | ----------- | ------------------------------------ |
+| Special Therapies | Medium-High | Automation + human-assisted analysis |
 
 **Before building any feature, ask: "Which event types does this apply to?"**
 

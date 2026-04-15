@@ -7,7 +7,7 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip, DecisionActionChip } from '@/shared/components';
+import { DecisionActionChip } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type HistoryEntry, type IASuggestion } from '@/types/pedido';
 
@@ -107,9 +107,6 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         >
           …{entry.cardNumber.slice(-8)}
         </Typography>
-      </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
-        <CategoryChip category={entry.category} />
       </TableCell>
       <TableCell sx={{ maxWidth: 280, px: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>

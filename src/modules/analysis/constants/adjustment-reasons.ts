@@ -8,9 +8,3 @@ export const ADJUSTMENT_REASONS = [
   'Determinação de junta médica',
   'Outro (descrever na fundamentação)',
 ];
-
-export const OPME_VALUE_REASONS = [
-  'Valor acima da tabela de referência OPME',
-  'Divergência entre cotações',
-  'Material substituto aprovado',
-];

@@ -12,13 +12,11 @@ import TextField from '@mui/material/TextField';
 
 interface QueueFilterBarProps {
   search: string;
-  categoryFilter: string;
   slaFilter: string;
   providerFilter: string;
   iaSuggestionFilter: string;
   hasFilters: boolean;
   onSearchChange: (value: string) => void;
-  onCategoryFilterChange: (value: string) => void;
   onSlaFilterChange: (value: string) => void;
   onProviderFilterChange: (value: string) => void;
   onIaSuggestionFilterChange: (value: string) => void;
@@ -27,13 +25,11 @@ interface QueueFilterBarProps {
 
 export default function QueueFilterBar({
   search,
-  categoryFilter,
   slaFilter,
   providerFilter,
   iaSuggestionFilter,
   hasFilters,
   onSearchChange,
-  onCategoryFilterChange,
   onSlaFilterChange,
   onProviderFilterChange,
   onIaSuggestionFilterChange,
@@ -45,7 +41,7 @@ export default function QueueFilterBar({
         px: 2,
         py: 1.75,
         display: 'grid',
-        gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto',
+        gridTemplateColumns: '2fr 1fr 1fr 1fr auto',
         gap: 1.5,
         alignItems: 'center',
         borderBottom: '1px solid rgba(0,0,0,0.06)',
@@ -69,26 +65,6 @@ export default function QueueFilterBar({
           htmlInput: { 'aria-label': 'Buscar na fila' },
         }}
       />
-      <FormControl size="small" fullWidth>
-        <InputLabel>Categoria</InputLabel>
-        <Select
-          value={categoryFilter}
-          label="Categoria"
-          onChange={(e) => {
-            onCategoryFilterChange(e.target.value);
-          }}
-        >
-          <MenuItem value="Todas">Todas</MenuItem>
-          <MenuItem value="Internação">Internação</MenuItem>
-          <MenuItem value="Urgência/Emergência">Urgência/Emergência</MenuItem>
-          <MenuItem value="Oncologia">Oncologia</MenuItem>
-          <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
-          <MenuItem value="OPME">OPME</MenuItem>
-          <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
-          <MenuItem value="Cirurgias Eletivas">Cirurgias Eletivas</MenuItem>
-          <MenuItem value="Home Care">Home Care</MenuItem>
-        </Select>
-      </FormControl>
       <FormControl size="small" fullWidth>
         <InputLabel>Situação SLA</InputLabel>
         <Select
@@ -114,10 +90,10 @@ export default function QueueFilterBar({
           }}
         >
           <MenuItem value="Todos">Todos</MenuItem>
-          <MenuItem value="Hospital São Lucas">Hospital São Lucas</MenuItem>
           <MenuItem value="Clínica Integrar TEA">Clínica Integrar TEA</MenuItem>
-          <MenuItem value="Hospital Sírio-Libanês SP">Hospital Sírio-Libanês SP</MenuItem>
-          <MenuItem value="Lab Diagnostium">Lab Diagnostium</MenuItem>
+          <MenuItem value="Instituto ABA Brasil">Instituto ABA Brasil</MenuItem>
+          <MenuItem value="Centro de Psicologia Infantil">Centro de Psicologia Infantil</MenuItem>
+          <MenuItem value="AMA-SP">AMA-SP</MenuItem>
         </Select>
       </FormControl>
       <FormControl size="small" fullWidth>

@@ -19,7 +19,6 @@ import QueueTableRow from './QueueTableRow';
 
 interface QueueTableProps {
   items: Request[];
-  categoryFilter: string;
   loading: boolean;
   lastViewedId: string | null;
   hasFilters: boolean;
@@ -29,7 +28,6 @@ interface QueueTableProps {
 
 export default function QueueTable({
   items,
-  categoryFilter,
   loading,
   lastViewedId,
   hasFilters,
@@ -69,7 +67,6 @@ export default function QueueTable({
             <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
             <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
-            {categoryFilter === 'Todas' && <TableCell sx={{ minWidth: 155 }}>Categoria</TableCell>}
             <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
             <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
             <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
@@ -80,7 +77,7 @@ export default function QueueTable({
         <TableBody>
           {items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={11} sx={{ py: 6, border: 0 }}>
+              <TableCell colSpan={10} sx={{ py: 6, border: 0 }}>
                 <Box
                   sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}
                 >
@@ -129,7 +126,6 @@ export default function QueueTable({
               <QueueTableRow
                 key={item.id}
                 request={item}
-                categoryFilter={categoryFilter}
                 lastViewedId={lastViewedId}
                 onRowClick={onRowClick}
               />

@@ -79,7 +79,7 @@ function StepIcon({
 // ── Inner component (uses useSearchParams) ────────────────────────────
 function NewRequestInner() {
   const searchParams = useSearchParams();
-  const moduloParam = (searchParams.get('modulo') ?? '') as ModuloType | '';
+  const moduloParam = (searchParams.get('modulo') ?? 'terapias') as ModuloType;
 
   const {
     form,
@@ -142,7 +142,7 @@ function NewRequestInner() {
   };
 
   const handleSkipUpload = () => {
-    setForm({ ...initialForm, tipoSolicitacao: '' });
+    setForm({ ...initialForm, tipoSolicitacao: 'terapias' });
     setCurrentStep(1);
   };
 
@@ -167,7 +167,7 @@ function NewRequestInner() {
         onSkip={handleSkipUpload}
       />
     ),
-    1: <StepBeneficiary form={form} set={set} setSelect={setSelect} />,
+    1: <StepBeneficiary form={form} set={set} />,
     2: (
       <StepClinical
         form={form}
@@ -182,8 +182,6 @@ function NewRequestInner() {
     3: (
       <StepDynamic
         form={form}
-        setForm={setForm}
-        set={set}
         setSelect={setSelect}
         terapiaProcedimentos={terapiaProcedimentos}
         handleAddTerapiaProc={handleAddTerapiaProc}

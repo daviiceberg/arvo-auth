@@ -28,10 +28,6 @@ function matchesSearch(request: Request, search: string): boolean {
   );
 }
 
-function matchesCategory(request: Request, categoryFilter: string): boolean {
-  return categoryFilter === 'Todas' || request.category === categoryFilter;
-}
-
 function matchesSla(request: Request, slaFilter: string): boolean {
   return (
     slaFilter === 'Todas' ||
@@ -80,7 +76,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     tabValue,
     returnSubFilter,
     search,
-    categoryFilter,
     slaFilter,
     providerFilter,
     iaSuggestionFilter,
@@ -93,8 +88,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const filteredByTab = useMemo(
     () =>
       pedidos.filter((p) => {
-        if (tabValue === 1)
-          return p.category === 'Urgência/Emergência' || p.guideType === 'Emergência';
+        if (tabValue === 1) return p.guideType === 'Urgente' || p.guideType === 'Emergência';
         if (tabValue === 2) {
           if (p.status !== 'Devolutiva') return false;
           if (returnSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO';
@@ -112,7 +106,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
       filteredByTab.filter(
         (p) =>
           matchesSearch(p, search) &&
-          matchesCategory(p, categoryFilter) &&
           matchesSla(p, slaFilter) &&
           matchesProvider(p, providerFilter) &&
           matchesIaSuggestion(p, iaSuggestionFilter) &&
@@ -122,7 +115,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     [
       filteredByTab,
       search,
-      categoryFilter,
       slaFilter,
       providerFilter,
       iaSuggestionFilter,
@@ -137,9 +129,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   );
 
   const urgEmergCount = useMemo(
-    () =>
-      pedidos.filter((p) => p.category === 'Urgência/Emergência' || p.guideType === 'Emergência')
-        .length,
+    () => pedidos.filter((p) => p.guideType === 'Urgente' || p.guideType === 'Emergência').length,
     [pedidos],
   );
 

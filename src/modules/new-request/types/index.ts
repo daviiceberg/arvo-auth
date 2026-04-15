@@ -1,45 +1,9 @@
-export type ModuloType =
-  | 'internacao'
-  | 'urgencia'
-  | 'oncologia'
-  | 'terapias'
-  | 'opme'
-  | 'exames'
-  | 'cirurgias'
-  | 'homecare';
+export type ModuloType = 'terapias';
 
 export interface ProcedimentoItem {
   codigoTUSS: string;
   descricao: string;
   qtd: string;
-}
-
-export interface OpmeItem {
-  codigoTUSS: string;
-  descricao: string;
-  fabricante: string;
-  qtd: string;
-  valorUnit: string;
-}
-
-export interface ExameItem {
-  codigoTUSS: string;
-  descricao: string;
-  tipo: string;
-  qtd: string;
-}
-
-export interface MaterialItem {
-  codigo: string;
-  descricao: string;
-  fabricante: string;
-  qtd: string;
-  valor: string;
-}
-
-export interface Cotacao {
-  fornecedor: string;
-  valor: string;
 }
 
 export interface TerapiaProcedimento {
@@ -83,21 +47,6 @@ export interface FormData {
   indicacaoClinica: string;
   prestador: string;
   cnpjPrestador: string;
-  // Internacao
-  tipoAcomodacao: string;
-  qtdDiarias: string;
-  dataInternacao: string;
-  regimeInternacao: string;
-  // Urgencia
-  classificacaoRisco: string;
-  tipoAtendimento: string;
-  queixaPrincipal: string;
-  // Oncologia
-  estadiamentoTNM: string;
-  numeroCiclo: string;
-  protocoloQuimio: string;
-  tipoTratamento: string;
-  totalCiclos: string;
   // Terapias
   etapaAutorizacao: string;
   tipoTerapia: string;
@@ -107,19 +56,4 @@ export interface FormData {
   terapiaDataTermino: string;
   frequenciaSemanal: string;
   duracaoSessao: string;
-  // OPME
-  materiais: MaterialItem[];
-  registroAnvisa: string;
-  fabricanteMaterial: string;
-  justificativaTecnica: string;
-  cotacoes: Cotacao[];
-  // Exames
-  exames: ExameItem[];
-  // Cirurgias
-  procedimentos: ProcedimentoItem[];
-  opme: OpmeItem[];
-  // Home Care
-  modalidadeHomeCare: string;
-  periodoSolicitado: string;
-  cuidadosNecessarios: string;
 }
