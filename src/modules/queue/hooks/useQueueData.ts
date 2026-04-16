@@ -11,11 +11,6 @@ interface UseQueueDataParams {
   pedidos: Request[];
 }
 
-function isStalled12h(p: Request): boolean {
-  const t = parseInt(p.queueTime);
-  return !isNaN(t) && t > 12;
-}
-
 function matchesSearch(request: Request, search: string): boolean {
   const q = search.toLowerCase().trim();
   if (q === '') return true;
@@ -38,7 +33,7 @@ function matchesSla(request: Request, slaFilter: string): boolean {
 }
 
 function matchesProvider(request: Request, providerFilter: string): boolean {
-  return providerFilter === 'Todos' || request.provider.hospital === providerFilter;
+  return providerFilter === 'Todos' || request.executingProvider.name === providerFilter;
 }
 
 function matchesIaSuggestion(request: Request, iaSuggestionFilter: string): boolean {
@@ -50,14 +45,7 @@ function matchesAlert(request: Request, alertFilter: string): boolean {
 }
 
 function matchesStatus(request: Request, statusFilter: string): boolean {
-  return (
-    statusFilter === 'Todos' ||
-    (statusFilter === 'retorno_recebido' &&
-      (request.subStatus === 'PENDENTE_RETORNO_RECEBIDO' ||
-        request.subStatus === 'JUNTA_PARECER_RECEBIDO')) ||
-    (statusFilter === 'aguardando' &&
-      (request.subStatus === 'PENDENTE_AGUARDANDO' || request.subStatus === 'JUNTA_AGUARDANDO'))
-  );
+  return statusFilter === 'Todos';
 }
 
 export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
@@ -74,7 +62,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const {
     tabValue,
-    returnSubFilter,
     search,
     slaFilter,
     providerFilter,
@@ -88,17 +75,11 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const filteredByTab = useMemo(
     () =>
       pedidos.filter((p) => {
-        if (tabValue === 1) return p.guideType === 'Urgente' || p.guideType === 'Emergência';
-        if (tabValue === 2) {
-          if (p.status !== 'Devolutiva') return false;
-          if (returnSubFilter === 'aguardando') return p.subStatus === 'PENDENTE_AGUARDANDO';
-          if (returnSubFilter === 'retorno') return p.subStatus === 'PENDENTE_RETORNO_RECEBIDO';
-          return true;
-        }
-        if (tabValue === 3) return isStalled12h(p);
+        if (tabValue === 1) return p.slaStatus === 'warning';
+        if (tabValue === 2) return p.slaStatus === 'violated';
         return true;
       }),
-    [pedidos, tabValue, returnSubFilter],
+    [pedidos, tabValue],
   );
 
   const filtered = useMemo(
@@ -128,42 +109,22 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     [filtered, page, rowsPerPage],
   );
 
-  const urgEmergCount = useMemo(
-    () => pedidos.filter((p) => p.guideType === 'Urgente' || p.guideType === 'Emergência').length,
+  const warningCount = useMemo(
+    () => pedidos.filter((p) => p.slaStatus === 'warning').length,
     [pedidos],
   );
 
-  const returnsCount = useMemo(
-    () => pedidos.filter((p) => p.status === 'Devolutiva').length,
+  const violatedCount = useMemo(
+    () => pedidos.filter((p) => p.slaStatus === 'violated').length,
     [pedidos],
   );
-
-  const returnsWaiting = useMemo(
-    () =>
-      pedidos.filter((p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_AGUARDANDO')
-        .length,
-    [pedidos],
-  );
-
-  const returnsReceived = useMemo(
-    () =>
-      pedidos.filter(
-        (p) => p.status === 'Devolutiva' && p.subStatus === 'PENDENTE_RETORNO_RECEBIDO',
-      ).length,
-    [pedidos],
-  );
-
-  const stalled12h = useMemo(() => pedidos.filter(isStalled12h).length, [pedidos]);
 
   return {
     loading,
     filteredByTab,
     filtered,
     pagedItems,
-    urgEmergCount,
-    returnsCount,
-    returnsWaiting,
-    returnsReceived,
-    stalled12h,
+    warningCount,
+    violatedCount,
   };
 }

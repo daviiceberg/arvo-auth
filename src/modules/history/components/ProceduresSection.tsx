@@ -28,8 +28,8 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
       description: entry.procedure,
       qty: 1,
       authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
-      startDate: entry.decisionDate,
-      endDate: entry.decisionDate,
+      requestDate: entry.protocolDate,
+      passwordExpiryDate: entry.decisionDate,
       cid: entry.cid,
       auditLevel: 'AMBULATORIAL' as const,
       codeType: 'TUSS' as const,
@@ -124,8 +124,8 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           }}
         >
           {[
-            { label: 'Prestador', value: entry.provider },
-            { label: 'Médico Solicitante', value: entry.requestingDoctor },
+            { label: 'Executante', value: entry.executingProviderName },
+            { label: 'Profissional Solicitante', value: entry.requestingProfessional },
             { label: 'Tipo de Guia', value: entry.guideType },
             { label: 'Categoria', value: entry.category },
           ].map((f) => (

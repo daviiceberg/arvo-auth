@@ -109,7 +109,10 @@ export function StepTherapies({
 
       {/* Procedimentos */}
       {terapiaProcedimentos.map((proc, idx) => {
-        const dataErro = proc.dataTermino && proc.dataInicio && proc.dataTermino <= proc.dataInicio;
+        const dataErro =
+          proc.dataValidadeSenha &&
+          proc.dataSolicitacao &&
+          proc.dataValidadeSenha <= proc.dataSolicitacao;
         return (
           <Box
             key={proc.id}
@@ -216,27 +219,27 @@ export function StepTherapies({
                 />
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <FieldLabel>Data de Início *</FieldLabel>
+                <FieldLabel>Data da Solicitação *</FieldLabel>
                 <TextField
                   fullWidth
                   size="small"
                   type="date"
-                  value={proc.dataInicio}
+                  value={proc.dataSolicitacao}
                   onChange={(e) => {
-                    handleUpdateTerapiaProc(proc.id, 'dataInicio', e.target.value);
+                    handleUpdateTerapiaProc(proc.id, 'dataSolicitacao', e.target.value);
                   }}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <FieldLabel>Data de Término *</FieldLabel>
+                <FieldLabel>Data de Validade da Senha *</FieldLabel>
                 <TextField
                   fullWidth
                   size="small"
                   type="date"
-                  value={proc.dataTermino}
+                  value={proc.dataValidadeSenha}
                   onChange={(e) => {
-                    handleUpdateTerapiaProc(proc.id, 'dataTermino', e.target.value);
+                    handleUpdateTerapiaProc(proc.id, 'dataValidadeSenha', e.target.value);
                   }}
                   slotProps={{ inputLabel: { shrink: true } }}
                   error={!!dataErro}

@@ -7,8 +7,7 @@ import { type ProcessingRequest } from '@/types/pedido';
 
 const statusOrder: Record<string, number> = {
   em_processamento: 0,
-  aguardando_processamento: 1,
-  erro_processamento: 2,
+  erro_processamento: 1,
 };
 
 function sortQueue(items: ProcessingRequest[]): ProcessingRequest[] {
@@ -35,13 +34,10 @@ export default function useProcessingQueue() {
     const processing = pedidosEmProcessamento.filter(
       (p) => p.statusProcessamento === 'em_processamento',
     ).length;
-    const waiting = pedidosEmProcessamento.filter(
-      (p) => p.statusProcessamento === 'aguardando_processamento',
-    ).length;
     const error = pedidosEmProcessamento.filter(
       (p) => p.statusProcessamento === 'erro_processamento',
     ).length;
-    return { processing, waiting, error };
+    return { processing, error };
   }, []);
 
   const handlePageChange = (_: unknown, newPage: number) => {

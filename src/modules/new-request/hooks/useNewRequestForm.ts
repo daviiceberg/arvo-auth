@@ -12,8 +12,8 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
   tipoTerapia: '',
   codigoTUSS: '',
   numeroSessoes: '',
-  dataInicio: base?.dataInicio ?? '',
-  dataTermino: base?.dataTermino ?? '',
+  dataSolicitacao: base?.dataSolicitacao ?? '',
+  dataValidadeSenha: base?.dataValidadeSenha ?? '',
   frequenciaSemanal: '3x por semana',
   duracaoSessao: '50',
 });
@@ -26,21 +26,31 @@ export const initialForm: FormData = {
   cpf: '',
   operadora: 'Athena Saúde',
   validadeCarteirinha: '',
+  telefoneContato: '',
+  dataInclusaoPlano: '',
   cidPrincipal: 'F84.0 - Autismo infantil',
   cidsSecundarios: [],
   caraterAtendimento: 'Eletivo',
-  medicoSolicitante: 'Dra. Helena Rocha',
-  crm: 'CRM/SP 98765',
   indicacaoClinica:
     'Paciente pediátrico com diagnóstico de TEA (F84.0) em acompanhamento multidisciplinar. Indicada continuidade do plano terapêutico com Fonoaudiologia, Terapia Ocupacional e Psicologia/ABA.',
-  prestador: '',
-  cnpjPrestador: '',
+  indicacaoAcidente: 'NAO_ACIDENTE',
+  procedimentoJaRealizado: '',
+  profissionalSolicitante: 'Dra. Helena Rocha',
+  conselhoTipo: 'CRM',
+  conselhoNumero: '98765',
+  conselhoUF: 'SP',
+  cboCodigo: '225142',
+  nomeContratadoSolicitante: 'Clínica Neuropediátrica Esperança',
+  cnpjSolicitante: '',
+  nomeContratadoExecutante: 'Clínica Integrar TEA',
+  cnpjExecutante: '',
+  cnesExecutante: '7547277',
   etapaAutorizacao: '',
   tipoTerapia: 'Fonoaudiologia',
   codigoTuss: TUSS_POR_TERAPIA.Fonoaudiologia ?? '',
   numSessoes: '',
-  terapiaDataInicio: '',
-  terapiaDataTermino: '',
+  terapiaDataSolicitacao: '',
+  terapiaDataValidadeSenha: '',
   frequenciaSemanal: '3x por semana',
   duracaoSessao: '50',
 };
@@ -69,7 +79,10 @@ export function useNewRequestForm(moduloParam: string) {
     const first = terapiaProcedimentos[0];
     setTerapiaProcedimentos((prev) => [
       ...prev,
-      newTerapiaProc({ dataInicio: first?.dataInicio, dataTermino: first?.dataTermino }),
+      newTerapiaProc({
+        dataSolicitacao: first?.dataSolicitacao,
+        dataValidadeSenha: first?.dataValidadeSenha,
+      }),
     ]);
   };
 

@@ -5,8 +5,6 @@ import React from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DownloadIcon from '@mui/icons-material/Download';
-import GroupsIcon from '@mui/icons-material/Groups';
-import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
@@ -19,6 +17,9 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { DecisionActionChip } from '@/shared/components';
+
+import AuditLogSection from '@/modules/analysis/components/AuditLogSection';
+import InternalNotesSection from '@/modules/analysis/components/InternalNotesSection';
 
 import useHistoryDetail from '../hooks/useHistoryDetail';
 
@@ -86,6 +87,10 @@ export default function HistoryDetailPage() {
             <BeneficiarySection entry={entry} />
             <ProceduresSection entry={entry} />
             <ObservationsSection entry={entry} />
+            {entry.internalNotes ? (
+              <InternalNotesSection value={entry.internalNotes} onChange={() => undefined} />
+            ) : null}
+            <AuditLogSection entries={entry.auditLog ?? []} />
             <ConsolidatedHistorySection entry={entry} />
             <DocumentsSection entry={entry} />
           </Box>
@@ -154,15 +159,8 @@ export default function HistoryDetailPage() {
                       backgroundColor:
                         entry.iaSuggestion === 'Aprovar'
                           ? 'rgba(22,163,74,0.1)'
-                          : entry.iaSuggestion === 'Negar'
-                            ? 'rgba(212,24,61,0.1)'
-                            : 'rgba(245,158,11,0.12)',
-                      color:
-                        entry.iaSuggestion === 'Aprovar'
-                          ? 'success.main'
-                          : entry.iaSuggestion === 'Negar'
-                            ? 'error.main'
-                            : 'warning.main',
+                          : 'rgba(212,24,61,0.1)',
+                      color: entry.iaSuggestion === 'Aprovar' ? 'success.main' : 'error.main',
                     }}
                   />
                 </Box>
@@ -196,118 +194,6 @@ export default function HistoryDetailPage() {
                     </Typography>
                   </Box>
                 )}
-
-                {/* Junta Medica */}
-                {entry.medicalBoard ? (
-                  <>
-                    <Divider sx={{ my: 1.5 }} />
-                    <Box
-                      sx={{
-                        backgroundColor: 'rgba(124,58,237,0.04)',
-                        border: '1px solid rgba(124,58,237,0.18)',
-                        borderRadius: 2,
-                        p: 2,
-                        mb: 2,
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                        <GroupsIcon sx={{ fontSize: 17, color: 'secondary.main' }} />
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          sx={{ fontSize: 13, color: 'secondary.main' }}
-                        >
-                          Junta Médica Realizada
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', gap: 3, mb: 1.5 }}>
-                        <Box>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              fontSize: 12,
-                              color: 'text.secondary',
-                              fontWeight: 600,
-                              display: 'block',
-                              mb: 0.25,
-                            }}
-                          >
-                            Data da reunião
-                          </Typography>
-                          <Typography variant="body2" sx={{ fontSize: 13 }}>
-                            {entry.medicalBoard.dataReuniao}
-                          </Typography>
-                        </Box>
-                        <Box>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              fontSize: 12,
-                              color: 'text.secondary',
-                              fontWeight: 600,
-                              display: 'block',
-                              mb: 0.25,
-                            }}
-                          >
-                            N° da ata
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontSize: 13, fontFamily: 'monospace' }}
-                          >
-                            {entry.medicalBoard.numeroAta}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          fontSize: 12,
-                          color: 'text.secondary',
-                          fontWeight: 600,
-                          display: 'block',
-                          mb: 0.75,
-                        }}
-                      >
-                        Membros
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}>
-                        {entry.medicalBoard.membros.map((m, i) => (
-                          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                            <PersonIcon
-                              sx={{ fontSize: 13, color: 'secondary.main', flexShrink: 0 }}
-                            />
-                            <Typography
-                              variant="caption"
-                              sx={{ fontSize: 12, color: '#374151', lineHeight: 1.4 }}
-                            >
-                              <strong>{m.nome}</strong> — {m.especialidade}
-                              <Box component="span" sx={{ color: 'text.secondary' }}>
-                                {' '}
-                                ({m.crm})
-                              </Box>
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          fontSize: 12,
-                          color: 'text.secondary',
-                          fontWeight: 600,
-                          display: 'block',
-                          mb: 0.5,
-                        }}
-                      >
-                        Parecer da Junta
-                      </Typography>
-                      <Typography variant="body2" sx={{ fontSize: 13, lineHeight: 1.6 }}>
-                        {entry.medicalBoard.parecer}
-                      </Typography>
-                    </Box>
-                  </>
-                ) : null}
               </Box>
 
               <Divider />

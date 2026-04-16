@@ -15,7 +15,6 @@ import { useQueueFilters } from '../hooks/useQueueFilters';
 import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 import QueueFilterBar from './QueueFilterBar';
-import QueueMetricsRow from './QueueMetricsRow';
 import QueuePagination from './QueuePagination';
 import QueueTabBar from './QueueTabBar';
 import QueueTable from './QueueTable';
@@ -25,16 +24,10 @@ export default function QueuePage() {
   const searchParams = useSearchParams();
 
   const filters = useQueueFilters({ searchParams });
-  const {
-    loading,
-    filtered,
-    pagedItems,
-    urgEmergCount,
-    returnsCount,
-    returnsWaiting,
-    returnsReceived,
-    stalled12h,
-  } = useQueueData({ filters, pedidos });
+  const { loading, filtered, pagedItems, warningCount, violatedCount } = useQueueData({
+    filters,
+    pedidos,
+  });
   const { scrollContainerRef, lastViewedId, saveScrollPosition } = useScrollRestoration();
 
   const handleRowClick = (requestId: string) => {
@@ -44,11 +37,6 @@ export default function QueuePage() {
 
   const handleTabChange = (value: number) => {
     filters.setTabValue(value);
-    filters.setPage(0);
-  };
-
-  const handleReturnSubFilterChange = (value: 'all' | 'aguardando' | 'retorno') => {
-    filters.setReturnSubFilter(value);
     filters.setPage(0);
   };
 
@@ -94,30 +82,15 @@ export default function QueuePage() {
         </Button>
       </Box>
 
-      {/* Metric Cards Row */}
-      <QueueMetricsRow
-        totalCount={pedidos.length}
-        urgEmergCount={urgEmergCount}
-        returnsCount={returnsCount}
-        stalled12h={stalled12h}
-        loading={loading}
-        onTabChange={handleTabChange}
-      />
-
       {/* Table Card */}
       <Card>
         {/* Tabs */}
         <QueueTabBar
           tabValue={filters.tabValue}
           totalCount={pedidos.length}
-          urgEmergCount={urgEmergCount}
-          returnsCount={returnsCount}
-          returnsWaiting={returnsWaiting}
-          returnsReceived={returnsReceived}
-          stalled12h={stalled12h}
-          returnSubFilter={filters.returnSubFilter}
+          warningCount={warningCount}
+          violatedCount={violatedCount}
           onTabChange={handleTabChange}
-          onReturnSubFilterChange={handleReturnSubFilterChange}
         />
 
         {/* Filter bar */}

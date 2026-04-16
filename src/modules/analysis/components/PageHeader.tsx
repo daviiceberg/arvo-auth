@@ -6,7 +6,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import GavelIcon from '@mui/icons-material/Gavel';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -98,6 +97,19 @@ export default function PageHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {request.id}
           </Typography>
+          {request.guidePassword ? (
+            <Typography
+              variant="caption"
+              sx={{ fontSize: 12, color: 'text.secondary', fontFamily: 'monospace' }}
+            >
+              Senha: {request.guidePassword}
+            </Typography>
+          ) : null}
+          {request.passwordExpiryDate ? (
+            <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary' }}>
+              Val.: {request.passwordExpiryDate}
+            </Typography>
+          ) : null}
           <Chip
             label={request.guideType}
             size="small"
@@ -129,19 +141,6 @@ export default function PageHeader({
               sx={{
                 backgroundColor: 'rgba(245,158,11,0.12)',
                 color: 'warning.main',
-                fontWeight: 700,
-                height: 22,
-              }}
-            />
-          )}
-          {request.alerts.includes('Liminar Judicial') && (
-            <Chip
-              icon={<GavelIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
-              label="Liminar Judicial"
-              size="small"
-              sx={{
-                backgroundColor: 'rgba(124,58,237,0.1)',
-                color: 'secondary.main',
                 fontWeight: 700,
                 height: 22,
               }}
@@ -236,7 +235,7 @@ export default function PageHeader({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              {request.provider.hospital}
+              {request.executingProvider.name}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>

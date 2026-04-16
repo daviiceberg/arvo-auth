@@ -6,7 +6,6 @@ import CallSplitIcon from '@mui/icons-material/CallSplit';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import GavelIcon from '@mui/icons-material/Gavel';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -27,8 +26,6 @@ interface AssistantSidebarProps {
   request: Request;
   onAprovarClick: () => void;
   onNegarClick: () => void;
-  onPendenciarClick: () => void;
-  onJuntaClick: () => void;
   procDecisoes: Record<string, ProcDecision>;
   onProcDecisaoChange: (codigo: string, decisao: ProcDecision) => void;
   onConfirmarDecisaoClick: () => void;
@@ -37,7 +34,6 @@ interface AssistantSidebarProps {
 const PILL_LABEL: Record<string, string> = {
   Aprovar: 'Critérios atendidos',
   Negar: 'Bloqueios identificados',
-  'Junta Médica': 'Análise clínica necessária',
 };
 
 /* ---------- Consolidated badge helper ---------- */
@@ -88,16 +84,10 @@ function getConsolidatedBadgeProps(
 interface SuggestionSectionProps {
   iaSuggestion: IASuggestion;
   sc: ChipColor;
-  opinionReceived: boolean;
   iaJustification: string;
 }
 
-function SuggestionSection({
-  iaSuggestion,
-  sc,
-  opinionReceived,
-  iaJustification,
-}: SuggestionSectionProps) {
+function SuggestionSection({ iaSuggestion, sc, iaJustification }: SuggestionSectionProps) {
   return (
     <Box
       sx={{ p: 1.5, borderRadius: 2, backgroundColor: sc.bg, border: `1px solid ${sc.color}33` }}
@@ -107,9 +97,7 @@ function SuggestionSection({
         color="text.secondary"
         sx={{ display: 'block', mb: 0.5, fontSize: 12 }}
       >
-        {opinionReceived
-          ? 'Ponto de vista com base no parecer da Junta Médica'
-          : 'Ponto de vista da IA'}
+        Ponto de vista da IA
       </Typography>
       <Chip
         label={PILL_LABEL[iaSuggestion] ?? iaSuggestion}
@@ -132,18 +120,6 @@ function SuggestionSection({
 function SpecialAlertsSection({ alerts }: { alerts: string[] }) {
   return (
     <>
-      {alerts.includes('Liminar Judicial') && (
-        <Alert severity="warning" icon={<GavelIcon fontSize="small" />} sx={{ borderRadius: 2 }}>
-          <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
-            Liminar Judicial Ativa
-          </Typography>
-          <Typography variant="caption">
-            A autorização pode ser mandatória por determinação judicial. Consulte o jurídico antes
-            de negar.
-          </Typography>
-        </Alert>
-      )}
-
       {alerts.includes('Fora do Rol ANS') && (
         <Alert
           severity="error"
@@ -170,7 +146,6 @@ interface AnalystDecisionSectionProps {
   procDecisoes: Record<string, ProcDecision>;
   onProcDecisaoChange: (codigo: string, decisao: ProcDecision) => void;
   isGuideFinalized: boolean;
-  isBoardWaiting: boolean;
   anyPending: boolean;
   allApproved: boolean;
   allDenied: boolean;
@@ -179,8 +154,6 @@ interface AnalystDecisionSectionProps {
   confirmBtnColor: string;
   confirmBtnHover: string;
   onConfirmarDecisaoClick: () => void;
-  onPendenciarClick: () => void;
-  onJuntaClick: () => void;
   loadingApprove: boolean;
   loadingDeny: boolean;
   onApproveClick: () => void;
@@ -193,7 +166,6 @@ function AnalystDecisionSection({
   procDecisoes,
   onProcDecisaoChange,
   isGuideFinalized,
-  isBoardWaiting,
   anyPending,
   allApproved,
   allDenied,
@@ -202,8 +174,6 @@ function AnalystDecisionSection({
   confirmBtnColor,
   confirmBtnHover,
   onConfirmarDecisaoClick,
-  onPendenciarClick,
-  onJuntaClick,
   loadingApprove,
   loadingDeny,
   onApproveClick,
@@ -291,20 +261,15 @@ function AnalystDecisionSection({
             confirmBtnColor={confirmBtnColor}
             confirmBtnHover={confirmBtnHover}
             onConfirmClick={onConfirmarDecisaoClick}
-            onPendencyClick={onPendenciarClick}
-            onBoardClick={onJuntaClick}
           />
         ) : (
           <DecisionButtons
             isMultiProc={false}
             isGuideFinalized={isGuideFinalized}
-            isBoardWaiting={isBoardWaiting}
             loadingApprove={loadingApprove}
             loadingDeny={loadingDeny}
             onApproveClick={onApproveClick}
             onDenyClick={onDenyClick}
-            onPendencyClick={onPendenciarClick}
-            onBoardClick={onJuntaClick}
           />
         )}
       </Box>
@@ -318,22 +283,16 @@ export default function AssistantSidebar({
   request,
   onAprovarClick,
   onNegarClick,
-  onPendenciarClick,
-  onJuntaClick,
   procDecisoes,
   onProcDecisaoChange,
   onConfirmarDecisaoClick,
 }: AssistantSidebarProps) {
-  const opinionReceived =
-    request.subStatus === 'JUNTA_PARECER_RECEBIDO' && !!request.boardRecommendation;
-  const iaSuggestion: IASuggestion =
-    (opinionReceived ? request.boardRecommendation : undefined) ?? request.iaSuggestion;
-  const iaJustification = opinionReceived ? (request.boardOpinion ?? '') : request.iaJustification;
+  const iaSuggestion: IASuggestion = request.iaSuggestion;
+  const iaJustification = request.iaJustification;
   const sc = iaSuggestionColorMap[iaSuggestion];
   const [loadingApprove, setLoadingApprove] = useState(false);
   const [loadingDeny, setLoadingDeny] = useState(false);
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
-  const isBoardWaiting = request.subStatus === 'JUNTA_AGUARDANDO';
 
   const isMultiProc = request.procedures.length > 1;
   const decisions = request.procedures.map((pr) => procDecisoes[pr.code] ?? 'pendente');
@@ -386,7 +345,6 @@ export default function AssistantSidebar({
           <SuggestionSection
             iaSuggestion={iaSuggestion}
             sc={sc}
-            opinionReceived={opinionReceived}
             iaJustification={iaJustification}
           />
           <ChecklistSection request={request} />
@@ -400,7 +358,6 @@ export default function AssistantSidebar({
         procDecisoes={procDecisoes}
         onProcDecisaoChange={onProcDecisaoChange}
         isGuideFinalized={isGuideFinalized}
-        isBoardWaiting={isBoardWaiting}
         anyPending={anyPending}
         allApproved={allApproved}
         allDenied={allDenied}
@@ -409,8 +366,6 @@ export default function AssistantSidebar({
         confirmBtnColor={confirmBtnColor}
         confirmBtnHover={confirmBtnHover}
         onConfirmarDecisaoClick={onConfirmarDecisaoClick}
-        onPendenciarClick={onPendenciarClick}
-        onJuntaClick={onJuntaClick}
         loadingApprove={loadingApprove}
         loadingDeny={loadingDeny}
         onApproveClick={handleApproveWithLoading}

@@ -50,7 +50,7 @@ export const NOTIFICACOES: Notification[] = [
     id: 'ATH-2026-00431',
     type: 'urgencia',
     title: 'Novo pedido urgente',
-    message: 'Pedido ATH-2026-00431 com liminar judicial adicionado à fila.',
+    message: 'Pedido ATH-2026-00431 adicionado à fila de análise.',
     time: '1h atrás',
     read: true,
     href: '/analise?id=ATH-2026-00431',

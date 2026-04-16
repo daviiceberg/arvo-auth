@@ -67,18 +67,8 @@ export default function HistoryDetailHeader({
             label={entry.guideType}
             size="small"
             sx={{
-              backgroundColor:
-                entry.guideType === 'Emergência'
-                  ? 'rgba(212,24,61,0.1)'
-                  : entry.guideType === 'Urgente'
-                    ? 'rgba(245,158,11,0.12)'
-                    : 'rgba(37,99,235,0.1)',
-              color:
-                entry.guideType === 'Emergência'
-                  ? 'error.main'
-                  : entry.guideType === 'Urgente'
-                    ? 'warning.main'
-                    : 'info.main',
+              backgroundColor: 'rgba(37,99,235,0.1)',
+              color: 'info.main',
               fontWeight: 700,
               height: 22,
             }}
@@ -194,7 +184,7 @@ export default function HistoryDetailHeader({
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
           <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {entry.provider}
+            {entry.executingProviderName}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>

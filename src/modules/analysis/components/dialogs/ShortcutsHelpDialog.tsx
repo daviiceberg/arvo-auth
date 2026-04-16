@@ -25,7 +25,6 @@ export default function ShortcutsHelpDialog({ open, onClose }: ShortcutsHelpDial
           { keys: '→ / J', desc: 'Próximo pedido' },
           { keys: 'A', desc: 'Aprovar pedido' },
           { keys: 'N', desc: 'Negar pedido' },
-          { keys: 'P', desc: 'Pendenciar pedido' },
           { keys: '?', desc: 'Mostrar esta ajuda' },
         ].map(({ keys, desc }) => (
           <Box

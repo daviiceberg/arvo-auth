@@ -1,13 +1,3 @@
-import { type NivelUrgencia } from '@/shared/utils/urgencia';
-
-export interface UrgencySegment {
-  label: string;
-  key: NivelUrgencia;
-  color: string;
-  count: number;
-  url: string;
-}
-
 export interface MonthlyTrendItem {
   mes: string;
   aprovados: number;

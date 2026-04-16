@@ -1,6 +1,5 @@
 'use client';
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
@@ -13,26 +12,21 @@ interface MultiProcButtonsProps {
   confirmBtnColor: string;
   confirmBtnHover: string;
   onConfirmClick: () => void;
-  onPendencyClick: () => void;
-  onBoardClick: () => void;
 }
 
 interface SingleProcButtonsProps {
   isMultiProc: false;
   isGuideFinalized: boolean;
-  isBoardWaiting: boolean;
   loadingApprove: boolean;
   loadingDeny: boolean;
   onApproveClick: () => void;
   onDenyClick: () => void;
-  onPendencyClick: () => void;
-  onBoardClick: () => void;
 }
 
 type DecisionButtonsProps = MultiProcButtonsProps | SingleProcButtonsProps;
 
 export default function DecisionButtons(props: DecisionButtonsProps) {
-  const { isMultiProc, isGuideFinalized, onPendencyClick, onBoardClick } = props;
+  const { isMultiProc, isGuideFinalized } = props;
 
   return (
     <>
@@ -47,39 +41,12 @@ export default function DecisionButtons(props: DecisionButtonsProps) {
       ) : (
         <SingleProcApprovalButtons
           isGuideFinalized={isGuideFinalized}
-          isBoardWaiting={props.isBoardWaiting}
           loadingApprove={props.loadingApprove}
           loadingDeny={props.loadingDeny}
           onApproveClick={props.onApproveClick}
           onDenyClick={props.onDenyClick}
         />
       )}
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={onPendencyClick}
-          disabled={isGuideFinalized}
-          sx={{ minHeight: 36, fontSize: 12 }}
-        >
-          Pendenciar
-        </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          onClick={onBoardClick}
-          disabled={isGuideFinalized}
-          sx={{
-            minHeight: 36,
-            fontSize: 12,
-            borderColor: 'info.main',
-            color: 'info.main',
-            '&:hover': { borderColor: '#1d4ed8', backgroundColor: 'rgba(37,99,235,0.05)' },
-          }}
-        >
-          Junta Médica
-        </Button>
-      </Box>
     </>
   );
 }
@@ -132,7 +99,6 @@ function MultiProcConfirmButton({
 
 interface SingleProcApprovalButtonsProps {
   isGuideFinalized: boolean;
-  isBoardWaiting: boolean;
   loadingApprove: boolean;
   loadingDeny: boolean;
   onApproveClick: () => void;
@@ -141,7 +107,6 @@ interface SingleProcApprovalButtonsProps {
 
 function SingleProcApprovalButtons({
   isGuideFinalized,
-  isBoardWaiting,
   loadingApprove,
   loadingDeny,
   onApproveClick,
@@ -149,47 +114,31 @@ function SingleProcApprovalButtons({
 }: SingleProcApprovalButtonsProps) {
   return (
     <>
-      <Tooltip
-        title={isBoardWaiting ? 'Aguardando parecer da Junta Médica' : ''}
-        placement="top"
-        disableHoverListener={!isBoardWaiting}
+      <Button
+        variant="contained"
+        fullWidth
+        disabled={loadingApprove || isGuideFinalized}
+        onClick={onApproveClick}
+        startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
+        sx={{
+          minHeight: 40,
+          backgroundColor: 'success.main',
+          '&:hover': { backgroundColor: '#15803d' },
+        }}
       >
-        <span style={{ width: '100%' }}>
-          <Button
-            variant="contained"
-            fullWidth
-            disabled={loadingApprove || isGuideFinalized || isBoardWaiting}
-            onClick={onApproveClick}
-            startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
-            sx={{
-              minHeight: 40,
-              backgroundColor: 'success.main',
-              '&:hover': { backgroundColor: '#15803d' },
-            }}
-          >
-            {loadingApprove ? 'Processando...' : 'Aprovar'}
-          </Button>
-        </span>
-      </Tooltip>
-      <Tooltip
-        title={isBoardWaiting ? 'Aguardando parecer da Junta Médica' : ''}
-        placement="top"
-        disableHoverListener={!isBoardWaiting}
+        {loadingApprove ? 'Processando...' : 'Aprovar'}
+      </Button>
+      <Button
+        variant="contained"
+        color="error"
+        fullWidth
+        disabled={loadingDeny || isGuideFinalized}
+        onClick={onDenyClick}
+        startIcon={loadingDeny ? <CircularProgress size={14} color="inherit" /> : undefined}
+        sx={{ minHeight: 40 }}
       >
-        <span style={{ width: '100%' }}>
-          <Button
-            variant="contained"
-            color="error"
-            fullWidth
-            disabled={loadingDeny || isGuideFinalized || isBoardWaiting}
-            onClick={onDenyClick}
-            startIcon={loadingDeny ? <CircularProgress size={14} color="inherit" /> : undefined}
-            sx={{ minHeight: 40 }}
-          >
-            {loadingDeny ? 'Processando...' : 'Negar'}
-          </Button>
-        </span>
-      </Tooltip>
+        {loadingDeny ? 'Processando...' : 'Negar'}
+      </Button>
     </>
   );
 }

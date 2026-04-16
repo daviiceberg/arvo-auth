@@ -11,8 +11,8 @@ export interface TerapiaProcedimento {
   tipoTerapia: string;
   codigoTUSS: string;
   numeroSessoes: string;
-  dataInicio: string;
-  dataTermino: string;
+  dataSolicitacao: string;
+  dataValidadeSenha: string;
   frequenciaSemanal: string;
   duracaoSessao: string;
 }
@@ -30,7 +30,7 @@ export interface DocUpload {
 export type { GuiaProcedure } from '@/types/procedure-codes';
 
 export interface FormData {
-  // Step 1
+  // Step 1 — Beneficiário
   tipoSolicitacao: ModuloType | '';
   nomeBeneficiario: string;
   carteirinha: string;
@@ -38,22 +38,34 @@ export interface FormData {
   cpf: string;
   operadora: string;
   validadeCarteirinha: string;
-  // Step 2
+  telefoneContato: string;
+  dataInclusaoPlano: string;
+  // Step 2 — Dados Clínicos
   cidPrincipal: string;
   cidsSecundarios: string[];
   caraterAtendimento: string;
-  medicoSolicitante: string;
-  crm: string;
   indicacaoClinica: string;
-  prestador: string;
-  cnpjPrestador: string;
+  indicacaoAcidente: string;
+  procedimentoJaRealizado: string;
+  // Step 2 — Profissional Solicitante
+  profissionalSolicitante: string;
+  conselhoTipo: string;
+  conselhoNumero: string;
+  conselhoUF: string;
+  cboCodigo: string;
+  nomeContratadoSolicitante: string;
+  cnpjSolicitante: string;
+  // Step 2 — Contratado Executante
+  nomeContratadoExecutante: string;
+  cnpjExecutante: string;
+  cnesExecutante: string;
   // Terapias
   etapaAutorizacao: string;
   tipoTerapia: string;
   codigoTuss: string;
   numSessoes: string;
-  terapiaDataInicio: string;
-  terapiaDataTermino: string;
+  terapiaDataSolicitacao: string;
+  terapiaDataValidadeSenha: string;
   frequenciaSemanal: string;
   duracaoSessao: string;
 }

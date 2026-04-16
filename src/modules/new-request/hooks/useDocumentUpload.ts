@@ -80,13 +80,13 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
   };
 
   const handleAddDocAdicional = () => {
-    if (!newDocTipo || !newDocFile) return;
+    if (!newDocFile) return;
     setDocsAdicionais((prev) => [
       ...prev,
       {
         id: `ADD-${String(Date.now())}`,
         nome: newDocFile.name,
-        tipo: newDocTipo,
+        tipo: newDocTipo || 'Documento',
         tamanho:
           newDocFile.size > 1024 * 1024
             ? `${(newDocFile.size / 1024 / 1024).toFixed(1)} MB`

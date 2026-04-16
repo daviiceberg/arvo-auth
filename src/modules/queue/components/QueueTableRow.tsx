@@ -2,7 +2,6 @@
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import TimerOffIcon from '@mui/icons-material/TimerOff';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { type SxProps, type Theme } from '@mui/material/styles';
@@ -24,8 +23,6 @@ import { type Request } from '@/types/pedido';
 
 import { REQUEST_TYPE_MAP } from '../constants/request-type-map';
 
-import SubStatusLabel from './SubStatusLabel';
-
 // ── Row style helper ─────────────────────────────────────────────────
 function getRowSx(request: Request, lastViewedId: string | null): SxProps<Theme> {
   return {
@@ -35,19 +32,6 @@ function getRowSx(request: Request, lastViewedId: string | null): SxProps<Theme>
     ...(request.id === lastViewedId && {
       backgroundColor: 'rgba(144,43,41,0.06) !important',
       outline: '1px solid rgba(144,43,41,0.2)',
-    }),
-    ...(request.status === 'Devolutiva' && {
-      borderLeft: '3px solid #f59e0b',
-    }),
-    ...(request.subStatus === 'PENDENTE_RETORNO_RECEBIDO' && {
-      backgroundColor: 'rgba(245,158,11,0.06) !important',
-    }),
-    ...(request.subStatus === 'JUNTA_PARECER_RECEBIDO' && {
-      backgroundColor: 'rgba(37,99,235,0.05) !important',
-      borderLeft: '3px solid #2563eb',
-    }),
-    ...(request.subStatus === 'JUNTA_AGUARDANDO' && {
-      borderLeft: '3px solid rgba(37,99,235,0.5)',
     }),
   };
 }
@@ -149,11 +133,6 @@ function ActionCell({ request, onRowClick }: ActionCellProps) {
           </Typography>
         </Box>
       ) : null}
-      {!request.operatorLock && request.subStatus ? (
-        <Box sx={{ mt: 0.75 }}>
-          <SubStatusLabel subStatus={request.subStatus} />
-        </Box>
-      ) : null}
     </Box>
   );
 }
@@ -209,10 +188,10 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12 }}>
-          {request.provider.hospital}
+          {request.executingProvider.name}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-          {request.provider.doctor}
+          {request.requestingProvider.professional}
         </Typography>
       </TableCell>
       <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
@@ -228,28 +207,6 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <SLAChip status={request.slaStatus} label={request.slaText} />
-        {request.status === 'Devolutiva' && (
-          <Tooltip
-            title="Devolutiva não interrompe o prazo ANS — SLA continua em contagem"
-            placement="top"
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.4,
-                mt: 0.4,
-                fontSize: 10,
-                color: 'warning.main',
-                fontWeight: 600,
-                cursor: 'default',
-              }}
-            >
-              <TimerOffIcon sx={{ fontSize: 11 }} /> SLA em curso
-            </Typography>
-          </Tooltip>
-        )}
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Tooltip

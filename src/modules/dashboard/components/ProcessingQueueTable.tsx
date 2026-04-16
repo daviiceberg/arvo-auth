@@ -102,7 +102,7 @@ export default function ProcessingQueueTable() {
             </Typography>
           </Box>
           <Tooltip
-            title={`${String(counts.processing)} em processamento · ${String(counts.waiting)} aguardando · ${String(counts.error)} com erro`}
+            title={`${String(counts.processing)} em processamento · ${String(counts.error)} com erro`}
           >
             <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
               {total} pedidos aguardando processamento da IA

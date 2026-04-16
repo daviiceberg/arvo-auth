@@ -21,7 +21,7 @@ interface RecentRequestsTableProps {
   loading: boolean;
 }
 
-const CRITICAL_ALERTS = ['Liminar Judicial', 'NIP Ativa'];
+const CRITICAL_ALERTS = ['NIP Ativa'];
 
 function urgencyScore(p: Request): number {
   const hasCritical = p.alerts.some((a) => CRITICAL_ALERTS.includes(a));
@@ -30,9 +30,7 @@ function urgencyScore(p: Request): number {
   if (p.slaStatus === 'violated') return 1;
   if (p.slaStatus === 'warning' && hasAnyAlert) return 2;
   if (p.slaStatus === 'warning') return 3;
-  if (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO')
-    return 4;
-  return 5;
+  return 4;
 }
 
 export default function RecentRequestsTable({ pedidos, loading }: RecentRequestsTableProps) {

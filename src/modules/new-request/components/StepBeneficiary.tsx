@@ -122,6 +122,27 @@ export function StepBeneficiary({ form, set }: StepBeneficiaryProps) {
             slotProps={{ inputLabel: { shrink: true } }}
           />
         </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <FieldLabel>Telefone de Contato</FieldLabel>
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="(11) 99999-9999"
+            value={form.telefoneContato}
+            onChange={set('telefoneContato')}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <FieldLabel>Data de Inclusão no Plano</FieldLabel>
+          <TextField
+            fullWidth
+            size="small"
+            type="date"
+            value={form.dataInclusaoPlano}
+            onChange={set('dataInclusaoPlano')}
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+        </Grid>
       </Grid>
     </Box>
   );

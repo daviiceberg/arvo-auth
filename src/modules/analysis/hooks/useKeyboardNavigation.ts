@@ -11,7 +11,6 @@ interface UseKeyboardNavigationParams {
   onNavigateNext: () => void;
   onApprove: () => void;
   onDeny: () => void;
-  onPendency: () => void;
   onShowShortcuts: () => void;
 }
 
@@ -30,7 +29,6 @@ export function useKeyboardNavigation({
   onNavigateNext,
   onApprove,
   onDeny,
-  onPendency,
   onShowShortcuts,
 }: UseKeyboardNavigationParams) {
   useEffect(() => {
@@ -56,8 +54,6 @@ export function useKeyboardNavigation({
         A: onApprove,
         n: onDeny,
         N: onDeny,
-        p: onPendency,
-        P: onPendency,
       };
 
       const action = keyActions[e.key];
@@ -79,7 +75,6 @@ export function useKeyboardNavigation({
     onNavigateNext,
     onApprove,
     onDeny,
-    onPendency,
     onShowShortcuts,
   ]);
 }

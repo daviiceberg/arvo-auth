@@ -22,7 +22,6 @@ interface IASuggestionCellProps {
 const SUGGESTION_COLOR_MAP: Record<IASuggestion, string> = {
   Aprovar: 'success.main',
   Negar: 'error.main',
-  'Junta Médica': 'warning.main',
 };
 
 function IASuggestionCell({ origin, iaSuggestion, divergence }: IASuggestionCellProps) {
@@ -81,9 +80,6 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         cursor: 'pointer',
         transition: 'background-color 0.15s ease',
         '&:hover': { backgroundColor: 'rgba(144,43,41,0.03)' },
-        ...(entry.action === 'Devolutiva' && {
-          borderLeft: '3px solid #f59e0b',
-        }),
       }}
       onClick={() => {
         onNavigate(entry.id);

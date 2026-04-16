@@ -193,26 +193,14 @@ function NewRequestInner() {
     ),
     4: (
       <StepDocuments
-        modulo={activeModulo}
-        docsObrigatorios={docUpload.docsObrigatorios}
+        etapaAutorizacao={form.etapaAutorizacao}
         docsAdicionais={docUpload.docsAdicionais}
-        pendentesObrig={docUpload.pendentesObrig}
-        showAddDocForm={docUpload.showAddDocForm}
-        setShowAddDocForm={docUpload.setShowAddDocForm}
-        newDocTipo={docUpload.newDocTipo}
-        setNewDocTipo={docUpload.setNewDocTipo}
-        newDocFile={docUpload.newDocFile}
-        setNewDocFile={docUpload.setNewDocFile}
-        newDocDescricao={docUpload.newDocDescricao}
-        setNewDocDescricao={docUpload.setNewDocDescricao}
         docDragOver={docUpload.docDragOver}
         setDocDragOver={docUpload.setDocDragOver}
         docFileRef={docUpload.docFileRef}
-        handleObrigUpload={docUpload.handleObrigUpload}
-        handleRemoveObrigDoc={docUpload.handleRemoveObrigDoc}
+        setNewDocFile={docUpload.setNewDocFile}
         handleAddDocAdicional={docUpload.handleAddDocAdicional}
         handleRemoveDocAdicional={docUpload.handleRemoveDocAdicional}
-        cancelAddDoc={docUpload.cancelAddDoc}
       />
     ),
     5: (

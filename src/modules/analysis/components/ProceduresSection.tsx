@@ -413,7 +413,7 @@ function ProcedureRow({
           qtyAdjustment={qtyAdjustment}
         />
         <ProcedureProviderCell hospital={hospital} providerAdjustment={providerAdjustment} />
-        {/* Periodo */}
+        {/* Datas */}
         <TableCell
           sx={{
             color: 'text.secondary',
@@ -423,7 +423,12 @@ function ProcedureRow({
             width: 140,
           }}
         >
-          {proc.startDate} → {proc.endDate}
+          Solic.: {proc.requestDate}
+          {proc.passwordExpiryDate ? (
+            <Typography variant="caption" sx={{ display: 'block', fontSize: 11, mt: 0.25 }}>
+              Val.: {proc.passwordExpiryDate}
+            </Typography>
+          ) : null}
         </TableCell>
         <ProcedureStatusCell
           cid={proc.cid}
@@ -490,7 +495,8 @@ export default function ProceduresSection({
   onAdjustClick,
 }: ProceduresSectionProps) {
   const procs = request.procedures;
-  const p = request.provider;
+  const rp = request.requestingProvider;
+  const ep = request.executingProvider;
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
   const [expandedCodes, setExpandedCodes] = useState(new Set());
   const dutModal = useDutModal();
@@ -528,7 +534,7 @@ export default function ProceduresSection({
               <TableCell sx={TH_SX}>Descrição</TableCell>
               <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
               <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 140 }}>Período</TableCell>
+              <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
               <TableCell sx={TH_SX}>Status</TableCell>
               <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
               <TableCell sx={{ ...TH_SX, pr: 0 }} />
@@ -542,7 +548,7 @@ export default function ProceduresSection({
                 allAdjustments={allAdjustments}
                 isGuideFinalized={isGuideFinalized}
                 isLast={index === procs.length - 1}
-                hospital={p.hospital}
+                hospital={ep.name}
                 onAdjustClick={onAdjustClick}
                 isExpanded={expandedCodes.has(proc.code)}
                 onToggleExpand={() => {
@@ -554,7 +560,7 @@ export default function ProceduresSection({
           </TableBody>
         </Table>
         {request.secondaryCids && request.secondaryCids.length > 0 ? (
-          <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
+          <Box sx={{ pb: 2, pt: 0.5 }}>
             <Typography
               variant="caption"
               sx={{
@@ -587,7 +593,7 @@ export default function ProceduresSection({
         ) : null}
         {(() => {
           const providerAdj = allAdjustments.find((a) => a.field === 'prestador');
-          const activeHospital = providerAdj ? providerAdj.newValue : p.hospital;
+          const activeHospital = providerAdj ? providerAdj.newValue : ep.name;
           return (
             <Box
               sx={{
@@ -634,9 +640,12 @@ export default function ProceduresSection({
                 </Box>
               </Box>
               {[
-                { label: 'Médico Solicitante', value: p.doctor },
-                { label: 'CRM', value: p.crm },
-                { label: 'Especialidade', value: p.specialty },
+                { label: 'Profissional Solicitante', value: rp.professional },
+                {
+                  label: 'Conselho',
+                  value: `${rp.councilType} ${rp.councilNumber}/${rp.councilUF}`,
+                },
+                { label: 'Contratado Solicitante', value: rp.name },
               ].map((f) => (
                 <Box key={f.label}>
                   <Typography

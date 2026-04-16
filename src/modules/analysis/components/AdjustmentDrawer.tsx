@@ -23,18 +23,14 @@ import { type UseAdjustmentFormReturn, useAdjustmentForm } from '../hooks/useAdj
 
 import AdjustmentFieldCode from './AdjustmentFieldCode';
 import AdjustmentFieldDut from './AdjustmentFieldDut';
-import AdjustmentFieldManufacturer from './AdjustmentFieldManufacturer';
 import AdjustmentFieldProvider from './AdjustmentFieldProvider';
 import AdjustmentFieldQuantity from './AdjustmentFieldQuantity';
-import AdjustmentFieldValue from './AdjustmentFieldValue';
 
 interface AdjustmentProc {
   codigo: string;
   descricao: string;
   qty: number;
   prestador: string;
-  fabricante?: string;
-  valorUnitario?: number;
 }
 
 interface AdjustmentDrawerProps {
@@ -82,24 +78,6 @@ function buildFieldComponents(
         setNewCode={form.setNewCode}
         newDesc={form.newDesc}
         setNewDesc={form.setNewDesc}
-        errors={form.errors}
-        setErrors={form.setErrors}
-      />
-    ),
-    fabricante: (
-      <AdjustmentFieldManufacturer
-        currentManufacturer={proc?.fabricante}
-        newManufacturer={form.newManufacturer}
-        setNewManufacturer={form.setNewManufacturer}
-        errors={form.errors}
-        setErrors={form.setErrors}
-      />
-    ),
-    valorUnitario: (
-      <AdjustmentFieldValue
-        currentValue={proc?.valorUnitario}
-        newValue={form.newValue}
-        setNewValue={form.setNewValue}
         errors={form.errors}
         setErrors={form.setErrors}
       />

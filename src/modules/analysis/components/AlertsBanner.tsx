@@ -19,14 +19,11 @@ export default function AlertsBanner({ request }: AlertsBannerProps) {
       {request.alerts.map((alert) => (
         <Alert
           key={alert}
-          severity={alert === 'Liminar Judicial' ? 'warning' : 'error'}
+          severity="error"
           icon={<WarningAmberIcon fontSize="small" />}
           sx={{
             borderRadius: 2,
-            border:
-              alert === 'Liminar Judicial'
-                ? '1px solid rgba(245,158,11,0.35)'
-                : '1px solid rgba(212,24,61,0.3)',
+            border: '1px solid rgba(212,24,61,0.3)',
           }}
         >
           <Typography variant="body2" fontWeight={600}>

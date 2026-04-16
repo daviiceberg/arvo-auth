@@ -26,8 +26,8 @@ export interface GuiaProcedure {
   quantity: number;
   authorizedQuantity?: number;
   provider?: string;
-  periodStart?: string;
-  periodEnd?: string;
+  requestDate?: string;
+  passwordExpiryDate?: string;
   cid?: string;
   isCredentialed?: boolean;
 }

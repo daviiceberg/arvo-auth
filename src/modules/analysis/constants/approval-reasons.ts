@@ -3,5 +3,5 @@ export const APPROVAL_REASONS = [
   'Cobertura contratual confirmada',
   'Documentação completa e correta',
   'Alinhado com RN 539/2022 — Terapias TEA',
-  'Liminar judicial ativa',
+  'Critérios administrativos atendidos',
 ];

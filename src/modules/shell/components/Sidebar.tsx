@@ -8,7 +8,6 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -185,10 +184,8 @@ export default function Sidebar({
           </List>
         </Box>
 
-        <Divider sx={{ mx: 1, my: 1 }} />
-
         {/* Admin nav */}
-        <Box sx={{ px: 1, flexShrink: 0 }}>
+        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {ADMIN_ITEMS.map(renderNavItem)}
           </List>
@@ -196,10 +193,11 @@ export default function Sidebar({
 
         {!collapsed && (
           <>
-            <Divider sx={{ mx: 1, my: 1 }} />
+            {/* Spacer pushes external links to the bottom */}
+            <Box sx={{ flex: 1 }} />
 
             {/* External links */}
-            <Box sx={{ px: 1.5, pt: 1, pb: 2, flex: 1, minHeight: 0, overflowY: 'auto' }}>
+            <Box sx={{ px: 1.5, pt: 1, pb: 2, flexShrink: 0 }}>
               <Typography
                 variant="caption"
                 sx={{

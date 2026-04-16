@@ -15,7 +15,6 @@ export type {
   Adjustment,
   Category,
   IASuggestion,
-  MedicalBoard,
 } from '@/types/pedido';
 
 // -- Module-specific types -----------------------------------------------

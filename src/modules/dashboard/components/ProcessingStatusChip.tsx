@@ -2,7 +2,6 @@
 
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined';
 import Chip from '@mui/material/Chip';
 
 import { type ProcessingRequest } from '@/types/pedido';
@@ -32,22 +31,6 @@ export default function ProcessingStatusChip({ status }: ProcessingStatusChipPro
         sx={{
           backgroundColor: 'rgba(25,118,210,0.1)',
           color: 'rgb(25,118,210)',
-          fontWeight: 600,
-          fontSize: 12,
-        }}
-      />
-    );
-  }
-
-  if (status === 'aguardando_processamento') {
-    return (
-      <Chip
-        icon={<HourglassEmptyOutlinedIcon sx={{ fontSize: 14 }} />}
-        label="Aguardando"
-        size="small"
-        sx={{
-          backgroundColor: 'rgba(90,96,112,0.1)',
-          color: 'text.secondary',
           fontWeight: 600,
           fontSize: 12,
         }}

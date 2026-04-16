@@ -66,8 +66,8 @@ function getStep3Content(
           <ReviewRow label="Tipo de Terapia" value={proc.tipoTerapia} />
           <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
           <ReviewRow label="Nº de Sessões" value={proc.numeroSessoes} />
-          <ReviewRow label="Data de Início" value={proc.dataInicio} />
-          <ReviewRow label="Data de Término" value={proc.dataTermino} />
+          <ReviewRow label="Data da Solicitação" value={proc.dataSolicitacao} />
+          <ReviewRow label="Validade da Senha" value={proc.dataValidadeSenha} />
           <ReviewRow label="Frequência Semanal" value={proc.frequenciaSemanal} />
           <ReviewRow label="Duração da Sessão" value={`${proc.duracaoSessao} min`} />
         </Box>
@@ -255,8 +255,11 @@ export function StepReview({
           </Box>
         )}
         <ReviewRow label="Caráter do Atendimento" value={form.caraterAtendimento} />
-        <ReviewRow label="Médico Solicitante" value={form.medicoSolicitante} />
-        <ReviewRow label="CRM" value={form.crm} />
+        <ReviewRow label="Profissional Solicitante" value={form.profissionalSolicitante} />
+        <ReviewRow
+          label="Conselho"
+          value={`${form.conselhoTipo} ${form.conselhoNumero}/${form.conselhoUF}`}
+        />
         <ReviewRow label="Indicação Clínica" value={form.indicacaoClinica} />
       </Box>
       {/* Step 3 summary */}
