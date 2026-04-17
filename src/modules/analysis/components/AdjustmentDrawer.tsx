@@ -21,6 +21,7 @@ import { type Adjustment } from '@/types/pedido';
 
 import { type UseAdjustmentFormReturn, useAdjustmentForm } from '../hooks/useAdjustmentForm';
 
+import AdjustmentFieldCid from './AdjustmentFieldCid';
 import AdjustmentFieldCode from './AdjustmentFieldCode';
 import AdjustmentFieldDut from './AdjustmentFieldDut';
 import AdjustmentFieldProvider from './AdjustmentFieldProvider';
@@ -31,6 +32,7 @@ interface AdjustmentProc {
   descricao: string;
   qty: number;
   prestador: string;
+  cid: string;
 }
 
 interface AdjustmentDrawerProps {
@@ -80,6 +82,13 @@ function buildFieldComponents(
         setNewDesc={form.setNewDesc}
         errors={form.errors}
         setErrors={form.setErrors}
+      />
+    ),
+    cid: (
+      <AdjustmentFieldCid
+        currentCid={proc?.cid ?? ''}
+        newCid={form.newCid}
+        onNewCidChange={form.setNewCid}
       />
     ),
     dut: (

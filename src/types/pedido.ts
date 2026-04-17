@@ -66,7 +66,7 @@ export interface Adjustment {
   id: string;
   procedureCode: string;
   procedureDescription: string;
-  field: 'quantidade' | 'prestador' | 'codigo' | 'dut';
+  field: 'quantidade' | 'prestador' | 'codigo' | 'cid' | 'dut';
   previousValue: string;
   newValue: string;
   reason: string;

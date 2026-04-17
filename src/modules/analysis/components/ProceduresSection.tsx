@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 
+import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -16,12 +18,14 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import DutModal from '@/shared/components/dut-modal/DutModal';
 import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
+import { CID_DATABASE, CID_GROUP_LABELS } from '@/shared/constants/cid-codes';
 import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
 
 import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
@@ -63,6 +67,7 @@ type AdjustClickHandler = (proc: {
   descricao: string;
   qty: number;
   prestador: string;
+  cid: string;
 }) => void;
 
 interface ProcedureActionCellProps {
@@ -113,6 +118,7 @@ function ProcedureActionCell({
                 descricao: proc.description,
                 qty: proc.qty,
                 prestador: hospital,
+                cid: proc.cid,
               });
             }}
             sx={{
@@ -481,6 +487,134 @@ function ProcedureRow({
   );
 }
 
+// ── Secondary CIDs editor ───────────────────────────────────────────
+
+interface SecondaryCidsEditorProps {
+  cids: string[];
+  disabled: boolean;
+  onAdd: (cid: string) => void;
+  onRemove: (index: number) => void;
+}
+
+function SecondaryCidsEditor({ cids, disabled, onAdd, onRemove }: SecondaryCidsEditorProps) {
+  const [showAdd, setShowAdd] = useState(false);
+
+  if (cids.length === 0 && disabled) return null;
+
+  return (
+    <Box sx={{ pb: 2, pt: 0.5 }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: '#64748b',
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: 0.4,
+        }}
+      >
+        CIDs Secundários
+      </Typography>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75, alignItems: 'center' }}>
+        {cids.map((cid, i) => (
+          <Chip
+            key={`${cid}-${String(i)}`}
+            label={cid}
+            size="small"
+            onDelete={
+              disabled
+                ? undefined
+                : () => {
+                    onRemove(i);
+                  }
+            }
+            sx={{
+              backgroundColor: 'rgba(100,116,139,0.08)',
+              color: '#475569',
+              fontWeight: 600,
+              fontSize: 12,
+              height: 22,
+            }}
+          />
+        ))}
+        {!disabled ? (
+          <Chip
+            icon={<AddIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
+            label="CID"
+            size="small"
+            variant="outlined"
+            onClick={() => {
+              setShowAdd(true);
+            }}
+            sx={{
+              fontSize: 11,
+              height: 22,
+              cursor: 'pointer',
+              borderStyle: 'dashed',
+              color: 'text.secondary',
+            }}
+          />
+        ) : null}
+      </Box>
+      {showAdd ? (
+        <Box sx={{ mt: 1, maxWidth: 320 }}>
+          <Autocomplete
+            freeSolo
+            openOnFocus
+            options={CID_DATABASE}
+            groupBy={(option) => CID_GROUP_LABELS[option.group] ?? ''}
+            getOptionLabel={(opt) =>
+              typeof opt === 'string' ? opt : `${opt.code} — ${opt.description}`
+            }
+            filterOptions={(options, { inputValue }) => {
+              const q = inputValue.toLowerCase().trim();
+              if (q.length < 2) return options.filter((c) => c.group === 'tea');
+              return options.filter(
+                (c) =>
+                  c.code.toLowerCase().startsWith(q) || c.description.toLowerCase().includes(q),
+              );
+            }}
+            onChange={(_e, value) => {
+              if (value && typeof value !== 'string') {
+                onAdd(`${value.code} — ${value.description}`);
+                setShowAdd(false);
+              }
+            }}
+            onBlur={() => {
+              setShowAdd(false);
+            }}
+            size="small"
+            renderInput={(params) => (
+              <TextField {...params} size="small" placeholder="Buscar CID para adicionar..." />
+            )}
+            renderOption={(props, option) => (
+              <li {...props} key={option.code}>
+                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      fontFamily: 'monospace',
+                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
+                      flexShrink: 0,
+                      minWidth: 56,
+                    }}
+                  >
+                    {option.code}
+                  </Typography>
+                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
+                    {option.description}
+                  </Typography>
+                </Box>
+              </li>
+            )}
+          />
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
+
 // ── Main section ────────────────────────────────────────────────────
 
 interface ProceduresSectionProps {
@@ -499,7 +633,16 @@ export default function ProceduresSection({
   const ep = request.executingProvider;
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
   const [expandedCodes, setExpandedCodes] = useState(new Set());
+  const [localSecondaryCids, setLocalSecondaryCids] = useState(request.secondaryCids ?? []);
   const dutModal = useDutModal();
+
+  const handleRemoveSecondaryCid = (index: number) => {
+    setLocalSecondaryCids((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddSecondaryCid = (cid: string) => {
+    setLocalSecondaryCids((prev) => (prev.includes(cid) ? prev : [...prev, cid]));
+  };
 
   const toggleExpand = (code: string) => {
     setExpandedCodes((prev) => {
@@ -599,38 +742,12 @@ export default function ProceduresSection({
             </Table>
           </Box>
         </Box>
-        {request.secondaryCids && request.secondaryCids.length > 0 ? (
-          <Box sx={{ pb: 2, pt: 0.5 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#64748b',
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: 0.4,
-              }}
-            >
-              CIDs Secundários
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
-              {request.secondaryCids.map((cid, i) => (
-                <Chip
-                  key={i}
-                  label={cid}
-                  size="small"
-                  sx={{
-                    backgroundColor: 'rgba(100,116,139,0.08)',
-                    color: '#475569',
-                    fontWeight: 600,
-                    fontSize: 12,
-                    height: 20,
-                  }}
-                />
-              ))}
-            </Box>
-          </Box>
-        ) : null}
+        <SecondaryCidsEditor
+          cids={localSecondaryCids}
+          disabled={isGuideFinalized}
+          onAdd={handleAddSecondaryCid}
+          onRemove={handleRemoveSecondaryCid}
+        />
         {(() => {
           const providerAdj = allAdjustments.find((a) => a.field === 'prestador');
           const activeHospital = providerAdj ? providerAdj.newValue : ep.name;

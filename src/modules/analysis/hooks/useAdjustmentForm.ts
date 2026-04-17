@@ -8,13 +8,14 @@ import { ADJUSTMENT_REASONS } from '../constants/adjustment-reasons';
 import { USER_PROFILE } from '../types';
 
 // ---- Types ----
-type AdjustmentField = 'quantidade' | 'prestador' | 'codigo' | 'dut' | '';
+type AdjustmentField = 'quantidade' | 'prestador' | 'codigo' | 'cid' | 'dut' | '';
 
 interface ProcedureInfo {
   codigo: string;
   descricao: string;
   qty: number;
   prestador: string;
+  cid: string;
 }
 
 interface UseAdjustmentFormParams {
@@ -32,6 +33,7 @@ interface FormState {
   newCNES: string;
   newCode: string;
   newDesc: string;
+  newCid: string;
   newDut: string;
   reason: string;
   justification: string;
@@ -69,13 +71,27 @@ function validateDutField(form: FormState): Record<string, string> {
   return errs;
 }
 
+function validateCidField(form: FormState, currentCid: string): Record<string, string> {
+  const errs: Record<string, string> = {};
+  const trimmed = form.newCid.trim();
+  if (!trimmed) errs.newCid = 'Informe o novo CID';
+  else if (trimmed === currentCid) errs.newCid = 'O novo CID deve ser diferente do atual';
+  return errs;
+}
+
 const FIELD_VALIDATORS: Record<
   AdjustmentField,
-  (form: FormState, qtyNum: number, qtyStatus: string | null) => Record<string, string>
+  (
+    form: FormState,
+    qtyNum: number,
+    qtyStatus: string | null,
+    currentCid: string,
+  ) => Record<string, string>
 > = {
   quantidade: validateQuantityField,
   prestador: (form) => validateProviderField(form),
   codigo: (form) => validateCodeField(form),
+  cid: (form, _q, _s, currentCid) => validateCidField(form, currentCid),
   dut: (form) => validateDutField(form),
   '': () => ({}),
 };
@@ -87,6 +103,7 @@ const EMPTY_FORM: FormState = {
   newCNES: '',
   newCode: '',
   newDesc: '',
+  newCid: '',
   newDut: '',
   reason: '',
   justification: '',
@@ -105,6 +122,9 @@ function buildInitialForm(
     .slice(-1)[0];
   const lastCodeAdj = existingAdjustments
     .filter((a) => a.procedureCode === proc?.codigo && a.field === 'codigo')
+    .slice(-1)[0];
+  const lastCidAdj = existingAdjustments
+    .filter((a) => a.procedureCode === proc?.codigo && a.field === 'cid')
     .slice(-1)[0];
 
   if (lastQtyAdj) {
@@ -127,6 +147,9 @@ function buildInitialForm(
       newDesc: lastCodeAdj.newValue.split(' — ')[1] ?? '',
     };
   }
+  if (lastCidAdj) {
+    return { ...EMPTY_FORM, field: 'cid', newCid: lastCidAdj.newValue };
+  }
   return EMPTY_FORM;
 }
 
@@ -145,10 +168,12 @@ export function useAdjustmentForm({
           { value: 'quantidade', label: 'Quantidade autorizada' },
           { value: 'prestador', label: 'Prestador executante' },
           { value: 'codigo', label: 'Código do procedimento' },
+          { value: 'cid', label: 'CID do procedimento' },
           { value: 'dut', label: 'DUT (Diretriz de Utilização)' },
         ]
       : [
           { value: 'quantidade', label: 'Quantidade autorizada' },
+          { value: 'cid', label: 'CID do procedimento' },
           { value: 'dut', label: 'DUT (Diretriz de Utilização)' },
         ];
 
@@ -194,6 +219,9 @@ export function useAdjustmentForm({
   const setNewDesc = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, newDesc: value }));
   }, []);
+  const setNewCid = useCallback((value: string) => {
+    setForm((prev) => ({ ...prev, newCid: value }));
+  }, []);
   const setNewDut = useCallback((value: string) => {
     setForm((prev) => ({ ...prev, newDut: value }));
   }, []);
@@ -210,7 +238,7 @@ export function useAdjustmentForm({
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!form.field) errs.field = 'Selecione o campo a ajustar';
-    Object.assign(errs, FIELD_VALIDATORS[form.field](form, qtyNum, qtyStatus));
+    Object.assign(errs, FIELD_VALIDATORS[form.field](form, qtyNum, qtyStatus, proc?.cid ?? ''));
     if (!form.reason) errs.motivo = 'Selecione o motivo';
     if (form.reason === 'Outro (descrever na fundamentação)' && !form.justification.trim()) {
       errs.justification = 'Fundamentação obrigatória quando motivo é "Outro"';
@@ -239,6 +267,10 @@ export function useAdjustmentForm({
     if (form.field === 'codigo') {
       prevValue = proc.codigo;
       newVal = `${form.newCode} — ${form.newDesc}`;
+    }
+    if (form.field === 'cid') {
+      prevValue = proc.cid || '—';
+      newVal = form.newCid.trim();
     }
     if (form.field === 'dut') {
       prevValue = 'Nenhuma';
@@ -272,6 +304,8 @@ export function useAdjustmentForm({
     setNewCode,
     newDesc: form.newDesc,
     setNewDesc,
+    newCid: form.newCid,
+    setNewCid,
     newDut: form.newDut,
     setNewDut,
     reason: form.reason,

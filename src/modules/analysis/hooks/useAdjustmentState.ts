@@ -18,6 +18,7 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
     descricao: string;
     qty: number;
     prestador: string;
+    cid: string;
   } | null>(null);
   const [localAdjustments, setLocalAdjustments] = useState<Adjustment[]>([]);
 
@@ -28,6 +29,7 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
     descricao: string;
     qty: number;
     prestador: string;
+    cid: string;
   }) => {
     setDrawerProc(proc);
     setDrawerOpen(true);
@@ -42,7 +44,11 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
         ? `Qtd. autorizada alterada de ${adjustment.previousValue} para ${adjustment.newValue}`
         : adjustment.field === 'prestador'
           ? `Prestador alterado para ${adjustment.newValue}`
-          : `Código alterado para ${adjustment.newValue}`;
+          : adjustment.field === 'cid'
+            ? `CID alterado de ${adjustment.previousValue} para ${adjustment.newValue}`
+            : adjustment.field === 'dut'
+              ? `DUT definida: ${adjustment.newValue}`
+              : `Código alterado para ${adjustment.newValue}`;
     showSnackbar(`✓ Ajuste registrado — ${fieldLabel}`, 'warning');
   };
 
