@@ -144,6 +144,10 @@ export interface Request {
   internalNotes?: string;
   auditLog?: AuditLogEntry[];
   attendanceTypeCode?: string;
+  cidSource?: 'prestador' | 'ocr' | 'inferencia';
+  cidConfidence?: number;
+  cidDivergence?: boolean;
+  cidDivergenceDetail?: string;
 }
 
 export interface ProcessingRequest {

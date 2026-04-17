@@ -172,6 +172,11 @@ export function StepReview({
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Revisão da Solicitação
       </Typography>
+      {!form.cidPrincipal ? (
+        <Alert severity="error" sx={{ mb: 2, fontSize: 12, borderRadius: 2 }}>
+          CID Principal é obrigatório. Volte à etapa &quot;Clínico&quot; e preencha o CID.
+        </Alert>
+      ) : null}
       <Box
         sx={{
           backgroundColor: '#f0fdf4',

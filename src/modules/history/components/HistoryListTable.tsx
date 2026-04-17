@@ -8,9 +8,9 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
+import DataTablePagination from '@/shared/components/DataTablePagination';
 import { type HistoryEntry } from '@/types/pedido';
 
 import { type SortDirection } from '../types';
@@ -40,68 +40,64 @@ export default function HistoryListTable({
 }: HistoryListTableProps) {
   return (
     <Card>
-      <Table size="small">
-        <TableHead>
-          <TableRow
-            sx={{
-              '& .MuiTableCell-head': {
-                fontWeight: 700,
-                fontSize: 12,
-                textTransform: 'uppercase',
-                letterSpacing: 0.4,
-                color: 'text.secondary',
-                px: 1.5,
-              },
-            }}
-          >
-            <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
-            <TableCell sx={{ minWidth: 180 }}>Beneficiário</TableCell>
-            <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
-            <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
-            <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
-            <TableCell sx={{ minWidth: 130 }}>Sugestão IA</TableCell>
-            <TableCell
-              sx={{ minWidth: 135, cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
-              onClick={onToggleSort}
+      <Box sx={{ overflowX: 'auto' }}>
+        <Table size="small" sx={{ minWidth: 1100 }}>
+          <TableHead>
+            <TableRow
+              sx={{
+                '& .MuiTableCell-head': {
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.4,
+                  color: 'text.secondary',
+                  px: 1.5,
+                },
+              }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                Data Decisão
-                {sortDirection === 'desc' ? (
-                  <ArrowDownwardIcon sx={{ fontSize: 14 }} />
-                ) : (
-                  <ArrowUpwardIcon sx={{ fontSize: 14 }} />
-                )}
-              </Box>
-            </TableCell>
-            <TableCell sx={{ minWidth: 125 }} />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {pagedEntries.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={8} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
-                Nenhuma decisão encontrada para os filtros selecionados.
+              <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
+              <TableCell sx={{ minWidth: 180 }}>Beneficiário</TableCell>
+              <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
+              <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
+              <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
+              <TableCell sx={{ minWidth: 130 }}>Sugestão IA</TableCell>
+              <TableCell
+                sx={{ minWidth: 135, cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
+                onClick={onToggleSort}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  Data Decisão
+                  {sortDirection === 'desc' ? (
+                    <ArrowDownwardIcon sx={{ fontSize: 14 }} />
+                  ) : (
+                    <ArrowUpwardIcon sx={{ fontSize: 14 }} />
+                  )}
+                </Box>
               </TableCell>
+              <TableCell sx={{ minWidth: 125 }} />
             </TableRow>
-          ) : (
-            pagedEntries.map((entry) => (
-              <HistoryListTableRow key={entry.id} entry={entry} onNavigate={onNavigate} />
-            ))
-          )}
-        </TableBody>
-      </Table>
-      <TablePagination
-        component="div"
+          </TableHead>
+          <TableBody>
+            {pagedEntries.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                  Nenhuma decisão encontrada para os filtros selecionados.
+                </TableCell>
+              </TableRow>
+            ) : (
+              pagedEntries.map((entry) => (
+                <HistoryListTableRow key={entry.id} entry={entry} onNavigate={onNavigate} />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Box>
+      <DataTablePagination
         count={filteredCount}
         page={page}
         rowsPerPage={rowsPerPage}
-        onPageChange={(_e, p) => {
-          onPageChange(p);
-        }}
-        rowsPerPageOptions={[]}
-        labelDisplayedRows={({ from, to, count }) =>
-          `${String(from)}–${String(to)} de ${String(count)}`
-        }
+        itemLabel="decisões"
+        onPageChange={onPageChange}
       />
     </Card>
   );

@@ -44,13 +44,17 @@ function getCredentialingStatus(code: string): 'ok' | 'warning' {
 }
 
 const TH_SX = {
-  fontSize: 11,
+  fontSize: '11px',
   fontWeight: 700,
   textTransform: 'uppercase' as const,
-  letterSpacing: 0.5,
+  letterSpacing: '0.5px',
   color: 'text.secondary',
-  pb: 1,
+  py: '6px',
+  px: 2,
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
 };
+
+const TD_SX = { py: '8px', px: 2, verticalAlign: 'top' as const };
 
 // ── Sub-components ──────────────────────────────────────────────────
 
@@ -75,7 +79,7 @@ function ProcedureActionCell({
   onAdjustClick,
 }: ProcedureActionCellProps) {
   return (
-    <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
+    <TableCell sx={TD_SX}>
       {USER_PROFILE !== 'Auditor' &&
         (isGuideFinalized ? (
           <Tooltip title="Guia já finalizada — edição não permitida">
@@ -173,7 +177,7 @@ interface ProcedureCodeCellProps {
 
 function ProcedureCodeCell({ code, codeAdjustment }: ProcedureCodeCellProps) {
   return (
-    <TableCell sx={{ fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
+    <TableCell sx={{ ...TD_SX, fontWeight: 700, fontSize: 13, width: 120 }}>
       {codeAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>
@@ -197,7 +201,7 @@ interface ProcedureDescCellProps {
 
 function ProcedureDescCell({ description, codeAdjustment }: ProcedureDescCellProps) {
   return (
-    <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
+    <TableCell sx={{ ...TD_SX, fontWeight: 600, fontSize: 13 }}>
       {codeAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>
@@ -222,9 +226,7 @@ interface ProcedureQtyCellProps {
 
 function ProcedureQtyCell({ qty, authorizedQty, qtyAdjustment }: ProcedureQtyCellProps) {
   return (
-    <TableCell
-      sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}
-    >
+    <TableCell sx={{ ...TD_SX, color: 'text.secondary', fontSize: 12, width: 80 }}>
       {qtyAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12 }}>Qtd: {qty}</Typography>
@@ -248,7 +250,7 @@ interface ProcedureProviderCellProps {
 
 function ProcedureProviderCell({ hospital, providerAdjustment }: ProcedureProviderCellProps) {
   return (
-    <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
+    <TableCell sx={{ ...TD_SX, fontSize: 12, maxWidth: 160, minWidth: 120 }}>
       {providerAdjustment ? (
         <Box>
           <Typography
@@ -292,7 +294,7 @@ function ProcedureStatusCell({
   isGuideFinalized,
 }: ProcedureStatusCellProps) {
   return (
-    <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+    <TableCell sx={TD_SX}>
       <Box
         sx={{
           display: 'flex',
@@ -386,12 +388,11 @@ function ProcedureRow({
         sx={{
           cursor: 'default',
           '& td': { borderBottom: isLast && !isExpanded ? 'none' : '1px solid rgba(0,0,0,0.08)' },
-          '&:not(:first-of-type) td': { pt: 2 },
           '&:hover': { backgroundColor: 'transparent' },
         }}
       >
         {/* Tipo */}
-        <TableCell sx={{ pl: 0, verticalAlign: 'top', pt: 1.5, width: 80 }}>
+        <TableCell sx={{ ...TD_SX, width: 80 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <CodeTypeChip codeType={codeType} onClick={hasTussCodes ? onToggleExpand : undefined} />
             {hasTussCodes ? (
@@ -416,10 +417,9 @@ function ProcedureRow({
         {/* Datas */}
         <TableCell
           sx={{
+            ...TD_SX,
             color: 'text.secondary',
             fontSize: 12,
-            verticalAlign: 'top',
-            pt: 1.5,
             width: 140,
           }}
         >
@@ -437,7 +437,7 @@ function ProcedureRow({
           isGuideFinalized={isGuideFinalized}
         />
         {/* DUT */}
-        <TableCell sx={{ verticalAlign: 'top', pt: 1.5, width: 70, textAlign: 'left' }}>
+        <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
           {dutNumber ? (
             <Typography
               component="button"
@@ -513,52 +513,92 @@ export default function ProceduresSection({
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          sx={{
-            mb: 2,
-            fontSize: 15,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            color: 'text.secondary',
-          }}
-        >
-          Procedimentos ({procs.length})
-        </Typography>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ '& th': { borderBottom: '1px solid rgba(0,0,0,0.08)' } }}>
-              <TableCell sx={{ pl: 0, ...TH_SX, width: 80 }}>Tipo</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
-              <TableCell sx={TH_SX}>Descrição</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
-              <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
-              <TableCell sx={TH_SX}>Status</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
-              <TableCell sx={{ ...TH_SX, pr: 0 }} />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {procs.map((proc, index) => (
-              <ProcedureRow
-                key={proc.code}
-                proc={proc}
-                allAdjustments={allAdjustments}
-                isGuideFinalized={isGuideFinalized}
-                isLast={index === procs.length - 1}
-                hospital={ep.name}
-                onAdjustClick={onAdjustClick}
-                isExpanded={expandedCodes.has(proc.code)}
-                onToggleExpand={() => {
-                  toggleExpand(proc.code);
-                }}
-                onDutClick={dutModal.open}
-              />
-            ))}
-          </TableBody>
-        </Table>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Typography
+            variant="h6"
+            fontWeight={700}
+            sx={{
+              fontSize: 15,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              color: 'text.secondary',
+            }}
+          >
+            Procedimentos ({procs.length})
+          </Typography>
+          {request.cidSource ? (
+            <Chip
+              label={
+                request.cidSource === 'prestador'
+                  ? 'CID: Prestador'
+                  : request.cidSource === 'ocr'
+                    ? 'CID: OCR'
+                    : 'CID: IA'
+              }
+              size="small"
+              sx={{
+                fontSize: 10,
+                height: 20,
+                fontWeight: 700,
+                backgroundColor:
+                  request.cidSource === 'prestador'
+                    ? 'rgba(0,0,0,0.06)'
+                    : request.cidSource === 'ocr'
+                      ? 'rgba(37,99,235,0.08)'
+                      : 'rgba(144,43,41,0.08)',
+                color:
+                  request.cidSource === 'prestador'
+                    ? 'text.secondary'
+                    : request.cidSource === 'ocr'
+                      ? 'info.main'
+                      : 'primary.main',
+              }}
+            />
+          ) : null}
+        </Box>
+        <Box sx={{ overflowX: 'auto' }}>
+          <Box
+            sx={{
+              border: '1px solid rgba(0,0,0,0.1)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+            }}
+          >
+            <Table size="small" sx={{ minWidth: 900 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ ...TH_SX, width: 80 }}>Tipo</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
+                  <TableCell sx={TH_SX}>Descrição</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
+                  <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
+                  <TableCell sx={TH_SX}>Status</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
+                  <TableCell sx={{ ...TH_SX, minWidth: 80 }}>Ação</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {procs.map((proc, index) => (
+                  <ProcedureRow
+                    key={proc.code}
+                    proc={proc}
+                    allAdjustments={allAdjustments}
+                    isGuideFinalized={isGuideFinalized}
+                    isLast={index === procs.length - 1}
+                    hospital={ep.name}
+                    onAdjustClick={onAdjustClick}
+                    isExpanded={expandedCodes.has(proc.code)}
+                    onToggleExpand={() => {
+                      toggleExpand(proc.code);
+                    }}
+                    onDutClick={dutModal.open}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
+        </Box>
         {request.secondaryCids && request.secondaryCids.length > 0 ? (
           <Box sx={{ pb: 2, pt: 0.5 }}>
             <Typography

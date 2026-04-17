@@ -32,6 +32,14 @@ function validateStepTransition(
   if (currentStep === 1 && !form.tipoSolicitacao) {
     return 'Por favor, selecione o tipo de solicitação antes de continuar.';
   }
+  if (currentStep === 2) {
+    if (!form.cidPrincipal.trim()) {
+      return 'CID Principal é obrigatório. Preencha o CID antes de continuar.';
+    }
+    if (!form.indicacaoClinica.trim()) {
+      return 'Indicação Clínica é obrigatória. Preencha a indicação clínica antes de continuar.';
+    }
+  }
   if (currentStep === 3 && form.tipoSolicitacao === 'terapias') {
     if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
     return validateTherapyProcedures(terapiaProcedimentos);

@@ -14,10 +14,11 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+
+import DataTablePagination from '@/shared/components/DataTablePagination';
 
 import useProcessingQueue from '../hooks/useProcessingQueue';
 
@@ -65,16 +66,7 @@ const thSx = {
 
 // -- Component ----------------------------------------------------------------
 export default function ProcessingQueueTable() {
-  const {
-    page,
-    rowsPerPage,
-    pagedItems,
-    sorted,
-    counts,
-    total,
-    handlePageChange,
-    handleRowsPerPageChange,
-  } = useProcessingQueue();
+  const { page, rowsPerPage, pagedItems, sorted, counts, total, setPage } = useProcessingQueue();
 
   if (total === 0) return null;
 
@@ -180,20 +172,13 @@ export default function ProcessingQueueTable() {
               ))}
             </TableBody>
           </Table>
-          {sorted.length > 5 && (
-            <TablePagination
-              component="div"
+          {sorted.length > rowsPerPage && (
+            <DataTablePagination
               count={sorted.length}
               page={page}
-              onPageChange={handlePageChange}
               rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              rowsPerPageOptions={[5, 10, 25]}
-              labelRowsPerPage="Por página:"
-              labelDisplayedRows={({ from, to, count }) =>
-                `${String(from)}–${String(to)} de ${String(count)}`
-              }
-              sx={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}
+              itemLabel="pedidos"
+              onPageChange={setPage}
             />
           )}
         </Box>

@@ -2,7 +2,6 @@
 
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 
 interface MultiProcButtonsProps {
@@ -92,7 +91,6 @@ function MultiProcConfirmButton({
           </Button>
         </span>
       </Tooltip>
-      <Divider sx={{ my: 0.5 }} />
     </>
   );
 }

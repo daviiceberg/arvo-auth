@@ -33,7 +33,7 @@ export default function DashboardPage() {
       >
         <Box>
           <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-0.5px' }}>
-            Gestão Inteligente de Pedidos TEA
+            Gestão Inteligente de Pedidos - Terapias Especiais
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
             Visão geral das solicitações —{' '}

@@ -21,7 +21,7 @@ function sortQueue(items: ProcessingRequest[]): ProcessingRequest[] {
 
 export default function useProcessingQueue() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const rowsPerPage = 5;
 
   const sorted = useMemo(() => sortQueue(pedidosEmProcessamento), []);
 
@@ -40,25 +40,13 @@ export default function useProcessingQueue() {
     return { processing, error };
   }, []);
 
-  const handlePageChange = (_: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleRowsPerPageChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(0);
-  };
-
   return {
     page,
+    setPage,
     rowsPerPage,
     pagedItems,
     sorted,
     counts,
     total: pedidosEmProcessamento.length,
-    handlePageChange,
-    handleRowsPerPageChange,
   } as const;
 }
