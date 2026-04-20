@@ -217,4 +217,12 @@ export interface HistoryEntry {
   secondaryCids?: string[];
   internalNotes?: string;
   auditLog?: AuditLogEntry[];
+  procedureAlreadyPerformed?: boolean;
+  cidDivergence?: boolean;
+  cidDivergenceDetail?: string;
+  planInclusionDate?: string;
+  contactPhone?: string;
+  planScope?: PlanScope;
+  isRegulatedPlan?: boolean;
+  beneficiaryNotes?: string;
 }

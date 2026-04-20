@@ -20,6 +20,8 @@ function formatDates(requestDate: string, expiryDate?: string): string {
   return `Solic.: ${requestDate} · Val.: ${expiryDate ?? '—'}`;
 }
 
+const TD_SX = { py: '8px', px: 2, verticalAlign: 'top' as const };
+
 interface DetailedProc {
   code: string;
   tuss: string;
@@ -100,7 +102,7 @@ function DutCell({
   onDutClick: (n: number) => void;
 }) {
   return (
-    <TableCell sx={{ verticalAlign: 'top', pt: 1.5, width: 70, textAlign: 'left' }}>
+    <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
       {dutNumber ? (
         <Typography
           component="button"
@@ -132,6 +134,7 @@ function DutCell({
 
 interface HistoryProcedureRowProps {
   proc: DetailedProc;
+  executingProviderName: string;
   isLast: boolean;
   isPartial: boolean;
   isExpanded: boolean;
@@ -141,6 +144,7 @@ interface HistoryProcedureRowProps {
 
 export default function HistoryProcedureRow({
   proc,
+  executingProviderName,
   isLast,
   isPartial,
   isExpanded,
@@ -165,7 +169,7 @@ export default function HistoryProcedureRow({
         }}
       >
         {/* Tipo */}
-        <TableCell sx={{ pl: 0, verticalAlign: 'top', pt: 1.5, width: 80 }}>
+        <TableCell sx={{ ...TD_SX, width: 80 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <CodeTypeChip codeType={codeType} onClick={hasTussCodes ? onToggleExpand : undefined} />
             {hasTussCodes ? (
@@ -180,26 +184,34 @@ export default function HistoryProcedureRow({
           </Box>
         </TableCell>
         {/* Código */}
-        <TableCell
-          sx={{ fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}
-        >
+        <TableCell sx={{ ...TD_SX, fontWeight: 700, fontSize: 13, width: 120 }}>
           {proc.tuss}
         </TableCell>
         {/* Descrição */}
-        <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
-          {proc.description}
-        </TableCell>
+        <TableCell sx={{ ...TD_SX, fontWeight: 600, fontSize: 13 }}>{proc.description}</TableCell>
         {/* Qtd */}
-        <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+        <TableCell sx={{ ...TD_SX, color: 'text.secondary', fontSize: 12, width: 80 }}>
           Qtd: {proc.qty}
           {proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}
         </TableCell>
+        {/* Prestador */}
+        <TableCell
+          sx={{
+            ...TD_SX,
+            color: 'text.secondary',
+            fontSize: 12,
+            maxWidth: 160,
+            minWidth: 120,
+          }}
+        >
+          {executingProviderName}
+        </TableCell>
         {/* Datas */}
-        <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
+        <TableCell sx={{ ...TD_SX, color: 'text.secondary', fontSize: 12, width: 140 }}>
           {formatDates(proc.requestDate, proc.passwordExpiryDate)}
         </TableCell>
-        {/* Status */}
-        <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+        {/* CID */}
+        <TableCell sx={TD_SX}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.5 }}>
             {proc.cid ? (
               <Chip
@@ -214,23 +226,12 @@ export default function HistoryProcedureRow({
                 }}
               />
             ) : null}
-            <Chip
-              label={proc.auditLevel}
-              size="small"
-              sx={{
-                backgroundColor: 'rgba(0,0,0,0.05)',
-                color: '#6b7280',
-                fontWeight: 600,
-                fontSize: 11,
-                height: 20,
-              }}
-            />
           </Box>
         </TableCell>
         <DutCell dutNumber={dutNumber} onDutClick={onDutClick} />
         {/* Decisão parcial */}
         {isPartial ? (
-          <TableCell sx={{ verticalAlign: 'top', pt: 1.5, pr: 0 }}>
+          <TableCell sx={{ ...TD_SX, minWidth: 100 }}>
             <PartialDecisionCell decisao={proc.decisao} motivoDecisao={proc.motivoDecisao} />
           </TableCell>
         ) : null}
@@ -242,18 +243,18 @@ export default function HistoryProcedureRow({
               key={tuss.code}
               sx={{ '& td': { borderBottom: '1px solid rgba(0,0,0,0.04)' } }}
             >
-              <TableCell />
-              <TableCell sx={{ pl: 2 }}>
+              <TableCell sx={TD_SX} />
+              <TableCell sx={TD_SX}>
                 <Typography sx={{ fontSize: 11, fontFamily: 'monospace', color: 'text.secondary' }}>
                   {tuss.code}
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell sx={TD_SX}>
                 <Typography sx={{ fontSize: 11, color: 'text.secondary' }}>
                   {tuss.description}
                 </Typography>
               </TableCell>
-              <TableCell colSpan={isPartial ? 5 : 4} />
+              <TableCell sx={TD_SX} colSpan={isPartial ? 6 : 5} />
             </TableRow>
           ))
         : null}

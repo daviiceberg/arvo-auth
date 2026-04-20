@@ -42,7 +42,7 @@ function getAdjustmentForField(
   return allAdjustments.find((a) => a.procedureCode === procCode && a.field === field);
 }
 
-function getCredentialingStatus(code: string): 'ok' | 'warning' {
+function getProviderEnablementStatus(code: string): 'ok' | 'warning' {
   const lastDigit = parseInt(code.slice(-1));
   return lastDigit % 2 === 0 ? 'ok' : 'warning';
 }
@@ -252,9 +252,14 @@ function ProcedureQtyCell({ qty, authorizedQty, qtyAdjustment }: ProcedureQtyCel
 interface ProcedureProviderCellProps {
   hospital: string;
   providerAdjustment: Adjustment | undefined;
+  habilitado: boolean;
 }
 
-function ProcedureProviderCell({ hospital, providerAdjustment }: ProcedureProviderCellProps) {
+function ProcedureProviderCell({
+  hospital,
+  providerAdjustment,
+  habilitado,
+}: ProcedureProviderCellProps) {
   return (
     <TableCell sx={{ ...TD_SX, fontSize: 12, maxWidth: 160, minWidth: 120 }}>
       {providerAdjustment ? (
@@ -282,73 +287,42 @@ function ProcedureProviderCell({ hospital, providerAdjustment }: ProcedureProvid
       ) : (
         <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{hospital}</Typography>
       )}
+      <Chip
+        label={habilitado ? 'Habilitado' : 'Não habilitado'}
+        size="small"
+        sx={{
+          mt: 0.5,
+          backgroundColor: habilitado ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
+          color: habilitado ? 'success.main' : 'error.main',
+          fontWeight: 700,
+          fontSize: 11,
+          height: 20,
+        }}
+      />
     </TableCell>
   );
 }
 
-interface ProcedureStatusCellProps {
+interface ProcedureCidCellProps {
   cid: string;
-  credOk: boolean;
-  hasAnyAdjustment: boolean;
-  isGuideFinalized: boolean;
 }
 
-function ProcedureStatusCell({
-  cid,
-  credOk,
-  hasAnyAdjustment,
-  isGuideFinalized,
-}: ProcedureStatusCellProps) {
+function ProcedureCidCell({ cid }: ProcedureCidCellProps) {
   return (
     <TableCell sx={TD_SX}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          gap: 0.5,
-        }}
-      >
-        {cid ? (
-          <Chip
-            label={`CID ${cid}`}
-            size="small"
-            sx={{
-              backgroundColor: 'rgba(37,99,235,0.08)',
-              color: 'info.main',
-              fontWeight: 700,
-              fontSize: 12,
-              height: 20,
-            }}
-          />
-        ) : null}
+      {cid ? (
         <Chip
-          label={credOk ? 'Credenciado' : 'Não credenciado'}
+          label={`CID ${cid}`}
           size="small"
           sx={{
-            backgroundColor: credOk ? 'rgba(22,163,74,0.1)' : 'rgba(212,24,61,0.1)',
-            color: credOk ? 'success.main' : 'error.main',
+            backgroundColor: 'rgba(37,99,235,0.08)',
+            color: 'info.main',
             fontWeight: 700,
-            fontSize: 11,
+            fontSize: 12,
             height: 20,
           }}
         />
-        {hasAnyAdjustment && !isGuideFinalized ? (
-          <Chip
-            icon={<EditIcon sx={{ fontSize: 10, ml: '4px !important' }} />}
-            label="Ajustado"
-            size="small"
-            sx={{
-              backgroundColor: 'rgba(144,43,41,0.1)',
-              color: 'primary.main',
-              fontWeight: 700,
-              fontSize: 11,
-              height: 20,
-            }}
-          />
-        ) : null}
-      </Box>
+      ) : null}
     </TableCell>
   );
 }
@@ -381,8 +355,7 @@ function ProcedureRow({
   const qtyAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'quantidade');
   const providerAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'prestador');
   const codeAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'codigo');
-  const hasAnyAdjustment = allAdjustments.some((a) => a.procedureCode === proc.code);
-  const credOk = getCredentialingStatus(proc.code) === 'ok';
+  const habilitado = getProviderEnablementStatus(proc.code) === 'ok';
   const codeType = proc.codeType ?? 'TUSS';
   const isPackage = codeType === 'PACKAGE';
   const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
@@ -419,7 +392,11 @@ function ProcedureRow({
           authorizedQty={proc.authorizedQty}
           qtyAdjustment={qtyAdjustment}
         />
-        <ProcedureProviderCell hospital={hospital} providerAdjustment={providerAdjustment} />
+        <ProcedureProviderCell
+          hospital={hospital}
+          providerAdjustment={providerAdjustment}
+          habilitado={habilitado}
+        />
         {/* Datas */}
         <TableCell
           sx={{
@@ -436,12 +413,7 @@ function ProcedureRow({
             </Typography>
           ) : null}
         </TableCell>
-        <ProcedureStatusCell
-          cid={proc.cid}
-          credOk={credOk}
-          hasAnyAdjustment={hasAnyAdjustment}
-          isGuideFinalized={isGuideFinalized}
-        />
+        <ProcedureCidCell cid={proc.cid} />
         {/* DUT */}
         <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
           {dutNumber ? (
@@ -722,7 +694,7 @@ export default function ProceduresSection({
                   <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
                   <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
                   <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
-                  <TableCell sx={TH_SX}>Status</TableCell>
+                  <TableCell sx={TH_SX}>CID</TableCell>
                   <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
                   <TableCell sx={{ ...TH_SX, minWidth: 80 }}>Ação</TableCell>
                 </TableRow>
