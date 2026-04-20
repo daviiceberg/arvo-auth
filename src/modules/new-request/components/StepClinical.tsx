@@ -323,20 +323,6 @@ export function StepClinical({
           />
         </Grid>
         <Grid size={{ xs: 12 }}>
-          <FieldLabel warning>Caráter do Atendimento</FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select
-              value={form.caraterAtendimento}
-              onChange={(e) => {
-                setSelect('caraterAtendimento')(e.target.value);
-              }}
-              sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: 'warning.light' } }}
-            >
-              <MenuItem value="Eletivo">Eletivo</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={{ xs: 12 }}>
           <FieldLabel validated={!!form.indicacaoClinica}>
             Indicação Clínica / Hipótese Diagnóstica <span style={{ color: '#C62828' }}>*</span>
           </FieldLabel>
@@ -357,23 +343,7 @@ export function StepClinical({
             detalhado, melhor.
           </Typography>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Indicação de Acidente</FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select
-              value={form.indicacaoAcidente}
-              onChange={(e) => {
-                setSelect('indicacaoAcidente')(e.target.value);
-              }}
-            >
-              <MenuItem value="NAO_ACIDENTE">Não Acidente</MenuItem>
-              <MenuItem value="TRABALHO">Trabalho</MenuItem>
-              <MenuItem value="TRANSITO">Trânsito</MenuItem>
-              <MenuItem value="OUTROS">Outros</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12 }}>
           <Box
             sx={{
               display: 'flex',
@@ -466,7 +436,7 @@ export function StepClinical({
             placeholder="SP"
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12 }}>
           <FieldLabel>Nome do Contratado Solicitante (Clínica)</FieldLabel>
           <TextField
             fullWidth
@@ -474,16 +444,6 @@ export function StepClinical({
             value={form.nomeContratadoSolicitante}
             onChange={set('nomeContratadoSolicitante')}
             placeholder="Ex: Clínica Neuropediátrica Esperança"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <FieldLabel>CNPJ do Solicitante</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="00.000.000/0001-00"
-            value={form.cnpjSolicitante}
-            onChange={set('cnpjSolicitante')}
           />
         </Grid>
       </Grid>
@@ -494,7 +454,7 @@ export function StepClinical({
         Contratado Executante
       </Typography>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12, md: 9 }}>
           <FieldLabel>Nome do Contratado Executante</FieldLabel>
           <TextField
             fullWidth
@@ -502,16 +462,6 @@ export function StepClinical({
             value={form.nomeContratadoExecutante}
             onChange={set('nomeContratadoExecutante')}
             placeholder="Ex: Clínica Integrar TEA"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <FieldLabel>CNPJ / Código na Operadora</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="00.000.000/0001-00"
-            value={form.cnpjExecutante}
-            onChange={set('cnpjExecutante')}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>

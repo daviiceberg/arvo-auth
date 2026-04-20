@@ -128,13 +128,18 @@ function AnalysisInner() {
             <AlertsBanner request={request} />
             <BeneficiarySection request={request} />
             <ProceduresSection
+              key={`procedures-${request.id}`}
               request={request}
               allAdjustments={adjustment.allAdjustments}
               onAdjustClick={adjustment.handleAdjustClick}
             />
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
             <ObservationsSection request={request} />
-            <InternalNotesSection value={internalNotes} onChange={setInternalNotes} />
+            <InternalNotesSection
+              key={`notes-${request.id}`}
+              value={internalNotes}
+              onChange={setInternalNotes}
+            />
             <AuditLogSection entries={request.auditLog ?? []} />
             <ConsolidatedHistorySection request={request} />
             <DocumentsSection request={request} />

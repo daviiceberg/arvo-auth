@@ -69,7 +69,6 @@ function getStep3Content(
           <ReviewRow label="Data da Solicitação" value={proc.dataSolicitacao} />
           <ReviewRow label="Validade da Senha" value={proc.dataValidadeSenha} />
           <ReviewRow label="Frequência Semanal" value={proc.frequenciaSemanal} />
-          <ReviewRow label="Duração da Sessão" value={`${proc.duracaoSessao} min`} />
         </Box>
       ))}
     </>
@@ -259,7 +258,6 @@ export function StepReview({
             </Box>
           </Box>
         )}
-        <ReviewRow label="Caráter do Atendimento" value={form.caraterAtendimento} />
         <ReviewRow label="Profissional Solicitante" value={form.profissionalSolicitante} />
         <ReviewRow
           label="Conselho"

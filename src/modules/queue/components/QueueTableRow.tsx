@@ -11,7 +11,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import {
-  GuideTypeChip,
   IASuggestionChip,
   OriginChip,
   PrioDot,
@@ -20,8 +19,6 @@ import {
 } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type Request } from '@/types/pedido';
-
-import { REQUEST_TYPE_MAP } from '../constants/request-type-map';
 
 // ── Row style helper ─────────────────────────────────────────────────
 function getRowSx(request: Request, lastViewedId: string | null): SxProps<Theme> {
@@ -145,7 +142,7 @@ interface QueueTableRowProps {
 }
 
 export default function QueueTableRow({ request, lastViewedId, onRowClick }: QueueTableRowProps) {
-  const requestType = REQUEST_TYPE_MAP[request.id] ?? 'primeira';
+  const requestType = request.authorizationStage === 'continuidade' ? 'continuidade' : 'primeira';
 
   return (
     <TableRow
@@ -183,7 +180,6 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
         </Typography>
         <Box sx={{ mt: 0.5, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
           <RequestTypeChip type={requestType} />
-          <GuideTypeChip type={request.guideType} />
         </Box>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>

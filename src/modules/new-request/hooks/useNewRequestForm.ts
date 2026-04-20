@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import { type GuiaProcedure } from '@/types/procedure-codes';
-
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
 import { type FormData, type TerapiaProcedimento } from '../types';
 
@@ -15,7 +13,6 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
   dataSolicitacao: base?.dataSolicitacao ?? '',
   dataValidadeSenha: base?.dataValidadeSenha ?? '',
   frequenciaSemanal: '3x por semana',
-  duracaoSessao: '50',
 });
 
 export const initialForm: FormData = {
@@ -30,10 +27,8 @@ export const initialForm: FormData = {
   dataInclusaoPlano: '',
   cidPrincipal: 'F84.0 - Autismo infantil',
   cidsSecundarios: [],
-  caraterAtendimento: 'Eletivo',
   indicacaoClinica:
     'Paciente pediátrico com diagnóstico de TEA (F84.0) em acompanhamento multidisciplinar. Indicada continuidade do plano terapêutico com Fonoaudiologia, Terapia Ocupacional e Psicologia/ABA.',
-  indicacaoAcidente: 'NAO_ACIDENTE',
   procedimentoJaRealizado: '',
   profissionalSolicitante: 'Dra. Helena Rocha',
   conselhoTipo: 'CRM',
@@ -41,9 +36,7 @@ export const initialForm: FormData = {
   conselhoUF: 'SP',
   cboCodigo: '225142',
   nomeContratadoSolicitante: 'Clínica Neuropediátrica Esperança',
-  cnpjSolicitante: '',
   nomeContratadoExecutante: 'Clínica Integrar TEA',
-  cnpjExecutante: '',
   cnesExecutante: '7547277',
   etapaAutorizacao: '',
   tipoTerapia: 'Fonoaudiologia',
@@ -52,7 +45,6 @@ export const initialForm: FormData = {
   terapiaDataSolicitacao: '',
   terapiaDataValidadeSenha: '',
   frequenciaSemanal: '3x por semana',
-  duracaoSessao: '50',
 };
 
 export function useNewRequestForm(moduloParam: string) {
@@ -62,7 +54,6 @@ export function useNewRequestForm(moduloParam: string) {
   });
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
-  const [guiaProcedures, setGuiaProcedures] = useState<GuiaProcedure[]>([]);
   const [cidSecundarioInput, setCidSecundarioInput] = useState('');
 
   const set =
@@ -122,7 +113,6 @@ export function useNewRequestForm(moduloParam: string) {
       tipoSolicitacao: (moduloParamValue || 'terapias') as FormData['tipoSolicitacao'],
     });
     setTerapiaProcedimentos([newTerapiaProc()]);
-    setGuiaProcedures([]);
     setCidSecundarioInput('');
   };
 
@@ -135,8 +125,6 @@ export function useNewRequestForm(moduloParam: string) {
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
-    guiaProcedures,
-    setGuiaProcedures,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -635,6 +635,12 @@ export default function ProceduresSection({
   const [expandedCodes, setExpandedCodes] = useState(new Set());
   const [localSecondaryCids, setLocalSecondaryCids] = useState(request.secondaryCids ?? []);
   const dutModal = useDutModal();
+
+  useEffect(() => {
+    setLocalSecondaryCids(request.secondaryCids ?? []);
+    setExpandedCodes(new Set());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request.id]);
 
   const handleRemoveSecondaryCid = (index: number) => {
     setLocalSecondaryCids((prev) => prev.filter((_, i) => i !== index));
