@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { type RefObject } from 'react';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -12,22 +12,54 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 
 interface StepUploadProps {
-  uploadState: 'idle' | 'loading' | 'done';
+  uploadState: 'idle' | 'uploading' | 'waiting' | 'processed';
   uploadProgress: number;
   dragOver: boolean;
   setDragOver: (v: boolean) => void;
-  onUpload: () => void;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onFileSelected: (file: File) => void;
   onSkip: () => void;
 }
+
+/**
+ * File picker input positioned off-screen but still reachable by keyboard and
+ * assistive tech. The surrounding `<Box component="label">` delegates the
+ * click/Enter/Space activation to this input natively, so we don't need a
+ * synthetic `onClick` on the drop zone.
+ */
+const VISUALLY_HIDDEN_INPUT_SX = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  whiteSpace: 'nowrap',
+  border: 0,
+} as const;
+
+const FILE_INPUT_ID = 'step-upload-file';
 
 export function StepUpload({
   uploadState,
   uploadProgress,
   dragOver,
   setDragOver,
-  onUpload,
+  fileInputRef,
+  onFileSelected,
   onSkip,
 }: StepUploadProps) {
+  const isIdle = uploadState === 'idle';
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) onFileSelected(file);
+    // Reset so the same file can be reselected after a failure.
+    event.target.value = '';
+  };
+
   return (
     <Box
       sx={{
@@ -50,11 +82,15 @@ export function StepUpload({
         </Typography>
       </Box>
 
-      {/* Drop zone */}
+      {/* Drop zone — rendered as a <label> so keyboard users can activate the
+          hidden file input with Enter/Space, and screen readers announce it
+          correctly. */}
       <Box
+        component="label"
+        htmlFor={FILE_INPUT_ID}
         onDragOver={(e) => {
           e.preventDefault();
-          setDragOver(true);
+          if (isIdle) setDragOver(true);
         }}
         onDragLeave={() => {
           setDragOver(false);
@@ -62,10 +98,9 @@ export function StepUpload({
         onDrop={(e) => {
           e.preventDefault();
           setDragOver(false);
-          onUpload();
-        }}
-        onClick={() => {
-          if (uploadState === 'idle') onUpload();
+          if (!isIdle) return;
+          const file = e.dataTransfer.files[0];
+          if (file) onFileSelected(file);
         }}
         sx={{
           width: '100%',
@@ -74,7 +109,7 @@ export function StepUpload({
           borderRadius: 3,
           backgroundColor: dragOver
             ? 'rgba(144,43,41,0.07)'
-            : uploadState === 'loading'
+            : uploadState === 'uploading' || uploadState === 'waiting'
               ? 'rgba(37,99,235,0.03)'
               : '#fafafa',
           boxShadow: dragOver ? '0 0 0 4px rgba(144,43,41,0.12)' : 'none',
@@ -87,14 +122,24 @@ export function StepUpload({
           gap: 1.5,
           py: 5,
           px: 3,
-          cursor: uploadState === 'idle' ? 'pointer' : 'default',
-          '&:hover':
-            uploadState === 'idle'
-              ? { borderColor: 'primary.main', backgroundColor: 'rgba(144,43,41,0.03)' }
-              : {},
+          cursor: isIdle ? 'pointer' : 'default',
+          '&:hover': isIdle
+            ? { borderColor: 'primary.main', backgroundColor: 'rgba(144,43,41,0.03)' }
+            : {},
         }}
       >
-        {uploadState === 'idle' && (
+        <Box
+          component="input"
+          id={FILE_INPUT_ID}
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          disabled={!isIdle}
+          onChange={handleChange}
+          sx={VISUALLY_HIDDEN_INPUT_SX}
+        />
+
+        {isIdle ? (
           <>
             <UploadFileIcon sx={{ fontSize: 48, color: 'rgba(0,0,0,0.25)' }} />
             <Box sx={{ textAlign: 'center' }}>
@@ -109,15 +154,16 @@ export function StepUpload({
               PDF, JPG, PNG — até 10MB
             </Typography>
           </>
-        )}
-        {uploadState === 'loading' && (
+        ) : null}
+
+        {uploadState === 'uploading' ? (
           <>
             <CircularProgress size={40} thickness={3} sx={{ color: 'info.main' }} />
             <Typography variant="body1" fontWeight={700} sx={{ color: 'info.main' }}>
-              Lendo documento com IA...
+              Enviando documento...
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Extraindo dados automaticamente
+              Aguarde enquanto o envio é concluído
             </Typography>
             <Box sx={{ width: '100%', mt: 1 }}>
               <LinearProgress
@@ -138,26 +184,44 @@ export function StepUpload({
               </Typography>
             </Box>
           </>
-        )}
-        {uploadState === 'done' && (
+        ) : null}
+
+        {uploadState === 'waiting' ? (
+          <>
+            <CircularProgress size={40} thickness={3} sx={{ color: 'info.main' }} />
+            <Typography variant="body1" fontWeight={700} sx={{ color: 'info.main' }}>
+              Aguardando processamento...
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center' }}>
+              A análise ocorre em segundo plano. Isso pode levar alguns instantes.
+            </Typography>
+          </>
+        ) : null}
+
+        {uploadState === 'processed' ? (
           <>
             <CheckCircleOutlineIcon sx={{ fontSize: 44, color: 'success.main' }} />
             <Typography variant="body1" fontWeight={700} sx={{ color: 'success.main' }}>
-              Documento processado!
+              Arquivo processado!
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Clique em &quot;Próxima Etapa&quot; para continuar.
             </Typography>
           </>
-        )}
+        ) : null}
       </Box>
 
-      <Button
-        variant="text"
-        size="small"
-        endIcon={<ChevronRightIcon />}
-        onClick={onSkip}
-        sx={{ color: 'text.secondary', fontSize: 13 }}
-      >
-        Preencher manualmente sem upload
-      </Button>
+      {isIdle ? (
+        <Button
+          variant="text"
+          size="small"
+          endIcon={<ChevronRightIcon />}
+          onClick={onSkip}
+          sx={{ color: 'text.secondary', fontSize: 13 }}
+        >
+          Preencher manualmente sem upload
+        </Button>
+      ) : null}
     </Box>
   );
 }

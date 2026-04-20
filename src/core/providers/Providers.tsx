@@ -3,6 +3,7 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 
+import QueryProvider from '@/core/providers/QueryProvider';
 import EmotionRegistry from '@/core/theme/EmotionRegistry';
 import theme from '@/core/theme/index';
 
@@ -11,7 +12,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <EmotionRegistry>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </ThemeProvider>
     </EmotionRegistry>
   );
