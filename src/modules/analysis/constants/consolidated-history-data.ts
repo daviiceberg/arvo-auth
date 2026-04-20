@@ -63,14 +63,14 @@ export const DEFAULT_HISTORY: ConsolidatedHistory = {
       autorizadas: 8,
       tipo: 'Fonoaudiologia',
       cidF84: true,
-      dut: 'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+      dut: 'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
     },
     {
       utilizadas: 4,
       autorizadas: 4,
       tipo: 'Terapia Ocupacional',
       cidF84: true,
-      dut: 'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+      dut: 'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
     },
   ],
   autorizacoesAnteriores: [
@@ -110,7 +110,7 @@ export const DEFAULT_HISTORY: ConsolidatedHistory = {
     limitesContratuais:
       'RN 539/2022 — sessões ilimitadas para CID F84.x. Sem restrições contratuais aplicáveis.',
     dutRelevantes: [
-      'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+      'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
       'DUT 6 — Terapias do Espectro Autista',
     ],
   },
@@ -138,21 +138,21 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         autorizadas: 80,
         tipo: 'ABA / Análise do Comportamento',
         cidF84: true,
-        dut: 'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+        dut: 'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
       },
       {
         utilizadas: 8,
         autorizadas: 8,
         tipo: 'Fonoaudiologia',
         cidF84: true,
-        dut: 'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+        dut: 'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
       },
       {
         utilizadas: 4,
         autorizadas: 4,
         tipo: 'Terapia Ocupacional',
         cidF84: true,
-        dut: 'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+        dut: 'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
       },
     ],
     autorizacoesAnteriores: [
@@ -215,7 +215,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
       limitesContratuais:
         'RN 539/2022 — sessões ilimitadas para CID F84.x. Quantidades >80/mês → Junta Médica.',
       dutRelevantes: [
-        'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+        'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
         'DUT 6 — Terapias do Espectro Autista',
       ],
     },
@@ -241,7 +241,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
       limitesContratuais:
         'RN 539/2022 — sessões ilimitadas para CID F84.x. Cobertura integral garantida.',
       dutRelevantes: [
-        'RN 539/2022 — Terapias TEA (sessões ilimitadas)',
+        'RN 539/2022 — Terapias Especiais (sessões ilimitadas)',
         'DUT 6 — Terapias do Espectro Autista',
       ],
     },

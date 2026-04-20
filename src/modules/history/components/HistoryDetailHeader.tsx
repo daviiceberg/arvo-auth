@@ -13,7 +13,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { DecisionActionChip } from '@/shared/components';
-import { categoryColorMap } from '@/shared/constants';
 import { type HistoryEntry } from '@/types/pedido';
 
 interface HistoryDetailHeaderProps {
@@ -33,9 +32,6 @@ export default function HistoryDetailHeader({
   onPrev,
   onNext,
 }: HistoryDetailHeaderProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- noUncheckedIndexedAccess widens Record access to include undefined
-  const catStyle = categoryColorMap[entry.category] ?? { bg: 'transparent', color: 'inherit' };
-
   return (
     <Box
       sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}
@@ -63,26 +59,6 @@ export default function HistoryDetailHeader({
             {entry.id}
           </Typography>
           <DecisionActionChip action={entry.action} />
-          <Chip
-            label={entry.guideType}
-            size="small"
-            sx={{
-              backgroundColor: 'rgba(37,99,235,0.1)',
-              color: 'info.main',
-              fontWeight: 700,
-              height: 22,
-            }}
-          />
-          <Chip
-            label={entry.category}
-            size="small"
-            sx={{
-              backgroundColor: catStyle.bg,
-              color: catStyle.color,
-              fontWeight: 600,
-              height: 22,
-            }}
-          />
           {entry.alerts && entry.alerts.length > 0
             ? entry.alerts.map((alerta) => (
                 <Chip

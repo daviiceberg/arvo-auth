@@ -45,7 +45,7 @@ function matchesAlert(request: Request, alertFilter: string): boolean {
 }
 
 function matchesStatus(request: Request, statusFilter: string): boolean {
-  return statusFilter === 'Todos';
+  return statusFilter === 'Todos' || request.status === statusFilter;
 }
 
 export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
@@ -74,11 +74,13 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const filteredByTab = useMemo(
     () =>
-      pedidos.filter((p) => {
-        if (tabValue === 1) return p.slaStatus === 'warning';
-        if (tabValue === 2) return p.slaStatus === 'violated';
-        return true;
-      }),
+      pedidos
+        .filter((p) => p.status === 'Em Análise')
+        .filter((p) => {
+          if (tabValue === 1) return p.slaStatus === 'warning';
+          if (tabValue === 2) return p.slaStatus === 'violated';
+          return true;
+        }),
     [pedidos, tabValue],
   );
 

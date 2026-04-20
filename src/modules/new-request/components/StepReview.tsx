@@ -69,7 +69,6 @@ function getStep3Content(
           <ReviewRow label="Data da Solicitação" value={proc.dataSolicitacao} />
           <ReviewRow label="Validade da Senha" value={proc.dataValidadeSenha} />
           <ReviewRow label="Frequência Semanal" value={proc.frequenciaSemanal} />
-          <ReviewRow label="Duração da Sessão" value={`${proc.duracaoSessao} min`} />
         </Box>
       ))}
     </>
@@ -172,6 +171,11 @@ export function StepReview({
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Revisão da Solicitação
       </Typography>
+      {!form.cidPrincipal ? (
+        <Alert severity="error" sx={{ mb: 2, fontSize: 12, borderRadius: 2 }}>
+          CID Principal é obrigatório. Volte à etapa &quot;Clínico&quot; e preencha o CID.
+        </Alert>
+      ) : null}
       <Box
         sx={{
           backgroundColor: '#f0fdf4',
@@ -254,7 +258,6 @@ export function StepReview({
             </Box>
           </Box>
         )}
-        <ReviewRow label="Caráter do Atendimento" value={form.caraterAtendimento} />
         <ReviewRow label="Profissional Solicitante" value={form.profissionalSolicitante} />
         <ReviewRow
           label="Conselho"

@@ -189,6 +189,16 @@ export default function MyComponent({ data, onAction }: MyComponentProps) {
 
 ---
 
+## Git — Regra Obrigatória
+
+**NUNCA execute `git add`, `git commit` ou `git push` automaticamente.**
+
+Commits e pushes são feitos EXCLUSIVAMENTE quando o usuário solicitar de forma explícita.
+
+Ao concluir qualquer tarefa, apenas informe que o trabalho foi concluído e aguarde instrução para commitar.
+
+---
+
 # Code conventions
 
 - **Language**: ALL code in English — variables, functions, comments, types

@@ -20,7 +20,6 @@ export interface TerapiaProcedimento {
   dataSolicitacao: string;
   dataValidadeSenha: string;
   frequenciaSemanal: string;
-  duracaoSessao: string;
 }
 
 export interface DocUpload {
@@ -49,9 +48,7 @@ export interface FormData {
   // Step 2 — Dados Clínicos
   cidPrincipal: string;
   cidsSecundarios: string[];
-  caraterAtendimento: string;
   indicacaoClinica: string;
-  indicacaoAcidente: string;
   procedimentoJaRealizado: string;
   // Step 2 — Profissional Solicitante
   profissionalSolicitante: string;
@@ -60,10 +57,8 @@ export interface FormData {
   conselhoUF: string;
   cboCodigo: string;
   nomeContratadoSolicitante: string;
-  cnpjSolicitante: string;
   // Step 2 — Contratado Executante
   nomeContratadoExecutante: string;
-  cnpjExecutante: string;
   cnesExecutante: string;
   // Terapias
   etapaAutorizacao: string;
@@ -73,5 +68,4 @@ export interface FormData {
   terapiaDataSolicitacao: string;
   terapiaDataValidadeSenha: string;
   frequenciaSemanal: string;
-  duracaoSessao: string;
 }

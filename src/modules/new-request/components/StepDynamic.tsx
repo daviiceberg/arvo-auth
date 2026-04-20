@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import { type GuiaProcedure } from '@/types/procedure-codes';
-
 import { type FormData, type TerapiaProcedimento } from '../types';
 
 import { StepTherapies } from './steps/StepTherapies';
@@ -19,8 +17,6 @@ interface StepDynamicProps {
     field: keyof Omit<TerapiaProcedimento, 'id'>,
     value: string,
   ) => void;
-  guiaProcedures: GuiaProcedure[];
-  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
 export function StepDynamic({
@@ -30,8 +26,6 @@ export function StepDynamic({
   handleAddTerapiaProc,
   handleRemoveTerapiaProc,
   handleUpdateTerapiaProc,
-  guiaProcedures,
-  onGuiaProceduresChange,
 }: StepDynamicProps) {
   return (
     <StepTherapies
@@ -41,8 +35,6 @@ export function StepDynamic({
       handleAddTerapiaProc={handleAddTerapiaProc}
       handleRemoveTerapiaProc={handleRemoveTerapiaProc}
       handleUpdateTerapiaProc={handleUpdateTerapiaProc}
-      guiaProcedures={guiaProcedures}
-      onGuiaProceduresChange={onGuiaProceduresChange}
     />
   );
 }

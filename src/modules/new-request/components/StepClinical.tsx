@@ -14,11 +14,10 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { COUNCIL_TYPES } from '@/shared/constants';
-import { CID_DATABASE, type CidEntry } from '@/shared/constants/cid-codes';
+import { CID_DATABASE, CID_GROUP_LABELS, type CidEntry } from '@/shared/constants/cid-codes';
 
 import { type FormData } from '../types';
 
@@ -28,28 +27,13 @@ function formatCidOption(entry: CidEntry): string {
 
 function filterCids(options: CidEntry[], { inputValue }: { inputValue: string }): CidEntry[] {
   const q = inputValue.toLowerCase().trim();
-  if (q.length < 2) return [];
+  if (q.length < 2) {
+    return options.filter((c) => c.group === 'tea');
+  }
   return options.filter(
     (c) => c.code.toLowerCase().startsWith(q) || c.description.toLowerCase().includes(q),
   );
 }
-
-const CID_SUGGESTIONS_PRINCIPAL: CidEntry[] = [
-  { code: 'F84.0', description: 'Autismo infantil' },
-  { code: 'F84.1', description: 'Autismo atípico' },
-  { code: 'F84.3', description: 'Outro transtorno desintegrativo da infância' },
-  { code: 'F84.5', description: 'Síndrome de Asperger' },
-  { code: 'F84.8', description: 'Outros transtornos globais do desenvolvimento' },
-  { code: 'F84.9', description: 'TGD não especificado' },
-];
-
-const CID_SUGGESTIONS_SECONDARY: CidEntry[] = [
-  { code: 'F80.1', description: 'Transtorno expressivo de linguagem' },
-  { code: 'F80.2', description: 'Transtorno receptivo de linguagem' },
-  { code: 'F82', description: 'Transtorno específico do desenvolvimento motor' },
-  { code: 'F90.0', description: 'Distúrbios da atividade e da atenção (TDAH)' },
-  { code: 'R62.0', description: 'Retardo do desenvolvimento' },
-];
 
 // ── Field helpers ─────────────────────────────────────────────────────
 function FieldLabel({
@@ -114,19 +98,14 @@ export function StepClinical({
       </Typography>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12 }}>
-          <FieldLabel validated>
-            CID Principal{' '}
-            <Typography
-              component="span"
-              variant="caption"
-              sx={{ color: '#64748b', fontWeight: 400 }}
-            >
-              (opcional)
-            </Typography>
+          <FieldLabel validated={!!form.cidPrincipal} warning={!form.cidPrincipal}>
+            CID Principal <span style={{ color: '#C62828' }}>*</span>
           </FieldLabel>
           <Autocomplete
             freeSolo
+            openOnFocus
             options={CID_DATABASE}
+            groupBy={(option) => CID_GROUP_LABELS[option.group] ?? ''}
             getOptionLabel={(opt) => (typeof opt === 'string' ? opt : formatCidOption(opt))}
             filterOptions={filterCids}
             inputValue={form.cidPrincipal}
@@ -142,48 +121,86 @@ export function StepClinical({
               <TextField
                 {...params}
                 size="small"
-                placeholder="Buscar por código ou descrição (ex: F84, autismo...)"
-                sx={inputSx(!!form.cidPrincipal)}
+                placeholder="Clique para ver sugestões TEA ou digite para buscar..."
+                sx={inputSx(!!form.cidPrincipal, !form.cidPrincipal)}
               />
             )}
             renderOption={(props, option) => (
               <li {...props} key={option.code}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline' }}>
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      fontFamily: 'monospace',
+                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
+                      flexShrink: 0,
+                      minWidth: 56,
+                    }}
+                  >
                     {option.code}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
                     {option.description}
                   </Typography>
                 </Box>
               </li>
             )}
-            noOptionsText="Digite pelo menos 2 caracteres para buscar"
+            renderGroup={(params) => (
+              <li key={params.key}>
+                <Box
+                  sx={{
+                    px: 1.5,
+                    py: 0.5,
+                    backgroundColor: params.group.includes('TEA')
+                      ? 'rgba(22,163,74,0.06)'
+                      : 'rgba(0,0,0,0.03)',
+                    borderBottom: '1px solid rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: 0.4,
+                      color: params.group.includes('TEA') ? '#166534' : 'text.secondary',
+                    }}
+                  >
+                    {params.group}
+                  </Typography>
+                </Box>
+                <ul style={{ padding: 0 }}>{params.children}</ul>
+              </li>
+            )}
+            noOptionsText="Nenhum CID encontrado"
             size="small"
           />
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1, alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', mr: 0.5 }}>
-              Sugestões:
+          {/* Inline feedback */}
+          {form.cidPrincipal.startsWith('F84') ? (
+            <Typography
+              sx={{
+                fontSize: 12,
+                color: '#166534',
+                mt: 0.5,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+              }}
+            >
+              ✓ RN 539/2022 — sessões ilimitadas aplicáveis
             </Typography>
-            {CID_SUGGESTIONS_PRINCIPAL.map((cid) => (
-              <Tooltip key={cid.code} title={cid.description} placement="top">
-                <Chip
-                  label={cid.code}
-                  size="small"
-                  onClick={() => {
-                    setSelect('cidPrincipal')(formatCidOption(cid));
-                  }}
-                  sx={{
-                    fontSize: 11,
-                    height: 20,
-                    cursor: 'pointer',
-                    backgroundColor: 'rgba(144,43,41,0.06)',
-                    '&:hover': { backgroundColor: 'rgba(144,43,41,0.12)' },
-                  }}
-                />
-              </Tooltip>
-            ))}
-          </Box>
+          ) : null}
+          {form.cidPrincipal && !form.cidPrincipal.startsWith('F84') ? (
+            <Typography sx={{ fontSize: 12, color: '#b45309', mt: 0.5 }}>
+              CID fora do espectro F84 — RN 539 (sessões ilimitadas) não se aplica automaticamente
+            </Typography>
+          ) : null}
+          {!form.cidPrincipal ? (
+            <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.5 }}>
+              O CID determina regras de cobertura. Clique no campo para ver sugestões.
+            </Typography>
+          ) : null}
         </Grid>
         <Grid size={{ xs: 12 }}>
           <FieldLabel>
@@ -218,7 +235,13 @@ export function StepClinical({
           )}
           <Autocomplete
             freeSolo
-            options={CID_DATABASE}
+            openOnFocus
+            options={CID_DATABASE.filter(
+              (c) =>
+                !form.cidPrincipal.startsWith(c.code + ' ') &&
+                !form.cidsSecundarios.some((s) => s.startsWith(c.code + ' ')),
+            )}
+            groupBy={(option) => CID_GROUP_LABELS[option.group] ?? ''}
             getOptionLabel={(opt) => (typeof opt === 'string' ? opt : formatCidOption(opt))}
             filterOptions={filterCids}
             inputValue={cidSecundarioInput}
@@ -236,7 +259,7 @@ export function StepClinical({
               <TextField
                 {...params}
                 size="small"
-                placeholder="Buscar CID secundário (ex: F80, TDAH...)"
+                placeholder="Clique para ver sugestões ou digite para buscar..."
                 sx={{ width: '100%' }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && cidSecundarioInput.trim()) {
@@ -248,62 +271,61 @@ export function StepClinical({
             )}
             renderOption={(props, option) => (
               <li {...props} key={option.code}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline' }}>
-                  <Typography sx={{ fontSize: 13, fontWeight: 700, fontFamily: 'monospace' }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      fontFamily: 'monospace',
+                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
+                      flexShrink: 0,
+                      minWidth: 56,
+                    }}
+                  >
                     {option.code}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
                     {option.description}
                   </Typography>
                 </Box>
               </li>
             )}
-            noOptionsText="Digite pelo menos 2 caracteres para buscar"
+            renderGroup={(params) => (
+              <li key={params.key}>
+                <Box
+                  sx={{
+                    px: 1.5,
+                    py: 0.5,
+                    backgroundColor: params.group.includes('TEA')
+                      ? 'rgba(22,163,74,0.06)'
+                      : 'rgba(0,0,0,0.03)',
+                    borderBottom: '1px solid rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: 0.4,
+                      color: params.group.includes('TEA') ? '#166534' : 'text.secondary',
+                    }}
+                  >
+                    {params.group}
+                  </Typography>
+                </Box>
+                <ul style={{ padding: 0 }}>{params.children}</ul>
+              </li>
+            )}
+            noOptionsText="Nenhum CID encontrado"
             value={null}
             size="small"
           />
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1, alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary', mr: 0.5 }}>
-              Sugestões:
-            </Typography>
-            {CID_SUGGESTIONS_SECONDARY.map((cid) => (
-              <Tooltip key={cid.code} title={cid.description} placement="top">
-                <Chip
-                  label={cid.code}
-                  size="small"
-                  onClick={() => {
-                    addCidSecundario(formatCidOption(cid));
-                  }}
-                  sx={{
-                    fontSize: 11,
-                    height: 20,
-                    cursor: 'pointer',
-                    backgroundColor: 'rgba(37,99,235,0.06)',
-                    '&:hover': { backgroundColor: 'rgba(37,99,235,0.12)' },
-                  }}
-                />
-              </Tooltip>
-            ))}
-          </Box>
         </Grid>
         <Grid size={{ xs: 12 }}>
-          <FieldLabel warning>Caráter do Atendimento</FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select
-              value={form.caraterAtendimento}
-              onChange={(e) => {
-                setSelect('caraterAtendimento')(e.target.value);
-              }}
-              sx={{ backgroundColor: '#fffbeb', '& fieldset': { borderColor: 'warning.light' } }}
-            >
-              <MenuItem value="Eletivo">Eletivo</MenuItem>
-              <MenuItem value="Urgência">Urgência</MenuItem>
-              <MenuItem value="Emergência">Emergência</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <FieldLabel validated>Indicação Clínica</FieldLabel>
+          <FieldLabel validated={!!form.indicacaoClinica}>
+            Indicação Clínica / Hipótese Diagnóstica <span style={{ color: '#C62828' }}>*</span>
+          </FieldLabel>
           <TextField
             fullWidth
             multiline
@@ -311,26 +333,17 @@ export function StepClinical({
             size="small"
             value={form.indicacaoClinica}
             onChange={set('indicacaoClinica')}
-            sx={inputSx(true)}
+            sx={inputSx(!!form.indicacaoClinica)}
           />
+          <Typography
+            variant="caption"
+            sx={{ color: 'text.secondary', fontSize: 11, mt: 0.5, display: 'block' }}
+          >
+            Texto do médico justificando o pedido. Este campo é a base da análise — quanto mais
+            detalhado, melhor.
+          </Typography>
         </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Indicação de Acidente</FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select
-              value={form.indicacaoAcidente}
-              onChange={(e) => {
-                setSelect('indicacaoAcidente')(e.target.value);
-              }}
-            >
-              <MenuItem value="NAO_ACIDENTE">Não Acidente</MenuItem>
-              <MenuItem value="TRABALHO">Trabalho</MenuItem>
-              <MenuItem value="TRANSITO">Trânsito</MenuItem>
-              <MenuItem value="OUTROS">Outros</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12 }}>
           <Box
             sx={{
               display: 'flex',
@@ -423,7 +436,7 @@ export function StepClinical({
             placeholder="SP"
           />
         </Grid>
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12 }}>
           <FieldLabel>Nome do Contratado Solicitante (Clínica)</FieldLabel>
           <TextField
             fullWidth
@@ -431,16 +444,6 @@ export function StepClinical({
             value={form.nomeContratadoSolicitante}
             onChange={set('nomeContratadoSolicitante')}
             placeholder="Ex: Clínica Neuropediátrica Esperança"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
-          <FieldLabel>CNPJ do Solicitante</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="00.000.000/0001-00"
-            value={form.cnpjSolicitante}
-            onChange={set('cnpjSolicitante')}
           />
         </Grid>
       </Grid>
@@ -451,7 +454,7 @@ export function StepClinical({
         Contratado Executante
       </Typography>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12, md: 9 }}>
           <FieldLabel>Nome do Contratado Executante</FieldLabel>
           <TextField
             fullWidth
@@ -459,16 +462,6 @@ export function StepClinical({
             value={form.nomeContratadoExecutante}
             onChange={set('nomeContratadoExecutante')}
             placeholder="Ex: Clínica Integrar TEA"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 3 }}>
-          <FieldLabel>CNPJ / Código na Operadora</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="00.000.000/0001-00"
-            value={form.cnpjExecutante}
-            onChange={set('cnpjExecutante')}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 3 }}>

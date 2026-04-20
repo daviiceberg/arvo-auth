@@ -1,51 +1,82 @@
 export interface CidEntry {
   code: string;
   description: string;
+  group: 'tea' | 'comorbidade' | 'outro';
 }
 
 export const CID_DATABASE: CidEntry[] = [
-  { code: 'F84', description: 'Transtornos globais do desenvolvimento' },
-  { code: 'F84.0', description: 'Autismo infantil' },
-  { code: 'F84.1', description: 'Autismo atípico' },
-  { code: 'F84.2', description: 'Síndrome de Rett' },
+  // TEA — Espectro Autista
+  { code: 'F84.0', description: 'Autismo infantil', group: 'tea' },
+  { code: 'F84.1', description: 'Autismo atípico', group: 'tea' },
+  { code: 'F84.2', description: 'Síndrome de Rett', group: 'tea' },
   {
     code: 'F84.3',
     description: 'Outro transtorno desintegrativo da infância',
+    group: 'tea',
   },
   {
     code: 'F84.4',
     description:
       'Transtorno com hipercinesia associada a retardo mental e movimentos estereotipados',
+    group: 'tea',
   },
-  { code: 'F84.5', description: 'Síndrome de Asperger' },
-  { code: 'F84.8', description: 'Outros transtornos globais do desenvolvimento' },
+  { code: 'F84.5', description: 'Síndrome de Asperger', group: 'tea' },
   {
-    code: 'F84.9',
-    description: 'Transtorno global do desenvolvimento não especificado',
+    code: 'F84.8',
+    description: 'Outros transtornos globais do desenvolvimento',
+    group: 'tea',
   },
+  { code: 'F84.9', description: 'TGD não especificado', group: 'tea' },
+  { code: 'F84', description: 'Transtornos globais do desenvolvimento', group: 'tea' },
+  // Comorbidades frequentes
   {
-    code: 'F80',
-    description: 'Transtornos específicos do desenvolvimento da fala e linguagem',
+    code: 'F80.0',
+    description: 'Transtorno específico da articulação da fala',
+    group: 'comorbidade',
   },
-  { code: 'F80.0', description: 'Transtorno específico da articulação da fala' },
-  { code: 'F80.1', description: 'Transtorno expressivo de linguagem' },
-  { code: 'F80.2', description: 'Transtorno receptivo de linguagem' },
+  { code: 'F80.1', description: 'Transtorno expressivo de linguagem', group: 'comorbidade' },
+  { code: 'F80.2', description: 'Transtorno receptivo de linguagem', group: 'comorbidade' },
   {
     code: 'F80.9',
-    description: 'Transtorno do desenvolvimento da fala e linguagem, não especificado',
+    description: 'Transtorno do desenvolvimento da fala e linguagem NE',
+    group: 'comorbidade',
   },
-  { code: 'F82', description: 'Transtorno específico do desenvolvimento motor' },
-  { code: 'F83', description: 'Transtornos específicos mistos do desenvolvimento' },
-  { code: 'F90', description: 'Transtornos hipercinéticos' },
-  { code: 'F90.0', description: 'Distúrbios da atividade e da atenção (TDAH)' },
-  { code: 'G80', description: 'Paralisia cerebral' },
-  { code: 'Q90', description: 'Síndrome de Down' },
-  { code: 'F70', description: 'Retardo mental leve' },
-  { code: 'F71', description: 'Retardo mental moderado' },
-  { code: 'F72', description: 'Retardo mental grave' },
-  { code: 'R62', description: 'Atraso no desenvolvimento fisiológico normal esperado' },
-  { code: 'R62.0', description: 'Retardo do desenvolvimento' },
+  {
+    code: 'F82',
+    description: 'Transtorno específico do desenvolvimento motor',
+    group: 'comorbidade',
+  },
+  {
+    code: 'F83',
+    description: 'Transtornos específicos mistos do desenvolvimento',
+    group: 'comorbidade',
+  },
+  { code: 'F90.0', description: 'TDAH', group: 'comorbidade' },
+  { code: 'R62.0', description: 'Retardo do desenvolvimento', group: 'comorbidade' },
+  {
+    code: 'F80',
+    description: 'Transtornos específicos da fala e linguagem',
+    group: 'comorbidade',
+  },
+  // Outros diagnósticos
+  { code: 'F70', description: 'Retardo mental leve', group: 'outro' },
+  { code: 'F71', description: 'Retardo mental moderado', group: 'outro' },
+  { code: 'F72', description: 'Retardo mental grave', group: 'outro' },
+  { code: 'G80', description: 'Paralisia cerebral', group: 'outro' },
+  { code: 'Q90', description: 'Síndrome de Down', group: 'outro' },
+  { code: 'F90', description: 'Transtornos hipercinéticos', group: 'outro' },
+  {
+    code: 'R62',
+    description: 'Atraso no desenvolvimento fisiológico normal esperado',
+    group: 'outro',
+  },
 ];
+
+export const CID_GROUP_LABELS: Record<string, string> = {
+  tea: 'TEA — Espectro Autista · sessões ilimitadas RN 539',
+  comorbidade: 'Comorbidades frequentes',
+  outro: 'Outros diagnósticos',
+};
 
 export function searchCids(query: string): CidEntry[] {
   const q = query.toLowerCase().trim();

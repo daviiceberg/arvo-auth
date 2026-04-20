@@ -11,7 +11,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CloseIcon from '@mui/icons-material/Close';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import Alert from '@mui/material/Alert';
@@ -92,8 +91,6 @@ function NewRequestInner() {
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
-    guiaProcedures,
-    setGuiaProcedures,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
@@ -210,8 +207,6 @@ function NewRequestInner() {
         handleAddTerapiaProc={handleAddTerapiaProc}
         handleRemoveTerapiaProc={handleRemoveTerapiaProc}
         handleUpdateTerapiaProc={handleUpdateTerapiaProc}
-        guiaProcedures={guiaProcedures}
-        onGuiaProceduresChange={setGuiaProcedures}
       />
     ),
     4: (
@@ -374,7 +369,6 @@ function NewRequestInner() {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
                 px: 2,
                 py: 1,
                 borderBottom: '1px solid rgba(0,0,0,0.07)',
@@ -399,13 +393,6 @@ function NewRequestInner() {
                   <RotateRightIcon fontSize="small" />
                 </IconButton>
               </Box>
-              <Button
-                size="small"
-                startIcon={<UploadFileIcon sx={{ fontSize: 14 }} />}
-                sx={{ fontSize: 11 }}
-              >
-                Novo Arquivo
-              </Button>
             </Box>
 
             {/* Document */}

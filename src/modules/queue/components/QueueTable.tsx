@@ -45,8 +45,8 @@ export default function QueueTable({
   }
 
   return (
-    <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0 }}>
-      <Table aria-label="Tabela da fila operacional" size="small">
+    <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 0, overflowX: 'auto' }}>
+      <Table aria-label="Tabela da fila operacional" size="small" sx={{ minWidth: 1100 }}>
         <TableHead>
           <TableRow
             sx={{

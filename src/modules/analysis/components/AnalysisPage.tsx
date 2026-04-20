@@ -5,6 +5,7 @@ import { Suspense, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
+import Typography from '@mui/material/Typography';
 
 import { DENIAL_REASONS } from '../constants/denial-reasons';
 import { useAdjustmentState } from '../hooks/useAdjustmentState';
@@ -103,16 +104,42 @@ function AnalysisInner() {
                 Procedimento já realizado antes da autorização — atenção redobrada na análise
               </Alert>
             ) : null}
+            {request.cidDivergence ? (
+              <Alert
+                severity="warning"
+                sx={{
+                  borderRadius: 2,
+                  border: '1px solid rgba(245,158,11,0.35)',
+                }}
+              >
+                <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                  Divergência de CID detectada
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
+                >
+                  {request.cidDivergenceDetail ??
+                    'O CID informado pelo prestador difere do CID extraído do laudo. Verifique qual está correto.'}
+                </Typography>
+              </Alert>
+            ) : null}
             <AlertsBanner request={request} />
             <BeneficiarySection request={request} />
             <ProceduresSection
+              key={`procedures-${request.id}`}
               request={request}
               allAdjustments={adjustment.allAdjustments}
               onAdjustClick={adjustment.handleAdjustClick}
             />
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
             <ObservationsSection request={request} />
-            <InternalNotesSection value={internalNotes} onChange={setInternalNotes} />
+            <InternalNotesSection
+              key={`notes-${request.id}`}
+              value={internalNotes}
+              onChange={setInternalNotes}
+            />
             <AuditLogSection entries={request.auditLog ?? []} />
             <ConsolidatedHistorySection request={request} />
             <DocumentsSection request={request} />
