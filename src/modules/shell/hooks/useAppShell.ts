@@ -2,38 +2,10 @@
 
 import { useState } from 'react';
 
-import { categoryColorMap } from '@/shared/constants';
 import { type Notification } from '@/types/notificacao';
 import { type Request } from '@/types/pedido';
 
-import {
-  CATEGORY_ICON_MAP,
-  CATEGORY_ORDER,
-  NAV_ITEMS,
-  type NavItem,
-  type Regional,
-} from '../constants/navigation';
-
-export interface CategoryEntry {
-  label: string;
-  count: number;
-  color: string;
-  icon: React.ReactNode;
-}
-
-function buildCategories(requests: Request[]): CategoryEntry[] {
-  const counts: Record<string, number> = {};
-  for (const r of requests) {
-    counts[r.category] = (counts[r.category] ?? 0) + 1;
-  }
-
-  return CATEGORY_ORDER.filter((cat) => (counts[cat] ?? 0) > 0).map((cat) => ({
-    label: cat,
-    count: counts[cat] ?? 0,
-    color: categoryColorMap[cat].color,
-    icon: CATEGORY_ICON_MAP[cat],
-  }));
-}
+import { NAV_ITEMS, type NavItem } from '../constants/navigation';
 
 function buildNavItems(requests: Request[]): NavItem[] {
   return NAV_ITEMS.map((item) =>
@@ -43,17 +15,12 @@ function buildNavItems(requests: Request[]): NavItem[] {
 
 export default function useAppShell(requests: Request[], notifications: Notification[]) {
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-  const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
-  const [regional, setRegional] = useState<Regional>('Todas');
-  const [regionalAnchor, setRegionalAnchor] = useState<null | HTMLElement>(null);
-  const [regionalSnackbar, setRegionalSnackbar] = useState('');
   const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const notifOpen = Boolean(notifAnchor);
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const categories = buildCategories(requests);
   const navItems = buildNavItems(requests);
 
   return {
@@ -66,13 +33,6 @@ export default function useAppShell(requests: Request[], notifications: Notifica
       setUserMenuAnchor(null);
     },
 
-    // Categories
-    categoriesOpen,
-    toggleCategories: () => {
-      setCategoriesOpen((prev) => !prev);
-    },
-    categories,
-
     // Notifications
     notifAnchor,
     notifOpen,
@@ -82,27 +42,6 @@ export default function useAppShell(requests: Request[], notifications: Notifica
     },
     closeNotifications: () => {
       setNotifAnchor(null);
-    },
-
-    // Regional
-    regional,
-    regionalAnchor,
-    regionalSnackbar,
-    openRegionalMenu: (e: React.MouseEvent<HTMLElement>) => {
-      setRegionalAnchor(e.currentTarget);
-    },
-    closeRegionalMenu: () => {
-      setRegionalAnchor(null);
-    },
-    selectRegional: (r: Regional) => {
-      setRegionalAnchor(null);
-      if (r !== regional) {
-        setRegional(r);
-        setRegionalSnackbar(`Regional changed to ${r}. Reloading data...`);
-      }
-    },
-    closeRegionalSnackbar: () => {
-      setRegionalSnackbar('');
     },
 
     // Help drawer

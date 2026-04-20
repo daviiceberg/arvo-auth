@@ -22,11 +22,8 @@ interface HistoryListFilterBarProps {
   onOriginFilterChange: (value: OriginFilter) => void;
   actionFilter: ActionFilter;
   onActionFilterChange: (value: ActionFilter) => void;
-  categoryFilter: string;
-  onCategoryFilterChange: (value: string) => void;
   divergenceFilter: DivergenceFilter;
   onDivergenceFilterChange: (value: DivergenceFilter) => void;
-  categories: string[];
   hasFilters: boolean;
   onClearFilters: () => void;
   onResetPage: () => void;
@@ -39,11 +36,8 @@ export default function HistoryListFilterBar({
   onOriginFilterChange,
   actionFilter,
   onActionFilterChange,
-  categoryFilter,
-  onCategoryFilterChange,
   divergenceFilter,
   onDivergenceFilterChange,
-  categories,
   hasFilters,
   onClearFilters,
   onResetPage,
@@ -101,23 +95,6 @@ export default function HistoryListFilterBar({
               <MenuItem value="Negado">Negado</MenuItem>
               <MenuItem value="Aprovado Parcial">Aprovado Parcialmente</MenuItem>
               <MenuItem value="Devolutiva">Devolutiva</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>Categoria</InputLabel>
-            <Select
-              value={categoryFilter}
-              label="Categoria"
-              onChange={(e) => {
-                onCategoryFilterChange(e.target.value);
-                onResetPage();
-              }}
-            >
-              {categories.map((c) => (
-                <MenuItem key={c} value={c}>
-                  {c}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 160 }}>

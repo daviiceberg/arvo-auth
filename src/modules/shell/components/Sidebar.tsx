@@ -4,13 +4,10 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Collapse from '@mui/material/Collapse';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -27,24 +24,17 @@ import {
   SIDEBAR_COLLAPSED_WIDTH,
   SIDEBAR_WIDTH,
 } from '../constants/navigation';
-import { type CategoryEntry } from '../hooks/useAppShell';
 
 interface SidebarProps {
   navItems: NavItem[];
-  categories: CategoryEntry[];
-  categoriesOpen: boolean;
   collapsed: boolean;
-  onToggleCategories: () => void;
   onToggleCollapse: () => void;
   onOpenHelp: () => void;
 }
 
 export default function Sidebar({
   navItems,
-  categories,
-  categoriesOpen,
   collapsed,
-  onToggleCategories,
   onToggleCollapse,
   onOpenHelp,
 }: SidebarProps) {
@@ -194,10 +184,8 @@ export default function Sidebar({
           </List>
         </Box>
 
-        <Divider sx={{ mx: 1, my: 1 }} />
-
         {/* Admin nav */}
-        <Box sx={{ px: 1, flexShrink: 0 }}>
+        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {ADMIN_ITEMS.map(renderNavItem)}
           </List>
@@ -205,114 +193,8 @@ export default function Sidebar({
 
         {!collapsed && (
           <>
-            <Divider sx={{ mx: 1, my: 1 }} />
-
-            {/* Categories */}
-            <Box sx={{ px: 1.5, pt: 2, flex: 1, minHeight: 0, overflowY: 'auto' }}>
-              <Box
-                onClick={onToggleCategories}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  px: 1.5,
-                  py: 0.75,
-                  cursor: 'pointer',
-                  borderRadius: 1,
-                  '&:hover': { backgroundColor: 'rgba(144,43,41,0.04)' },
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'text.secondary',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: 0.6,
-                    fontSize: 12,
-                  }}
-                >
-                  Categorias
-                </Typography>
-                <ExpandMoreIcon
-                  sx={{
-                    fontSize: 14,
-                    color: 'text.secondary',
-                    transition: 'transform 150ms ease',
-                    transform: categoriesOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  }}
-                />
-              </Box>
-              <Collapse in={categoriesOpen}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, mt: 0.5 }}>
-                  {categories.map((cat) => (
-                    <Box
-                      key={cat.label}
-                      onClick={() => {
-                        router.push(`/fila?categoria=${encodeURIComponent(cat.label)}`);
-                      }}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        px: 1.5,
-                        py: 0.6,
-                        borderRadius: 1,
-                        cursor: 'pointer',
-                        minHeight: 32,
-                        '&:hover': { backgroundColor: 'rgba(144,43,41,0.05)' },
-                        transition: 'background-color 150ms ease',
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-                        <Box
-                          sx={{
-                            color: cat.color,
-                            flexShrink: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          {cat.icon}
-                        </Box>
-                        <Tooltip
-                          title={cat.label}
-                          placement="right"
-                          disableHoverListener={cat.label.length < 20}
-                        >
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              fontSize: 12,
-                              fontWeight: 500,
-                              color: 'text.secondary',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {cat.label}
-                          </Typography>
-                        </Tooltip>
-                      </Box>
-                      <Chip
-                        label={cat.count}
-                        size="small"
-                        sx={{
-                          height: 18,
-                          fontSize: 12,
-                          fontWeight: 700,
-                          backgroundColor: `${cat.color}18`,
-                          color: cat.color,
-                          flexShrink: 0,
-                          '& .MuiChip-label': { px: 0.75 },
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </Collapse>
-            </Box>
+            {/* Spacer pushes external links to the bottom */}
+            <Box sx={{ flex: 1 }} />
 
             {/* External links */}
             <Box sx={{ px: 1.5, pt: 1, pb: 2, flexShrink: 0 }}>

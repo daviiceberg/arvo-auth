@@ -36,100 +36,43 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-// ── Step 3 content by request type ───────────────────────────────────
+// ── Step 3 content: Terapias ─────────────────────────────────────────
 function getStep3Content(
   form: FormData,
   terapiaProcedimentos: TerapiaProcedimento[],
 ): React.ReactNode {
-  const contentByType: Record<string, React.ReactNode> = {
-    internacao: (
-      <>
-        <ReviewRow label="Tipo de Acomodação" value={form.tipoAcomodacao} />
-        <ReviewRow label="Qtd. de Diárias" value={form.qtdDiarias} />
-        <ReviewRow label="Data Prevista" value={form.dataInternacao} />
-        <ReviewRow label="Regime" value={form.regimeInternacao} />
-      </>
-    ),
-    urgencia: (
-      <>
-        <ReviewRow label="Classificação de Risco" value={form.classificacaoRisco} />
-        <ReviewRow label="Tipo de Atendimento" value={form.tipoAtendimento} />
-        <ReviewRow label="Queixa Principal" value={form.queixaPrincipal} />
-      </>
-    ),
-    oncologia: (
-      <>
-        <ReviewRow label="Estadiamento TNM" value={form.estadiamentoTNM} />
-        <ReviewRow label="Nº do Ciclo" value={form.numeroCiclo} />
-        <ReviewRow label="Protocolo" value={form.protocoloQuimio} />
-        <ReviewRow label="Tipo de Tratamento" value={form.tipoTratamento} />
-        <ReviewRow label="Total de Ciclos" value={form.totalCiclos} />
-      </>
-    ),
-    terapias: (
-      <>
-        <ReviewRow
-          label="Etapa da Autorização"
-          value={
-            form.etapaAutorizacao === 'continuidade'
-              ? 'Continuidade / Renovação'
-              : form.etapaAutorizacao === 'primeira_solicitacao'
-                ? 'Primeira Solicitação'
-                : '\u2014'
-          }
-        />
-        {terapiaProcedimentos.map((proc, idx) => (
-          <Box key={proc.id} sx={{ mt: 1.5, mb: 0.5 }}>
-            {terapiaProcedimentos.length > 1 && (
-              <Typography
-                variant="subtitle2"
-                sx={{ fontSize: 12, fontWeight: 700, mb: 0.5, color: 'text.secondary' }}
-              >
-                Procedimento {idx + 1}
-              </Typography>
-            )}
-            <ReviewRow label="Tipo de Terapia" value={proc.tipoTerapia} />
-            <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
-            <ReviewRow label="Nº de Sessões" value={proc.numeroSessoes} />
-            <ReviewRow label="Data de Início" value={proc.dataInicio} />
-            <ReviewRow label="Data de Término" value={proc.dataTermino} />
-            <ReviewRow label="Frequência Semanal" value={proc.frequenciaSemanal} />
-            <ReviewRow label="Duração da Sessão" value={`${proc.duracaoSessao} min`} />
-          </Box>
-        ))}
-      </>
-    ),
-    homecare: (
-      <>
-        <ReviewRow label="Modalidade" value={form.modalidadeHomeCare} />
-        <ReviewRow label="Período (dias)" value={form.periodoSolicitado} />
-        <ReviewRow label="Cuidados Necessários" value={form.cuidadosNecessarios} />
-      </>
-    ),
-    cirurgias: (
-      <Box sx={{ py: 1 }}>
-        <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-          {`${String(form.procedimentos.length)} procedimento(s) e ${String(form.opme.length)} material(is) OPME cadastrado(s).`}
-        </Typography>
-      </Box>
-    ),
-    exames: (
-      <Box sx={{ py: 1 }}>
-        <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-          {`${String(form.exames.length)} exame(s) solicitado(s).`}
-        </Typography>
-      </Box>
-    ),
-    opme: (
-      <Box sx={{ py: 1 }}>
-        <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-          {`${String(form.materiais.length)} material(is) cadastrado(s).`}
-        </Typography>
-      </Box>
-    ),
-  };
-
-  return contentByType[form.tipoSolicitacao] ?? null;
+  return (
+    <>
+      <ReviewRow
+        label="Etapa da Autorização"
+        value={
+          form.etapaAutorizacao === 'continuidade'
+            ? 'Continuidade / Renovação'
+            : form.etapaAutorizacao === 'primeira_solicitacao'
+              ? 'Primeira Solicitação'
+              : '\u2014'
+        }
+      />
+      {terapiaProcedimentos.map((proc, idx) => (
+        <Box key={proc.id} sx={{ mt: 1.5, mb: 0.5 }}>
+          {terapiaProcedimentos.length > 1 && (
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 12, fontWeight: 700, mb: 0.5, color: 'text.secondary' }}
+            >
+              Procedimento {idx + 1}
+            </Typography>
+          )}
+          <ReviewRow label="Tipo de Terapia" value={proc.tipoTerapia} />
+          <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+          <ReviewRow label="Nº de Sessões" value={proc.numeroSessoes} />
+          <ReviewRow label="Data da Solicitação" value={proc.dataSolicitacao} />
+          <ReviewRow label="Validade da Senha" value={proc.dataValidadeSenha} />
+          <ReviewRow label="Frequência Semanal" value={proc.frequenciaSemanal} />
+        </Box>
+      ))}
+    </>
+  );
 }
 
 // ── Documents review section ─────────────────────────────────────────
@@ -228,6 +171,11 @@ export function StepReview({
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Revisão da Solicitação
       </Typography>
+      {!form.cidPrincipal ? (
+        <Alert severity="error" sx={{ mb: 2, fontSize: 12, borderRadius: 2 }}>
+          CID Principal é obrigatório. Volte à etapa &quot;Clínico&quot; e preencha o CID.
+        </Alert>
+      ) : null}
       <Box
         sx={{
           backgroundColor: '#f0fdf4',
@@ -310,9 +258,11 @@ export function StepReview({
             </Box>
           </Box>
         )}
-        <ReviewRow label="Caráter do Atendimento" value={form.caraterAtendimento} />
-        <ReviewRow label="Médico Solicitante" value={form.medicoSolicitante} />
-        <ReviewRow label="CRM" value={form.crm} />
+        <ReviewRow label="Profissional Solicitante" value={form.profissionalSolicitante} />
+        <ReviewRow
+          label="Conselho"
+          value={`${form.conselhoTipo} ${form.conselhoNumero}/${form.conselhoUF}`}
+        />
         <ReviewRow label="Indicação Clínica" value={form.indicacaoClinica} />
       </Box>
       {/* Step 3 summary */}

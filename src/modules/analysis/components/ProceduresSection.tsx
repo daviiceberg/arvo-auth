@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MonetizationOnOutlinedIcon from '@mui/icons-material/MonetizationOnOutlined';
+import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -18,12 +18,14 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import DutModal from '@/shared/components/dut-modal/DutModal';
 import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
+import { CID_DATABASE, CID_GROUP_LABELS } from '@/shared/constants/cid-codes';
 import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
 
 import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
@@ -46,52 +48,26 @@ function getCredentialingStatus(code: string): 'ok' | 'warning' {
 }
 
 const TH_SX = {
-  fontSize: 11,
+  fontSize: '11px',
   fontWeight: 700,
   textTransform: 'uppercase' as const,
-  letterSpacing: 0.5,
+  letterSpacing: '0.5px',
   color: 'text.secondary',
-  pb: 1,
+  py: '6px',
+  px: 2,
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
 };
 
+const TD_SX = { py: '8px', px: 2, verticalAlign: 'top' as const };
+
 // ── Sub-components ──────────────────────────────────────────────────
-
-interface OpmeFieldsProps {
-  manufacturer: string | undefined;
-  unitValue: number | undefined;
-}
-
-function OpmeFields({ manufacturer, unitValue }: OpmeFieldsProps) {
-  if (!manufacturer && !unitValue) return null;
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 0.75, flexWrap: 'wrap' }}>
-      {manufacturer ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <BusinessOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
-            {manufacturer}
-          </Typography>
-        </Box>
-      ) : null}
-      {unitValue ? (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <MonetizationOnOutlinedIcon sx={{ fontSize: 13, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.primary" sx={{ fontSize: 12, fontWeight: 600 }}>
-            {unitValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-          </Typography>
-        </Box>
-      ) : null}
-    </Box>
-  );
-}
 
 type AdjustClickHandler = (proc: {
   codigo: string;
   descricao: string;
   qty: number;
   prestador: string;
-  fabricante?: string;
-  valorUnitario?: number;
+  cid: string;
 }) => void;
 
 interface ProcedureActionCellProps {
@@ -108,7 +84,7 @@ function ProcedureActionCell({
   onAdjustClick,
 }: ProcedureActionCellProps) {
   return (
-    <TableCell sx={{ verticalAlign: 'top', pt: 1, pr: 0 }}>
+    <TableCell sx={TD_SX}>
       {USER_PROFILE !== 'Auditor' &&
         (isGuideFinalized ? (
           <Tooltip title="Guia já finalizada — edição não permitida">
@@ -142,8 +118,7 @@ function ProcedureActionCell({
                 descricao: proc.description,
                 qty: proc.qty,
                 prestador: hospital,
-                fabricante: proc.manufacturer,
-                valorUnitario: proc.unitValue,
+                cid: proc.cid,
               });
             }}
             sx={{
@@ -203,29 +178,12 @@ function PackageTussRow({ code, description }: { code: string; description: stri
 
 interface ProcedureCodeCellProps {
   code: string;
-  hasManufacturer: boolean;
   codeAdjustment: Adjustment | undefined;
 }
 
-function ProcedureCodeCell({ code, hasManufacturer, codeAdjustment }: ProcedureCodeCellProps) {
+function ProcedureCodeCell({ code, codeAdjustment }: ProcedureCodeCellProps) {
   return (
-    <TableCell sx={{ fontWeight: 700, fontSize: 13, width: 120, verticalAlign: 'top', pt: 1.5 }}>
-      {hasManufacturer ? (
-        <Chip
-          label="OPME"
-          size="small"
-          sx={{
-            fontSize: 10,
-            height: 18,
-            backgroundColor: 'rgba(144,43,41,0.1)',
-            color: 'primary.main',
-            fontWeight: 700,
-            mb: 0.5,
-            display: 'block',
-            width: 'fit-content',
-          }}
-        />
-      ) : null}
+    <TableCell sx={{ ...TD_SX, fontWeight: 700, fontSize: 13, width: 120 }}>
       {codeAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>
@@ -244,19 +202,12 @@ function ProcedureCodeCell({ code, hasManufacturer, codeAdjustment }: ProcedureC
 
 interface ProcedureDescCellProps {
   description: string;
-  manufacturer: string | undefined;
-  unitValue: number | undefined;
   codeAdjustment: Adjustment | undefined;
 }
 
-function ProcedureDescCell({
-  description,
-  manufacturer,
-  unitValue,
-  codeAdjustment,
-}: ProcedureDescCellProps) {
+function ProcedureDescCell({ description, codeAdjustment }: ProcedureDescCellProps) {
   return (
-    <TableCell sx={{ fontWeight: 600, fontSize: 13, verticalAlign: 'top', pt: 1.5 }}>
+    <TableCell sx={{ ...TD_SX, fontWeight: 600, fontSize: 13 }}>
       {codeAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12, textDecoration: 'line-through', color: 'text.disabled' }}>
@@ -269,7 +220,6 @@ function ProcedureDescCell({
       ) : (
         description
       )}
-      <OpmeFields manufacturer={manufacturer} unitValue={unitValue} />
     </TableCell>
   );
 }
@@ -282,9 +232,7 @@ interface ProcedureQtyCellProps {
 
 function ProcedureQtyCell({ qty, authorizedQty, qtyAdjustment }: ProcedureQtyCellProps) {
   return (
-    <TableCell
-      sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5, width: 80 }}
-    >
+    <TableCell sx={{ ...TD_SX, color: 'text.secondary', fontSize: 12, width: 80 }}>
       {qtyAdjustment ? (
         <Box>
           <Typography sx={{ fontSize: 12 }}>Qtd: {qty}</Typography>
@@ -308,7 +256,7 @@ interface ProcedureProviderCellProps {
 
 function ProcedureProviderCell({ hospital, providerAdjustment }: ProcedureProviderCellProps) {
   return (
-    <TableCell sx={{ fontSize: 12, verticalAlign: 'top', pt: 1.5, maxWidth: 160, minWidth: 120 }}>
+    <TableCell sx={{ ...TD_SX, fontSize: 12, maxWidth: 160, minWidth: 120 }}>
       {providerAdjustment ? (
         <Box>
           <Typography
@@ -352,7 +300,7 @@ function ProcedureStatusCell({
   isGuideFinalized,
 }: ProcedureStatusCellProps) {
   return (
-    <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>
+    <TableCell sx={TD_SX}>
       <Box
         sx={{
           display: 'flex',
@@ -446,12 +394,11 @@ function ProcedureRow({
         sx={{
           cursor: 'default',
           '& td': { borderBottom: isLast && !isExpanded ? 'none' : '1px solid rgba(0,0,0,0.08)' },
-          '&:not(:first-of-type) td': { pt: 2 },
           '&:hover': { backgroundColor: 'transparent' },
         }}
       >
         {/* Tipo */}
-        <TableCell sx={{ pl: 0, verticalAlign: 'top', pt: 1.5, width: 80 }}>
+        <TableCell sx={{ ...TD_SX, width: 80 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <CodeTypeChip codeType={codeType} onClick={hasTussCodes ? onToggleExpand : undefined} />
             {hasTussCodes ? (
@@ -465,34 +412,29 @@ function ProcedureRow({
             ) : null}
           </Box>
         </TableCell>
-        <ProcedureCodeCell
-          code={proc.code}
-          hasManufacturer={proc.manufacturer !== undefined}
-          codeAdjustment={codeAdjustment}
-        />
-        <ProcedureDescCell
-          description={proc.description}
-          manufacturer={proc.manufacturer}
-          unitValue={proc.unitValue}
-          codeAdjustment={codeAdjustment}
-        />
+        <ProcedureCodeCell code={proc.code} codeAdjustment={codeAdjustment} />
+        <ProcedureDescCell description={proc.description} codeAdjustment={codeAdjustment} />
         <ProcedureQtyCell
           qty={proc.qty}
           authorizedQty={proc.authorizedQty}
           qtyAdjustment={qtyAdjustment}
         />
         <ProcedureProviderCell hospital={hospital} providerAdjustment={providerAdjustment} />
-        {/* Periodo */}
+        {/* Datas */}
         <TableCell
           sx={{
+            ...TD_SX,
             color: 'text.secondary',
             fontSize: 12,
-            verticalAlign: 'top',
-            pt: 1.5,
             width: 140,
           }}
         >
-          {proc.startDate} → {proc.endDate}
+          Solic.: {proc.requestDate}
+          {proc.passwordExpiryDate ? (
+            <Typography variant="caption" sx={{ display: 'block', fontSize: 11, mt: 0.25 }}>
+              Val.: {proc.passwordExpiryDate}
+            </Typography>
+          ) : null}
         </TableCell>
         <ProcedureStatusCell
           cid={proc.cid}
@@ -501,7 +443,7 @@ function ProcedureRow({
           isGuideFinalized={isGuideFinalized}
         />
         {/* DUT */}
-        <TableCell sx={{ verticalAlign: 'top', pt: 1.5, width: 70, textAlign: 'left' }}>
+        <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
           {dutNumber ? (
             <Typography
               component="button"
@@ -545,6 +487,134 @@ function ProcedureRow({
   );
 }
 
+// ── Secondary CIDs editor ───────────────────────────────────────────
+
+interface SecondaryCidsEditorProps {
+  cids: string[];
+  disabled: boolean;
+  onAdd: (cid: string) => void;
+  onRemove: (index: number) => void;
+}
+
+function SecondaryCidsEditor({ cids, disabled, onAdd, onRemove }: SecondaryCidsEditorProps) {
+  const [showAdd, setShowAdd] = useState(false);
+
+  if (cids.length === 0 && disabled) return null;
+
+  return (
+    <Box sx={{ pb: 2, pt: 0.5 }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: '#64748b',
+          fontSize: 11,
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: 0.4,
+        }}
+      >
+        CIDs Secundários
+      </Typography>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75, alignItems: 'center' }}>
+        {cids.map((cid, i) => (
+          <Chip
+            key={`${cid}-${String(i)}`}
+            label={cid}
+            size="small"
+            onDelete={
+              disabled
+                ? undefined
+                : () => {
+                    onRemove(i);
+                  }
+            }
+            sx={{
+              backgroundColor: 'rgba(100,116,139,0.08)',
+              color: '#475569',
+              fontWeight: 600,
+              fontSize: 12,
+              height: 22,
+            }}
+          />
+        ))}
+        {!disabled ? (
+          <Chip
+            icon={<AddIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
+            label="CID"
+            size="small"
+            variant="outlined"
+            onClick={() => {
+              setShowAdd(true);
+            }}
+            sx={{
+              fontSize: 11,
+              height: 22,
+              cursor: 'pointer',
+              borderStyle: 'dashed',
+              color: 'text.secondary',
+            }}
+          />
+        ) : null}
+      </Box>
+      {showAdd ? (
+        <Box sx={{ mt: 1, maxWidth: 320 }}>
+          <Autocomplete
+            freeSolo
+            openOnFocus
+            options={CID_DATABASE}
+            groupBy={(option) => CID_GROUP_LABELS[option.group] ?? ''}
+            getOptionLabel={(opt) =>
+              typeof opt === 'string' ? opt : `${opt.code} — ${opt.description}`
+            }
+            filterOptions={(options, { inputValue }) => {
+              const q = inputValue.toLowerCase().trim();
+              if (q.length < 2) return options.filter((c) => c.group === 'tea');
+              return options.filter(
+                (c) =>
+                  c.code.toLowerCase().startsWith(q) || c.description.toLowerCase().includes(q),
+              );
+            }}
+            onChange={(_e, value) => {
+              if (value && typeof value !== 'string') {
+                onAdd(`${value.code} — ${value.description}`);
+                setShowAdd(false);
+              }
+            }}
+            onBlur={() => {
+              setShowAdd(false);
+            }}
+            size="small"
+            renderInput={(params) => (
+              <TextField {...params} size="small" placeholder="Buscar CID para adicionar..." />
+            )}
+            renderOption={(props, option) => (
+              <li {...props} key={option.code}>
+                <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: 13,
+                      fontWeight: 500,
+                      fontFamily: 'monospace',
+                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
+                      flexShrink: 0,
+                      minWidth: 56,
+                    }}
+                  >
+                    {option.code}
+                  </Typography>
+                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
+                    {option.description}
+                  </Typography>
+                </Box>
+              </li>
+            )}
+          />
+        </Box>
+      ) : null}
+    </Box>
+  );
+}
+
 // ── Main section ────────────────────────────────────────────────────
 
 interface ProceduresSectionProps {
@@ -559,10 +629,26 @@ export default function ProceduresSection({
   onAdjustClick,
 }: ProceduresSectionProps) {
   const procs = request.procedures;
-  const p = request.provider;
+  const rp = request.requestingProvider;
+  const ep = request.executingProvider;
   const isGuideFinalized = ['Aprovado', 'Negado', 'Aprovado Parcial'].includes(request.status);
   const [expandedCodes, setExpandedCodes] = useState(new Set());
+  const [localSecondaryCids, setLocalSecondaryCids] = useState(request.secondaryCids ?? []);
   const dutModal = useDutModal();
+
+  useEffect(() => {
+    setLocalSecondaryCids(request.secondaryCids ?? []);
+    setExpandedCodes(new Set());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request.id]);
+
+  const handleRemoveSecondaryCid = (index: number) => {
+    setLocalSecondaryCids((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddSecondaryCid = (cid: string) => {
+    setLocalSecondaryCids((prev) => (prev.includes(cid) ? prev : [...prev, cid]));
+  };
 
   const toggleExpand = (code: string) => {
     setExpandedCodes((prev) => {
@@ -576,87 +662,101 @@ export default function ProceduresSection({
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          sx={{
-            mb: 2,
-            fontSize: 15,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            color: 'text.secondary',
-          }}
-        >
-          Procedimentos ({procs.length})
-        </Typography>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ '& th': { borderBottom: '1px solid rgba(0,0,0,0.08)' } }}>
-              <TableCell sx={{ pl: 0, ...TH_SX, width: 80 }}>Tipo</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
-              <TableCell sx={TH_SX}>Descrição</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
-              <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 140 }}>Período</TableCell>
-              <TableCell sx={TH_SX}>Status</TableCell>
-              <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
-              <TableCell sx={{ ...TH_SX, pr: 0 }} />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {procs.map((proc, index) => (
-              <ProcedureRow
-                key={proc.code}
-                proc={proc}
-                allAdjustments={allAdjustments}
-                isGuideFinalized={isGuideFinalized}
-                isLast={index === procs.length - 1}
-                hospital={p.hospital}
-                onAdjustClick={onAdjustClick}
-                isExpanded={expandedCodes.has(proc.code)}
-                onToggleExpand={() => {
-                  toggleExpand(proc.code);
-                }}
-                onDutClick={dutModal.open}
-              />
-            ))}
-          </TableBody>
-        </Table>
-        {request.secondaryCids && request.secondaryCids.length > 0 ? (
-          <Box sx={{ px: 2.5, pb: 2, pt: 0.5 }}>
-            <Typography
-              variant="caption"
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+          <Typography
+            variant="h6"
+            fontWeight={700}
+            sx={{
+              fontSize: 15,
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              color: 'text.secondary',
+            }}
+          >
+            Procedimentos ({procs.length})
+          </Typography>
+          {request.cidSource ? (
+            <Chip
+              label={
+                request.cidSource === 'prestador'
+                  ? 'CID: Prestador'
+                  : request.cidSource === 'ocr'
+                    ? 'CID: OCR'
+                    : 'CID: IA'
+              }
+              size="small"
               sx={{
-                color: '#64748b',
-                fontSize: 11,
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: 0.4,
+                fontSize: 10,
+                height: 20,
+                fontWeight: 700,
+                backgroundColor:
+                  request.cidSource === 'prestador'
+                    ? 'rgba(0,0,0,0.06)'
+                    : request.cidSource === 'ocr'
+                      ? 'rgba(37,99,235,0.08)'
+                      : 'rgba(144,43,41,0.08)',
+                color:
+                  request.cidSource === 'prestador'
+                    ? 'text.secondary'
+                    : request.cidSource === 'ocr'
+                      ? 'info.main'
+                      : 'primary.main',
               }}
-            >
-              CIDs Secundários
-            </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.75 }}>
-              {request.secondaryCids.map((cid, i) => (
-                <Chip
-                  key={i}
-                  label={cid}
-                  size="small"
-                  sx={{
-                    backgroundColor: 'rgba(100,116,139,0.08)',
-                    color: '#475569',
-                    fontWeight: 600,
-                    fontSize: 12,
-                    height: 20,
-                  }}
-                />
-              ))}
-            </Box>
+            />
+          ) : null}
+        </Box>
+        <Box sx={{ overflowX: 'auto' }}>
+          <Box
+            sx={{
+              border: '1px solid rgba(0,0,0,0.1)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+            }}
+          >
+            <Table size="small" sx={{ minWidth: 900 }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ ...TH_SX, width: 80 }}>Tipo</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
+                  <TableCell sx={TH_SX}>Descrição</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
+                  <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
+                  <TableCell sx={TH_SX}>Status</TableCell>
+                  <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
+                  <TableCell sx={{ ...TH_SX, minWidth: 80 }}>Ação</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {procs.map((proc, index) => (
+                  <ProcedureRow
+                    key={proc.code}
+                    proc={proc}
+                    allAdjustments={allAdjustments}
+                    isGuideFinalized={isGuideFinalized}
+                    isLast={index === procs.length - 1}
+                    hospital={ep.name}
+                    onAdjustClick={onAdjustClick}
+                    isExpanded={expandedCodes.has(proc.code)}
+                    onToggleExpand={() => {
+                      toggleExpand(proc.code);
+                    }}
+                    onDutClick={dutModal.open}
+                  />
+                ))}
+              </TableBody>
+            </Table>
           </Box>
-        ) : null}
+        </Box>
+        <SecondaryCidsEditor
+          cids={localSecondaryCids}
+          disabled={isGuideFinalized}
+          onAdd={handleAddSecondaryCid}
+          onRemove={handleRemoveSecondaryCid}
+        />
         {(() => {
           const providerAdj = allAdjustments.find((a) => a.field === 'prestador');
-          const activeHospital = providerAdj ? providerAdj.newValue : p.hospital;
+          const activeHospital = providerAdj ? providerAdj.newValue : ep.name;
           return (
             <Box
               sx={{
@@ -703,9 +803,12 @@ export default function ProceduresSection({
                 </Box>
               </Box>
               {[
-                { label: 'Médico Solicitante', value: p.doctor },
-                { label: 'CRM', value: p.crm },
-                { label: 'Especialidade', value: p.specialty },
+                { label: 'Profissional Solicitante', value: rp.professional },
+                {
+                  label: 'Conselho',
+                  value: `${rp.councilType} ${rp.councilNumber}/${rp.councilUF}`,
+                },
+                { label: 'Contratado Solicitante', value: rp.name },
               ].map((f) => (
                 <Box key={f.label}>
                   <Typography

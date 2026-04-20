@@ -15,7 +15,6 @@ import { useQueueFilters } from '../hooks/useQueueFilters';
 import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 import QueueFilterBar from './QueueFilterBar';
-import QueueMetricsRow from './QueueMetricsRow';
 import QueuePagination from './QueuePagination';
 import QueueTabBar from './QueueTabBar';
 import QueueTable from './QueueTable';
@@ -25,16 +24,10 @@ export default function QueuePage() {
   const searchParams = useSearchParams();
 
   const filters = useQueueFilters({ searchParams });
-  const {
-    loading,
-    filtered,
-    pagedItems,
-    urgEmergCount,
-    returnsCount,
-    returnsWaiting,
-    returnsReceived,
-    stalled12h,
-  } = useQueueData({ filters, pedidos });
+  const { loading, filtered, pagedItems, warningCount, violatedCount } = useQueueData({
+    filters,
+    pedidos,
+  });
   const { scrollContainerRef, lastViewedId, saveScrollPosition } = useScrollRestoration();
 
   const handleRowClick = (requestId: string) => {
@@ -47,18 +40,8 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handleReturnSubFilterChange = (value: 'all' | 'aguardando' | 'retorno') => {
-    filters.setReturnSubFilter(value);
-    filters.setPage(0);
-  };
-
   const handleSearchChange = (value: string) => {
     filters.setSearch(value);
-    filters.setPage(0);
-  };
-
-  const handleCategoryFilterChange = (value: string) => {
-    filters.setCategoryFilter(value);
     filters.setPage(0);
   };
 
@@ -84,7 +67,7 @@ export default function QueuePage() {
         sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}
       >
         <Typography variant="h4" fontWeight={700}>
-          {filters.categoryFilter === 'Todas' ? 'Fila Operacional' : filters.categoryFilter}
+          Fila Operacional
         </Typography>
         <Button
           variant="contained"
@@ -99,44 +82,25 @@ export default function QueuePage() {
         </Button>
       </Box>
 
-      {/* Metric Cards Row — only on general queue */}
-      {filters.categoryFilter === 'Todas' && (
-        <QueueMetricsRow
-          totalCount={pedidos.length}
-          urgEmergCount={urgEmergCount}
-          returnsCount={returnsCount}
-          stalled12h={stalled12h}
-          loading={loading}
-          onTabChange={handleTabChange}
-        />
-      )}
-
       {/* Table Card */}
       <Card>
         {/* Tabs */}
         <QueueTabBar
           tabValue={filters.tabValue}
           totalCount={pedidos.length}
-          urgEmergCount={urgEmergCount}
-          returnsCount={returnsCount}
-          returnsWaiting={returnsWaiting}
-          returnsReceived={returnsReceived}
-          stalled12h={stalled12h}
-          returnSubFilter={filters.returnSubFilter}
+          warningCount={warningCount}
+          violatedCount={violatedCount}
           onTabChange={handleTabChange}
-          onReturnSubFilterChange={handleReturnSubFilterChange}
         />
 
         {/* Filter bar */}
         <QueueFilterBar
           search={filters.search}
-          categoryFilter={filters.categoryFilter}
           slaFilter={filters.slaFilter}
           providerFilter={filters.providerFilter}
           iaSuggestionFilter={filters.iaSuggestionFilter}
           hasFilters={filters.hasFilters}
           onSearchChange={handleSearchChange}
-          onCategoryFilterChange={handleCategoryFilterChange}
           onSlaFilterChange={handleSlaFilterChange}
           onProviderFilterChange={handleProviderFilterChange}
           onIaSuggestionFilterChange={handleIaSuggestionFilterChange}
@@ -146,7 +110,6 @@ export default function QueuePage() {
         {/* Table */}
         <QueueTable
           items={pagedItems}
-          categoryFilter={filters.categoryFilter}
           loading={loading}
           lastViewedId={lastViewedId}
           hasFilters={filters.hasFilters}

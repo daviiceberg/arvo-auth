@@ -21,7 +21,7 @@ interface ProcedureListRowProps {
   onToggleExpand: () => void;
   onRemove: () => void;
   onQuantityChange: (qty: number) => void;
-  onPeriodChange: (field: 'periodStart' | 'periodEnd', value: string) => void;
+  onPeriodChange: (field: 'requestDate' | 'passwordExpiryDate', value: string) => void;
 }
 
 export default function ProcedureListRow({
@@ -98,9 +98,9 @@ export default function ProcedureListRow({
             <TextField
               size="small"
               type="date"
-              value={procedure.periodStart ?? ''}
+              value={procedure.requestDate ?? ''}
               onChange={(e) => {
-                onPeriodChange('periodStart', e.target.value);
+                onPeriodChange('requestDate', e.target.value);
               }}
               disabled={readOnly}
               sx={{ width: 140 }}
@@ -109,9 +109,9 @@ export default function ProcedureListRow({
             <TextField
               size="small"
               type="date"
-              value={procedure.periodEnd ?? ''}
+              value={procedure.passwordExpiryDate ?? ''}
               onChange={(e) => {
-                onPeriodChange('periodEnd', e.target.value);
+                onPeriodChange('passwordExpiryDate', e.target.value);
               }}
               disabled={readOnly}
               sx={{ width: 140 }}

@@ -5,39 +5,39 @@ export interface DenialReason {
 
 export const DENIAL_REASONS: DenialReason[] = [
   {
-    label: 'Carência contratual',
+    label: 'CID F84 ausente ou não confirmado',
+    texto:
+      'Solicitação negada por ausência ou não confirmação do diagnóstico CID F84.x (Transtornos Globais do Desenvolvimento). A cobertura obrigatória de terapias especiais depende da confirmação diagnóstica em laudo neuropsicológico.',
+  },
+  {
+    label: 'Laudo médico ausente, ilegível ou vencido',
+    texto:
+      'Laudo neuropsicológico não anexado, ilegível ou com data superior a 12 meses. Conforme protocolo, é exigido laudo vigente emitido por profissional habilitado para análise da solicitação.',
+  },
+  {
+    label: 'Assinatura ou carimbo do médico ausente',
+    texto:
+      'Pedido médico apresentado sem assinatura ou carimbo do profissional responsável, descumprindo requisitos formais para validação da solicitação.',
+  },
+  {
+    label: 'CRM inválido ou não encontrado',
+    texto:
+      'CRM do médico solicitante inválido, inativo ou não localizado em consulta ao Conselho Regional de Medicina competente.',
+  },
+  {
+    label: 'Beneficiário em período de carência',
     texto:
       'Solicitação negada em razão de período de carência contratual não cumprido para o procedimento solicitado, conforme contrato do plano do beneficiário.',
   },
   {
-    label: 'Fora do Rol ANS',
+    label: 'Beneficiário inadimplente',
     texto:
-      'O procedimento solicitado não consta no Rol de Procedimentos e Eventos em Saúde da ANS (RN 465/2021 e atualizações), não sendo de cobertura obrigatória.',
+      'Contrato do beneficiário encontra-se em situação de inadimplência, com cobertura suspensa até regularização conforme cláusulas contratuais.',
   },
   {
-    label: 'Documentação clínica incompleta',
+    label: 'Prestador não credenciado',
     texto:
-      'Negativa por ausência ou incompletude da documentação clínica exigida para análise. O beneficiário poderá reapresentar o pedido com documentação completa.',
-  },
-  {
-    label: 'Método/procedimento não coberto',
-    texto:
-      'O método ou procedimento solicitado não está contemplado na cobertura contratual vigente e/ou no Rol de Procedimentos da ANS.',
-  },
-  {
-    label: 'Prestador não credenciado para o procedimento',
-    texto:
-      'O prestador indicado não possui credenciamento junto à operadora para a realização do procedimento solicitado na especialidade requerida.',
-  },
-  {
-    label: 'Quantidade acima do protocolo clínico',
-    texto:
-      'A quantidade solicitada excede o limite estabelecido pelo protocolo clínico e/ou pelas Diretrizes de Utilização (DUT) aplicáveis para este procedimento.',
-  },
-  {
-    label: 'CID incompatível com o procedimento solicitado',
-    texto:
-      'Há incompatibilidade clínica entre o CID informado e o procedimento solicitado, não havendo indicação reconhecida nos protocolos técnicos vigentes.',
+      'O prestador indicado não possui credenciamento junto à operadora para a realização de terapias especiais na modalidade solicitada.',
   },
   { label: 'Outro motivo', texto: '' },
 ];

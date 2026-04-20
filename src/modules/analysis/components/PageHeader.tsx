@@ -1,50 +1,21 @@
 'use client';
 
-import React from 'react';
-
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import GavelIcon from '@mui/icons-material/Gavel';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { statusColorMap, guideTypeColorMap, originConfigMap } from '@/shared/constants';
-import { type Request, type RequestOrigin } from '@/types/pedido';
+import { type Request } from '@/types/pedido';
 
 import { formatSlaDisplay } from '../utils/format-sla';
-
-// ---- OrigemLabel (module-level inline component) ----
-const originIconMap: Record<RequestOrigin, React.ReactNode> = {
-  app: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
-  whatsapp: <WhatsAppIcon sx={{ fontSize: 13 }} />,
-  email: <EmailOutlinedIcon sx={{ fontSize: 13 }} />,
-  prestador: <LocalHospitalOutlinedIcon sx={{ fontSize: 13 }} />,
-  call_center: <PhoneAndroidIcon sx={{ fontSize: 13 }} />,
-};
-
-function OrigemLabel({ origem }: { origem: RequestOrigin }) {
-  const { label, color } = originConfigMap[origem];
-  const icon = originIconMap[origem];
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-      <Box sx={{ color, display: 'flex', alignItems: 'center' }}>{icon}</Box>
-      <Typography variant="caption" sx={{ fontSize: 12, color, fontWeight: 600 }}>
-        {label}
-      </Typography>
-    </Box>
-  );
-}
 
 interface PageHeaderProps {
   request: Request;
@@ -63,8 +34,6 @@ export default function PageHeader({
   onPrev,
   onNext,
 }: PageHeaderProps) {
-  const sc = statusColorMap[request.status];
-  const tc = guideTypeColorMap[request.guideType];
   return (
     <Box
       sx={{
@@ -98,16 +67,19 @@ export default function PageHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {request.id}
           </Typography>
-          <Chip
-            label={request.guideType}
-            size="small"
-            sx={{ backgroundColor: tc.bg, color: tc.color, fontWeight: 700, height: 22 }}
-          />
-          <Chip
-            label={request.status}
-            size="small"
-            sx={{ backgroundColor: sc.bg, color: sc.color, fontWeight: 700, height: 22 }}
-          />
+          {request.guidePassword ? (
+            <Typography
+              variant="caption"
+              sx={{ fontSize: 12, color: 'text.secondary', fontFamily: 'monospace' }}
+            >
+              Senha: {request.guidePassword}
+            </Typography>
+          ) : null}
+          {request.passwordExpiryDate ? (
+            <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary' }}>
+              Val.: {request.passwordExpiryDate}
+            </Typography>
+          ) : null}
           {request.slaStatus === 'violated' && (
             <Chip
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
@@ -129,19 +101,6 @@ export default function PageHeader({
               sx={{
                 backgroundColor: 'rgba(245,158,11,0.12)',
                 color: 'warning.main',
-                fontWeight: 700,
-                height: 22,
-              }}
-            />
-          )}
-          {request.alerts.includes('Liminar Judicial') && (
-            <Chip
-              icon={<GavelIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
-              label="Liminar Judicial"
-              size="small"
-              sx={{
-                backgroundColor: 'rgba(124,58,237,0.1)',
-                color: 'secondary.main',
                 fontWeight: 700,
                 height: 22,
               }}
@@ -236,7 +195,7 @@ export default function PageHeader({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
             <LocalHospitalOutlinedIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-              {request.provider.hospital}
+              {request.executingProvider.name}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
@@ -245,7 +204,6 @@ export default function PageHeader({
               Entrada: {request.protocolDate}
             </Typography>
           </Box>
-          <OrigemLabel origem={request.origin} />
           {(() => {
             const sla = formatSlaDisplay(
               request.slaStatus,

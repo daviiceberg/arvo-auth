@@ -450,9 +450,6 @@ function ProductContent() {
         Gestão de equipe: criar, editar, ativar/inativar usuários. Perfis: Autorizador, Gestor,
         Auditor. Filtro por perfil e status.
       </FeatureItem>
-      <FeatureItem name="Seletor de Regional" route="(header global)">
-        Troca o contexto regional da operação. Afeta os dados exibidos em todas as telas.
-      </FeatureItem>
       <FeatureItem name="Links Úteis" route="(sidebar)">
         Atalhos para recursos externos: Rol da ANS, Consulta ANVISA, Árvore de Códigos TUSS, Padrão
         TISS 2026.

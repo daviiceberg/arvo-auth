@@ -16,14 +16,18 @@ import { type CodeType, type TussCode } from '@/types/procedure-codes';
 
 import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
 
+function formatDates(requestDate: string, expiryDate?: string): string {
+  return `Solic.: ${requestDate} · Val.: ${expiryDate ?? '—'}`;
+}
+
 interface DetailedProc {
   code: string;
   tuss: string;
   description: string;
   qty: number;
   authorizedQty?: number;
-  startDate: string;
-  endDate: string;
+  requestDate: string;
+  passwordExpiryDate?: string;
   cid: string;
   auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
   decisao?: 'aprovado' | 'negado';
@@ -190,9 +194,9 @@ export default function HistoryProcedureRow({
           Qtd: {proc.qty}
           {proc.authorizedQty !== undefined ? ` · Aut: ${String(proc.authorizedQty)}` : ''}
         </TableCell>
-        {/* Período */}
+        {/* Datas */}
         <TableCell sx={{ color: 'text.secondary', fontSize: 12, verticalAlign: 'top', pt: 1.5 }}>
-          {proc.startDate} → {proc.endDate}
+          {formatDates(proc.requestDate, proc.passwordExpiryDate)}
         </TableCell>
         {/* Status */}
         <TableCell sx={{ verticalAlign: 'top', pt: 1.5 }}>

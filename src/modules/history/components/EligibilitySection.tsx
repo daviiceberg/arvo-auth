@@ -100,7 +100,14 @@ export default function EligibilitySection({ elegibilidade }: EligibilitySection
           ) : null}
         </Box>
         {/* Limites contratuais */}
-        <Box sx={{ p: 1.5, border: '1px solid rgba(0,0,0,0.1)', borderRadius: 2 }}>
+        <Box
+          sx={{
+            p: 1.5,
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: 2,
+            gridColumn: '1 / -1',
+          }}
+        >
           <Typography
             variant="caption"
             color="text.secondary"

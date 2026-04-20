@@ -11,3 +11,4 @@ export {
   type AnvisaStatusConfig,
   anvisaStatusColorMap,
 } from './anvisa-status-colors';
+export { COUNCIL_TYPES, type CouncilType } from './council-types';

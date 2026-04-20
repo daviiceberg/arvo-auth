@@ -122,9 +122,7 @@ export default function DocumentList({
 
         // Sent document -- standard visual
         const iaFields =
-          processingId === docKey
-            ? null
-            : getIAExtractionFields(docItem.nome, docItem.tipo, docItem.dadosExtraidos);
+          processingId === docKey ? null : getIAExtractionFields(docItem.nome, docItem.tipo);
 
         return (
           <Box

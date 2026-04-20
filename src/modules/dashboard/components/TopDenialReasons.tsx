@@ -65,8 +65,8 @@ export default function TopDenialReasons({ reasons, loading }: TopDenialReasonsP
             </Box>
             <Box
               sx={{
-                height: 5,
-                borderRadius: 3,
+                height: 10,
+                borderRadius: 5,
                 backgroundColor: 'rgba(0,0,0,0.06)',
                 overflow: 'hidden',
               }}
@@ -76,7 +76,7 @@ export default function TopDenialReasons({ reasons, loading }: TopDenialReasonsP
                   height: '100%',
                   width: `${String((motivo.count / maxCount) * 100)}%`,
                   backgroundColor: motivo.color,
-                  borderRadius: 3,
+                  borderRadius: 5,
                   transition: 'width 600ms ease',
                 }}
               />

@@ -1,17 +1,7 @@
-import BiotechIcon from '@mui/icons-material/Biotech';
-import ContentCutIcon from '@mui/icons-material/ContentCut';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import DevicesOtherIcon from '@mui/icons-material/DevicesOther';
-import EmergencyIcon from '@mui/icons-material/Emergency';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import HistoryIcon from '@mui/icons-material/History';
-import HomeIcon from '@mui/icons-material/Home';
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import ScienceIcon from '@mui/icons-material/Science';
-
-import { type Category } from '@/types/pedido';
 
 export interface NavItem {
   label: string;
@@ -54,31 +44,5 @@ export const EXTERNAL_LINKS: ExternalLink[] = [
   },
 ];
 
-export const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
-  Internação: <LocalHospitalIcon sx={{ fontSize: 14 }} />,
-  'Urgência/Emergência': <EmergencyIcon sx={{ fontSize: 14 }} />,
-  Oncologia: <BiotechIcon sx={{ fontSize: 14 }} />,
-  'Terapias Especiais': <PsychologyIcon sx={{ fontSize: 14 }} />,
-  OPME: <DevicesOtherIcon sx={{ fontSize: 14 }} />,
-  'Exames Alta Complexidade': <ScienceIcon sx={{ fontSize: 14 }} />,
-  'Cirurgias Eletivas': <ContentCutIcon sx={{ fontSize: 14 }} />,
-  'Home Care': <HomeIcon sx={{ fontSize: 14 }} />,
-};
-
-export const CATEGORY_ORDER: Category[] = [
-  'Internação',
-  'Urgência/Emergência',
-  'Oncologia',
-  'Terapias Especiais',
-  'OPME',
-  'Exames Alta Complexidade',
-  'Cirurgias Eletivas',
-  'Home Care',
-];
-
 export const SIDEBAR_WIDTH = 240;
 export const SIDEBAR_COLLAPSED_WIDTH = 64;
-
-export type Regional = 'Todas' | 'Sul' | 'Sudeste' | 'Nordeste';
-
-export const REGIONAL_OPTIONS: Regional[] = ['Todas', 'Sul', 'Sudeste', 'Nordeste'];

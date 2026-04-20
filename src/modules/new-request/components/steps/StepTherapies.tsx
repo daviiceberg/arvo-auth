@@ -20,11 +20,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type GuiaProcedure } from '@/types/procedure-codes';
-
 import { type FormData, type TerapiaProcedimento } from '@/modules/new-request/types';
-
-import { ProceduresStepSection } from './ProceduresStepSection';
 
 function FieldLabel({
   children,
@@ -57,8 +53,6 @@ interface StepTherapiesProps {
     field: keyof Omit<TerapiaProcedimento, 'id'>,
     value: string,
   ) => void;
-  guiaProcedures: GuiaProcedure[];
-  onGuiaProceduresChange: (procs: GuiaProcedure[]) => void;
 }
 
 export function StepTherapies({
@@ -68,8 +62,6 @@ export function StepTherapies({
   handleAddTerapiaProc,
   handleRemoveTerapiaProc,
   handleUpdateTerapiaProc,
-  guiaProcedures,
-  onGuiaProceduresChange,
 }: StepTherapiesProps) {
   return (
     <Box>
@@ -109,7 +101,10 @@ export function StepTherapies({
 
       {/* Procedimentos */}
       {terapiaProcedimentos.map((proc, idx) => {
-        const dataErro = proc.dataTermino && proc.dataInicio && proc.dataTermino <= proc.dataInicio;
+        const dataErro =
+          proc.dataValidadeSenha &&
+          proc.dataSolicitacao &&
+          proc.dataValidadeSenha <= proc.dataSolicitacao;
         return (
           <Box
             key={proc.id}
@@ -216,27 +211,27 @@ export function StepTherapies({
                 />
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <FieldLabel>Data de Início *</FieldLabel>
+                <FieldLabel>Data da Solicitação *</FieldLabel>
                 <TextField
                   fullWidth
                   size="small"
                   type="date"
-                  value={proc.dataInicio}
+                  value={proc.dataSolicitacao}
                   onChange={(e) => {
-                    handleUpdateTerapiaProc(proc.id, 'dataInicio', e.target.value);
+                    handleUpdateTerapiaProc(proc.id, 'dataSolicitacao', e.target.value);
                   }}
                   slotProps={{ inputLabel: { shrink: true } }}
                 />
               </Grid>
               <Grid size={{ xs: 6 }}>
-                <FieldLabel>Data de Término *</FieldLabel>
+                <FieldLabel>Data de Validade da Senha *</FieldLabel>
                 <TextField
                   fullWidth
                   size="small"
                   type="date"
-                  value={proc.dataTermino}
+                  value={proc.dataValidadeSenha}
                   onChange={(e) => {
-                    handleUpdateTerapiaProc(proc.id, 'dataTermino', e.target.value);
+                    handleUpdateTerapiaProc(proc.id, 'dataValidadeSenha', e.target.value);
                   }}
                   slotProps={{ inputLabel: { shrink: true } }}
                   error={!!dataErro}
@@ -258,18 +253,6 @@ export function StepTherapies({
                     <MenuItem value="5x por semana">5x por semana</MenuItem>
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid size={{ xs: 6 }}>
-                <FieldLabel>Duração da Sessão (min)</FieldLabel>
-                <TextField
-                  fullWidth
-                  size="small"
-                  type="number"
-                  value={proc.duracaoSessao}
-                  onChange={(e) => {
-                    handleUpdateTerapiaProc(proc.id, 'duracaoSessao', e.target.value);
-                  }}
-                />
               </Grid>
             </Grid>
           </Box>
@@ -300,13 +283,6 @@ export function StepTherapies({
           </Button>
         </span>
       </Tooltip>
-
-      <ProceduresStepSection
-        guiaProcedures={guiaProcedures}
-        onGuiaProceduresChange={onGuiaProceduresChange}
-        showPeriod
-        showQuantity
-      />
     </Box>
   );
 }

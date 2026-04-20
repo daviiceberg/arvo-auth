@@ -31,8 +31,7 @@ export default function RegisteredAdjustmentsSection({
     quantidade: 'Qtd. autorizada alterada',
     prestador: 'Prestador executante alterado',
     codigo: 'Código do procedimento alterado',
-    fabricante: 'Fabricante alterado',
-    valorUnitario: 'Valor unitário alterado',
+    cid: 'CID do procedimento alterado',
     dut: 'DUT alterada',
   };
 

@@ -34,15 +34,12 @@ interface HistoryWarningsProps {
 
 export default function HistoryWarnings({ warnings, request }: HistoryWarningsProps) {
   const isF84 = request.procedures.some((p) => p.cid.startsWith('F84'));
-  const isTerapias = request.category === 'Terapias Especiais';
-  const filteredWarnings =
-    isTerapias && isF84
-      ? warnings.filter(
-          (s) => !SUPPRESSED_F84_KEYWORDS.some((k) => s.mensagem.toLowerCase().includes(k)),
-        )
-      : warnings;
+  const filteredWarnings = isF84
+    ? warnings.filter(
+        (s) => !SUPPRESSED_F84_KEYWORDS.some((k) => s.mensagem.toLowerCase().includes(k)),
+      )
+    : warnings;
   const hasHighUseF84 =
-    isTerapias &&
     isF84 &&
     warnings.some((s) => SUPPRESSED_F84_KEYWORDS.some((k) => s.mensagem.toLowerCase().includes(k)));
 

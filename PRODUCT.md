@@ -1,10 +1,10 @@
-# Arvo Auth — Product Domain Context
+# Arvo Auth TEA — Product Domain Context
 
 > This file provides domain knowledge for AI-assisted development. It answers "what" and "why" so that CLAUDE.md can focus on "how".
 
 ## Identity
 
-Arvo Auth is a **whitelabel authorization platform** for Brazilian health insurance operators (operadoras de saúde suplementar). It is NOT built for a single client. Every feature, label, rule, and workflow must be operator-agnostic and configurable. The current pilot client is Athena Saúde, but the codebase must never hardcode Athena-specific logic.
+Arvo Auth TEA is a **MVP focado em Terapias Especiais (CID F84)** para operadoras de saúde brasileiras. Instância simplificada do Arvo Auth com escopo reduzido a uma única categoria. Piloto: Athena Saúde.
 
 **Core principle:** "A Arvo gera a análise (ponto de vista) — a operadora decide a consequência (decisão/automação)." The AI produces structured analysis; the operator configures what happens as a result.
 
@@ -21,31 +21,24 @@ Authorization analysts at operators spend 80%+ of their time on mechanical cross
 - **RN 539/2022:** Governs Terapias Especiais for CID F84.x (autism spectrum). Mandates unlimited therapy sessions — no quantity caps.
 - **SLA rules:** ANS-mandated response deadlines. The clock does NOT pause for pendency returns, making devolutivas (returned requests) time-critical.
 
-## Request categories and complexity tiers
+## Request category (MVP)
 
-### Tier 1 — Low complexity (automated)
+Este MVP cobre **uma única categoria**:
 
-- **Simple SADT** (exams, routine diagnostics): If AI confidence ≥ 90% and all criteria pass, the system executes automatic approval without human review.
+- **Terapias Especiais** (behavioral/occupational/speech therapy, especially CID F84.x — Transtornos Globais do Desenvolvimento/TEA)
 
-### Tier 2 — High complexity (hybrid: AI + human)
+Modalidades atendidas: Fonoaudiologia, Psicologia (ABA e demais abordagens), Terapia Ocupacional, Fisioterapia, Psicopedagogia. Todas surgem para revisão humana, exceto quando bloqueadas por filtro administrativo automático (ver abaixo).
 
-These categories always surface for human review unless blocked by an administrative filter:
-
-- **Terapias Especiais** (behavioral/occupational/speech therapy, especially CID F84.x)
-- **Oncologia** (chemotherapy protocols, cycles, medication validation)
-- **OPME** (prostheses, orthoses, special materials — requires ANVISA registry check, manufacturer data, price quotations)
-- **Internações** (hospitalizations — bed type, expected length of stay, clinical justification)
-- **Cirurgias** (surgeries)
-- **Home Care**
-
-### Administrative auto-filter (applies to ALL tiers)
+### Administrative auto-filter
 
 Before any clinical evaluation, the system applies administrative checks. If configurable rules are met, the system can auto-deny without human review:
 
-- Missing essential documents (laudo, biópsia)
-- Illegible or unsigned prescription
+- CID F84 ausente ou não confirmado no laudo ("Chave de Ouro" no piloto Athena)
+- Laudo neuropsicológico ausente, ilegível ou vencido (>12 meses)
+- Assinatura ou carimbo do médico ausente
 - Invalid CRM (physician registry)
 - Beneficiary ineligible (carência not fulfilled, contract inactive, delinquency)
+- Prestador não credenciado
 
 > **Key for developers:** The auto-filter is operator-configurable. Client A may auto-deny on missing signature; Client B may just flag an alert. Never hardcode the consequence — only the detection.
 

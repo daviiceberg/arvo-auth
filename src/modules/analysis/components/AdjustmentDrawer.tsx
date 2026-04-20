@@ -21,20 +21,18 @@ import { type Adjustment } from '@/types/pedido';
 
 import { type UseAdjustmentFormReturn, useAdjustmentForm } from '../hooks/useAdjustmentForm';
 
+import AdjustmentFieldCid from './AdjustmentFieldCid';
 import AdjustmentFieldCode from './AdjustmentFieldCode';
 import AdjustmentFieldDut from './AdjustmentFieldDut';
-import AdjustmentFieldManufacturer from './AdjustmentFieldManufacturer';
 import AdjustmentFieldProvider from './AdjustmentFieldProvider';
 import AdjustmentFieldQuantity from './AdjustmentFieldQuantity';
-import AdjustmentFieldValue from './AdjustmentFieldValue';
 
 interface AdjustmentProc {
   codigo: string;
   descricao: string;
   qty: number;
   prestador: string;
-  fabricante?: string;
-  valorUnitario?: number;
+  cid: string;
 }
 
 interface AdjustmentDrawerProps {
@@ -86,22 +84,11 @@ function buildFieldComponents(
         setErrors={form.setErrors}
       />
     ),
-    fabricante: (
-      <AdjustmentFieldManufacturer
-        currentManufacturer={proc?.fabricante}
-        newManufacturer={form.newManufacturer}
-        setNewManufacturer={form.setNewManufacturer}
-        errors={form.errors}
-        setErrors={form.setErrors}
-      />
-    ),
-    valorUnitario: (
-      <AdjustmentFieldValue
-        currentValue={proc?.valorUnitario}
-        newValue={form.newValue}
-        setNewValue={form.setNewValue}
-        errors={form.errors}
-        setErrors={form.setErrors}
+    cid: (
+      <AdjustmentFieldCid
+        currentCid={proc?.cid ?? ''}
+        newCid={form.newCid}
+        onNewCidChange={form.setNewCid}
       />
     ),
     dut: (
@@ -119,27 +106,16 @@ function buildFieldComponents(
 
 function buildCurrentValueRows(
   proc: AdjustmentProc | null,
-  isOpme: boolean,
 ): { label: string; value: string | undefined }[] {
-  const rows: { label: string; value: string | undefined }[] = [
+  return [
     { label: 'Código', value: proc?.codigo },
     { label: 'Descrição', value: proc?.descricao },
     {
       label: 'Qtd. Solicitada',
-      value: proc ? `${String(proc.qty)}${isOpme ? ' unidade' : ' sessões'}` : '',
+      value: proc ? `${String(proc.qty)} sessões` : '',
     },
     { label: 'Prestador', value: proc?.prestador },
   ];
-  if (isOpme) {
-    rows.push({ label: 'Fabricante', value: proc?.fabricante ?? '—' });
-    rows.push({
-      label: 'Valor Unitário',
-      value: proc?.valorUnitario
-        ? proc.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-        : '—',
-    });
-  }
-  return rows;
 }
 
 interface AdjustmentFormBodyProps {
@@ -150,12 +126,10 @@ interface AdjustmentFormBodyProps {
 
 function AdjustmentFormBody({ proc, form, fieldComponents }: AdjustmentFormBodyProps) {
   const auditWarningMessage =
-    form.field === 'valorUnitario'
-      ? 'Ajustes de valor OPME são auditáveis e exigem fundamentação. O novo valor será registrado com seu nome, data/hora e motivo.'
-      : 'Este ajuste será registrado no histórico da guia com seu nome e data/hora.';
+    'Este ajuste será registrado no histórico da guia com seu nome e data/hora.';
 
   const justificationRequired = form.reason === 'Outro (descrever na fundamentação)';
-  const currentValues = buildCurrentValueRows(proc, form.isOpme);
+  const currentValues = buildCurrentValueRows(proc);
 
   return (
     <Box

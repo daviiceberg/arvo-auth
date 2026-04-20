@@ -8,7 +8,6 @@ interface QueueFiltersParams {
 
 interface QueueFilterValues {
   search: string;
-  categoryFilter: string;
   slaFilter: string;
   alertFilter: string;
   providerFilter: string;
@@ -20,7 +19,6 @@ interface QueueFilterValues {
 
 export interface QueueFilters {
   search: string;
-  categoryFilter: string;
   slaFilter: string;
   alertFilter: string;
   providerFilter: string;
@@ -34,7 +32,6 @@ export interface QueueFilters {
 
 export interface QueueFiltersActions {
   setSearch: (value: string) => void;
-  setCategoryFilter: (value: string) => void;
   setSlaFilter: (value: string) => void;
   setAlertFilter: (value: string) => void;
   setProviderFilter: (value: string) => void;
@@ -47,31 +44,16 @@ export interface QueueFiltersActions {
   hasFilters: boolean;
 }
 
-const FILTER_DEFAULTS: Omit<
-  QueueFilterValues,
-  | 'search'
-  | 'categoryFilter'
-  | 'slaFilter'
-  | 'alertFilter'
-  | 'iaSuggestionFilter'
-  | 'statusFilter'
-  | 'tabValue'
-> = {
-  providerFilter: 'Todos',
-  returnSubFilter: 'all',
-};
-
 function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
   return {
     search: searchParams.get('beneficiario') ?? '',
-    categoryFilter: searchParams.get('categoria') ?? 'Todas',
     slaFilter: searchParams.get('sla') ?? 'Todas',
     alertFilter: searchParams.get('alerta') ?? 'Todos',
-    providerFilter: FILTER_DEFAULTS.providerFilter,
+    providerFilter: 'Todos',
     iaSuggestionFilter: searchParams.get('ia') ?? 'Todas',
     statusFilter: searchParams.get('status') ?? 'Todos',
     tabValue: Number(searchParams.get('tab')) || 0,
-    returnSubFilter: FILTER_DEFAULTS.returnSubFilter,
+    returnSubFilter: 'all',
   };
 }
 
@@ -84,7 +66,7 @@ export function useQueueFilters({
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
 
-  // Sync state when URL params change (e.g. sidebar navigation to /fila?categoria=X)
+  // Sync state when URL params change
   const searchParamsKey = searchParams.toString();
   const [prevParamsKey, setPrevParamsKey] = useState(searchParamsKey);
   if (searchParamsKey !== prevParamsKey) {
@@ -104,7 +86,6 @@ export function useQueueFilters({
   const hasFilters = useMemo(
     () =>
       filters.search !== '' ||
-      filters.categoryFilter !== 'Todas' ||
       filters.slaFilter !== 'Todas' ||
       filters.alertFilter !== 'Todos' ||
       filters.providerFilter !== 'Todos' ||
@@ -117,7 +98,6 @@ export function useQueueFilters({
     setFilters((prev) => ({
       ...prev,
       search: '',
-      categoryFilter: 'Todas',
       slaFilter: 'Todas',
       providerFilter: 'Todos',
       iaSuggestionFilter: 'Todas',
@@ -130,12 +110,8 @@ export function useQueueFilters({
     page,
     rowsPerPage,
 
-    // Setters (same API as before)
     setSearch: (value: string) => {
       updateFilter('search', value);
-    },
-    setCategoryFilter: (value: string) => {
-      updateFilter('categoryFilter', value);
     },
     setSlaFilter: (value: string) => {
       updateFilter('slaFilter', value);

@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import DutModal from '@/shared/components/dut-modal/DutModal';
 import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
+import { logger } from '@/shared/utils/logger';
 import { type HistoryEntry } from '@/types/pedido';
 
 import HistoryProcedureRow from './HistoryProcedureRow';
@@ -28,18 +29,22 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
       description: entry.procedure,
       qty: 1,
       authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
-      startDate: entry.decisionDate,
-      endDate: entry.decisionDate,
+      requestDate: entry.protocolDate,
+      passwordExpiryDate: entry.decisionDate,
       cid: entry.cid,
-      auditLevel:
-        entry.category === 'Internação' ||
-        entry.category === 'Urgência/Emergência' ||
-        entry.category === 'Oncologia'
-          ? ('HOSPITALAR' as const)
-          : ('AMBULATORIAL' as const),
+      auditLevel: 'AMBULATORIAL' as const,
       codeType: 'TUSS' as const,
     },
   ];
+
+  if (
+    entry.action === 'Aprovado Parcial' &&
+    (!entry.detailedProcedures || entry.detailedProcedures.length < 2)
+  ) {
+    logger.warn(
+      `[DATA INCONSISTENCY] Entry ${entry.id} marked as 'Aprovado Parcial' but lacks detailedProcedures with 2+ items.`,
+    );
+  }
 
   const [expandedCodes, setExpandedCodes] = useState(new Set<string>());
   const dutModal = useDutModal();
@@ -129,10 +134,8 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           }}
         >
           {[
-            { label: 'Prestador', value: entry.provider },
-            { label: 'Médico Solicitante', value: entry.requestingDoctor },
-            { label: 'Tipo de Guia', value: entry.guideType },
-            { label: 'Categoria', value: entry.category },
+            { label: 'Executante', value: entry.executingProviderName },
+            { label: 'Profissional Solicitante', value: entry.requestingProfessional },
           ].map((f) => (
             <Box key={f.label}>
               <Typography

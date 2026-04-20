@@ -18,16 +18,11 @@ Arvo builds **authorization infrastructure** for health insurance operators. The
 
 ## Event types govern everything
 
-Different request types have different forms, validations, intelligences, and flows:
+This MVP cobre **uma única categoria**:
 
-| Type                         | Complexity  | System behavior                                |
-| ---------------------------- | ----------- | ---------------------------------------------- |
-| SADT N1 (simple exams)       | Low         | End-to-end automation                          |
-| Special Therapies            | Medium-High | Automation + human-assisted analysis           |
-| Hospitalization              | High        | Automation + human-assisted analysis           |
-| OPME (prosthetics/materials) | High        | Automation + human-assisted analysis           |
-| Oncology                     | High        | Automation + human-assisted analysis           |
-| Urgency/Emergency            | Variable    | Specific regulatory flow (short ANS deadlines) |
+| Type              | Complexity  | System behavior                      |
+| ----------------- | ----------- | ------------------------------------ |
+| Special Therapies | Medium-High | Automation + human-assisted analysis |
 
 **Before building any feature, ask: "Which event types does this apply to?"**
 
@@ -191,6 +186,16 @@ export default function MyComponent({ data, onAction }: MyComponentProps) {
 - Hooks in a separate file: `useMyComponent.ts`
 - Helper functions above the component, not inside it
 - Keep components focused (SRP) — one responsibility per file
+
+---
+
+## Git — Regra Obrigatória
+
+**NUNCA execute `git add`, `git commit` ou `git push` automaticamente.**
+
+Commits e pushes são feitos EXCLUSIVAMENTE quando o usuário solicitar de forma explícita.
+
+Ao concluir qualquer tarefa, apenas informe que o trabalho foi concluído e aguarde instrução para commitar.
 
 ---
 

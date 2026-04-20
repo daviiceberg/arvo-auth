@@ -1,10 +1,11 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Snackbar from '@mui/material/Snackbar';
+import Typography from '@mui/material/Typography';
 
 import { DENIAL_REASONS } from '../constants/denial-reasons';
 import { useAdjustmentState } from '../hooks/useAdjustmentState';
@@ -16,26 +17,24 @@ import AdjustmentDrawer from './AdjustmentDrawer';
 import AlertsBanner from './AlertsBanner';
 import AnalysisSkeleton from './AnalysisSkeleton';
 import AssistantSidebar from './AssistantSidebar';
+import AuditLogSection from './AuditLogSection';
 import BeneficiarySection from './BeneficiarySection';
 import ConsolidatedHistorySection from './ConsolidatedHistorySection';
 import AdjustmentApprovalDialog from './dialogs/AdjustmentApprovalDialog';
 import ApprovalDialog from './dialogs/ApprovalDialog';
 import DenialDialog from './dialogs/DenialDialog';
 import DivergenceDialog from './dialogs/DivergenceDialog';
-import MedicalBoardDialog from './dialogs/MedicalBoardDialog';
 import PartialApprovalDialog from './dialogs/PartialApprovalDialog';
-import PendencyDialog from './dialogs/PendencyDialog';
 import ShortcutsHelpDialog from './dialogs/ShortcutsHelpDialog';
 import DocumentsSection from './DocumentsSection';
-import InjunctionBanner from './InjunctionBanner';
+import InternalNotesSection from './InternalNotesSection';
 import ObservationsSection from './ObservationsSection';
 import PageHeader from './PageHeader';
-import PendencyBanner from './PendencyBanner';
 import ProceduresSection from './ProceduresSection';
 import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection';
-import SimultaneousGuidesAlert from './SimultaneousGuidesAlert';
 
 function AnalysisInner() {
+  const [internalNotes, setInternalNotes] = useState('' as string);
   const {
     request,
     currentIndex,
@@ -65,9 +64,6 @@ function AnalysisInner() {
     onNavigateNext: handleNavNext,
     onApprove: decision.handleApproveClick,
     onDeny: decision.handleDenyClick,
-    onPendency: () => {
-      decision.setShowPendencyDialog(true);
-    },
     onShowShortcuts: () => {
       decision.setShowShortcutsHelp(true);
     },
@@ -95,18 +91,56 @@ function AnalysisInner() {
         {/* Left content -- scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <PendencyBanner request={request} />
+            {request.procedureAlreadyPerformed ? (
+              <Alert
+                severity="error"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: 13,
+                  borderRadius: 2,
+                  border: '1px solid rgba(212,24,61,0.3)',
+                }}
+              >
+                Procedimento já realizado antes da autorização — atenção redobrada na análise
+              </Alert>
+            ) : null}
+            {request.cidDivergence ? (
+              <Alert
+                severity="warning"
+                sx={{
+                  borderRadius: 2,
+                  border: '1px solid rgba(245,158,11,0.35)',
+                }}
+              >
+                <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                  Divergência de CID detectada
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
+                >
+                  {request.cidDivergenceDetail ??
+                    'O CID informado pelo prestador difere do CID extraído do laudo. Verifique qual está correto.'}
+                </Typography>
+              </Alert>
+            ) : null}
             <AlertsBanner request={request} />
-            <InjunctionBanner request={request} />
-            <SimultaneousGuidesAlert request={request} />
             <BeneficiarySection request={request} />
             <ProceduresSection
+              key={`procedures-${request.id}`}
               request={request}
               allAdjustments={adjustment.allAdjustments}
               onAdjustClick={adjustment.handleAdjustClick}
             />
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
             <ObservationsSection request={request} />
+            <InternalNotesSection
+              key={`notes-${request.id}`}
+              value={internalNotes}
+              onChange={setInternalNotes}
+            />
+            <AuditLogSection entries={request.auditLog ?? []} />
             <ConsolidatedHistorySection request={request} />
             <DocumentsSection request={request} />
           </Box>
@@ -118,12 +152,6 @@ function AnalysisInner() {
             request={request}
             onAprovarClick={decision.handleApproveClick}
             onNegarClick={decision.handleDenyClick}
-            onPendenciarClick={() => {
-              decision.setShowPendencyDialog(true);
-            }}
-            onJuntaClick={() => {
-              decision.setShowMedicalBoardDialog(true);
-            }}
             procDecisoes={decision.procDecisions}
             onProcDecisaoChange={decision.handleProcDecisionChange}
             onConfirmarDecisaoClick={decision.handleConfirmDecisionClick}
@@ -200,32 +228,6 @@ function AnalysisInner() {
         onConfirm={decision.confirmDenial}
         onClose={() => {
           decision.setShowDenialDialog(false);
-        }}
-      />
-
-      {/* Pendency Dialog */}
-      <PendencyDialog
-        open={decision.showPendencyDialog}
-        pendencyItems={decision.pendencyItems}
-        onPendencyItemsChange={decision.setPendencyItems}
-        pendencyJustification={decision.pendencyJustification}
-        onPendencyJustificationChange={decision.setPendencyJustification}
-        onConfirm={decision.confirmPendency}
-        onClose={() => {
-          decision.setShowPendencyDialog(false);
-        }}
-      />
-
-      {/* Medical Board Dialog */}
-      <MedicalBoardDialog
-        open={decision.showMedicalBoardDialog}
-        medicalBoardReason={decision.medicalBoardReason}
-        onMedicalBoardReasonChange={decision.setMedicalBoardReason}
-        medicalBoardObs={decision.medicalBoardObs}
-        onMedicalBoardObsChange={decision.setMedicalBoardObs}
-        onConfirm={decision.confirmMedicalBoard}
-        onClose={() => {
-          decision.setShowMedicalBoardDialog(false);
         }}
       />
 

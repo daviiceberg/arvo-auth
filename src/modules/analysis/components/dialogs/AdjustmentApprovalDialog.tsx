@@ -46,7 +46,11 @@ export default function AdjustmentApprovalDialog({
                 ? `Quantidade reduzida de ${aj.previousValue} para ${aj.newValue}`
                 : aj.field === 'prestador'
                   ? `Prestador alterado para ${aj.newValue}`
-                  : `Código alterado para ${aj.newValue}`}
+                  : aj.field === 'cid'
+                    ? `CID alterado de ${aj.previousValue} para ${aj.newValue}`
+                    : aj.field === 'dut'
+                      ? `DUT definida: ${aj.newValue}`
+                      : `Código alterado para ${aj.newValue}`}
             </Typography>
           </Box>
         ))}

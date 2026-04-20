@@ -37,8 +37,8 @@ export default function HistoryEligibility({ eligibility, request }: HistoryElig
         Elegibilidade e Regras
       </Typography>
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5 }}>
-        {/* Etapa da Autorização -- only for Terapias Especiais */}
-        {request.category === 'Terapias Especiais' && request.authorizationStage ? (
+        {/* Etapa da Autorização */}
+        {request.authorizationStage ? (
           <Box
             sx={{
               p: 1.5,

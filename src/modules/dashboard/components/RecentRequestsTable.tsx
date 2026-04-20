@@ -21,7 +21,20 @@ interface RecentRequestsTableProps {
   loading: boolean;
 }
 
-const CRITICAL_ALERTS = ['Liminar Judicial', 'NIP Ativa'];
+const thSx = {
+  fontSize: '11px',
+  fontWeight: 700,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.5px',
+  color: 'text.secondary',
+  py: '6px',
+  px: 2,
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
+};
+
+const tdSx = { py: '8px', px: '12px' };
+
+const CRITICAL_ALERTS = ['NIP Ativa'];
 
 function urgencyScore(p: Request): number {
   const hasCritical = p.alerts.some((a) => CRITICAL_ALERTS.includes(a));
@@ -30,9 +43,7 @@ function urgencyScore(p: Request): number {
   if (p.slaStatus === 'violated') return 1;
   if (p.slaStatus === 'warning' && hasAnyAlert) return 2;
   if (p.slaStatus === 'warning') return 3;
-  if (p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' || p.subStatus === 'JUNTA_PARECER_RECEBIDO')
-    return 4;
-  return 5;
+  return 4;
 }
 
 export default function RecentRequestsTable({ pedidos, loading }: RecentRequestsTableProps) {
@@ -71,127 +82,80 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
           ))}
         </Box>
       ) : (
-        <Table size="small" aria-label="Pedidos que requerem atenção">
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  pl: 0.5,
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                }}
-              >
-                ID
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                }}
-              >
-                Status
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                }}
-              >
-                Beneficiário
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                }}
-              >
-                SLA
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                }}
-              >
-                Data
-              </TableCell>
-              <TableCell sx={{ width: 32 }} />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {urgentFirst.map((pedido) => (
-              <TableRow
-                key={pedido.id}
-                tabIndex={0}
-                onClick={() => {
-                  router.push(`/analise?id=${pedido.id}`);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    router.push(`/analise?id=${pedido.id}`);
-                  }
-                }}
-                aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiary.name}`}
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
-                  '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 },
-                }}
-              >
-                <TableCell sx={{ pl: 0.5 }}>
-                  <Typography
-                    variant="body2"
-                    fontWeight={700}
-                    sx={{ color: 'primary.main', fontSize: 12 }}
-                  >
-                    {pedido.id}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <StatusChip status={pedido.status} />
-                </TableCell>
-                <TableCell>
-                  <Typography variant="caption" fontWeight={600} noWrap sx={{ fontSize: 12 }}>
-                    {pedido.beneficiary.name}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <SLAChip status={pedido.slaStatus} label={pedido.slaText} />
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontSize: 12, whiteSpace: 'nowrap' }}
-                  >
-                    {pedido.protocolDate.split(' ')[0]}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <ChevronRightIcon
-                    sx={{ fontSize: 16, color: 'text.secondary', verticalAlign: 'middle' }}
-                  />
-                </TableCell>
+        <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', overflow: 'hidden' }}>
+          <Table size="small" aria-label="Pedidos que requerem atenção">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...thSx, width: 150, minWidth: 150 }}>ID</TableCell>
+                <TableCell sx={{ ...thSx, width: 130 }}>Status</TableCell>
+                <TableCell sx={thSx}>Beneficiário</TableCell>
+                <TableCell sx={{ ...thSx, width: 160 }}>SLA</TableCell>
+                <TableCell sx={{ ...thSx, width: 110, whiteSpace: 'nowrap' }}>Data</TableCell>
+                <TableCell sx={{ ...thSx, width: 32 }} />
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {urgentFirst.map((pedido) => (
+                <TableRow
+                  key={pedido.id}
+                  tabIndex={0}
+                  onClick={() => {
+                    router.push(`/analise?id=${pedido.id}`);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      router.push(`/analise?id=${pedido.id}`);
+                    }
+                  }}
+                  aria-label={`Abrir pedido ${pedido.id} — ${pedido.beneficiary.name}`}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: 'rgba(144,43,41,0.03) !important' },
+                    '&:focus-visible': { outline: '2px solid #902B29', outlineOffset: -2 },
+                    '&:last-child td': { borderBottom: 0 },
+                  }}
+                >
+                  <TableCell sx={{ ...tdSx, width: 150, minWidth: 150 }}>
+                    <Typography
+                      variant="caption"
+                      color="primary"
+                      fontWeight={700}
+                      sx={{ display: 'block', fontSize: 13, whiteSpace: 'nowrap' }}
+                    >
+                      {pedido.id}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={tdSx}>
+                    <StatusChip status={pedido.status} />
+                  </TableCell>
+                  <TableCell sx={tdSx}>
+                    <Typography variant="caption" fontWeight={600} noWrap sx={{ fontSize: 13 }}>
+                      {pedido.beneficiary.name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={tdSx}>
+                    <SLAChip status={pedido.slaStatus} label={pedido.slaText} />
+                  </TableCell>
+                  <TableCell sx={tdSx}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ fontSize: 12, whiteSpace: 'nowrap' }}
+                    >
+                      {pedido.protocolDate.split(' ')[0]}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right" sx={tdSx}>
+                    <ChevronRightIcon
+                      sx={{ fontSize: 16, color: 'text.secondary', verticalAlign: 'middle' }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       )}
     </>
   );

@@ -16,10 +16,10 @@ function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | 
     if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
     if (!p.numeroSessoes.trim() || Number(p.numeroSessoes) <= 0)
       return `Informe o número de sessões${n}.`;
-    if (!p.dataInicio) return `Informe a data de início${n}.`;
-    if (!p.dataTermino) return `Informe a data de término${n}.`;
-    if (p.dataTermino <= p.dataInicio)
-      return `A data de término deve ser posterior à data de início${n}.`;
+    if (!p.dataSolicitacao) return `Informe a data da solicitação${n}.`;
+    if (!p.dataValidadeSenha) return `Informe a data de validade da senha${n}.`;
+    if (p.dataValidadeSenha <= p.dataSolicitacao)
+      return `A data de validade deve ser posterior à data da solicitação${n}.`;
   }
   return null;
 }
@@ -31,6 +31,14 @@ function validateStepTransition(
 ): string | null {
   if (currentStep === 1 && !form.tipoSolicitacao) {
     return 'Por favor, selecione o tipo de solicitação antes de continuar.';
+  }
+  if (currentStep === 2) {
+    if (!form.cidPrincipal.trim()) {
+      return 'CID Principal é obrigatório. Preencha o CID antes de continuar.';
+    }
+    if (!form.indicacaoClinica.trim()) {
+      return 'Indicação Clínica é obrigatória. Preencha a indicação clínica antes de continuar.';
+    }
   }
   if (currentStep === 3 && form.tipoSolicitacao === 'terapias') {
     if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';

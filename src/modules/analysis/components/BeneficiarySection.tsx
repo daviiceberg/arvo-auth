@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -118,6 +120,10 @@ export default function BeneficiarySection({ request }: BeneficiarySectionProps)
             { label: 'CPF', value: b.cpf },
             { label: 'Nascimento', value: b.birthDate },
             { label: 'Plano', value: b.plan },
+            ...(b.planInclusionDate
+              ? [{ label: 'Inclusão no Plano', value: b.planInclusionDate }]
+              : []),
+            ...(b.contactPhone ? [{ label: 'Telefone', value: b.contactPhone }] : []),
           ].map((f) => (
             <Box key={f.label}>
               <Typography
@@ -163,6 +169,50 @@ export default function BeneficiarySection({ request }: BeneficiarySectionProps)
             </Typography>
           </Box>
         </Box>
+
+        {/* Row 3: badges + notes */}
+        <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+          {b.planScope ? (
+            <Chip
+              label={`Abrangência: ${b.planScope}`}
+              size="small"
+              sx={{
+                fontSize: 11,
+                fontWeight: 600,
+                height: 22,
+                backgroundColor: 'rgba(37,99,235,0.08)',
+                color: 'info.main',
+              }}
+            />
+          ) : null}
+          {b.isRegulatedPlan ? (
+            <Chip
+              label="Plano Regulamentado"
+              size="small"
+              sx={{
+                fontSize: 11,
+                fontWeight: 600,
+                height: 22,
+                backgroundColor: 'rgba(22,163,74,0.08)',
+                color: 'success.main',
+              }}
+            />
+          ) : null}
+        </Box>
+
+        {b.beneficiaryNotes &&
+        !(
+          request.alerts.includes('High-User') &&
+          b.beneficiaryNotes.toLowerCase().includes('alta utilização')
+        ) ? (
+          <Alert
+            severity="warning"
+            icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
+            sx={{ mt: 2, fontSize: 12 }}
+          >
+            <strong>Nota do cadastro:</strong> {b.beneficiaryNotes}
+          </Alert>
+        ) : null}
       </CardContent>
     </Card>
   );

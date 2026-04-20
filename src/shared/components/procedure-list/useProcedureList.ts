@@ -43,7 +43,7 @@ export function useProcedureList(
   );
 
   const handlePeriodChange = useCallback(
-    (id: string, field: 'periodStart' | 'periodEnd', value: string) => {
+    (id: string, field: 'requestDate' | 'passwordExpiryDate', value: string) => {
       onUpdate(procedures.map((p) => (p.id === id ? { ...p, [field]: value } : p)));
     },
     [procedures, onUpdate],

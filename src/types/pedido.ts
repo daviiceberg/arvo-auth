@@ -1,26 +1,10 @@
 import { type CodeType, type TussCode } from './procedure-codes';
 
-export type ProcessingStatus =
-  | 'aguardando_processamento'
-  | 'em_processamento'
-  | 'erro_processamento'
-  | 'processado';
+export type ProcessingStatus = 'em_processamento' | 'erro_processamento' | 'processado';
 
-export type GuideStatus =
-  | 'Em Análise'
-  | 'Aprovado'
-  | 'Negado'
-  | 'Aprovado Parcial'
-  | 'Pendente'
-  | 'Devolutiva';
+export type GuideStatus = 'Em Análise' | 'Aprovado' | 'Negado' | 'Aprovado Parcial';
 
-export type SubStatus =
-  | 'PENDENTE_AGUARDANDO'
-  | 'PENDENTE_RETORNO_RECEBIDO'
-  | 'JUNTA_AGUARDANDO'
-  | 'JUNTA_PARECER_RECEBIDO';
-
-export type GuideType = 'Eleitiva' | 'Urgente' | 'Emergência';
+export type GuideType = 'Eleitiva';
 
 export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
@@ -28,18 +12,20 @@ export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
 
 export type SLAStatus = 'ok' | 'warning' | 'violated';
 
-export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica';
+export type IASuggestion = 'Aprovar' | 'Negar';
 
-export type Category =
-  | 'Internação'
-  | 'Urgência/Emergência'
-  | 'Oncologia'
-  | 'Terapias Especiais'
-  | 'OPME'
-  | 'Exames Alta Complexidade'
-  | 'Cirurgias Eletivas'
-  | 'Home Care'
-  | 'SADT';
+export type Category = 'Terapias Especiais';
+
+export type AccidentIndication = 'NAO_ACIDENTE' | 'TRABALHO' | 'TRANSITO' | 'OUTROS';
+
+export type PlanScope = 'Municipal' | 'Estadual' | 'Nacional';
+
+export interface AuditLogEntry {
+  action: string;
+  actor: string;
+  timestamp: string;
+  details?: string;
+}
 
 export interface Procedure {
   code: string;
@@ -47,22 +33,40 @@ export interface Procedure {
   description: string;
   qty: number;
   authorizedQty?: number;
-  startDate: string;
-  endDate: string;
+  requestDate: string;
+  authorizationDate?: string;
+  passwordExpiryDate?: string;
   cid: string;
   auditLevel: AuditLevel;
-  manufacturer?: string;
-  unitValue?: number;
+  tableNumber?: number;
   codeType?: CodeType;
   packageId?: string;
   tussCodesIncluded?: TussCode[];
+  auditNotes?: string;
+  procedureNotes?: string;
+}
+
+export interface RequestingProvider {
+  name: string;
+  operatorCode?: string;
+  professional: string;
+  councilType: string;
+  councilNumber: string;
+  councilUF: string;
+  cboCode?: string;
+}
+
+export interface ExecutingProvider {
+  name: string;
+  operatorCode?: string;
+  cnesCode?: string;
 }
 
 export interface Adjustment {
   id: string;
   procedureCode: string;
   procedureDescription: string;
-  field: 'quantidade' | 'prestador' | 'codigo' | 'fabricante' | 'valorUnitario' | 'dut';
+  field: 'quantidade' | 'prestador' | 'codigo' | 'cid' | 'dut';
   previousValue: string;
   newValue: string;
   reason: string;
@@ -70,15 +74,6 @@ export interface Adjustment {
   operator: string;
   profile: string;
   timestamp: string;
-}
-
-export interface BudgetExtractedData {
-  fabricante: string;
-  modelo: string;
-  valorUnitario: number;
-  registroANVISA: string;
-  numeroCotacoes: number;
-  observacao: string;
 }
 
 export interface Document {
@@ -89,7 +84,6 @@ export interface Document {
   enviadoEm?: string;
   obrigatorio: boolean;
   status: 'enviado' | 'pendente';
-  dadosExtraidos?: BudgetExtractedData;
 }
 
 export interface Request {
@@ -113,13 +107,23 @@ export interface Request {
     sex: 'M' | 'F';
     plan: string;
     waitingPeriod: boolean;
+    planContractCode?: string;
+    planInclusionDate?: string;
+    planScope?: PlanScope;
+    isRegulatedPlan?: boolean;
+    contactPhone?: string;
+    isNewborn?: boolean;
+    beneficiaryNotes?: string;
   };
-  provider: {
-    hospital: string;
-    doctor: string;
-    crm: string;
-    specialty: string;
-  };
+  requestingProvider: RequestingProvider;
+  executingProvider: ExecutingProvider;
+  guideNumber?: string;
+  mainGuideNumber?: string;
+  operatorGuideNumber?: string;
+  password?: string;
+  passwordExpiryDate?: string;
+  operatorRegistryANS?: string;
+  isNewborn?: boolean;
   origin: RequestOrigin;
   procedures: Procedure[];
   alerts: string[];
@@ -128,23 +132,22 @@ export interface Request {
   iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[];
   observations: string;
   documents: Document[];
-  pendencyReasons?: string[];
-  pendencyResponsible?: string;
-  pendencyDate?: string;
-  subStatus?: SubStatus;
-  boardOpinion?: string;
-  boardRecommendation?: 'Aprovar' | 'Negar';
   authorizationStage?: 'primeira_solicitacao' | 'continuidade';
   adjustments?: Adjustment[];
   operatorLock?: { nome: string; desde: string };
-  injunction?: {
-    ativa: boolean;
-    processo: string;
-    escopo: string;
-    validade: string;
-    observacao?: string;
-  };
   secondaryCids?: string[];
+  guidePassword?: string;
+  decisionDate?: string;
+  registeredBy?: string;
+  accidentIndication?: AccidentIndication;
+  procedureAlreadyPerformed?: boolean;
+  internalNotes?: string;
+  auditLog?: AuditLogEntry[];
+  attendanceTypeCode?: string;
+  cidSource?: 'prestador' | 'ocr' | 'inferencia';
+  cidConfidence?: number;
+  cidDivergence?: boolean;
+  cidDivergenceDetail?: string;
 }
 
 export interface ProcessingRequest {
@@ -158,16 +161,9 @@ export interface ProcessingRequest {
   erroDescricao?: string;
 }
 
-export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial' | 'Devolutiva';
+export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial';
 
 export type DecisionOrigin = 'ia_automatica' | 'analista';
-
-export interface MedicalBoard {
-  dataReuniao: string;
-  numeroAta: string;
-  parecer: string;
-  membros: { nome: string; especialidade: string; crm: string }[];
-}
 
 export interface HistoryEntry {
   id: string;
@@ -177,8 +173,9 @@ export interface HistoryEntry {
   category: Category;
   procedure: string;
   cid: string;
-  provider: string;
-  requestingDoctor: string;
+  requestingProviderName: string;
+  executingProviderName: string;
+  requestingProfessional: string;
   guideType: GuideType;
   protocolDate: string;
   decisionDate: string;
@@ -203,8 +200,8 @@ export interface HistoryEntry {
     description: string;
     qty: number;
     authorizedQty?: number;
-    startDate: string;
-    endDate: string;
+    requestDate: string;
+    passwordExpiryDate?: string;
     cid: string;
     auditLevel: 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
     decisao?: 'aprovado' | 'negado';
@@ -216,7 +213,8 @@ export interface HistoryEntry {
   alerts?: string[];
   iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[];
   documents?: { nome: string; tipo: string; data: string }[];
-  medicalBoard?: MedicalBoard;
   adjustments?: Adjustment[];
   secondaryCids?: string[];
+  internalNotes?: string;
+  auditLog?: AuditLogEntry[];
 }
