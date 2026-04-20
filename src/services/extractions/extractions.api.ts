@@ -51,6 +51,18 @@ interface SnapshotEnvelope {
 /** Interval (ms) between status polls while the extraction is in `waiting`. */
 const POLL_INTERVAL_MS = 5_000;
 
+/**
+ * Maximum total time (ms) the client waits for the backend to finish processing
+ * the extraction before giving up and reporting a timeout to the caller.
+ *
+ * Chosen as 3 minutes to match the backend HTTP client timeout against the
+ * extractor (`externalclient/client.go`) plus a small margin for persistence.
+ * Beyond this, either the extractor hung or the background goroutine died
+ * without persisting — in both cases the user deserves feedback rather than a
+ * spinner forever.
+ */
+const POLL_MAX_DURATION_MS = 180_000;
+
 async function upload(input: UploadExtractionInput): Promise<UploadExtractionResponse> {
   const form = new FormData();
   form.append('file', input.file);
@@ -93,7 +105,25 @@ function watchStatus(extractionId: string, handlers: WatchStatusHandlers): Unsub
   // an in-flight request is aborted when the caller unsubscribes) and as a
   // sentinel the poll loop checks between iterations.
   const controller = new AbortController();
-  let timer: ReturnType<typeof setTimeout> | null = null;
+  let pollTimer: ReturnType<typeof setTimeout> | null = null;
+  let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const cleanup = () => {
+    controller.abort();
+    if (pollTimer !== null) clearTimeout(pollTimer);
+    if (timeoutTimer !== null) clearTimeout(timeoutTimer);
+  };
+
+  // Hard upper bound: if the backend did not persist the extraction within
+  // POLL_MAX_DURATION_MS, stop polling and surface a timeout so the UI can
+  // recover. Without this, a crashed background goroutine (or a stuck
+  // external extractor) would keep the UI in `waiting` forever.
+  timeoutTimer = setTimeout(() => {
+    cleanup();
+    handlers.onFailed(
+      'Tempo limite excedido: a análise não foi concluída no tempo esperado. Tente novamente.',
+    );
+  }, POLL_MAX_DURATION_MS);
 
   const poll = async (): Promise<void> => {
     if (controller.signal.aborted) return;
@@ -104,6 +134,7 @@ function watchStatus(extractionId: string, handlers: WatchStatusHandlers): Unsub
       // A 200 means the extraction row is persisted → finished processing.
       // The backend only returns 200 with status="processed" today; richer
       // states would arrive as distinct HTTP semantics.
+      cleanup();
       handlers.onProcessed();
       return;
     } catch (err) {
@@ -111,23 +142,21 @@ function watchStatus(extractionId: string, handlers: WatchStatusHandlers): Unsub
       if (axios.isAxiosError(err) && err.response?.status === 404) {
         // Not ready yet — continue polling.
       } else {
+        cleanup();
         const message =
           err instanceof Error ? err.message : 'Erro ao consultar o status da extração';
         handlers.onFailed(message);
         return;
       }
     }
-    timer = setTimeout(() => {
+    pollTimer = setTimeout(() => {
       void poll();
     }, POLL_INTERVAL_MS);
   };
 
   void poll();
 
-  return () => {
-    controller.abort();
-    if (timer) clearTimeout(timer);
-  };
+  return cleanup;
 }
 
 export const extractionsApi: ExtractionsService = { upload, watchStatus };
