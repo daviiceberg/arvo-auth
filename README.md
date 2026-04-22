@@ -8,8 +8,24 @@ Intelligent medical authorization system for health insurance operators. Receive
 
 ```bash
 npm install
+cp .env.example .env.local   # then fill in Auth0 and optional API URL
 npm run dev        # http://localhost:3000
 ```
+
+## Environment (Auth0)
+
+Set these in `.env.local` (or your deployment environment):
+
+| Variable                                  | Description                                                                                                                                          |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `APP_BASE_URL`                            | Public origin of this app (e.g. `http://localhost:3000`). Must match **Allowed Callback URLs** and **Allowed Logout URLs** in the Auth0 application. |
+| `AUTH0_DOMAIN`                            | Auth0 tenant domain (e.g. `tenant.auth0.com`).                                                                                                       |
+| `AUTH0_CLIENT_ID` / `AUTH0_CLIENT_SECRET` | Application credentials from the Auth0 dashboard.                                                                                                    |
+| `AUTH0_SECRET`                            | Long random string used to encrypt the session cookie (e.g. `openssl rand -hex 32`).                                                                 |
+| `AUTH0_AUDIENCE`                          | **Optional** API identifier. Required if the access token must be accepted by the Go API (`arvo-auth`); must match the API identifier in Auth0.      |
+| `NEXT_PUBLIC_API_BASE_URL`                | **Optional** Base URL of the backend. When set, logout will call the backend revoke endpoint before redirecting to Auth0’s logout.                   |
+
+**Auth0 application URLs (typical dev):** add `http://localhost:3000`, `http://localhost:3000/auth/callback`, and `http://localhost:3000` for logout, or follow the [Auth0 setup guide in `arvo-auth`](../arvo-auth/docs/auth0-setup.md) for a full walkthrough.
 
 ## Scripts
 
