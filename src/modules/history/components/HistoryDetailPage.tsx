@@ -29,6 +29,7 @@ import BeneficiarySection from './BeneficiarySection';
 import ConsolidatedHistorySection from './ConsolidatedHistorySection';
 import DecisionOriginChip from './DecisionOriginChip';
 import DocumentsSection from './DocumentsSection';
+import HistoryAlertsBanner from './HistoryAlertsBanner';
 import HistoryDetailHeader from './HistoryDetailHeader';
 import IAChecklistSection from './IAChecklistSection';
 import IADecisionSection from './IADecisionSection';
@@ -84,6 +85,38 @@ export default function HistoryDetailPage() {
         {/* Left column — scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            {entry.procedureAlreadyPerformed ? (
+              <Alert
+                severity="error"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: 13,
+                  borderRadius: 2,
+                  border: '1px solid rgba(212,24,61,0.3)',
+                }}
+              >
+                Procedimento já realizado antes da autorização
+              </Alert>
+            ) : null}
+            {entry.cidDivergence ? (
+              <Alert
+                severity="warning"
+                sx={{ borderRadius: 2, border: '1px solid rgba(245,158,11,0.35)' }}
+              >
+                <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                  Divergência de CID detectada no momento da análise
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
+                >
+                  {entry.cidDivergenceDetail ??
+                    'O CID informado pelo prestador divergia do CID extraído do laudo.'}
+                </Typography>
+              </Alert>
+            ) : null}
+            <HistoryAlertsBanner entry={entry} />
             <BeneficiarySection entry={entry} />
             <ProceduresSection entry={entry} />
             <ObservationsSection entry={entry} />
@@ -165,35 +198,36 @@ export default function HistoryDetailPage() {
                   />
                 </Box>
 
-                {/* Divergencia */}
-                {entry.divergence ? (
-                  <Alert
-                    severity="warning"
-                    icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
-                    sx={{ mb: 2, '& .MuiAlert-message': { fontSize: 12 } }}
-                  >
-                    <Typography
-                      variant="caption"
-                      fontWeight={700}
-                      sx={{ fontSize: 12, display: 'block', mb: 0.5 }}
+                {/* Divergencia (apenas para decisões de analista) */}
+                {entry.origin === 'analista' &&
+                  (entry.divergence ? (
+                    <Alert
+                      severity="warning"
+                      icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
+                      sx={{ mb: 2, '& .MuiAlert-message': { fontSize: 12 } }}
                     >
-                      Divergência com a IA
-                    </Typography>
-                    <Typography variant="caption" sx={{ fontSize: 12 }}>
-                      {entry.divergenceReason}
-                    </Typography>
-                  </Alert>
-                ) : (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 2 }}>
-                    <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
-                    <Typography
-                      variant="caption"
-                      sx={{ fontSize: 12, color: 'success.main', fontWeight: 600 }}
-                    >
-                      Decisão alinhada com a sugestão da IA
-                    </Typography>
-                  </Box>
-                )}
+                      <Typography
+                        variant="caption"
+                        fontWeight={700}
+                        sx={{ fontSize: 12, display: 'block', mb: 0.5 }}
+                      >
+                        Divergência com a IA
+                      </Typography>
+                      <Typography variant="caption" sx={{ fontSize: 12 }}>
+                        {entry.divergenceReason}
+                      </Typography>
+                    </Alert>
+                  ) : (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 2 }}>
+                      <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
+                      <Typography
+                        variant="caption"
+                        sx={{ fontSize: 12, color: 'success.main', fontWeight: 600 }}
+                      >
+                        Decisão alinhada com a sugestão da IA
+                      </Typography>
+                    </Box>
+                  ))}
               </Box>
 
               <Divider />

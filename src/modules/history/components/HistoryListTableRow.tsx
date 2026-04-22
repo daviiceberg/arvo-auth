@@ -14,9 +14,7 @@ import { type HistoryEntry, type IASuggestion } from '@/types/pedido';
 import DecisionOriginChip from './DecisionOriginChip';
 
 interface IASuggestionCellProps {
-  origin: HistoryEntry['origin'];
   iaSuggestion: HistoryEntry['iaSuggestion'];
-  divergence: HistoryEntry['divergence'];
 }
 
 const SUGGESTION_COLOR_MAP: Record<IASuggestion, string> = {
@@ -24,47 +22,22 @@ const SUGGESTION_COLOR_MAP: Record<IASuggestion, string> = {
   Negar: 'error.main',
 };
 
-function IASuggestionCell({ origin, iaSuggestion, divergence }: IASuggestionCellProps) {
-  if (origin === 'ia_automatica') {
-    return (
-      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.disabled' }}>
-        —
-      </Typography>
-    );
-  }
-
+function IASuggestionCell({ iaSuggestion }: IASuggestionCellProps) {
   const suggestionColor = SUGGESTION_COLOR_MAP[iaSuggestion];
 
   return (
-    <>
-      <Chip
-        label={iaSuggestion}
-        size="small"
-        variant="outlined"
-        sx={{
-          fontSize: 12,
-          fontWeight: 600,
-          height: 20,
-          borderColor: suggestionColor,
-          color: suggestionColor,
-        }}
-      />
-      {divergence ? (
-        <Typography
-          variant="caption"
-          sx={{ display: 'block', fontSize: 11, color: 'warning.main', fontWeight: 600, mt: 0.4 }}
-        >
-          ⚠ Divergiu
-        </Typography>
-      ) : (
-        <Typography
-          variant="caption"
-          sx={{ display: 'block', fontSize: 11, color: 'success.main', fontWeight: 600, mt: 0.4 }}
-        >
-          ✓ Alinhado
-        </Typography>
-      )}
-    </>
+    <Chip
+      label={iaSuggestion}
+      size="small"
+      variant="outlined"
+      sx={{
+        fontSize: 12,
+        fontWeight: 600,
+        height: 20,
+        borderColor: suggestionColor,
+        color: suggestionColor,
+      }}
+    />
   );
 }
 
@@ -142,11 +115,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         )}
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <IASuggestionCell
-          origin={entry.origin}
-          iaSuggestion={entry.iaSuggestion}
-          divergence={entry.divergence}
-        />
+        <IASuggestionCell iaSuggestion={entry.iaSuggestion} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>

@@ -6,12 +6,9 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-type ChecklistStatus = 'ok' | 'warning' | 'error';
+import { type ChecklistItem } from '@/types/pedido';
 
-interface ChecklistItem {
-  texto: string;
-  status: ChecklistStatus;
-}
+type ChecklistStatus = ChecklistItem['status'];
 
 const STATUS_ICON_MAP: Record<ChecklistStatus, React.ReactNode> = {
   ok: (

@@ -8,6 +8,9 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import DutModal from '@/shared/components/dut-modal/DutModal';
@@ -17,25 +20,43 @@ import { type HistoryEntry } from '@/types/pedido';
 
 import HistoryProcedureRow from './HistoryProcedureRow';
 
+const TH_SX = {
+  fontSize: '11px',
+  fontWeight: 700,
+  textTransform: 'uppercase' as const,
+  letterSpacing: '0.5px',
+  color: 'text.secondary',
+  py: '6px',
+  px: 2,
+  borderBottom: '1px solid rgba(0,0,0,0.08)',
+};
+
 interface ProceduresSectionProps {
   entry: HistoryEntry;
 }
 
 export default function ProceduresSection({ entry }: ProceduresSectionProps) {
-  const procs = entry.detailedProcedures ?? [
-    {
-      code: '00000000',
-      tuss: '00000000',
-      description: entry.procedure,
-      qty: 1,
-      authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
-      requestDate: entry.protocolDate,
-      passwordExpiryDate: entry.decisionDate,
-      cid: entry.cid,
-      auditLevel: 'AMBULATORIAL' as const,
-      codeType: 'TUSS' as const,
-    },
-  ];
+  const procs =
+    entry.detailedProcedures ??
+    (() => {
+      logger.warn(
+        `[DATA INCONSISTENCY] HistoryEntry ${entry.id} lacks detailedProcedures. Falling back to single procedure from procedure text. DUT will not be displayed.`,
+      );
+      return [
+        {
+          code: '00000000',
+          tuss: '00000000',
+          description: entry.procedure,
+          qty: 1,
+          authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
+          requestDate: entry.protocolDate,
+          passwordExpiryDate: entry.decisionDate,
+          cid: entry.cid,
+          auditLevel: 'AMBULATORIAL' as const,
+          codeType: 'TUSS' as const,
+        },
+      ];
+    })();
 
   if (
     entry.action === 'Aprovado Parcial' &&
@@ -74,23 +95,48 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
         >
           Procedimentos ({procs.length})
         </Typography>
-        <Table size="small">
-          <TableBody>
-            {procs.map((proc, idx) => (
-              <HistoryProcedureRow
-                key={proc.code + String(idx)}
-                proc={proc}
-                isLast={idx === procs.length - 1}
-                isPartial={entry.action === 'Aprovado Parcial'}
-                isExpanded={expandedCodes.has(proc.code)}
-                onToggleExpand={() => {
-                  toggleExpand(proc.code);
-                }}
-                onDutClick={dutModal.open}
-              />
-            ))}
-          </TableBody>
-        </Table>
+        <Box
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+          }}
+        >
+          <Table size="small" sx={{ minWidth: 900 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...TH_SX, width: 80 }}>Tipo</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
+                <TableCell sx={TH_SX}>Descrição</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
+                <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
+                <TableCell sx={TH_SX}>CID</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
+                {entry.action === 'Aprovado Parcial' ? (
+                  <TableCell sx={{ ...TH_SX, minWidth: 100 }}>Decisão</TableCell>
+                ) : null}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {procs.map((proc, idx) => (
+                <HistoryProcedureRow
+                  key={proc.code + String(idx)}
+                  proc={proc}
+                  executingProviderName={entry.executingProviderName}
+                  isLast={idx === procs.length - 1}
+                  isPartial={entry.action === 'Aprovado Parcial'}
+                  isExpanded={expandedCodes.has(proc.code)}
+                  onToggleExpand={() => {
+                    toggleExpand(proc.code);
+                  }}
+                  onDutClick={dutModal.open}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
         {entry.secondaryCids && entry.secondaryCids.length > 0 ? (
           <Box sx={{ px: 0, pb: 1.5, pt: 0.5 }}>
             <Typography
@@ -133,30 +179,25 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
             borderTop: '1px solid rgba(0,0,0,0.08)',
           }}
         >
-          {[
-            { label: 'Executante', value: entry.executingProviderName },
-            { label: 'Profissional Solicitante', value: entry.requestingProfessional },
-          ].map((f) => (
-            <Box key={f.label}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  display: 'block',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: 0.5,
-                  textTransform: 'uppercase',
-                  mb: 0.5,
-                }}
-              >
-                {f.label}
-              </Typography>
-              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
-                {f.value}
-              </Typography>
-            </Box>
-          ))}
+          <Box>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                display: 'block',
+                fontSize: 11,
+                fontWeight: 600,
+                letterSpacing: 0.5,
+                textTransform: 'uppercase',
+                mb: 0.5,
+              }}
+            >
+              Profissional Solicitante
+            </Typography>
+            <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+              {entry.requestingProfessional}
+            </Typography>
+          </Box>
         </Box>
       </CardContent>
       <DutModal open={dutModal.isOpen} onClose={dutModal.close} dutEntry={dutModal.dutEntry} />

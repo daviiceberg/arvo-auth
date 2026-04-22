@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -17,11 +19,190 @@ interface BeneficiarySectionProps {
   entry: HistoryEntry;
 }
 
+const LABEL_SX = {
+  display: 'block',
+  fontSize: 11,
+  fontWeight: 600,
+  letterSpacing: 0.5,
+  textTransform: 'uppercase' as const,
+  mb: 0.5,
+};
+
+function SexChip({ sex }: { sex: 'M' | 'F' }) {
+  const isMale = sex === 'M';
+  return (
+    <Chip
+      icon={
+        isMale ? (
+          <MaleIcon sx={{ fontSize: 14, color: '#1d4ed8' }} />
+        ) : (
+          <FemaleIcon sx={{ fontSize: 14, color: '#be185d' }} />
+        )
+      }
+      label={isMale ? 'Masculino' : 'Feminino'}
+      size="small"
+      sx={{
+        backgroundColor: isMale ? 'rgba(29,78,216,0.08)' : 'rgba(190,24,93,0.08)',
+        color: isMale ? '#1d4ed8' : '#be185d',
+        fontWeight: 600,
+        height: 22,
+        fontSize: 12,
+      }}
+    />
+  );
+}
+
+function HeaderRow({
+  name,
+  sex,
+  age,
+  onSeeAll,
+}: {
+  name: string;
+  sex: 'M' | 'F';
+  age: number;
+  onSeeAll: () => void;
+}) {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 2,
+        mb: 2,
+      }}
+    >
+      <Box>
+        <Typography variant="h5" fontWeight={800} sx={{ mb: 0.75 }}>
+          {name}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Chip
+            label={`${String(age)} anos`}
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(0,0,0,0.06)',
+              color: '#6b7280',
+              fontWeight: 600,
+              height: 22,
+              fontSize: 12,
+            }}
+          />
+          <SexChip sex={sex} />
+        </Box>
+      </Box>
+      <Button
+        size="small"
+        variant="outlined"
+        onClick={onSeeAll}
+        sx={{
+          fontSize: 12,
+          py: 0.5,
+          flexShrink: 0,
+          color: 'primary.main',
+          borderColor: 'rgba(144,43,41,0.35)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        Ver todas as guias deste beneficiário →
+      </Button>
+    </Box>
+  );
+}
+
+function DataField({ label, value }: { label: string; value: string }) {
+  return (
+    <Box>
+      <Typography variant="caption" color="text.secondary" sx={LABEL_SX}>
+        {label}
+      </Typography>
+      <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+        {value}
+      </Typography>
+    </Box>
+  );
+}
+
+function CarenciaField({ carencia }: { carencia: boolean }) {
+  return (
+    <Box>
+      <Typography variant="caption" color="text.secondary" sx={LABEL_SX}>
+        Carência
+      </Typography>
+      <Typography
+        variant="body2"
+        fontWeight={600}
+        sx={{ fontSize: 13, color: carencia ? 'warning.main' : 'success.main' }}
+      >
+        {carencia ? 'Em carência' : 'Sem carência'}
+      </Typography>
+    </Box>
+  );
+}
+
+function buildDataFields(entry: HistoryEntry) {
+  const fields: { label: string; value: string }[] = [
+    { label: 'Carteirinha', value: entry.cardNumber },
+    { label: 'CPF', value: entry.cpf ?? '—' },
+    { label: 'Nascimento', value: entry.birthDate ?? '—' },
+    { label: 'Plano', value: entry.plan },
+  ];
+  if (entry.planInclusionDate) {
+    fields.push({ label: 'Inclusão no Plano', value: entry.planInclusionDate });
+  }
+  if (entry.contactPhone) {
+    fields.push({ label: 'Telefone', value: entry.contactPhone });
+  }
+  return fields;
+}
+
+function BadgesRow({
+  planScope,
+  isRegulatedPlan,
+}: {
+  planScope: HistoryEntry['planScope'];
+  isRegulatedPlan: HistoryEntry['isRegulatedPlan'];
+}) {
+  if (!planScope && !isRegulatedPlan) return null;
+  return (
+    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+      {planScope ? (
+        <Chip
+          label={`Abrangência: ${planScope}`}
+          size="small"
+          sx={{
+            fontSize: 11,
+            fontWeight: 600,
+            height: 22,
+            backgroundColor: 'rgba(37,99,235,0.08)',
+            color: 'info.main',
+          }}
+        />
+      ) : null}
+      {isRegulatedPlan ? (
+        <Chip
+          label="Plano Regulamentado"
+          size="small"
+          sx={{
+            fontSize: 11,
+            fontWeight: 600,
+            height: 22,
+            backgroundColor: 'rgba(22,163,74,0.08)',
+            color: 'success.main',
+          }}
+        />
+      ) : null}
+    </Box>
+  );
+}
+
 export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
   const router = useRouter();
-  const sexo = entry.sex ?? 'M';
-  const idade = entry.age ?? 45;
+  const sex = entry.sex ?? 'M';
+  const age = entry.age ?? 45;
   const carencia = entry.waitingPeriod ?? false;
+  const fields = buildDataFields(entry);
 
   return (
     <Card>
@@ -40,72 +221,15 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
           Beneficiário
         </Typography>
 
-        {/* Row 1: name + chips | button */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: 2,
-            mb: 2,
+        <HeaderRow
+          name={entry.beneficiary}
+          sex={sex}
+          age={age}
+          onSeeAll={() => {
+            router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiary)}`);
           }}
-        >
-          <Box>
-            <Typography variant="h5" fontWeight={800} sx={{ mb: 0.75 }}>
-              {entry.beneficiary}
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Chip
-                label={`${String(idade)} anos`}
-                size="small"
-                sx={{
-                  backgroundColor: 'rgba(0,0,0,0.06)',
-                  color: '#6b7280',
-                  fontWeight: 600,
-                  height: 22,
-                  fontSize: 12,
-                }}
-              />
-              <Chip
-                icon={
-                  sexo === 'M' ? (
-                    <MaleIcon sx={{ fontSize: 14, color: '#1d4ed8' }} />
-                  ) : (
-                    <FemaleIcon sx={{ fontSize: 14, color: '#be185d' }} />
-                  )
-                }
-                label={sexo === 'M' ? 'Masculino' : 'Feminino'}
-                size="small"
-                sx={{
-                  backgroundColor: sexo === 'M' ? 'rgba(29,78,216,0.08)' : 'rgba(190,24,93,0.08)',
-                  color: sexo === 'M' ? '#1d4ed8' : '#be185d',
-                  fontWeight: 600,
-                  height: 22,
-                  fontSize: 12,
-                }}
-              />
-            </Box>
-          </Box>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => {
-              router.push(`/fila?beneficiario=${encodeURIComponent(entry.beneficiary)}`);
-            }}
-            sx={{
-              fontSize: 12,
-              py: 0.5,
-              flexShrink: 0,
-              color: 'primary.main',
-              borderColor: 'rgba(144,43,41,0.35)',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Ver todas as guias deste beneficiário →
-          </Button>
-        </Box>
+        />
 
-        {/* Row 2: data grid */}
         <Box
           sx={{
             display: 'flex',
@@ -116,56 +240,23 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
             borderTop: '1px solid rgba(0,0,0,0.08)',
           }}
         >
-          {[
-            { label: 'Carteirinha', value: entry.cardNumber },
-            { label: 'CPF', value: entry.cpf ?? '—' },
-            { label: 'Nascimento', value: entry.birthDate ?? '—' },
-            { label: 'Plano', value: entry.plan },
-          ].map((f) => (
-            <Box key={f.label}>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  display: 'block',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: 0.5,
-                  textTransform: 'uppercase',
-                  mb: 0.5,
-                }}
-              >
-                {f.label}
-              </Typography>
-              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
-                {f.value}
-              </Typography>
-            </Box>
+          {fields.map((f) => (
+            <DataField key={f.label} label={f.label} value={f.value} />
           ))}
-          <Box>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{
-                display: 'block',
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-                mb: 0.5,
-              }}
-            >
-              Carência
-            </Typography>
-            <Typography
-              variant="body2"
-              fontWeight={600}
-              sx={{ fontSize: 13, color: carencia ? 'warning.main' : 'success.main' }}
-            >
-              {carencia ? 'Em carência' : 'Sem carência'}
-            </Typography>
-          </Box>
+          <CarenciaField carencia={carencia} />
         </Box>
+
+        <BadgesRow planScope={entry.planScope} isRegulatedPlan={entry.isRegulatedPlan} />
+
+        {entry.beneficiaryNotes ? (
+          <Alert
+            severity="warning"
+            icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
+            sx={{ mt: 2, fontSize: 12 }}
+          >
+            <strong>Nota do cadastro:</strong> {entry.beneficiaryNotes}
+          </Alert>
+        ) : null}
       </CardContent>
     </Card>
   );

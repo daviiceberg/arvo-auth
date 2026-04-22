@@ -94,7 +94,6 @@ export default function HistoryListFilterBar({
               <MenuItem value="Aprovado">Aprovado</MenuItem>
               <MenuItem value="Negado">Negado</MenuItem>
               <MenuItem value="Aprovado Parcial">Aprovado Parcialmente</MenuItem>
-              <MenuItem value="Devolutiva">Devolutiva</MenuItem>
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 160 }}>

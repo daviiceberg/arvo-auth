@@ -55,7 +55,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
       if (diff !== 0) return diff;
       return a.protocolDate.localeCompare(b.protocolDate);
     })
-    .slice(0, 7);
+    .slice(0, 5);
 
   return (
     <>
@@ -77,13 +77,20 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
       </Box>
       {loading ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-          {Array.from({ length: 7 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} variant="rectangular" height={40} sx={{ borderRadius: 1 }} />
           ))}
         </Box>
       ) : (
-        <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', overflow: 'hidden' }}>
-          <Table size="small" aria-label="Pedidos que requerem atenção">
+        <Box
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+          }}
+        >
+          <Table size="small" aria-label="Pedidos que requerem atenção" sx={{ minWidth: 820 }}>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ ...thSx, width: 150, minWidth: 150 }}>ID</TableCell>

@@ -27,6 +27,25 @@ export interface AuditLogEntry {
   details?: string;
 }
 
+/**
+ * Item do checklist da Análise da IA.
+ *
+ * REGRA DE UX (NÃO VIOLAR):
+ * O texto deve sempre refletir o estado atual do item:
+ *
+ *   - status: 'ok'      → texto afirmativo  → "CRM médico validado"
+ *   - status: 'warning' → texto de alerta   → "Laudo próximo do vencimento"
+ *   - status: 'error'   → texto do problema → "CRM inválido ou não localizado"
+ *
+ * Nunca deixar texto afirmativo com status error/warning — isso gera
+ * contradição visual (ícone vermelho + texto positivo).
+ */
+export interface ChecklistItem {
+  texto: string;
+  sub?: string;
+  status: 'ok' | 'warning' | 'error';
+}
+
 export interface Procedure {
   code: string;
   tuss: string;
@@ -129,7 +148,7 @@ export interface Request {
   alerts: string[];
   iaSuggestion: IASuggestion;
   iaJustification: string;
-  iaChecklist: { texto: string; status: 'ok' | 'warning' | 'error' }[];
+  iaChecklist: ChecklistItem[];
   observations: string;
   documents: Document[];
   authorizationStage?: 'primeira_solicitacao' | 'continuidade';
@@ -211,10 +230,18 @@ export interface HistoryEntry {
     tussCodesIncluded?: TussCode[];
   }[];
   alerts?: string[];
-  iaChecklist?: { texto: string; status: 'ok' | 'warning' | 'error' }[];
+  iaChecklist?: ChecklistItem[];
   documents?: { nome: string; tipo: string; data: string }[];
   adjustments?: Adjustment[];
   secondaryCids?: string[];
   internalNotes?: string;
   auditLog?: AuditLogEntry[];
+  procedureAlreadyPerformed?: boolean;
+  cidDivergence?: boolean;
+  cidDivergenceDetail?: string;
+  planInclusionDate?: string;
+  contactPhone?: string;
+  planScope?: PlanScope;
+  isRegulatedPlan?: boolean;
+  beneficiaryNotes?: string;
 }
