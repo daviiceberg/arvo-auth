@@ -246,7 +246,7 @@ export const pedidos: Request[] = [
     iaChecklist: [
       { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
       { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'error' },
+      { texto: 'CRM médico inválido ou não localizado', status: 'error' },
       { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
       { texto: 'Prestador credenciado na rede', status: 'ok' },
     ],
@@ -381,7 +381,7 @@ export const pedidos: Request[] = [
       { texto: 'Diagnóstico CID-10 F84.1 confirmado por laudo', status: 'ok' },
       { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
       { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'error' },
+      { texto: 'Beneficiário inelegível (carência ou inadimplência)', status: 'error' },
       { texto: 'Prestador credenciado na rede', status: 'ok' },
       { texto: 'Carência de 180 dias ativa — vence em 14/07/2026', status: 'error' },
     ],
@@ -502,12 +502,12 @@ export const pedidos: Request[] = [
     iaJustification:
       'Solicitação de continuidade (renovação) com duas falhas documentais críticas: (1) Laudo neuropsicológico datado de 12/02/2025 — vencido há mais de 13 meses (validade máxima: 12 meses). (2) Relatório de Evolução Terapêutica não anexado, exigido obrigatoriamente para renovações. Negativa por documentação insuficiente. Solicitar laudo atualizado e relatório evolutivo.',
     iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.5 identificado', status: 'warning' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'error' },
+      { texto: 'Diagnóstico CID-10 F84.5 — confirmação pendente', status: 'warning' },
+      { texto: 'Laudo neuropsicológico vencido (>12 meses)', status: 'error' },
       { texto: 'CRP profissional validado', status: 'ok' },
       { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
       { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica para renovação', status: 'error' },
+      { texto: 'Relatório de Evolução Terapêutica ausente para renovação', status: 'error' },
     ],
     observations:
       'Enzo está em acompanhamento há 3 anos. Clínica esqueceu de anexar os documentos obrigatórios para renovação.',
@@ -954,7 +954,7 @@ export const pedidos: Request[] = [
       { texto: 'CRM médico validado', status: 'ok' },
       { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
       { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'warning' },
+      { texto: 'Relatório de Evolução Terapêutica incompleto', status: 'warning' },
     ],
     observations:
       'Primeira solicitação. Diagnóstico recente (fev/2026). Neuropediatra recomenda início imediato de intervenção precoce.',
@@ -1408,12 +1408,12 @@ export const pedidos: Request[] = [
     iaJustification:
       'Solicitação de terapia ABA com CID F90.0 (TDAH). O CID informado não pertence ao espectro F84.x (TEA), que é o critério de elegibilidade para terapia ABA conforme RN 539/2022. Sem laudo neuropsicológico de TEA anexado. Negativa administrativa por ausência de CID elegível.',
     iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.x confirmado por laudo', status: 'error' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'error' },
+      { texto: 'Diagnóstico CID-10 F84.x não confirmado no laudo', status: 'error' },
+      { texto: 'Laudo neuropsicológico vencido (>12 meses)', status: 'error' },
       { texto: 'CRM médico validado', status: 'ok' },
       { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
       { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'error' },
+      { texto: 'Relatório de Evolução Terapêutica ausente', status: 'error' },
     ],
     observations:
       'CID F90.0 (TDAH) não se enquadra no protocolo de terapias especiais para TEA. Necessário laudo com diagnóstico F84.x para elegibilidade.',
@@ -1526,7 +1526,7 @@ export const pedidos: Request[] = [
       { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
       { texto: 'CRM médico validado', status: 'ok' },
       { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'warning' },
+      { texto: 'Prestador com restrição de credenciamento', status: 'warning' },
       { texto: 'Procedimento fora do Rol ANS', status: 'error' },
       { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
     ],
@@ -3110,6 +3110,7 @@ export const dashboardMetrics = (() => {
   const _taxaDeteccaoIA =
     _criticosHist.length > 0 ? Math.round((_iaSinalizouCriticos / _criticosHist.length) * 100) : 0;
   const _slaViolados = pedidos.filter((p) => p.slaStatus === 'violated').length;
+  const _slaEmRisco = pedidos.filter((p) => p.slaStatus === 'warning').length;
   const _nipsAtivas = pedidos.filter((p) => p.alerts.includes('NIP Ativa')).length;
   // Aprovadas sem alertas (genuinamente limpas)
   const _aprovadosHist = historicoEntries.filter((h) => h.action === 'Aprovado');
@@ -3163,8 +3164,12 @@ export const dashboardMetrics = (() => {
     taxaAprovacao: _taxaBase > 0 ? Math.round((_aprovados / _taxaBase) * 100) : 0,
     taxaNegacao: _taxaBase > 0 ? Math.round((_negados / _taxaBase) * 100) : 0,
     slaViolados: _slaViolados,
+    slaEmRisco: _slaEmRisco,
     slaOk: pedidos.filter((p) => p.slaStatus === 'ok').length,
-    slaWarning: pedidos.filter((p) => p.slaStatus === 'warning').length,
+    slaWarning: _slaEmRisco,
+    // Monthly volumes for dashboard KPI strip — realistic operator scale
+    aprovadosMes: 312,
+    negadosMes: 38,
     iaSugestaoAprovar: pedidos.filter((p) => p.iaSuggestion === 'Aprovar').length,
     iaSugestaoNegar: pedidos.filter((p) => p.iaSuggestion === 'Negar').length,
     monthlyTrend: [

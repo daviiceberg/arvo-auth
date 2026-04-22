@@ -7,13 +7,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { type Request } from '@/types/pedido';
-
-interface ChecklistItem {
-  texto: string;
-  sub?: string;
-  status: 'ok' | 'warning' | 'error';
-}
+import { type ChecklistItem, type Request } from '@/types/pedido';
 
 interface ChecklistSectionProps {
   request: Request;
@@ -27,15 +21,16 @@ function buildContinuidadeItems(request: Request): ChecklistItem[] {
       d.nome.toLowerCase().includes('evolução'),
   );
 
+  if (hasEvolutionReport) {
+    return [
+      { texto: 'Relatório de evolução terapêutica anexado', status: 'ok' },
+      { texto: 'Relatório emitido pelo profissional executante', status: 'ok' },
+    ];
+  }
+
   return [
-    {
-      texto: 'Relatório de evolução terapêutica anexado',
-      status: hasEvolutionReport ? 'ok' : 'error',
-    },
-    {
-      texto: 'Relatório emitido pelo profissional executante',
-      status: hasEvolutionReport ? 'ok' : 'warning',
-    },
+    { texto: 'Relatório de evolução terapêutica ausente', status: 'error' },
+    { texto: 'Emissão pelo profissional executante não confirmada', status: 'warning' },
   ];
 }
 

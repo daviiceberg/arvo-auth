@@ -108,7 +108,6 @@ export default function QueueFilterBar({
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>
           <MenuItem value="Negar">Negar</MenuItem>
-          <MenuItem value="Junta Médica">Junta Médica</MenuItem>
         </Select>
       </FormControl>
       <Button

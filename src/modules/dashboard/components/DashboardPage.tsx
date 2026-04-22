@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import useDashboardData from '../hooks/useDashboardData';
 
+import DashboardKpiStrip from './DashboardKpiStrip';
 import ProcessingQueueTable from './ProcessingQueueTable';
 import RecentRequestsTable from './RecentRequestsTable';
 import TopDenialReasons from './TopDenialReasons';
@@ -57,6 +58,9 @@ export default function DashboardPage() {
           Nova Solicitação
         </Button>
       </Box>
+
+      {/* KPI strip */}
+      <DashboardKpiStrip metrics={metrics} />
 
       {/* Processing Queue */}
       {!loading && <ProcessingQueueTable />}

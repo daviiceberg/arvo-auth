@@ -99,7 +99,8 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           sx={{
             border: '1px solid rgba(0,0,0,0.1)',
             borderRadius: '16px',
-            overflow: 'hidden',
+            overflowX: 'auto',
+            overflowY: 'hidden',
           }}
         >
           <Table size="small" sx={{ minWidth: 900 }}>

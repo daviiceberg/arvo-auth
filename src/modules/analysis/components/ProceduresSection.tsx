@@ -677,48 +677,47 @@ export default function ProceduresSection({
             />
           ) : null}
         </Box>
-        <Box sx={{ overflowX: 'auto' }}>
-          <Box
-            sx={{
-              border: '1px solid rgba(0,0,0,0.1)',
-              borderRadius: '16px',
-              overflow: 'hidden',
-            }}
-          >
-            <Table size="small" sx={{ minWidth: 900 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ ...TH_SX, width: 80 }}>Tipo</TableCell>
-                  <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
-                  <TableCell sx={TH_SX}>Descrição</TableCell>
-                  <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
-                  <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
-                  <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
-                  <TableCell sx={TH_SX}>CID</TableCell>
-                  <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
-                  <TableCell sx={{ ...TH_SX, minWidth: 80 }}>Ação</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {procs.map((proc, index) => (
-                  <ProcedureRow
-                    key={proc.code}
-                    proc={proc}
-                    allAdjustments={allAdjustments}
-                    isGuideFinalized={isGuideFinalized}
-                    isLast={index === procs.length - 1}
-                    hospital={ep.name}
-                    onAdjustClick={onAdjustClick}
-                    isExpanded={expandedCodes.has(proc.code)}
-                    onToggleExpand={() => {
-                      toggleExpand(proc.code);
-                    }}
-                    onDutClick={dutModal.open}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+        <Box
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+          }}
+        >
+          <Table size="small" sx={{ minWidth: 900 }}>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ ...TH_SX, width: 80 }}>Tipo</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 120 }}>Código</TableCell>
+                <TableCell sx={TH_SX}>Descrição</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 80 }}>Qtd</TableCell>
+                <TableCell sx={{ ...TH_SX, minWidth: 120 }}>Prestador</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 140 }}>Datas</TableCell>
+                <TableCell sx={TH_SX}>CID</TableCell>
+                <TableCell sx={{ ...TH_SX, width: 70 }}>DUT</TableCell>
+                <TableCell sx={{ ...TH_SX, minWidth: 80 }}>Ação</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {procs.map((proc, index) => (
+                <ProcedureRow
+                  key={proc.code}
+                  proc={proc}
+                  allAdjustments={allAdjustments}
+                  isGuideFinalized={isGuideFinalized}
+                  isLast={index === procs.length - 1}
+                  hospital={ep.name}
+                  onAdjustClick={onAdjustClick}
+                  isExpanded={expandedCodes.has(proc.code)}
+                  onToggleExpand={() => {
+                    toggleExpand(proc.code);
+                  }}
+                  onDutClick={dutModal.open}
+                />
+              ))}
+            </TableBody>
+          </Table>
         </Box>
         <SecondaryCidsEditor
           cids={localSecondaryCids}
