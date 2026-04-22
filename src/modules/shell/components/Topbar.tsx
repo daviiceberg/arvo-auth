@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { useUser } from '@auth0/nextjs-auth0';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
@@ -19,7 +20,22 @@ import Popover from '@mui/material/Popover';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
+import { signOutWithBackendThenAuth0 } from '@/lib/client-sign-out';
 import { type Notification } from '@/types/notificacao';
+
+function userInitials(name: string | undefined, email: string | undefined): string {
+  if (name) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      const a = parts[0]?.[0];
+      const b = parts[parts.length - 1]?.[0];
+      if (a && b) return (a + b).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+  if (email) return email.slice(0, 2).toUpperCase();
+  return '?';
+}
 
 interface TopbarProps {
   // Notifications
@@ -47,6 +63,10 @@ export default function Topbar({
   onCloseUserMenu,
 }: TopbarProps) {
   const router = useRouter();
+  const { user, isLoading } = useUser();
+  const displayName = isLoading ? '…' : (user?.name ?? user?.email ?? 'Usuário');
+  const displaySubtitle = isLoading ? '…' : (user?.email ?? '—');
+  const avatarInitials = userInitials(user?.name, user?.email);
 
   return (
     <AppBar
@@ -227,20 +247,22 @@ export default function Topbar({
           }}
         >
           <Avatar
+            src={user?.picture}
+            alt=""
             sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: 13, fontWeight: 700 }}
           >
-            AS
+            {!user?.picture ? avatarInitials : null}
           </Avatar>
           <Box sx={{ textAlign: 'left' }}>
             <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, lineHeight: 1.2 }}>
-              Ana Paula Santos
+              {displayName}
             </Typography>
             <Typography
               variant="caption"
               color="text.secondary"
               sx={{ fontSize: 12, lineHeight: 1 }}
             >
-              Autorizadora
+              {displaySubtitle}
             </Typography>
           </Box>
           <KeyboardArrowDownIcon
@@ -285,7 +307,7 @@ export default function Topbar({
           <MenuItem
             onClick={() => {
               onCloseUserMenu();
-              router.push('/login');
+              void signOutWithBackendThenAuth0();
             }}
             sx={{ gap: 1.5, minHeight: 44, color: 'error.main', borderRadius: 1, mx: 0.5 }}
           >
