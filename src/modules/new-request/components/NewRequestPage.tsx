@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useCallback, useState } from 'react';
 
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
@@ -13,12 +13,14 @@ import RotateRightIcon from '@mui/icons-material/RotateRight';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import Snackbar from '@mui/material/Snackbar';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Stepper from '@mui/material/Stepper';
@@ -32,7 +34,7 @@ import { useDocumentUpload } from '../hooks/useDocumentUpload';
 import { useNewRequestForm, initialForm } from '../hooks/useNewRequestForm';
 import { useStepNavigation } from '../hooks/useStepNavigation';
 import { useUploadStep } from '../hooks/useUploadStep';
-import { type ModuloType } from '../types';
+import { type ModuloType, type SnackbarState } from '../types';
 
 import { StepBeneficiary } from './StepBeneficiary';
 import { StepClinical } from './StepClinical';
@@ -120,7 +122,8 @@ function NewRequestInner() {
     setDragOver,
     zoom,
     rotation,
-    handleUpload,
+    fileInputRef,
+    handleFileSelected,
     resetUpload,
     zoomIn,
     zoomOut,
@@ -132,11 +135,30 @@ function NewRequestInner() {
     etapaAutorizacao: form.etapaAutorizacao,
   });
 
-  const handleUploadComplete = () => {
-    handleUpload(() => {
-      setCurrentStep(1);
-    });
-  };
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    msg: '',
+    severity: 'success',
+  });
+
+  const showSnackbar = useCallback((msg: string, severity: SnackbarState['severity']) => {
+    setSnackbar({ open: true, msg, severity });
+  }, []);
+
+  const closeSnackbar = useCallback(() => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  }, []);
+
+  const handleFileFromStepUpload = useCallback(
+    (file: File) => {
+      handleFileSelected(file, {
+        onFailed: (message) => {
+          showSnackbar(`Falha ao enviar o documento: ${message}`, 'error');
+        },
+      });
+    },
+    [handleFileSelected, showSnackbar],
+  );
 
   const handleSkipUpload = () => {
     setForm({ ...initialForm, tipoSolicitacao: 'terapias' });
@@ -160,7 +182,8 @@ function NewRequestInner() {
         uploadProgress={uploadProgress}
         dragOver={dragOver}
         setDragOver={setDragOver}
-        onUpload={handleUploadComplete}
+        fileInputRef={fileInputRef}
+        onFileSelected={handleFileFromStepUpload}
         onSkip={handleSkipUpload}
       />
     ),
@@ -422,7 +445,7 @@ function NewRequestInner() {
               >
                 Voltar
               </Button>
-              {currentStep > 0 && (
+              {(currentStep > 0 || uploadState === 'processed') && (
                 <Button
                   variant="contained"
                   endIcon={currentStep < 5 ? <ChevronRightIcon /> : undefined}
@@ -454,6 +477,18 @@ function NewRequestInner() {
         onGoToDashboard={goToDashboard}
         onNewRequest={handleNovaSolicitacao}
       />
+
+      {/* ── Snackbar de feedback (upload/erros) ── */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={closeSnackbar} severity={snackbar.severity} sx={{ minWidth: 300 }}>
+          {snackbar.msg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

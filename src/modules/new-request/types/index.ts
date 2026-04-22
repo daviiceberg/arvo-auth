@@ -1,5 +1,11 @@
 export type ModuloType = 'terapias';
 
+export interface SnackbarState {
+  open: boolean;
+  msg: string;
+  severity: 'success' | 'error' | 'info' | 'warning';
+}
+
 export interface ProcedimentoItem {
   codigoTUSS: string;
   descricao: string;
