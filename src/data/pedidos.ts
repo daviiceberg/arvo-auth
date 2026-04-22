@@ -6,6 +6,8 @@ import {
   type Request,
 } from '@/types/pedido';
 
+import { buildTeaChecklist } from '@/mocks/tea-checklist-catalog';
+
 export const pedidos: Request[] = [
   // ── PACOTE: Protocolo multidisciplinar completo — demo de código de pacote ──
   {
@@ -110,15 +112,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Pacote multidisciplinar (98170343) para TEA F84.0 — 4 modalidades terapêuticas agrupadas em código de pacote da operadora. Diagnóstico confirmado, laudo em vigência, prestador credenciado. Protocolo é compatível com intervenção precoce para criança de 4 anos. RN 539/2022 aplicável — todas as modalidades cobertas sem limite de sessões para F84.x.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Código de pacote 98170343 registrado na operadora', status: 'ok' },
-      { texto: '4 códigos TUSS identificados no pacote', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'primeira_solicitacao',
+      isPacote: { code: '98170343', tussCount: 4 },
+      dutApplicable: { number: 105, label: 'ABA' },
+      secondaryCids: ['F80.1'],
+    }),
     observations:
       'Clínica utiliza código de pacote próprio da operadora para agrupar as 4 modalidades terapêuticas do protocolo multidisciplinar. Primeira solicitação — criança de 4 anos, intervenção precoce.',
     documents: [
@@ -243,13 +243,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'CRM "00001-XX" não localizado na base do CFM. Formato inválido — número de registro não segue o padrão numérico esperado. Negativa administrativa: não é possível validar a habilitação do profissional solicitante. O pedido pode ser reapresentado com CRM válido.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico inválido ou não localizado', status: 'error' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      crmInvalid: true,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations: 'Solicitação de continuidade ABA. CRM da solicitante com formato irregular.',
     documents: [
       {
@@ -377,14 +377,12 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'Beneficiária com carência contratual ativa para cobertura de terapias. Plano ativado em 15/01/2026; carência de 180 dias vence em 14/07/2026. A solicitação pode ser reapresentada a partir de 15/07/2026. Negativa administrativa — não é decisão clínica.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.1 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário inelegível (carência ou inadimplência)', status: 'error' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Carência de 180 dias ativa — vence em 14/07/2026', status: 'error' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.1',
+      authorizationStage: 'primeira_solicitacao',
+      carencia: true,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Diagnóstico F84.1 recente. Família recém migrou de outro plano. Orientar sobre prazo de carência.',
     documents: [
@@ -501,14 +499,14 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'Solicitação de continuidade (renovação) com duas falhas documentais críticas: (1) Laudo neuropsicológico datado de 12/02/2025 — vencido há mais de 13 meses (validade máxima: 12 meses). (2) Relatório de Evolução Terapêutica não anexado, exigido obrigatoriamente para renovações. Negativa por documentação insuficiente. Solicitar laudo atualizado e relatório evolutivo.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.5 — confirmação pendente', status: 'warning' },
-      { texto: 'Laudo neuropsicológico vencido (>12 meses)', status: 'error' },
-      { texto: 'CRP profissional validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica ausente para renovação', status: 'error' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.5',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: false,
+      laudoVencido: true,
+      cidNaoConfirmadoLaudo: true,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Enzo está em acompanhamento há 3 anos. Clínica esqueceu de anexar os documentos obrigatórios para renovação.',
     documents: [
@@ -648,18 +646,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Diagnóstico F84.0 grau severo confirmado em criança de 3 anos — fase crítica para intervenção precoce intensiva. Laudo de 01/2026 em vigência. Protocolo EIBI intensivo com 40 sessões ABA + 12 fono + 8 TO é compatível com recomendações clínicas para autismo grau 3 em janela de intervenção precoce. Volume total de 60 sessões/mês é elevado mas clinicamente justificado pelo laudo. RN 539/2022 assegura cobertura sem limite de sessões para F84.x. Documentação completa.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 (grau severo) confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Alta utilização: 60 sessões/mês — acima da média', status: 'warning' },
-      {
-        texto: 'Justificativa clínica para volume: grau severo + intervenção precoce',
-        status: 'ok',
-      },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'primeira_solicitacao',
+      altaUtilMes: 60,
+      secondaryCids: ['F80.2'],
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Miguel, 3 anos, TEA grau 3. Neuropediatra indica protocolo intensivo para janela de intervenção precoce. Família envolvida e comprometida com o protocolo.',
     documents: [
@@ -803,14 +796,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Beneficiária possui diagnóstico confirmado de TEA (F84.0) com laudo neuropsicológico datado de 10/01/2026. O histórico de 12 meses indica resposta terapêutica positiva. A frequência solicitada está dentro do protocolo EIBI para casos moderados. Documentação completa e prestador credenciado.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Alta utilização: 28 sessões no mês atual', status: 'warning' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      altaUtilMes: 28,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Criança com TEA grau 2. Pais solicitam manutenção do protocolo intensivo conforme recomendação do neuropediatra.',
     documents: [
@@ -948,14 +940,12 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Primeira solicitação de terapias para TEA (F84.0). Laudo neuropsicológico de 02/2026 confirma diagnóstico. Protocolo de intervenção precoce (EIBI) com 20 sessões ABA + 8 fono é compatível com boas práticas. Documentação completa e prestador credenciado.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica incompleto', status: 'warning' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'primeira_solicitacao',
+      laudoIncompleto: true,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Primeira solicitação. Diagnóstico recente (fev/2026). Neuropediatra recomenda início imediato de intervenção precoce.',
     documents: [
@@ -1097,14 +1087,12 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Renovação trimestral de terapias para Síndrome de Asperger (F84.5). Relatório de evolução indica ganhos em habilidades sociais e regulação sensorial. Quantidade dentro do protocolo. Documentação completa.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.5 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.5',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      dutApplicable: { number: 108, label: 'Psicoterapia Individual' },
+    }),
     observations:
       'Renovação trimestral. Relatório do terapeuta indica progresso em comunicação social e integração sensorial.',
     documents: [
@@ -1260,15 +1248,15 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'Solicitação totaliza 84 sessões/mês (60 ABA + 12 fono + 12 TO). Quantidade acima do protocolo padrão da operadora. O diagnóstico de TEA grau 3 (F84.0) é confirmado, mas a frequência solicitada não está respaldada por relatório de evolução que justifique protocolo intensivo. Negativa administrativa recomendada.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Alta utilização: 84 sessões no mês atual', status: 'warning' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      altaUtilMes: 84,
+      quantidadeAcima: true,
+      juntaIndicada: true,
+      dutApplicable: { number: 105, label: 'ABA' },
+    }),
     observations:
       'Criança com TEA grau 3 (suporte muito substancial). Protocolo ABA intensivo de 60 sessões/mês. Total de 84 sessões/mês excede o protocolo padrão da operadora.',
     documents: [
@@ -1407,14 +1395,14 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'Solicitação de terapia ABA com CID F90.0 (TDAH). O CID informado não pertence ao espectro F84.x (TEA), que é o critério de elegibilidade para terapia ABA conforme RN 539/2022. Sem laudo neuropsicológico de TEA anexado. Negativa administrativa por ausência de CID elegível.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.x não confirmado no laudo', status: 'error' },
-      { texto: 'Laudo neuropsicológico vencido (>12 meses)', status: 'error' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica ausente', status: 'error' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F90.0',
+      authorizationStage: 'primeira_solicitacao',
+      cidNaoConfirmadoLaudo: true,
+      cidDivergence: true,
+      laudoVencido: true,
+      tussCidMismatch: true,
+    }),
     observations:
       'CID F90.0 (TDAH) não se enquadra no protocolo de terapias especiais para TEA. Necessário laudo com diagnóstico F84.x para elegibilidade.',
     documents: [
@@ -1521,15 +1509,15 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'Solicitação de Equoterapia para TEA (F84.0). A Equoterapia não consta no Rol ANS como procedimento obrigatório. Negativa administrativa recomendada por procedimento fora do Rol ANS.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.0 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador com restrição de credenciamento', status: 'warning' },
-      { texto: 'Procedimento fora do Rol ANS', status: 'error' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      prestadorNaoHabilitado: true,
+      procedureRolAnsOut: true,
+      procedureRolAnsOutName: 'Equoterapia',
+      protocoloForaRecomendado: true,
+    }),
     observations:
       'Equoterapia solicitada como terapia complementar. Médico argumenta benefícios para coordenação motora e socialização. Procedimento fora do Rol ANS.',
     documents: [
@@ -1671,14 +1659,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Adolescente com Síndrome de Asperger (F84.5) em acompanhamento multidisciplinar. Quantidade dentro do protocolo. Documentação completa. Prestador credenciado.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.5 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.5',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      secondaryCids: ['F41.1'],
+      dutApplicable: { number: 108, label: 'Psicoterapia Individual' },
+    }),
     observations:
       'Adolescente em transição escolar. Psicoterapia focada em habilidades sociais e manejo de ansiedade. TO para adaptação de rotina acadêmica.',
     documents: [
@@ -1823,14 +1810,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification:
       'Renovação de terapias multidisciplinares para TEA atípico (F84.1). Três terapias solicitadas (ABA + fono + fisio). Quantidade total de 28 sessões/mês dentro do protocolo. Documentação completa e atualizada.',
-    iaChecklist: [
-      { texto: 'Diagnóstico CID-10 F84.1 confirmado por laudo', status: 'ok' },
-      { texto: 'Laudo neuropsicológico em vigência (<12 meses)', status: 'ok' },
-      { texto: 'CRM médico validado', status: 'ok' },
-      { texto: 'Beneficiário elegível (sem carência, sem inadimplência)', status: 'ok' },
-      { texto: 'Prestador credenciado na rede', status: 'ok' },
-      { texto: 'Relatório de Evolução Terapêutica anexado', status: 'ok' },
-    ],
+    iaChecklist: buildTeaChecklist({
+      cid: 'F84.1',
+      authorizationStage: 'continuidade',
+      hasEvolutionReport: true,
+      secondaryCids: ['F80.1'],
+      dutApplicable: { number: 102, label: 'Fonoaudiologia' },
+    }),
     observations:
       'Renovação trimestral. Terapeuta relata ganhos em linguagem receptiva e coordenação motora grossa. SLA próximo do limite.',
     documents: [

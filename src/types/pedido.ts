@@ -27,6 +27,9 @@ export interface AuditLogEntry {
   details?: string;
 }
 
+export type ChecklistStatus = 'ok' | 'warning' | 'error';
+export type ChecklistOrigin = 'ia' | 'dados' | 'engenharia';
+
 /**
  * Item do checklist da Análise da IA.
  *
@@ -39,11 +42,27 @@ export interface AuditLogEntry {
  *
  * Nunca deixar texto afirmativo com status error/warning — isso gera
  * contradição visual (ícone vermelho + texto positivo).
+ *
+ * REGRA DE EXIBIÇÃO:
+ * - Todo item negativo (error/warning) aparece na lista visível.
+ * - Itens positivos (ok) só aparecem quando `showWhenOk === true` — ou seja,
+ *   quando o item poupa esforço manual do analista (ex: CID confirmado no laudo).
+ * - Itens com `showWhenOk=false` e status='ok' ficam só no modal "Ver todas".
+ * - Ranqueamento: error (por severity desc) → warning (por severity desc) → ok relevantes.
+ * - Limite visível: 6 itens. Restante vai para o modal.
  */
 export interface ChecklistItem {
+  /** Identificador estável do item (ex: "LAUDO_NEURO_VIGENCIA"). Deve ser estável entre rodadas de IA. */
+  id?: string;
   texto: string;
   sub?: string;
-  status: 'ok' | 'warning' | 'error';
+  status: ChecklistStatus;
+  /** Origem do dado: 'ia' (inferência), 'dados' (base estruturada), 'engenharia' (payload). */
+  origin?: ChecklistOrigin;
+  /** 0–100. Usado para ranquear itens negativos. Itens 'ok' podem omitir. */
+  severity?: number;
+  /** true quando o item, estando 'ok', ainda poupa esforço manual do analista. */
+  showWhenOk?: boolean;
 }
 
 export interface Procedure {

@@ -4,12 +4,19 @@ import { useState, useRef, type Dispatch, type SetStateAction } from 'react';
 
 import { type Document } from '@/types/pedido';
 
+const AI_ANALYSIS_DURATION_MS = 8000;
+
+export type DocumentToastSeverity = 'info' | 'success';
+export interface DocumentToast {
+  message: string;
+  severity: DocumentToastSeverity;
+}
+
 interface UseDocumentModalsParams {
   setLocalDocs: Dispatch<SetStateAction<Document[]>>;
 }
 
 export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
-  // Add document modal state
   const [showAddModal, setShowAddModal] = useState(false);
   const [addTipo, setAddTipo] = useState('');
   const [addDescricao, setAddDescricao] = useState('');
@@ -18,15 +25,8 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
   const [addError, setAddError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Request documents modal state
-  const [showSolicitarModal, setShowSolicitarModal] = useState(false);
-  const [solicitarDocs, setSolicitarDocs] = useState<string[]>([]);
-  const [solicitarMensagem, setSolicitarMensagem] = useState('');
-  const [solicitarPrazo, setSolicitarPrazo] = useState('5');
-
-  // Shared state
   const [processingId, setProcessingId] = useState<string | null>(null);
-  const [toast, setToast] = useState('');
+  const [toast, setToast] = useState<DocumentToast | null>(null);
 
   const handleAddConfirm = () => {
     if (!addTipo) {
@@ -56,11 +56,19 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
     setAddTipo('');
     setAddDescricao('');
     setAddFile(null);
-    setToast('Documento adicionado com sucesso');
+    setToast({
+      message:
+        'Documento anexado. A IA está analisando — você será notificado quando a verificação for concluída.',
+      severity: 'info',
+    });
     setProcessingId(newId);
     setTimeout(() => {
       setProcessingId(null);
-    }, 2500);
+      setToast({
+        message: 'Análise concluída — conclusões da IA atualizadas no checklist.',
+        severity: 'success',
+      });
+    }, AI_ANALYSIS_DURATION_MS);
   };
 
   const handleAddModalClose = () => {
@@ -69,13 +77,6 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
     setAddDescricao('');
     setAddFile(null);
     setAddError('');
-  };
-
-  const handleSolicitarConfirm = () => {
-    setShowSolicitarModal(false);
-    setSolicitarDocs([]);
-    setSolicitarMensagem('');
-    setToast('Solicitação enviada — pedido pendenciado aguardando documentação');
   };
 
   return {
@@ -93,17 +94,8 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
     processingId,
     toast,
     setToast,
-    showSolicitarModal,
-    setShowSolicitarModal,
-    solicitarDocs,
-    setSolicitarDocs,
-    solicitarMensagem,
-    setSolicitarMensagem,
-    solicitarPrazo,
-    setSolicitarPrazo,
     fileInputRef,
     handleAddConfirm,
     handleAddModalClose,
-    handleSolicitarConfirm,
   };
 }

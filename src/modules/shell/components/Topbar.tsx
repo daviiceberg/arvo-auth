@@ -134,7 +134,7 @@ export default function Topbar({
                 Marcar todas como lidas
               </Button>
             </Box>
-            {notifications.map((n, i) => (
+            {notifications.slice(0, 4).map((n, i) => (
               <Box
                 key={n.id}
                 onClick={() => {

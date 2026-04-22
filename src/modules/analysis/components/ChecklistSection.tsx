@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -9,9 +12,23 @@ import Typography from '@mui/material/Typography';
 
 import { type ChecklistItem, type Request } from '@/types/pedido';
 
+import { rankChecklistItems } from '../utils/rank-checklist';
+
+import ChecklistFullModal from './ChecklistFullModal';
+
 interface ChecklistSectionProps {
   request: Request;
 }
+
+/**
+ * Lista de checklist da Análise da IA.
+ *
+ * Regras de UX (mesmas de `ChecklistItem`):
+ * - Texto afirmativo só com status 'ok'.
+ * - Todo item negativo (error/warning) aparece na lista visível.
+ * - `showWhenOk: true` só para itens que poupam esforço manual.
+ * - Limite de 6 itens na lista visível; restante abre no modal "Ver todas".
+ */
 
 function buildContinuidadeItems(request: Request): ChecklistItem[] {
   const hasEvolutionReport = request.documents.some(
@@ -23,14 +40,38 @@ function buildContinuidadeItems(request: Request): ChecklistItem[] {
 
   if (hasEvolutionReport) {
     return [
-      { texto: 'Relatório de evolução terapêutica anexado', status: 'ok' },
-      { texto: 'Relatório emitido pelo profissional executante', status: 'ok' },
+      {
+        id: 'RELATORIO_EVOLUCAO_AUSENTE',
+        texto: 'Relatório de evolução terapêutica anexado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      },
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Relatório emitido pelo profissional executante',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: false,
+      },
     ];
   }
 
   return [
-    { texto: 'Relatório de evolução terapêutica ausente', status: 'error' },
-    { texto: 'Emissão pelo profissional executante não confirmada', status: 'warning' },
+    {
+      id: 'RELATORIO_EVOLUCAO_AUSENTE',
+      texto: 'Relatório de evolução terapêutica ausente',
+      status: 'error',
+      origin: 'ia',
+      severity: 95,
+    },
+    {
+      id: 'RELATORIO_EXECUTANTE',
+      texto: 'Emissão pelo profissional executante não confirmada',
+      status: 'warning',
+      origin: 'ia',
+      severity: 80,
+    },
   ];
 }
 
@@ -50,12 +91,26 @@ function getItemTextColor(status: ChecklistItem['status']): string {
   return 'text.primary';
 }
 
+function dedupeById(items: ChecklistItem[]): ChecklistItem[] {
+  const seen = new Set<string>();
+  const out: ChecklistItem[] = [];
+  for (const item of items) {
+    const key = item.id ?? item.texto;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(item);
+  }
+  return out;
+}
+
 export default function ChecklistSection({ request }: ChecklistSectionProps) {
+  const [modalOpen, setModalOpen] = useState(false);
   const isF84 = request.procedures.some((p) => p.cid.startsWith('F84'));
   const isContinuidade = request.authorizationStage === 'continuidade';
 
   const extraContinuidadeItems = isContinuidade ? buildContinuidadeItems(request) : [];
-  const allItems: ChecklistItem[] = [...request.iaChecklist, ...extraContinuidadeItems];
+  const allItems = dedupeById([...request.iaChecklist, ...extraContinuidadeItems]);
+  const { visible, hidden, totalCount } = rankChecklistItems(allItems);
 
   return (
     <Box>
@@ -83,7 +138,7 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
         ) : null}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-        {/* RN 539/2022 info item for F84 CIDs */}
+        {/* RN 539/2022 banner fixo para F84 (não conta no limite) */}
         {isF84 ? (
           <Box
             sx={{
@@ -121,8 +176,11 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
             </Box>
           </Box>
         ) : null}
-        {allItems.map((item) => (
-          <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+        {visible.map((item, idx) => (
+          <Box
+            key={`${item.id ?? item.texto}-${String(idx)}`}
+            sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}
+          >
             {STATUS_ICON_MAP[item.status]}
             <Typography
               variant="body2"
@@ -138,6 +196,38 @@ export default function ChecklistSection({ request }: ChecklistSectionProps) {
           </Box>
         ))}
       </Box>
+      {hidden.length > 0 ? (
+        <Box
+          component="button"
+          onClick={() => {
+            setModalOpen(true);
+          }}
+          sx={{
+            mt: 1.5,
+            p: 0,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'primary.main',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+        >
+          Ver todas as {totalCount} análises
+          <ArrowForwardIcon sx={{ fontSize: 14 }} />
+        </Box>
+      ) : null}
+      <ChecklistFullModal
+        open={modalOpen}
+        items={allItems}
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      />
     </Box>
   );
 }
