@@ -354,13 +354,13 @@ function ProductContent() {
 
       <FeatureItem name="Fila Operacional" route="/fila">
         Central de trabalho do autorizador. Lista todos os pedidos ativos com prioridade, SLA,
-        origem e sugestão da IA. Filtros por categoria, SLA e sugestão. Tabs de triagem: Geral, U/E,
-        Devolutivas, SLA em Risco.
+        origem e sugestão da IA. Filtros por prestador, SLA e sugestão. Tabs de triagem: Geral, SLA
+        em Risco, SLA Violado.
       </FeatureItem>
       <FeatureItem name="Tela de Análise" route="/analise?id=">
         Tela principal de decisão. Exibe dados do beneficiário, procedimentos, histórico
         assistencial, documentos anexados e o Assistente de Decisão (IA) com recomendação, checklist
-        e alertas. Ações: Aprovar, Negar, Pendenciar, Junta Médica.
+        e alertas. Ações: Aprovar, Negar.
       </FeatureItem>
       <FeatureItem name="Nova Solicitação" route="/nova-solicitacao">
         Fluxo de 6 etapas para entrada de pedidos: Upload do pedido médico (extração automática via
@@ -368,9 +368,10 @@ function ProductContent() {
         manual sem upload.
       </FeatureItem>
       <FeatureItem name="Assistente de Decisão (IA)" route="(componente da tela de análise)">
-        Painel lateral em <Code>/analise</Code>. Gera recomendação (Aprovar / Negar / Junta Médica),
-        checklist de conformidade e alertas contextuais (Liminar Judicial, NIP Ativa, Fora do Rol,
-        High-User, Prestador Não Credenciado). Base para todas as decisões assistidas.
+        Painel lateral em <Code>/analise</Code>. Gera recomendação (Aprovar / Negar), checklist de
+        conformidade e alertas contextuais (NIP Ativa, Fora do Rol, High-User, Prestador Não
+        Credenciado). Quando todas as validações administrativas passam 100%, a IA pode aprovar ou
+        negar autonomamente — o autorizador é notificado para auditoria.
       </FeatureItem>
 
       <Divider sx={{ my: 3 }} />
@@ -387,45 +388,14 @@ function ProductContent() {
       </Box>
 
       <FeatureItem name="Dashboard" route="/dashboard">
-        Visão gerencial da operação. Bignumbers: pedidos aguardando decisão, irregularidades
-        detectadas, economia gerada, efetividade da IA, valor em risco. Blocos: alertas que requerem
-        atenção, sugestão da IA, status geral por urgência, negativas fundamentadas, volume mensal,
-        motivos de negativa, tabela de pedidos urgentes.
+        Visão gerencial da operação. KPIs: total de pedidos na fila, SLA violado, SLA em risco,
+        aprovações × negações mensais. Blocos: pedidos entrando no sistema, pedidos que requerem
+        atenção agora, principais motivos de negativa.
       </FeatureItem>
       <FeatureItem name="Histórico" route="/historico">
         Registro auditável de todas as decisões tomadas. Filtrável por origem (IA automática /
         analista), decisão, categoria e divergência IA×analista. Exibe divergências entre
         recomendação da IA e decisão humana — insumo para calibração do modelo.
-      </FeatureItem>
-      <FeatureItem
-        name="Sub-estados de Pendência e Junta Médica"
-        route="(componente da fila e análise)"
-      >
-        Diferencia pedidos <em>aguardando</em> retorno de pedidos com <em>retorno já recebido</em>,
-        tanto em devolutivas documentais quanto em junta médica. Estados:{' '}
-        {[
-          'PENDENTE_AGUARDANDO',
-          'PENDENTE_RETORNO_RECEBIDO',
-          'JUNTA_AGUARDANDO',
-          'JUNTA_PARECER_RECEBIDO',
-        ].map((s) => (
-          <Box
-            key={s}
-            component="code"
-            sx={{
-              fontFamily: 'monospace',
-              fontSize: 12,
-              color: '#5a6070',
-              backgroundColor: '#F0F0F0',
-              px: 0.6,
-              py: 0.15,
-              borderRadius: 1,
-              mr: 0.5,
-            }}
-          >
-            {s}
-          </Box>
-        ))}
       </FeatureItem>
       <FeatureItem name="Modal pós-submissão" route="(componente de /nova-solicitacao)">
         Exibido após &ldquo;Enviar Solicitação&rdquo;. Dois cenários: decisão automática pela IA
@@ -721,7 +691,7 @@ function DesignSystemContent() {
   </CardContent>
 </Card>
 
-// Card de alerta (ajustes registrados, devolutiva)
+// Card de alerta (ajustes registrados, documento obrigatório)
 <Card sx={{ border: '1px solid rgba(245,158,11,0.35) !important', backgroundColor: 'rgba(255,251,235,0.6)' }}>
 
 // Card de liminar judicial
@@ -852,22 +822,11 @@ function DesignSystemContent() {
               height: 22,
             }}
           />
-          <Chip
-            label="Devolutiva"
-            size="small"
-            sx={{
-              backgroundColor: 'rgba(245,158,11,0.18)',
-              color: '#92400e',
-              fontWeight: 700,
-              height: 22,
-            }}
-          />
         </Preview>
         <CodeBlock>{`const statusColor = {
   'Em Análise': { bg: 'rgba(245,158,11,0.18)', color: '#92400e' },
   'Aprovado':   { bg: 'rgba(22,163,74,0.1)',   color: '#16a34a' },
   'Negado':     { bg: 'rgba(212,24,61,0.1)',   color: '#d4183d' },
-  'Devolutiva': { bg: 'rgba(245,158,11,0.18)', color: '#92400e' },
 }`}</CodeBlock>
 
         <DSSubTitle>SLA</DSSubTitle>
@@ -967,16 +926,6 @@ function DesignSystemContent() {
             }}
           />
           <Chip
-            label="Urgência/Emergência"
-            size="small"
-            sx={{
-              backgroundColor: 'rgba(212,24,61,0.1)',
-              color: '#d4183d',
-              fontWeight: 600,
-              height: 22,
-            }}
-          />
-          <Chip
             label="Oncologia"
             size="small"
             sx={{
@@ -1039,7 +988,6 @@ function DesignSystemContent() {
         </Preview>
         <CodeBlock>{`const catColorMap = {
   'Internação':              { bg: 'rgba(144,43,41,0.1)',  color: '#902B29' },
-  'Urgência/Emergência':     { bg: 'rgba(212,24,61,0.1)',  color: '#d4183d' },
   'Oncologia':               { bg: 'rgba(124,58,237,0.1)', color: '#7c3aed' },
   'Terapias Especiais':      { bg: 'rgba(37,99,235,0.1)',  color: '#2563eb' },
   'OPME':                    { bg: 'rgba(245,158,11,0.12)',color: '#b45309' },

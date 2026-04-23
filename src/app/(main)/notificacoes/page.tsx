@@ -91,6 +91,17 @@ export default function NotificacoesPage() {
                     transition: 'background-color 150ms ease',
                   }}
                 >
+                  {/* Unread dot */}
+                  <Box
+                    sx={{
+                      mt: 1,
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: n.read ? 'transparent' : 'primary.main',
+                      flexShrink: 0,
+                    }}
+                  />
                   {/* Content */}
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
@@ -129,20 +140,6 @@ export default function NotificacoesPage() {
                       {n.time}
                     </Typography>
                   </Box>
-
-                  {/* Unread dot */}
-                  {!n.read && (
-                    <Box
-                      sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        backgroundColor: 'primary.main',
-                        flexShrink: 0,
-                        mt: 1,
-                      }}
-                    />
-                  )}
                 </Box>
               </Box>
             );

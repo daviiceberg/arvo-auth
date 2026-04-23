@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -7,6 +10,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 import { type ChecklistItem } from '@/types/pedido';
+
+import ChecklistFullModal from '@/modules/analysis/components/ChecklistFullModal';
+import { rankChecklistItems } from '@/modules/analysis/utils/rank-checklist';
 
 type ChecklistStatus = ChecklistItem['status'];
 
@@ -31,7 +37,10 @@ interface IAChecklistSectionProps {
 }
 
 export default function IAChecklistSection({ iaChecklist }: IAChecklistSectionProps) {
+  const [modalOpen, setModalOpen] = useState(false);
   if (iaChecklist.length === 0) return null;
+
+  const { visible, hidden, totalCount } = rankChecklistItems(iaChecklist);
 
   return (
     <Box sx={{ mb: 2 }}>
@@ -50,8 +59,11 @@ export default function IAChecklistSection({ iaChecklist }: IAChecklistSectionPr
         Checklist IA
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
-        {iaChecklist.map((item) => (
-          <Box key={item.texto} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
+        {visible.map((item, idx) => (
+          <Box
+            key={`${item.id ?? item.texto}-${String(idx)}`}
+            sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}
+          >
             {STATUS_ICON_MAP[item.status]}
             <Typography
               variant="caption"
@@ -67,6 +79,38 @@ export default function IAChecklistSection({ iaChecklist }: IAChecklistSectionPr
           </Box>
         ))}
       </Box>
+      {hidden.length > 0 ? (
+        <Box
+          component="button"
+          onClick={() => {
+            setModalOpen(true);
+          }}
+          sx={{
+            mt: 1.5,
+            p: 0,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.5,
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'primary.main',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+        >
+          Ver todas as {totalCount} análises
+          <ArrowForwardIcon sx={{ fontSize: 14 }} />
+        </Box>
+      ) : null}
+      <ChecklistFullModal
+        open={modalOpen}
+        items={iaChecklist}
+        onClose={() => {
+          setModalOpen(false);
+        }}
+      />
     </Box>
   );
 }

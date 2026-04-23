@@ -17,128 +17,136 @@ import { type Request } from '@/types/pedido';
 import { useDocumentViewer } from '../hooks/useDocumentViewer';
 
 import DocumentList from './DocumentList';
-import DocumentRequestModal from './DocumentRequestModal';
 import DocumentUploadModal from './DocumentUploadModal';
 import DocumentViewer from './DocumentViewer';
 
-// ---- Component ----
 interface DocumentsSectionProps {
   request: Request;
 }
 
+interface MandatoryDocInfo {
+  name: string;
+  missing: boolean;
+}
+
+function useMandatoryDocInfo(
+  request: Request,
+  allDocs: { nome: string; tipo: string }[],
+): MandatoryDocInfo {
+  const isContinuidade = request.authorizationStage === 'continuidade';
+  const name = isContinuidade ? 'Relatório de Evolução Terapêutica' : 'Plano Terapêutico';
+  const keywords = isContinuidade
+    ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
+    : ['plano terapêutico', 'plano terapeutico', 'plano_terapeutico'];
+  const hasDoc = allDocs.some((d) =>
+    keywords.some((kw) => d.nome.toLowerCase().includes(kw) || d.tipo.toLowerCase().includes(kw)),
+  );
+  return { name, missing: !hasDoc };
+}
+
+interface MandatoryDocAlertProps {
+  request: Request;
+  mandatory: MandatoryDocInfo;
+  onAdd: (preselectTipo: string) => void;
+}
+
+function MandatoryDocAlert({ request, mandatory, onAdd }: MandatoryDocAlertProps) {
+  const isContinuidade = request.authorizationStage === 'continuidade';
+  return (
+    <Box
+      sx={{
+        border: '1px solid rgba(245,158,11,0.4)',
+        borderRadius: 2,
+        backgroundColor: 'rgba(255,251,235,0.7)',
+        p: 2,
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 1.5,
+        mb: 1.5,
+      }}
+    >
+      <WarningAmberIcon sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0, mt: 0.1 }} />
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, color: 'warning.main' }}>
+          Documento obrigatório ausente: {mandatory.name}
+        </Typography>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
+        >
+          {isContinuidade
+            ? 'Solicitações de continuidade exigem relatório de evolução terapêutica emitido pelo profissional executante.'
+            : 'Primeiras solicitações de terapia exigem plano terapêutico detalhado emitido pelo profissional responsável.'}
+        </Typography>
+      </Box>
+      <Button
+        size="small"
+        variant="outlined"
+        startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+        onClick={() => {
+          onAdd(mandatory.name);
+        }}
+        sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
+      >
+        Adicionar
+      </Button>
+    </Box>
+  );
+}
+
 export default function DocumentsSection({ request }: DocumentsSectionProps) {
   const doc = useDocumentViewer(request);
+  const mandatory = useMandatoryDocInfo(request, doc.allDocs);
+
+  const openAddModal = (preselectTipo?: string): void => {
+    if (preselectTipo !== undefined) doc.setAddTipo(preselectTipo);
+    doc.setShowAddModal(true);
+  };
 
   return (
     <Card>
       <CardContent sx={{ p: 3 }}>
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            sx={{
-              fontSize: 15,
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              color: 'text.secondary',
-            }}
-          >
-            Documentos ({doc.allDocs.length})
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
-              onClick={() => {
-                doc.setShowAddModal(true);
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <Box>
+            <Typography
+              variant="h6"
+              fontWeight={700}
+              sx={{
+                fontSize: 15,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                color: 'text.secondary',
               }}
-              sx={{ fontSize: 12, py: 0.4 }}
             >
-              Adicionar
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              color="primary"
-              startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-              onClick={() => {
-                doc.setShowSolicitarModal(true);
-              }}
-              sx={{ fontSize: 12, py: 0.4 }}
+              Documentos ({doc.allDocs.length})
+            </Typography>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ fontSize: 11, display: 'block', mt: 0.25, mb: 1.5 }}
             >
-              Solicitar complementar
-            </Button>
+              Documentos anexados são analisados automaticamente pela IA
+            </Typography>
           </Box>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+            onClick={() => {
+              openAddModal();
+            }}
+            sx={{ fontSize: 12, py: 0.4 }}
+          >
+            Adicionar
+          </Button>
         </Box>
 
-        {/* Terapias Especiais -- missing mandatory doc warning */}
-        {(() => {
-          const isContinuidade = request.authorizationStage === 'continuidade';
-          const mandatoryDocName = isContinuidade
-            ? 'Relatório de Evolução Terapêutica'
-            : 'Plano Terapêutico';
-          const mandatoryDocKeywords = isContinuidade
-            ? ['evolucao', 'evolução', 'relatório de evolução', 'relatorio de evolucao']
-            : ['plano terapêutico', 'plano terapeutico', 'plano_terapeutico'];
-          const hasDoc = doc.allDocs.some((d) =>
-            mandatoryDocKeywords.some(
-              (kw) => d.nome.toLowerCase().includes(kw) || d.tipo.toLowerCase().includes(kw),
-            ),
-          );
-          if (hasDoc) return null;
-          return (
-            <Box
-              sx={{
-                border: '1px solid rgba(245,158,11,0.4)',
-                borderRadius: 2,
-                backgroundColor: 'rgba(255,251,235,0.7)',
-                p: 2,
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 1.5,
-                mb: 1.5,
-              }}
-            >
-              <WarningAmberIcon
-                sx={{ fontSize: 20, color: 'warning.light', flexShrink: 0, mt: 0.1 }}
-              />
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  variant="body2"
-                  fontWeight={700}
-                  sx={{ fontSize: 13, color: 'warning.main' }}
-                >
-                  Documento obrigatório ausente: {mandatoryDocName}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
-                >
-                  {isContinuidade
-                    ? 'Solicitações de continuidade exigem relatório de evolução terapêutica emitido pelo profissional executante.'
-                    : 'Primeiras solicitações de terapia exigem plano terapêutico detalhado emitido pelo profissional responsável.'}
-                </Typography>
-              </Box>
-              <Button
-                size="small"
-                variant="outlined"
-                color="primary"
-                startIcon={<WarningAmberIcon sx={{ fontSize: 14 }} />}
-                onClick={() => {
-                  doc.setShowSolicitarModal(true);
-                }}
-                sx={{ fontSize: 12, py: 0.4, flexShrink: 0 }}
-              >
-                Solicitar complementar
-              </Button>
-            </Box>
-          );
-        })()}
+        {mandatory.missing ? (
+          <MandatoryDocAlert request={request} mandatory={mandatory} onAdd={openAddModal} />
+        ) : null}
 
-        {/* Document list */}
         <DocumentList
           documents={doc.allDocs}
           expandedIA={doc.expandedIA}
@@ -151,12 +159,11 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
             doc.setZoom(100);
           }}
           onAddDocument={() => {
-            doc.setShowAddModal(true);
+            openAddModal();
           }}
         />
       </CardContent>
 
-      {/* Upload modal */}
       <DocumentUploadModal
         open={doc.showAddModal}
         addTipo={doc.addTipo}
@@ -173,42 +180,25 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
         onConfirm={doc.handleAddConfirm}
       />
 
-      {/* Request complementary docs modal */}
-      <DocumentRequestModal
-        open={doc.showSolicitarModal}
-        selectedDocs={doc.solicitarDocs}
-        deadline={doc.solicitarPrazo}
-        message={doc.solicitarMensagem}
-        onDocsChange={doc.setSolicitarDocs}
-        onDeadlineChange={doc.setSolicitarPrazo}
-        onMessageChange={doc.setSolicitarMensagem}
-        onClose={() => {
-          doc.setShowSolicitarModal(false);
-        }}
-        onConfirm={doc.handleSolicitarConfirm}
-      />
-
-      {/* Toast */}
       <Snackbar
-        open={!!doc.toast}
-        autoHideDuration={4000}
+        open={doc.toast !== null}
+        autoHideDuration={doc.toast?.severity === 'info' ? 6000 : 4000}
         onClose={() => {
-          doc.setToast('');
+          doc.setToast(null);
         }}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <Alert
-          severity="success"
+          severity={doc.toast?.severity ?? 'info'}
           onClose={() => {
-            doc.setToast('');
+            doc.setToast(null);
           }}
-          sx={{ minWidth: 280 }}
+          sx={{ minWidth: 320 }}
         >
-          {doc.toast}
+          {doc.toast?.message ?? ''}
         </Alert>
       </Snackbar>
 
-      {/* Document lightbox viewer */}
       <DocumentViewer
         docName={doc.viewDoc}
         zoom={doc.zoom}

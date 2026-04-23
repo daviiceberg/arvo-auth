@@ -1,5 +1,6 @@
 .claude/
 .next/
+.vercel/
 node_modules/
 out/
 public/

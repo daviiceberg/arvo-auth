@@ -35,12 +35,12 @@ const faqs = [
   {
     question: 'Como funciona o SLA regulatório da ANS?',
     answer:
-      'O sistema monitora automaticamente os prazos da ANS para cada tipo de solicitação. Os status são: "No prazo" (verde), "Atenção" (amarelo — menos de 30% do prazo restante) e "Violado" (vermelho). Solicitações de Urgência/Emergência têm prazos reduzidos e aparecem em destaque na fila.',
+      'O sistema monitora automaticamente os prazos da ANS para cada solicitação. Os status são: "No prazo" (verde), "Atenção" (amarelo — menos de 30% do prazo restante) e "Violado" (vermelho). Pedidos com SLA próximo do fim ou vencido aparecem em destaque na fila.',
   },
   {
     question: 'O que é a sugestão de decisão da IA?',
     answer:
-      'O sistema de IA analisa cada solicitação considerando o histórico do beneficiário, cobertura contratual, documentação anexada e protocolos clínicos do Rol da ANS. A sugestão (Aprovar, Negar ou Junta Médica) é informativa — a decisão final é sempre do autorizador.',
+      'O sistema de IA analisa cada solicitação considerando o histórico do beneficiário, cobertura contratual, documentação anexada e protocolos clínicos do Rol da ANS. A sugestão (Aprovar ou Negar) é informativa — a decisão final é do autorizador. Em casos em que todas as validações administrativas passam 100%, a IA pode aprovar ou negar autonomamente, e o autorizador é notificado para auditoria.',
   },
   {
     question: 'Posso discordar da sugestão da IA?',
@@ -55,17 +55,12 @@ const faqs = [
   {
     question: 'O que significam as abas da Fila Operacional?',
     answer:
-      '"Fila Geral" exibe todos os pedidos ativos. "Urgência/Emergência" filtra pedidos com prioridade crítica. "Devolutivas" mostra pedidos aguardando complementação de documentos pelo prestador. "Aprovados por IA" exibe pedidos já triados automaticamente.',
+      '"Fila Geral" exibe todos os pedidos ativos. "SLA em Risco" filtra pedidos com prazo próximo do vencimento. "SLA Violado" filtra pedidos com prazo já vencido.',
   },
   {
     question: 'O que é a tela de Histórico?',
     answer:
       'O Histórico exibe todos os pedidos já processados — tanto decisões automáticas da IA quanto decisões dos autorizadores. Você pode filtrar por origem da decisão, ação tomada e categoria. Divergências entre IA e autorizador ficam destacadas para revisão.',
-  },
-  {
-    question: 'O que acontece quando solicito devolutiva de documentos?',
-    answer:
-      'Ao encaminhar um pedido como devolutiva, o prestador é notificado para enviar os documentos faltantes (pedido médico, laudos, exames etc.). O pedido sai da fila ativa e retorna automaticamente quando a documentação for enviada, aparecendo na aba "Devolutivas".',
   },
   {
     question: 'As decisões ficam registradas e são auditáveis?',

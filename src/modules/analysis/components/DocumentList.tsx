@@ -3,6 +3,7 @@
 import React from 'react';
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GavelIcon from '@mui/icons-material/Gavel';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -145,6 +146,24 @@ export default function DocumentList({
                   <Typography variant="body2" fontWeight={600}>
                     {docItem.nome}
                   </Typography>
+                  {processingId === docKey ? (
+                    <Chip
+                      icon={
+                        <AutoFixHighIcon
+                          sx={{ fontSize: 12, ml: '4px !important', color: 'info.main' }}
+                        />
+                      }
+                      label="Analisando com IA..."
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(37,99,235,0.1)',
+                        color: 'info.main',
+                        fontWeight: 700,
+                        fontSize: 11,
+                        height: 20,
+                      }}
+                    />
+                  ) : null}
                   {(docItem.tipo === 'Laudo Médico' ||
                     docItem.nome.toLowerCase().includes('laudo')) && (
                     <Chip
@@ -162,9 +181,9 @@ export default function DocumentList({
                   )}
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-                  {docItem.tipo}
-                  {docItem.tamanho ? ` · ${docItem.tamanho}` : ''}
-                  {docItem.enviadoEm ? ` · Enviado em ${docItem.enviadoEm}` : ''}
+                  {processingId === docKey
+                    ? 'A IA está analisando este documento'
+                    : `${docItem.tipo}${docItem.tamanho ? ` · ${docItem.tamanho}` : ''}${docItem.enviadoEm ? ` · Enviado em ${docItem.enviadoEm}` : ''}`}
                 </Typography>
               </Box>
               <Button
