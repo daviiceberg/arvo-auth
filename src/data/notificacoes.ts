@@ -66,4 +66,14 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/historico/HIS-2026-5005',
   },
+  {
+    id: 'REQ-2026-04797',
+    type: 'documento_processado',
+    title: 'REQ-2026-04797 — reanálise da IA concluída',
+    message:
+      'Ana Paula Ferreira · Terapias Especiais · checklist atualizado após anexo/remoção de documento',
+    time: '2h atrás',
+    read: true,
+    href: '/analise?id=REQ-2026-04797',
+  },
 ];

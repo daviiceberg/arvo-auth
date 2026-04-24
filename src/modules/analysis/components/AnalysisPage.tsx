@@ -1,9 +1,12 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
@@ -32,6 +35,9 @@ import ObservationsSection from './ObservationsSection';
 import PageHeader from './PageHeader';
 import ProceduresSection from './ProceduresSection';
 import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection';
+import ReprocessPromptModal from './ReprocessPromptModal';
+
+const REPROCESS_DURATION_MS = 6000;
 
 function AnalysisInner() {
   const [internalNotes, setInternalNotes] = useState('' as string);
@@ -46,6 +52,43 @@ function AnalysisInner() {
     showSnackbar,
     closeSnackbar,
   } = useAnalysis();
+
+  const [pendingReprocess, setPendingReprocess] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<string[]>([]);
+  const [showReprocessModal, setShowReprocessModal] = useState(false);
+  const [isReprocessing, setIsReprocessing] = useState(false);
+  const [lastRequestId, setLastRequestId] = useState(request.id);
+  const openAddFromModalRef = useRef<(() => void) | null>(null);
+
+  // Reset reprocess state when navigating between requests (React "reset state on prop change" pattern).
+  if (lastRequestId !== request.id) {
+    setLastRequestId(request.id);
+    setPendingReprocess(false);
+    setPendingChanges([]);
+    setShowReprocessModal(false);
+    setIsReprocessing(false);
+  }
+
+  const markStructuralChange = (description: string) => {
+    setPendingChanges((prev) => [...prev, description]);
+    setPendingReprocess(true);
+    setShowReprocessModal(true);
+  };
+
+  const requestReprocess = () => {
+    setIsReprocessing(true);
+    setShowReprocessModal(false);
+    showSnackbar(
+      'Reanálise solicitada. Os agentes de IA estão verificando o pedido — você será notificado via sino quando a análise for concluída.',
+      'info',
+    );
+    setTimeout(() => {
+      setPendingReprocess(false);
+      setPendingChanges([]);
+      setIsReprocessing(false);
+      showSnackbar('Verificação concluída — checklist da IA atualizado.', 'success');
+    }, REPROCESS_DURATION_MS);
+  };
 
   const adjustment = useAdjustmentState({ request, showSnackbar });
 
@@ -91,6 +134,58 @@ function AnalysisInner() {
         {/* Left content -- scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            {pendingReprocess && !showReprocessModal && !isReprocessing ? (
+              <Alert
+                severity="warning"
+                sx={{ borderRadius: 2 }}
+                action={
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AutoAwesomeIcon sx={{ fontSize: 14 }} />}
+                    onClick={requestReprocess}
+                  >
+                    Solicitar verificação da IA
+                  </Button>
+                }
+              >
+                <AlertTitle sx={{ fontSize: 13, fontWeight: 700 }}>
+                  Mudanças aplicadas — pendente de reanálise pela IA
+                </AlertTitle>
+                <Typography variant="caption" sx={{ fontSize: 12, display: 'block' }}>
+                  {pendingChanges.length === 1
+                    ? pendingChanges[0]
+                    : `${String(pendingChanges.length)} alterações desde a última análise da IA`}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 11, display: 'block', mt: 0.5 }}
+                >
+                  A reanálise leva alguns minutos — faça todos os ajustes necessários antes de
+                  solicitar.{' '}
+                  <Box
+                    component="button"
+                    onClick={() => {
+                      setShowReprocessModal(true);
+                    }}
+                    sx={{
+                      background: 'none',
+                      border: 'none',
+                      p: 0,
+                      fontSize: 11,
+                      color: 'primary.main',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Ver detalhes
+                  </Box>
+                </Typography>
+              </Alert>
+            ) : null}
             {request.procedureAlreadyPerformed ? (
               <Alert
                 severity="error"
@@ -142,7 +237,14 @@ function AnalysisInner() {
             />
             <AuditLogSection entries={request.auditLog ?? []} />
             <ConsolidatedHistorySection request={request} />
-            <DocumentsSection request={request} />
+            <DocumentsSection
+              request={request}
+              pendingReprocess={pendingReprocess}
+              isReprocessing={isReprocessing}
+              onRequestReprocess={requestReprocess}
+              onStructuralChange={markStructuralChange}
+              attachHandlerRef={openAddFromModalRef}
+            />
           </Box>
         </Box>
 
@@ -264,6 +366,22 @@ function AnalysisInner() {
         onClose={() => {
           decision.setShowShortcutsHelp(false);
         }}
+      />
+
+      {/* Reprocess prompt modal */}
+      <ReprocessPromptModal
+        open={showReprocessModal}
+        changes={pendingChanges}
+        onClose={() => {
+          setShowReprocessModal(false);
+        }}
+        onAttachAnother={() => {
+          setShowReprocessModal(false);
+          setTimeout(() => {
+            openAddFromModalRef.current?.();
+          }, 120);
+        }}
+        onRequestReprocess={requestReprocess}
       />
     </Box>
   );

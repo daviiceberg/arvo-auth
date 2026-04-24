@@ -2,14 +2,31 @@
 
 import React from 'react';
 
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { type DocUpload } from '../types';
+
+function getDocIcon(filename: string): React.ReactNode {
+  const ext = filename.toLowerCase().split('.').pop() ?? '';
+  if (ext === 'pdf') {
+    return <PictureAsPdfIcon sx={{ color: 'error.main', fontSize: 28 }} />;
+  }
+  if (ext === 'jpg' || ext === 'jpeg' || ext === 'png') {
+    return <ImageOutlinedIcon sx={{ color: 'info.main', fontSize: 28 }} />;
+  }
+  return <DescriptionOutlinedIcon sx={{ color: '#6b7280', fontSize: 28 }} />;
+}
 
 interface StepDocumentsProps {
   etapaAutorizacao: string;
@@ -109,28 +126,56 @@ export function StepDocuments({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 2,
-                p: 1.5,
-                border: '1px solid rgba(22,163,74,0.25)',
-                borderRadius: 1.5,
-                backgroundColor: 'rgba(22,163,74,0.04)',
+                p: 2,
+                border: '1px solid rgba(0,0,0,0.08)',
+                borderRadius: 2,
+                backgroundColor: '#ffffff',
+                transition: 'all 0.15s ease',
+                '&:hover': {
+                  borderColor: 'rgba(0,0,0,0.15)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                },
               }}
             >
-              <CheckCircleOutlineIcon sx={{ fontSize: 18, color: 'success.main', flexShrink: 0 }} />
+              <Box sx={{ flexShrink: 0 }}>{getDocIcon(doc.nome)}</Box>
               <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={600}
+                    sx={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  >
+                    {doc.nome}
+                  </Typography>
+                  <Chip
+                    icon={
+                      <CheckCircleOutlineIcon
+                        sx={{ fontSize: 11, ml: '4px !important', color: 'success.main' }}
+                      />
+                    }
+                    label="Anexado"
+                    size="small"
+                    sx={{
+                      backgroundColor: 'rgba(22,163,74,0.08)',
+                      color: 'success.main',
+                      fontWeight: 600,
+                      fontSize: 11,
+                      height: 20,
+                    }}
+                  />
+                </Box>
                 <Typography
-                  variant="body2"
-                  fontWeight={600}
-                  sx={{ fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontSize: 12, display: 'block', mt: 0.25 }}
                 >
-                  {doc.nome}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
                   {doc.tamanho}
                 </Typography>
               </Box>
               <IconButton
                 size="small"
                 color="error"
+                aria-label={`Remover ${doc.nome}`}
                 onClick={() => {
                   handleRemoveDocAdicional(doc.id);
                 }}
@@ -140,6 +185,33 @@ export function StepDocuments({
             </Box>
           ))}
         </Box>
+      )}
+
+      {docsAdicionais.length > 0 && (
+        <Alert
+          severity="info"
+          icon={<AutoAwesomeIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            mb: 2,
+            borderRadius: 2,
+            border: '1px solid rgba(37,99,235,0.2)',
+            backgroundColor: 'rgba(37,99,235,0.04)',
+            '& .MuiAlert-icon': { color: 'info.main' },
+          }}
+        >
+          <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, mb: 0.5 }}>
+            Documentos serão analisados pela IA após o envio
+          </Typography>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontSize: 12, display: 'block' }}
+          >
+            Ao concluir a solicitação, a IA fará a extração e verificação automática dos arquivos
+            anexados. Isso leva alguns minutos — você será notificado quando a análise estiver
+            concluída.
+          </Typography>
+        </Alert>
       )}
 
       {/* Upload area */}
@@ -191,17 +263,6 @@ export function StepDocuments({
           PDF, JPG ou PNG
         </Typography>
       </Box>
-
-      {docsAdicionais.length > 0 && (
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', mt: 1.5, fontSize: 12 }}
-        >
-          {docsAdicionais.length} arquivo{docsAdicionais.length > 1 ? 's' : ''} anexado
-          {docsAdicionais.length > 1 ? 's' : ''}
-        </Typography>
-      )}
     </Box>
   );
 }

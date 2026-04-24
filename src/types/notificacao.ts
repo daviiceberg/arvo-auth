@@ -23,7 +23,8 @@ export type NotificationType =
   | 'processamento_erro'
   | 'sla_risco'
   | 'sla_violado'
-  | 'novo_pedido_fila';
+  | 'novo_pedido_fila'
+  | 'documento_processado';
 
 export interface Notification {
   id: string;
