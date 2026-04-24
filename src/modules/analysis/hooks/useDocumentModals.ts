@@ -4,8 +4,6 @@ import { useState, useRef, type Dispatch, type SetStateAction } from 'react';
 
 import { type Document } from '@/types/pedido';
 
-const AI_ANALYSIS_DURATION_MS = 8000;
-
 export type DocumentToastSeverity = 'info' | 'success';
 export interface DocumentToast {
   message: string;
@@ -14,9 +12,10 @@ export interface DocumentToast {
 
 interface UseDocumentModalsParams {
   setLocalDocs: Dispatch<SetStateAction<Document[]>>;
+  onStructuralChange?: (description: string) => void;
 }
 
-export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
+export function useDocumentModals({ setLocalDocs, onStructuralChange }: UseDocumentModalsParams) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addTipo, setAddTipo] = useState('');
   const [addDescricao, setAddDescricao] = useState('');
@@ -56,19 +55,9 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
     setAddTipo('');
     setAddDescricao('');
     setAddFile(null);
-    setToast({
-      message:
-        'Documento anexado. A IA está analisando — você será notificado quando a verificação for concluída.',
-      severity: 'info',
-    });
-    setProcessingId(newId);
-    setTimeout(() => {
-      setProcessingId(null);
-      setToast({
-        message: 'Análise concluída — conclusões da IA atualizadas no checklist.',
-        severity: 'success',
-      });
-    }, AI_ANALYSIS_DURATION_MS);
+    if (onStructuralChange) {
+      onStructuralChange(`${newDoc.nome} adicionado`);
+    }
   };
 
   const handleAddModalClose = () => {
@@ -92,6 +81,7 @@ export function useDocumentModals({ setLocalDocs }: UseDocumentModalsParams) {
     setAddDragOver,
     addError,
     processingId,
+    setProcessingId,
     toast,
     setToast,
     fileInputRef,

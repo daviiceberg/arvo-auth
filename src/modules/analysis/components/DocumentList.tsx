@@ -4,6 +4,7 @@ import React from 'react';
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import GavelIcon from '@mui/icons-material/Gavel';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -13,6 +14,8 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { type Document } from '@/types/pedido';
@@ -44,18 +47,22 @@ interface DocumentListProps {
   documents: Document[];
   expandedIA: Record<string, boolean>;
   processingId: string | null;
+  disabled?: boolean;
   onToggleIA: (docKey: string) => void;
   onViewDoc: (docName: string) => void;
   onAddDocument: () => void;
+  onRemoveDocument?: (docId: string, docName: string) => void;
 }
 
 export default function DocumentList({
   documents,
   expandedIA,
   processingId,
+  disabled = false,
   onToggleIA,
   onViewDoc,
   onAddDocument,
+  onRemoveDocument,
 }: DocumentListProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -197,6 +204,34 @@ export default function DocumentList({
               >
                 Visualizar
               </Button>
+              {onRemoveDocument ? (
+                <Tooltip
+                  title={
+                    disabled
+                      ? 'Desabilitado durante reanálise'
+                      : processingId === docItem.id
+                        ? 'Aguarde a análise concluir'
+                        : 'Remover documento'
+                  }
+                >
+                  <span>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      aria-label={`Remover ${docItem.nome}`}
+                      disabled={disabled || processingId === docItem.id}
+                      onClick={() => {
+                        onRemoveDocument(docItem.id, docItem.nome);
+                      }}
+                      sx={{
+                        '&:hover': { backgroundColor: 'rgba(212,24,61,0.08)' },
+                      }}
+                    >
+                      <DeleteOutlineIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ) : null}
             </Box>
 
             {/* IA Extraction panel */}

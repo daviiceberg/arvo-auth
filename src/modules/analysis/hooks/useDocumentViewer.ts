@@ -6,15 +6,39 @@ import { type Document, type Request } from '@/types/pedido';
 
 import { useDocumentModals } from './useDocumentModals';
 
-export function useDocumentViewer(request: Request) {
+interface UseDocumentViewerParams {
+  onStructuralChange?: (description: string) => void;
+}
+
+export function useDocumentViewer(request: Request, params: UseDocumentViewerParams = {}) {
   const [localDocs, setLocalDocs] = useState<Document[]>([]);
+  const [removedServerDocIds, setRemovedServerDocIds] = useState(new Set<string>());
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [zoom, setZoom] = useState(100);
   const [expandedIA, setExpandedIA] = useState<Record<string, boolean>>({ '0': true });
 
-  const modals = useDocumentModals({ setLocalDocs });
+  const modals = useDocumentModals({
+    setLocalDocs,
+    onStructuralChange: params.onStructuralChange,
+  });
 
-  const allDocs = [...request.documents, ...localDocs];
+  const allDocs = [
+    ...request.documents.filter((d) => !removedServerDocIds.has(d.id)),
+    ...localDocs,
+  ];
+
+  const removeDocument = (docId: string, _docName: string) => {
+    const isLocal = localDocs.some((d) => d.id === docId);
+    if (isLocal) {
+      setLocalDocs((prev) => prev.filter((d) => d.id !== docId));
+    } else {
+      setRemovedServerDocIds((prev) => {
+        const next = new Set(prev);
+        next.add(docId);
+        return next;
+      });
+    }
+  };
 
   return {
     localDocs,
@@ -25,6 +49,7 @@ export function useDocumentViewer(request: Request) {
     expandedIA,
     setExpandedIA,
     allDocs,
+    removeDocument,
 
     showAddModal: modals.showAddModal,
     setShowAddModal: modals.setShowAddModal,

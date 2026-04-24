@@ -135,13 +135,22 @@ export default function ChecklistFullModal({ open, items, onClose }: ChecklistFu
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ pr: 6, pb: 0.5 }}>
-        <Typography variant="h6" sx={{ fontSize: 16, fontWeight: 700 }}>
+        <Box component="span" sx={{ display: 'block', fontSize: 16, fontWeight: 700 }}>
           Análises da IA — Visão completa
-        </Typography>
-        <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+        </Box>
+        <Box
+          component="span"
+          sx={{
+            display: 'block',
+            fontSize: 12,
+            fontWeight: 400,
+            color: 'text.secondary',
+            mt: 0.25,
+          }}
+        >
           {items.length} análises · {negativeCount} negativas · {warningCount} alertas ·{' '}
           {positiveCount} positivas
-        </Typography>
+        </Box>
         <IconButton
           onClick={onClose}
           sx={{ position: 'absolute', right: 8, top: 8, color: 'text.secondary' }}

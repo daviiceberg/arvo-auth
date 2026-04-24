@@ -1,14 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
@@ -22,6 +30,11 @@ import DocumentViewer from './DocumentViewer';
 
 interface DocumentsSectionProps {
   request: Request;
+  pendingReprocess?: boolean;
+  isReprocessing?: boolean;
+  onRequestReprocess?: () => void;
+  onStructuralChange?: (description: string) => void;
+  attachHandlerRef?: React.RefObject<(() => void) | null>;
 }
 
 interface MandatoryDocInfo {
@@ -48,9 +61,10 @@ interface MandatoryDocAlertProps {
   request: Request;
   mandatory: MandatoryDocInfo;
   onAdd: (preselectTipo: string) => void;
+  disabled: boolean;
 }
 
-function MandatoryDocAlert({ request, mandatory, onAdd }: MandatoryDocAlertProps) {
+function MandatoryDocAlert({ request, mandatory, onAdd, disabled }: MandatoryDocAlertProps) {
   const isContinuidade = request.authorizationStage === 'continuidade';
   return (
     <Box
@@ -84,6 +98,7 @@ function MandatoryDocAlert({ request, mandatory, onAdd }: MandatoryDocAlertProps
         size="small"
         variant="outlined"
         startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+        disabled={disabled}
         onClick={() => {
           onAdd(mandatory.name);
         }}
@@ -95,19 +110,105 @@ function MandatoryDocAlert({ request, mandatory, onAdd }: MandatoryDocAlertProps
   );
 }
 
-export default function DocumentsSection({ request }: DocumentsSectionProps) {
-  const doc = useDocumentViewer(request);
+interface HeaderActionsProps {
+  isReprocessing: boolean;
+  pendingReprocess: boolean;
+  onRequestReprocess: () => void;
+  onAdd: () => void;
+}
+
+function HeaderActions({
+  isReprocessing,
+  pendingReprocess,
+  onRequestReprocess,
+  onAdd,
+}: HeaderActionsProps) {
+  if (isReprocessing) {
+    return (
+      <Chip
+        icon={<CircularProgress size={12} sx={{ color: 'info.main !important' }} />}
+        label="Agentes analisando..."
+        size="small"
+        sx={{
+          backgroundColor: 'rgba(37,99,235,0.1)',
+          color: 'info.main',
+          fontWeight: 700,
+          fontSize: 11,
+          height: 24,
+        }}
+      />
+    );
+  }
+  return (
+    <Box sx={{ display: 'flex', gap: 1 }}>
+      {pendingReprocess ? (
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          startIcon={<AutoAwesomeIcon sx={{ fontSize: 14 }} />}
+          onClick={onRequestReprocess}
+          sx={{ fontSize: 12, py: 0.4 }}
+        >
+          Solicitar verificação da IA
+        </Button>
+      ) : null}
+      <Button
+        size="small"
+        variant="outlined"
+        startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
+        onClick={onAdd}
+        sx={{ fontSize: 12, py: 0.4 }}
+      >
+        Adicionar
+      </Button>
+    </Box>
+  );
+}
+
+export default function DocumentsSection({
+  request,
+  pendingReprocess = false,
+  isReprocessing = false,
+  onRequestReprocess,
+  onStructuralChange,
+  attachHandlerRef,
+}: DocumentsSectionProps) {
+  const doc = useDocumentViewer(request, { onStructuralChange });
   const mandatory = useMandatoryDocInfo(request, doc.allDocs);
+  const [pendingRemoval, setPendingRemoval] = useState<{ id: string; name: string } | null>(null);
 
   const openAddModal = (preselectTipo?: string): void => {
     if (preselectTipo !== undefined) doc.setAddTipo(preselectTipo);
     doc.setShowAddModal(true);
   };
 
+  useEffect(() => {
+    if (attachHandlerRef) {
+      attachHandlerRef.current = () => {
+        openAddModal();
+      };
+    }
+    return () => {
+      if (attachHandlerRef) attachHandlerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attachHandlerRef]);
+
+  const handleConfirmRemove = (): void => {
+    if (pendingRemoval) {
+      doc.removeDocument(pendingRemoval.id, pendingRemoval.name);
+      setPendingRemoval(null);
+    }
+  };
+
+  const handleRequestReprocess = (): void => {
+    if (onRequestReprocess) onRequestReprocess();
+  };
+
   return (
-    <Card>
+    <Card aria-busy={isReprocessing}>
       <CardContent sx={{ p: 3 }}>
-        {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <Box>
             <Typography
@@ -130,27 +231,30 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
               Documentos anexados são analisados automaticamente pela IA
             </Typography>
           </Box>
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<AttachFileIcon sx={{ fontSize: 14 }} />}
-            onClick={() => {
+          <HeaderActions
+            isReprocessing={isReprocessing}
+            pendingReprocess={pendingReprocess}
+            onRequestReprocess={handleRequestReprocess}
+            onAdd={() => {
               openAddModal();
             }}
-            sx={{ fontSize: 12, py: 0.4 }}
-          >
-            Adicionar
-          </Button>
+          />
         </Box>
 
         {mandatory.missing ? (
-          <MandatoryDocAlert request={request} mandatory={mandatory} onAdd={openAddModal} />
+          <MandatoryDocAlert
+            request={request}
+            mandatory={mandatory}
+            onAdd={openAddModal}
+            disabled={isReprocessing}
+          />
         ) : null}
 
         <DocumentList
           documents={doc.allDocs}
           expandedIA={doc.expandedIA}
           processingId={doc.processingId}
+          disabled={isReprocessing}
           onToggleIA={(docKey) => {
             doc.setExpandedIA((prev) => ({ ...prev, [docKey]: !prev[docKey] }));
           }}
@@ -160,6 +264,9 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
           }}
           onAddDocument={() => {
             openAddModal();
+          }}
+          onRemoveDocument={(id, name) => {
+            setPendingRemoval({ id, name });
           }}
         />
       </CardContent>
@@ -179,6 +286,34 @@ export default function DocumentsSection({ request }: DocumentsSectionProps) {
         onClose={doc.handleAddModalClose}
         onConfirm={doc.handleAddConfirm}
       />
+
+      <Dialog
+        open={pendingRemoval !== null}
+        onClose={() => {
+          setPendingRemoval(null);
+        }}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontSize: 15, fontWeight: 700 }}>
+          Remover este documento do pedido?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ fontSize: 13 }}>{pendingRemoval?.name ?? ''}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setPendingRemoval(null);
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button color="error" variant="contained" onClick={handleConfirmRemove}>
+            Remover
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={doc.toast !== null}
