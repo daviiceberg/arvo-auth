@@ -11,6 +11,15 @@ interface UseQueueDataParams {
   pedidos: Request[];
 }
 
+function isInOperationalQueue(request: Request): boolean {
+  if (request.routing?.outcome === 'queued_for_human_review') {
+    return true;
+  }
+
+  // Backward compatibility while mock/API payloads are migrated.
+  return request.status === 'Em Análise';
+}
+
 function matchesSearch(request: Request, search: string): boolean {
   const q = search.toLowerCase().trim();
   if (q === '') return true;
@@ -74,13 +83,11 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const filteredByTab = useMemo(
     () =>
-      pedidos
-        .filter((p) => p.status === 'Em Análise')
-        .filter((p) => {
-          if (tabValue === 1) return p.slaStatus === 'warning';
-          if (tabValue === 2) return p.slaStatus === 'violated';
-          return true;
-        }),
+      pedidos.filter(isInOperationalQueue).filter((p) => {
+        if (tabValue === 1) return p.slaStatus === 'warning';
+        if (tabValue === 2) return p.slaStatus === 'violated';
+        return true;
+      }),
     [pedidos, tabValue],
   );
 
@@ -112,12 +119,12 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   );
 
   const warningCount = useMemo(
-    () => pedidos.filter((p) => p.slaStatus === 'warning').length,
+    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'warning').length,
     [pedidos],
   );
 
   const violatedCount = useMemo(
-    () => pedidos.filter((p) => p.slaStatus === 'violated').length,
+    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'violated').length,
     [pedidos],
   );
 

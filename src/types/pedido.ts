@@ -8,6 +8,16 @@ export type GuideType = 'Eleitiva';
 
 export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
+export type RoutingOutcome = 'queued_for_human_review' | 'auto_decision';
+export type RoutingRuleSource = 'rf004_event_type_tea_queue_only' | 'tenant_routing_rules';
+
+export interface RoutingMetadata {
+  outcome: RoutingOutcome;
+  queueType?: 'operational' | 'medical_board';
+  ruleSource?: RoutingRuleSource;
+  routedAt?: string;
+}
+
 export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
 
 export type SLAStatus = 'ok' | 'warning' | 'violated';
@@ -163,6 +173,7 @@ export interface Request {
   operatorRegistryANS?: string;
   isNewborn?: boolean;
   origin: RequestOrigin;
+  routing?: RoutingMetadata;
   procedures: Procedure[];
   alerts: string[];
   iaSuggestion: IASuggestion;
