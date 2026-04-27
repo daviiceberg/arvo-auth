@@ -119,12 +119,12 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   );
 
   const warningCount = useMemo(
-    () => pedidos.filter((p) => p.slaStatus === 'warning').length,
+    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'warning').length,
     [pedidos],
   );
 
   const violatedCount = useMemo(
-    () => pedidos.filter((p) => p.slaStatus === 'violated').length,
+    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'violated').length,
     [pedidos],
   );
 

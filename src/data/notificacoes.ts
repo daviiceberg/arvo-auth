@@ -66,7 +66,7 @@ export const NOTIFICACOES: Notification[] = [
     href: '/analise?id=REQ-2026-04891',
   },
   {
-    id: 'REQ-2026-04797',
+    id: 'REQ-2026-04797-doc',
     type: 'documento_processado',
     title: 'REQ-2026-04797 — reanálise da IA concluída',
     message:
