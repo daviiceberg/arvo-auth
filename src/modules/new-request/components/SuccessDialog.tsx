@@ -88,20 +88,10 @@ export function SuccessDialog({
             sx={{ color: '#64748b', fontSize: 12, lineHeight: 1.8, display: 'block' }}
           >
             {'\u2022'}{' '}
-            <Box component="span" sx={{ fontWeight: 600, color: '#15803d' }}>
-              Autorizado ou negado automaticamente
-            </Box>{' '}
-            — sem ação necessária, ou
-          </Typography>
-          <Typography
-            variant="caption"
-            sx={{ color: '#64748b', fontSize: 12, lineHeight: 1.8, display: 'block' }}
-          >
-            {'\u2022'}{' '}
             <Box component="span" sx={{ fontWeight: 600, color: 'primary.main' }}>
               Encaminhado para a Fila Operacional
             </Box>{' '}
-            — quando a IA identificar necessidade de análise&nbsp;humana
+            — para decisão do analista responsável
           </Typography>
         </Box>
 

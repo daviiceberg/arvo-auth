@@ -7,19 +7,12 @@
  * - Tenant é a camada acima.
  * - Fora do MVP: devolutivas, pendências com retorno, "urgência" (usar SLA).
  *
- * Sobre decisão automática pela IA:
- * - A IA PODE aprovar ou negar autonomamente quando todas as validações
- *   administrativas passam 100% (aprovação automática) ou quando há bloqueio
- *   administrativo claro (negativa automática).
- * - Nesses casos o autorizador precisa ser notificado para ter visibilidade
- *   do que está acontecendo na fila sem precisar intervir manualmente.
- * - Aprovação e negativa automáticas têm tipos distintos porque o tom visual
- *   e a urgência de auditoria são diferentes.
+ * RF-004 / NEW-881:
+ * - Para TEA, não há decisão automática final.
+ * - O fluxo sempre notifica preparação/entrada em fila e atualização de análise.
  */
 export type NotificationType =
   | 'processamento_ok'
-  | 'processamento_auto_aprovado'
-  | 'processamento_auto_negado'
   | 'processamento_erro'
   | 'sla_risco'
   | 'sla_violado'

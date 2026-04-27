@@ -11,14 +11,13 @@ export const NOTIFICACOES: Notification[] = [
     href: '/analise?id=REQ-2026-04801',
   },
   {
-    id: 'HIS-2026-5001',
-    type: 'processamento_auto_aprovado',
-    title: 'HIS-2026-5001 aprovado automaticamente pela IA',
-    message:
-      'Lucas Henrique Oliveira · Terapias Especiais · todas as validações administrativas aprovadas',
+    id: 'REQ-2026-04895',
+    type: 'novo_pedido_fila',
+    title: 'REQ-2026-04895 entrou na fila operacional',
+    message: 'Arthur Lima Ferraz · Terapias Especiais · aguardando decisão do analista',
     time: '5min atrás',
     read: false,
-    href: '/historico/HIS-2026-5001',
+    href: '/analise?id=REQ-2026-04895',
   },
   {
     id: 'REQ-2026-04870',
@@ -57,14 +56,14 @@ export const NOTIFICACOES: Notification[] = [
     href: '/analise?id=REQ-2026-04825',
   },
   {
-    id: 'HIS-2026-5005',
-    type: 'processamento_auto_negado',
-    title: 'HIS-2026-5005 negado automaticamente pela IA',
+    id: 'REQ-2026-04891',
+    type: 'processamento_ok',
+    title: 'REQ-2026-04891 pronto para análise',
     message:
-      'Caio Rodrigues Barros · Terapias Especiais · CRM do solicitante inválido no CFM (negativa administrativa)',
+      'Caio Rodrigues Barros · Terapias Especiais · sugestão da IA disponível para revisão humana',
     time: '1h atrás',
     read: true,
-    href: '/historico/HIS-2026-5005',
+    href: '/analise?id=REQ-2026-04891',
   },
   {
     id: 'REQ-2026-04797',
