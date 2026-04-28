@@ -17,10 +17,22 @@ interface AuditLogSectionProps {
   entries: AuditLogEntry[];
 }
 
+/**
+ * Exibe os eventos do auditLog do pedido como uma timeline.
+ *
+ * CONVENÇÃO DE ORDENAÇÃO:
+ * Os eventos são recebidos em ordem cronológica ascendente (mais antigo → mais recente)
+ * e exibidos em ordem descendente (mais recente no topo). Esta inversão acontece
+ * dentro deste componente — não modificar a ordem nos mocks ou no payload do BE.
+ */
 export default function AuditLogSection({ entries }: AuditLogSectionProps) {
   const [open, setOpen] = useState(true);
 
   if (entries.length === 0) return null;
+
+  // Apresentação: mais recente no topo, mais antigo no fim.
+  // Os dados chegam em ordem cronológica ascendente; invertemos para exibição.
+  const orderedEntries = [...entries].reverse();
 
   return (
     <Card>
@@ -64,14 +76,14 @@ export default function AuditLogSection({ entries }: AuditLogSectionProps) {
         </Box>
         <Collapse in={open}>
           <Box sx={{ mt: 2.5 }}>
-            {entries.map((entry, idx) => (
+            {orderedEntries.map((entry, idx) => (
               <Box
                 key={idx}
                 sx={{
                   display: 'flex',
                   gap: 1.5,
                   position: 'relative',
-                  pb: idx < entries.length - 1 ? 0 : 0,
+                  pb: idx < orderedEntries.length - 1 ? 0 : 0,
                   ml: 0.5,
                 }}
               >
@@ -96,7 +108,7 @@ export default function AuditLogSection({ entries }: AuditLogSectionProps) {
                       flexShrink: 0,
                     }}
                   />
-                  {idx < entries.length - 1 ? (
+                  {idx < orderedEntries.length - 1 ? (
                     <Box
                       sx={{
                         width: '1px',
@@ -114,9 +126,10 @@ export default function AuditLogSection({ entries }: AuditLogSectionProps) {
                   sx={{
                     flex: 1,
                     minWidth: 0,
-                    pb: idx < entries.length - 1 ? 2 : 0,
-                    borderBottom: idx < entries.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
-                    mb: idx < entries.length - 1 ? 0.5 : 0,
+                    pb: idx < orderedEntries.length - 1 ? 2 : 0,
+                    borderBottom:
+                      idx < orderedEntries.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none',
+                    mb: idx < orderedEntries.length - 1 ? 0.5 : 0,
                   }}
                 >
                   <Typography

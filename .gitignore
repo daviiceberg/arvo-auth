@@ -27,6 +27,7 @@
 # ide
 .idea/
 .vscode/
+.claude/
 
 # debug
 npm-debug.log*

@@ -22,9 +22,9 @@ const KEYBOARD_SHORTCUTS = [
 
 const QUICK_LINKS = [
   { label: 'FAQ — Perguntas Frequentes', path: '/ajuda' },
-  { label: 'Manual do Autorizador', path: '/ajuda' },
-  { label: 'DUTs e Protocolos ANS', path: '/ajuda' },
-  { label: 'Contato com Suporte', path: '/ajuda' },
+  { label: 'Manual do Autorizador', path: '/ajuda/manual' },
+  { label: 'DUTs e Protocolos ANS', path: '/ajuda/duts-protocolos' },
+  { label: 'Contato com Suporte', path: '/ajuda#contato' },
 ] as const;
 
 interface HelpDrawerProps {

@@ -69,7 +69,7 @@ export default function HistoryAuthorizations({ authorizations }: HistoryAuthori
           Nenhuma autorização anterior registrada.
         </Typography>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
           {visible.map((auth) => {
             const dc = decisionChipColor(auth.decisao);
             return (
