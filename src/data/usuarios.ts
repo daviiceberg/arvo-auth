@@ -39,7 +39,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-001',
     name: 'Ana Paula Santos',
-    email: 'ana.santos@athena.com.br',
+    email: 'ana.santos@operadora.exemplo.br',
     role: 'gestor',
     status: 'ativo',
     lastAccess: '24/03/2026 14:32',
@@ -49,7 +49,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-002',
     name: 'Carlos Eduardo Ramos',
-    email: 'carlos.ramos@athena.com.br',
+    email: 'carlos.ramos@operadora.exemplo.br',
     role: 'autorizador',
     status: 'ativo',
     lastAccess: '24/03/2026 12:10',
@@ -59,7 +59,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-003',
     name: 'Juliana Costa',
-    email: 'juliana.costa@athena.com.br',
+    email: 'juliana.costa@operadora.exemplo.br',
     role: 'autorizador',
     status: 'ativo',
     lastAccess: '23/03/2026 16:45',
@@ -69,7 +69,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-004',
     name: 'Roberto Almeida',
-    email: 'roberto.almeida@athena.com.br',
+    email: 'roberto.almeida@operadora.exemplo.br',
     role: 'auditor',
     status: 'ativo',
     lastAccess: '22/03/2026 09:00',
@@ -79,7 +79,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-005',
     name: 'Fernanda Lima',
-    email: 'fernanda.lima@athena.com.br',
+    email: 'fernanda.lima@operadora.exemplo.br',
     role: 'autorizador',
     status: 'ativo',
     lastAccess: '21/03/2026 11:20',
@@ -89,7 +89,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-006',
     name: 'Marcos Vinicius Souza',
-    email: 'marcos.souza@athena.com.br',
+    email: 'marcos.souza@operadora.exemplo.br',
     role: 'auditor',
     status: 'inativo',
     lastAccess: '10/01/2026 08:30',
@@ -99,7 +99,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-007',
     name: 'Patricia Nogueira',
-    email: 'patricia.nogueira@athena.com.br',
+    email: 'patricia.nogueira@operadora.exemplo.br',
     role: 'gestor',
     status: 'ativo',
     lastAccess: '24/03/2026 08:55',
@@ -109,7 +109,7 @@ export const mockUsers: SystemUser[] = [
   {
     id: 'u-008',
     name: 'Diego Ferreira',
-    email: 'diego.ferreira@athena.com.br',
+    email: 'diego.ferreira@operadora.exemplo.br',
     role: 'autorizador',
     status: 'inativo',
     createdAt: '15/11/2025',
