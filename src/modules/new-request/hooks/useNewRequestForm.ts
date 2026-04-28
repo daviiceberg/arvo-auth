@@ -21,7 +21,7 @@ export const initialForm: FormData = {
   carteirinha: '9876543210987654',
   dataNascimento: '2018-07-22',
   cpf: '',
-  operadora: 'Athena Saúde',
+  operadora: '',
   validadeCarteirinha: '',
   telefoneContato: '',
   dataInclusaoPlano: '',

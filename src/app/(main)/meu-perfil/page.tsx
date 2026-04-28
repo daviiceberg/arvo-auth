@@ -115,7 +115,7 @@ export default function MeuPerfilPage() {
             />
             <TextField
               label="E-mail"
-              value="ana.santos@athena.com.br"
+              value="ana.santos@operadora.exemplo.br"
               disabled
               size="small"
               fullWidth
