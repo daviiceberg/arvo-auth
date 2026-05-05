@@ -38,9 +38,7 @@ export default function useDashboardData() {
 
   const categoryBreakdown = useMemo<CategoryBreakdownEntry[]>(() => {
     return CATEGORIES_ORDER.map((category) => {
-      const slice = pedidos.filter(
-        (p) => p.category === category && (p.status === 'Em Análise' || p.status === 'Pendente'),
-      );
+      const slice = pedidos.filter((p) => p.category === category);
       return {
         category,
         color: categoryColorMap[category].color,
