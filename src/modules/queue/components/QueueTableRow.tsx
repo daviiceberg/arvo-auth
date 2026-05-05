@@ -18,6 +18,7 @@ import {
   SLAChip,
 } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
+import { formatDurationFromHours } from '@/shared/utils/formatDuration';
 import { type Request } from '@/types/pedido';
 
 // ── Row style helper ─────────────────────────────────────────────────
@@ -94,7 +95,7 @@ function ActionCell({ request, onRowClick }: ActionCellProps) {
       <Tooltip
         title={
           request.operatorLock
-            ? `Em análise por ${request.operatorLock.nome} desde ${request.operatorLock.desde}`
+            ? `Em análise por ${request.operatorLock.userName} desde ${request.operatorLock.lockedAt}`
             : ''
         }
         placement="top"
@@ -126,7 +127,7 @@ function ActionCell({ request, onRowClick }: ActionCellProps) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.4, mt: 0.5 }}>
           <LockOutlinedIcon sx={{ fontSize: 11, color: 'text.disabled' }} />
           <Typography variant="caption" sx={{ fontSize: 10, color: 'text.disabled' }}>
-            {request.operatorLock.nome}
+            {request.operatorLock.userName}
           </Typography>
         </Box>
       ) : null}
@@ -197,7 +198,7 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <AccessTimeIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
-            {request.queueTime}
+            {formatDurationFromHours(request.queueTimeHours)}
           </Typography>
         </Box>
       </TableCell>

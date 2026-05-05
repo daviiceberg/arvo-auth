@@ -67,19 +67,7 @@ export default function PageHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {request.id}
           </Typography>
-          {request.guidePassword ? (
-            <Typography
-              variant="caption"
-              sx={{ fontSize: 12, color: 'text.secondary', fontFamily: 'monospace' }}
-            >
-              Senha: {request.guidePassword}
-            </Typography>
-          ) : null}
-          {request.passwordExpiryDate ? (
-            <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary' }}>
-              Val.: {request.passwordExpiryDate}
-            </Typography>
-          ) : null}
+          {/* Senha + Validade — removidos em M1; reintroduzir em M2 após decisão favorável */}
           {request.slaStatus === 'violated' && (
             <Chip
               icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
@@ -208,7 +196,7 @@ export default function PageHeader({
             const sla = formatSlaDisplay(
               request.slaStatus,
               request.slaText,
-              request.queueTime,
+              request.queueTimeHours,
               request.slaDeadlineHours,
             );
             return (

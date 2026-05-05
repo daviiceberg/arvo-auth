@@ -216,8 +216,7 @@ function NewRequestInner() {
         docDragOver={docUpload.docDragOver}
         setDocDragOver={docUpload.setDocDragOver}
         docFileRef={docUpload.docFileRef}
-        setNewDocFile={docUpload.setNewDocFile}
-        handleAddDocAdicional={docUpload.handleAddDocAdicional}
+        addDocAdicionalFile={docUpload.addDocAdicionalFile}
         handleRemoveDocAdicional={docUpload.handleRemoveDocAdicional}
       />
     ),

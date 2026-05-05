@@ -9,11 +9,15 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
+import Skeleton from '@mui/material/Skeleton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type ChipColor, iaSuggestionColorMap } from '@/shared/constants';
+import { alertOutlines, type ChipColor, iaSuggestionColorMap } from '@/shared/constants';
 import { type IASuggestion, type Request } from '@/types/pedido';
 
 import { type ProcDecision } from '../types';
@@ -22,6 +26,13 @@ import ChecklistSection from './ChecklistSection';
 import DecisionButtons from './DecisionButtons';
 import ProcedureDecisionCard from './ProcedureDecisionCard';
 
+interface SidebarPermissions {
+  canApprove: boolean;
+  canDeny: boolean;
+  canPendency: boolean;
+  canForwardToJunta: boolean;
+}
+
 interface AssistantSidebarProps {
   request: Request;
   onAprovarClick: () => void;
@@ -29,11 +40,16 @@ interface AssistantSidebarProps {
   procDecisoes: Record<string, ProcDecision>;
   onProcDecisaoChange: (codigo: string, decisao: ProcDecision) => void;
   onConfirmarDecisaoClick: () => void;
+  onPendenciarClick?: () => void;
+  onJuntaMedicaClick?: () => void;
+  permissions?: SidebarPermissions;
+  isLocked?: boolean;
 }
 
 const PILL_LABEL: Record<string, string> = {
   Aprovar: 'Critérios atendidos',
   Negar: 'Bloqueios identificados',
+  Pendenciar: 'Pendenciar — documentação incompleta',
 };
 
 /* ---------- Consolidated badge helper ---------- */
@@ -85,9 +101,42 @@ interface SuggestionSectionProps {
   iaSuggestion: IASuggestion;
   sc: ChipColor;
   iaJustification: string;
+  isReprocessing: boolean;
 }
 
-function SuggestionSection({ iaSuggestion, sc, iaJustification }: SuggestionSectionProps) {
+function SuggestionSection({
+  iaSuggestion,
+  sc,
+  iaJustification,
+  isReprocessing,
+}: SuggestionSectionProps) {
+  if (isReprocessing) {
+    return (
+      <Box
+        sx={{
+          p: 1.5,
+          borderRadius: 2,
+          backgroundColor: 'rgba(0,0,0,0.02)',
+          border: '1px solid rgba(0,0,0,0.06)',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+          <CircularProgress size={14} thickness={5} />
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontSize: 12, fontWeight: 600 }}
+          >
+            Reprocessando análise…
+          </Typography>
+        </Box>
+        <Skeleton variant="rounded" width={140} height={24} sx={{ mb: 1 }} />
+        <Skeleton variant="text" width="100%" height={16} />
+        <Skeleton variant="text" width="92%" height={16} />
+        <Skeleton variant="text" width="78%" height={16} />
+      </Box>
+    );
+  }
   return (
     <Box
       sx={{ p: 1.5, borderRadius: 2, backgroundColor: sc.bg, border: `1px solid ${sc.color}33` }}
@@ -124,7 +173,7 @@ function SpecialAlertsSection({ alerts }: { alerts: string[] }) {
         <Alert
           severity="error"
           icon={<ErrorOutlineIcon fontSize="small" />}
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 2, border: alertOutlines.error }}
         >
           <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
             Fora do Rol ANS
@@ -158,8 +207,13 @@ interface AnalystDecisionSectionProps {
   loadingDeny: boolean;
   onApproveClick: () => void;
   onDenyClick: () => void;
+  onPendenciarClick?: () => void;
+  onJuntaMedicaClick?: () => void;
+  permissions?: SidebarPermissions;
+  isLocked?: boolean;
 }
 
+// eslint-disable-next-line complexity -- consolidated decision section: 1 primary path (single/multi), 2 secondary actions, lock guard, finalized guard
 function AnalystDecisionSection({
   request,
   isMultiProc,
@@ -178,6 +232,10 @@ function AnalystDecisionSection({
   loadingDeny,
   onApproveClick,
   onDenyClick,
+  onPendenciarClick,
+  onJuntaMedicaClick,
+  permissions,
+  isLocked,
 }: AnalystDecisionSectionProps) {
   return (
     <Card sx={{ mt: 2, overflow: 'hidden' }}>
@@ -257,23 +315,115 @@ function AnalystDecisionSection({
           <DecisionButtons
             isMultiProc
             anyPending={anyPending}
-            isGuideFinalized={isGuideFinalized}
+            isGuideFinalized={isGuideFinalized || (isLocked ?? false)}
             confirmBtnColor={confirmBtnColor}
             confirmBtnHover={confirmBtnHover}
             onConfirmClick={onConfirmarDecisaoClick}
+            canApprove={permissions?.canApprove}
+            canDeny={permissions?.canDeny}
           />
         ) : (
           <DecisionButtons
             isMultiProc={false}
-            isGuideFinalized={isGuideFinalized}
+            isGuideFinalized={isGuideFinalized || (isLocked ?? false)}
             loadingApprove={loadingApprove}
             loadingDeny={loadingDeny}
             onApproveClick={onApproveClick}
             onDenyClick={onDenyClick}
+            canApprove={permissions?.canApprove}
+            canDeny={permissions?.canDeny}
           />
         )}
+        {(onPendenciarClick || onJuntaMedicaClick) && !isGuideFinalized ? (
+          <SecondaryDecisionButtons
+            onPendenciarClick={onPendenciarClick}
+            onJuntaMedicaClick={onJuntaMedicaClick}
+            permissions={permissions}
+            isLocked={isLocked ?? false}
+          />
+        ) : null}
       </Box>
     </Card>
+  );
+}
+
+/* ---------- Secondary decision buttons (M1) ---------- */
+
+interface SecondaryDecisionButtonsProps {
+  onPendenciarClick?: () => void;
+  onJuntaMedicaClick?: () => void;
+  permissions?: SidebarPermissions;
+  isLocked: boolean;
+}
+
+function SecondaryDecisionButtons({
+  onPendenciarClick,
+  onJuntaMedicaClick,
+  permissions,
+  isLocked,
+}: SecondaryDecisionButtonsProps) {
+  const canPendency = permissions?.canPendency ?? true;
+  const canForwardToJunta = permissions?.canForwardToJunta ?? true;
+
+  return (
+    <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+      {onPendenciarClick ? (
+        <Tooltip
+          title={
+            isLocked
+              ? 'Guia bloqueada por outra pessoa'
+              : !canPendency
+                ? 'Apenas Analista Sênior pode pendenciar'
+                : ''
+          }
+          placement="top"
+        >
+          <Box component="span" sx={{ flex: 1 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              fullWidth
+              disabled={isLocked || !canPendency}
+              onClick={onPendenciarClick}
+              sx={{ fontSize: 12, minHeight: 32 }}
+            >
+              Pendenciar
+            </Button>
+          </Box>
+        </Tooltip>
+      ) : null}
+      {onJuntaMedicaClick ? (
+        <Tooltip
+          title={
+            isLocked
+              ? 'Guia bloqueada por outra pessoa'
+              : !canForwardToJunta
+                ? 'Apenas Analista Sênior pode encaminhar para junta'
+                : ''
+          }
+          placement="top"
+        >
+          <Box component="span" sx={{ flex: 1 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              fullWidth
+              disabled={isLocked || !canForwardToJunta}
+              onClick={onJuntaMedicaClick}
+              sx={{
+                fontSize: 12,
+                minHeight: 32,
+                color: '#6d28d9',
+                borderColor: 'rgba(124,58,237,0.4)',
+                '&:hover': { borderColor: '#6d28d9', backgroundColor: 'rgba(124,58,237,0.04)' },
+              }}
+            >
+              Junta Médica
+            </Button>
+          </Box>
+        </Tooltip>
+      ) : null}
+    </Box>
   );
 }
 
@@ -286,6 +436,10 @@ export default function AssistantSidebar({
   procDecisoes,
   onProcDecisaoChange,
   onConfirmarDecisaoClick,
+  onPendenciarClick,
+  onJuntaMedicaClick,
+  permissions,
+  isLocked,
 }: AssistantSidebarProps) {
   const iaSuggestion: IASuggestion = request.iaSuggestion;
   const iaJustification = request.iaJustification;
@@ -346,6 +500,7 @@ export default function AssistantSidebar({
             iaSuggestion={iaSuggestion}
             sc={sc}
             iaJustification={iaJustification}
+            isReprocessing={request.iaReprocessing ?? false}
           />
           <ChecklistSection request={request} />
           <SpecialAlertsSection alerts={request.alerts} />
@@ -370,6 +525,10 @@ export default function AssistantSidebar({
         loadingDeny={loadingDeny}
         onApproveClick={handleApproveWithLoading}
         onDenyClick={handleDenyWithLoading}
+        onPendenciarClick={onPendenciarClick}
+        onJuntaMedicaClick={onJuntaMedicaClick}
+        permissions={permissions}
+        isLocked={isLocked}
       />
     </>
   );

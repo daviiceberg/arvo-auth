@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
+import { formatDurationFromHours } from '@/shared/utils/formatDuration';
+import { hoursBetweenBrDates } from '@/shared/utils/parseBrDate';
 import { type HistoryEntry } from '@/types/pedido';
 
 const FIELD_LABELS: Record<string, string> = {
@@ -65,14 +67,18 @@ export default function AnalystDecisionSection({ entry }: AnalystDecisionSection
           </Typography>
         </Box>
       </Box>
-      {entry.analysisTimeMin > 0 && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}>
-          <AccessTimeIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-          <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-            Tempo de análise: <strong>{entry.analysisTimeMin} min</strong>
-          </Typography>
-        </Box>
-      )}
+      {(() => {
+        const totalHours = hoursBetweenBrDates(entry.protocolDate, entry.decisionDate);
+        if (totalHours <= 0) return null;
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}>
+            <AccessTimeIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+            <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+              Tempo de análise: <strong>{formatDurationFromHours(totalHours)}</strong>
+            </Typography>
+          </Box>
+        );
+      })()}
       <Box
         sx={{
           backgroundColor: '#f9fafb',

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
@@ -18,6 +19,7 @@ interface KpiMetrics {
   slaEmRisco: number;
   aprovadosMes: number;
   negadosMes: number;
+  devolutivasAtivas?: number;
 }
 
 interface DashboardKpiStripProps {
@@ -50,6 +52,46 @@ function KpiIconBox({ bg, icon }: { bg: string; icon: React.ReactNode }) {
       {icon}
     </Box>
   );
+}
+
+/**
+ * Preservado para reuso futuro em outro card do Dashboard.
+ * Removido do KPI Strip do topo no M1 — substituído por "Devolutivas".
+ */
+export function buildAprovacoesNegacoesKpi(metrics: KpiMetrics): KpiDefinition {
+  const totalMes = metrics.aprovadosMes + metrics.negadosMes;
+  const pctAprovados = totalMes > 0 ? Math.round((metrics.aprovadosMes / totalMes) * 100) : 0;
+  const pctNegados = totalMes > 0 ? 100 - pctAprovados : 0;
+
+  return {
+    label: 'Aprovações × Negações (mensal)',
+    icon: <CompareArrowsIcon sx={{ fontSize: 18, color: 'info.main' }} />,
+    bg: 'rgba(37,99,235,0.1)',
+    color: 'text.primary',
+    value: (
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+        <Box>
+          <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'success.main', lineHeight: 1 }}>
+            {metrics.aprovadosMes} ✓
+          </Typography>
+          <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.4 }}>
+            {pctAprovados}%
+          </Typography>
+        </Box>
+        <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'text.disabled', lineHeight: 1 }}>
+          /
+        </Typography>
+        <Box>
+          <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'error.main', lineHeight: 1 }}>
+            {metrics.negadosMes} ✗
+          </Typography>
+          <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.4 }}>
+            {pctNegados}%
+          </Typography>
+        </Box>
+      </Box>
+    ),
+  };
 }
 
 function KpiLink({ href, onNavigate }: { href: string; onNavigate: (href: string) => void }) {
@@ -113,38 +155,17 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
     },
   ];
 
-  const totalMes = metrics.aprovadosMes + metrics.negadosMes;
-  const pctAprovados = totalMes > 0 ? Math.round((metrics.aprovadosMes / totalMes) * 100) : 0;
-  const pctNegados = totalMes > 0 ? 100 - pctAprovados : 0;
-
+  // M1 — Devolutivas substitui "Aprovações × Negações" no topo. O componente
+  // de comparação Aprovações × Negações fica preservado em
+  // `buildAprovacoesNegacoesKpi` para reaproveitar em outra parte do Dashboard
+  // se necessário (não excluído conforme decisão de produto).
   kpis.push({
-    label: 'Aprovações × Negações (mensal)',
-    icon: <CompareArrowsIcon sx={{ fontSize: 18, color: 'info.main' }} />,
-    bg: 'rgba(37,99,235,0.1)',
-    color: 'text.primary',
-    value: (
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-        <Box>
-          <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'success.main', lineHeight: 1 }}>
-            {metrics.aprovadosMes} ✓
-          </Typography>
-          <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.4 }}>
-            {pctAprovados}%
-          </Typography>
-        </Box>
-        <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'text.disabled', lineHeight: 1 }}>
-          /
-        </Typography>
-        <Box>
-          <Typography sx={{ fontWeight: 800, fontSize: 24, color: 'error.main', lineHeight: 1 }}>
-            {metrics.negadosMes} ✗
-          </Typography>
-          <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.4 }}>
-            {pctNegados}%
-          </Typography>
-        </Box>
-      </Box>
-    ),
+    label: 'Devolutivas',
+    icon: <AssignmentReturnIcon sx={{ fontSize: 18, color: '#d97706' }} />,
+    bg: 'rgba(245,158,11,0.18)',
+    color: '#d97706',
+    href: '/fila?tab=devolutivas',
+    value: metrics.devolutivasAtivas ?? 0,
   });
 
   return (

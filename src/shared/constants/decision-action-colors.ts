@@ -10,4 +10,6 @@ export const decisionActionConfigMap: Record<DecisionAction, DecisionActionConfi
   Aprovado: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a', label: 'Aprovado' },
   Negado: { bg: 'rgba(212,24,61,0.1)', color: '#d4183d', label: 'Negado' },
   'Aprovado Parcial': { bg: 'rgba(217,119,6,0.12)', color: '#b45309', label: 'Parcial' },
+  Devolutiva: { bg: 'rgba(37,99,235,0.12)', color: '#1d4ed8', label: 'Devolutiva' },
+  'Junta Médica': { bg: 'rgba(124,58,237,0.12)', color: '#6d28d9', label: 'Junta Médica' },
 };

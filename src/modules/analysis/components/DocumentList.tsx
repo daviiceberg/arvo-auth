@@ -66,6 +66,7 @@ export default function DocumentList({
 }: DocumentListProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+      {/* eslint-disable-next-line complexity -- inline render with multiple conditional chips (pendente status, laudo, devolutiva, parecer, processando); splitting would obscure visual structure */}
       {documents.map((docItem) => {
         const docKey = docItem.id;
         const iaOpen = !!expandedIA[docKey];
@@ -186,6 +187,32 @@ export default function DocumentList({
                       }}
                     />
                   )}
+                  {docItem.origem === 'devolutiva_prestador' ? (
+                    <Chip
+                      label="Recebido em devolutiva"
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(37,99,235,0.1)',
+                        color: 'info.main',
+                        fontWeight: 700,
+                        fontSize: 11,
+                        height: 20,
+                      }}
+                    />
+                  ) : null}
+                  {docItem.origem === 'parecer_junta' ? (
+                    <Chip
+                      label="Anexado pela junta médica"
+                      size="small"
+                      sx={{
+                        backgroundColor: 'rgba(124,58,237,0.12)',
+                        color: '#6d28d9',
+                        fontWeight: 700,
+                        fontSize: 11,
+                        height: 20,
+                      }}
+                    />
+                  ) : null}
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
                   {processingId === docKey

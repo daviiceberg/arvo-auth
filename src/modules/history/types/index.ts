@@ -77,8 +77,10 @@ export type SortDirection = 'asc' | 'desc';
 
 export type OriginFilter = 'Todas' | 'ia_automatica' | 'analista';
 
-export type ActionFilter = 'Todas' | DecisionAction;
+export type ActionFilter = 'Todas' | DecisionAction | 'NegadoPendenciaTimeout';
 
 export type DivergenceFilter = 'Todas' | 'divergiu';
+
+export type PassedThroughFilter = 'Todos' | 'pendencia' | 'junta_medica' | 'direto';
 
 export type NotifyChannel = 'app' | 'whatsapp' | 'email';

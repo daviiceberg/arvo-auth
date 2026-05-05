@@ -26,11 +26,10 @@ import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import DutModal from '@/shared/components/dut-modal/DutModal';
 import { useDutModal } from '@/shared/components/dut-modal/useDutModal';
 import { CID_DATABASE, CID_GROUP_LABELS } from '@/shared/constants/cid-codes';
+import { useUserPermissions } from '@/shared/hooks/useUserPermissions';
 import { type Adjustment, type Procedure, type Request } from '@/types/pedido';
 
 import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
-
-import { USER_PROFILE } from '../types';
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -83,9 +82,11 @@ function ProcedureActionCell({
   hospital,
   onAdjustClick,
 }: ProcedureActionCellProps) {
+  const { canAdjustValue } = useUserPermissions();
+  const isAuditor = !canAdjustValue;
   return (
     <TableCell sx={TD_SX}>
-      {USER_PROFILE !== 'Auditor' &&
+      {!isAuditor &&
         (isGuideFinalized ? (
           <Tooltip title="Guia já finalizada — edição não permitida">
             <span>
@@ -138,7 +139,7 @@ function ProcedureActionCell({
             Ajustar
           </Button>
         ))}
-      {USER_PROFILE === 'Auditor' && (
+      {isAuditor ? (
         <Chip
           label="Somente leitura"
           size="small"
@@ -149,7 +150,7 @@ function ProcedureActionCell({
             color: 'text.secondary',
           }}
         />
-      )}
+      ) : null}
     </TableCell>
   );
 }
@@ -407,11 +408,7 @@ function ProcedureRow({
           }}
         >
           Solic.: {proc.requestDate}
-          {proc.passwordExpiryDate ? (
-            <Typography variant="caption" sx={{ display: 'block', fontSize: 11, mt: 0.25 }}>
-              Val.: {proc.passwordExpiryDate}
-            </Typography>
-          ) : null}
+          {/* Val. (validade da senha) removida em M1 — reintroduzir em M2 após decisão favorável */}
         </TableCell>
         <ProcedureCidCell cid={proc.cid} />
         {/* DUT */}

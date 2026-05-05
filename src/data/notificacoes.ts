@@ -75,4 +75,43 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/analise?id=REQ-2026-04797',
   },
+  {
+    id: 'notif-m1-devolutiva',
+    type: 'devolutiva_recebida',
+    title: 'Retorno do prestador recebido',
+    message:
+      'REQ-2026-M1-PEND-002 · Mateus Oliveira Pereira · Documentação atualizada anexada — pronto para sua análise',
+    time: '12min atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-M1-PEND-002',
+  },
+  {
+    id: 'notif-m1-parecer',
+    type: 'junta_parecer_recebido',
+    title: 'Parecer da Junta Médica disponível',
+    message:
+      'REQ-2026-M1-JUNTA-002 · Isabela Castro Vidigal · Parecer técnico recebido — aguardando sua decisão',
+    time: '1h atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-M1-JUNTA-002',
+  },
+  {
+    id: 'notif-m1-prazo',
+    type: 'pendencia_prazo_vencido',
+    title: 'Prazo de pendência expirado',
+    message: 'REQ-2026-M1-PEND-003 · Prestador não respondeu em 7 dias úteis — requer sua decisão',
+    time: '2h atrás',
+    read: false,
+    href: '/fila?sla=Violado',
+  },
+  {
+    id: 'notif-m1-junta-agendada',
+    type: 'junta_agendada',
+    title: 'Junta Médica agendada',
+    message:
+      'REQ-2026-M1-JUNTA-001 · Reunião marcada para 28/04 às 10:00 · Desempatador: Dr. Roberto Mendes',
+    time: '3h atrás',
+    read: true,
+    href: '/analise?id=REQ-2026-M1-JUNTA-001',
+  },
 ];

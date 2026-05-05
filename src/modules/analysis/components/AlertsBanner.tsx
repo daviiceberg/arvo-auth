@@ -5,6 +5,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { alertOutlines } from '@/shared/constants';
 import { type Request } from '@/types/pedido';
 
 interface AlertsBannerProps {
@@ -21,10 +22,7 @@ export default function AlertsBanner({ request }: AlertsBannerProps) {
           key={alert}
           severity="error"
           icon={<WarningAmberIcon fontSize="small" />}
-          sx={{
-            borderRadius: 2,
-            border: '1px solid rgba(212,24,61,0.3)',
-          }}
+          sx={{ borderRadius: 2, border: alertOutlines.error }}
         >
           <Typography variant="body2" fontWeight={600}>
             {alert}

@@ -1,9 +1,14 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 
 import { NOTIFICACOES } from '@/data/notificacoes';
 import { pedidos } from '@/data/pedidos';
+import { useDynamicNotifications } from '@/shared/notifications/notification-store';
+
+import { cleanupLegacyM1State } from '@/modules/analysis/hooks/useM1RequestState';
 
 import useAppShell from '../hooks/useAppShell';
 
@@ -12,7 +17,15 @@ import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const shell = useAppShell(pedidos, NOTIFICACOES);
+  const dynamicNotifications = useDynamicNotifications();
+  const allNotifications = [...dynamicNotifications, ...NOTIFICACOES];
+  const shell = useAppShell(pedidos, allNotifications);
+
+  // M1: limpa chaves legadas do localStorage de versões anteriores que persistiam
+  // simulações. Atual: simulações ficam em memória (refresh = volta ao mock).
+  useEffect(() => {
+    cleanupLegacyM1State();
+  }, []);
 
   return (
     <Box
@@ -24,7 +37,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       }}
     >
       <Topbar
-        notifications={NOTIFICACOES}
+        notifications={allNotifications}
         notifAnchor={shell.notifAnchor}
         notifOpen={shell.notifOpen}
         unreadCount={shell.unreadCount}

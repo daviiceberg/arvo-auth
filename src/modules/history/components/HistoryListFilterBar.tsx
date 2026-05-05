@@ -13,7 +13,12 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
-import { type OriginFilter, type ActionFilter, type DivergenceFilter } from '../types';
+import {
+  type OriginFilter,
+  type ActionFilter,
+  type DivergenceFilter,
+  type PassedThroughFilter,
+} from '../types';
 
 interface HistoryListFilterBarProps {
   search: string;
@@ -24,6 +29,8 @@ interface HistoryListFilterBarProps {
   onActionFilterChange: (value: ActionFilter) => void;
   divergenceFilter: DivergenceFilter;
   onDivergenceFilterChange: (value: DivergenceFilter) => void;
+  passedThroughFilter: PassedThroughFilter;
+  onPassedThroughFilterChange: (value: PassedThroughFilter) => void;
   hasFilters: boolean;
   onClearFilters: () => void;
   onResetPage: () => void;
@@ -38,6 +45,8 @@ export default function HistoryListFilterBar({
   onActionFilterChange,
   divergenceFilter,
   onDivergenceFilterChange,
+  passedThroughFilter,
+  onPassedThroughFilterChange,
   hasFilters,
   onClearFilters,
   onResetPage,
@@ -94,6 +103,25 @@ export default function HistoryListFilterBar({
               <MenuItem value="Aprovado">Aprovado</MenuItem>
               <MenuItem value="Negado">Negado</MenuItem>
               <MenuItem value="Aprovado Parcial">Aprovado Parcialmente</MenuItem>
+              <MenuItem value="NegadoPendenciaTimeout">
+                Negado por pendência não respondida
+              </MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Passou por</InputLabel>
+            <Select
+              value={passedThroughFilter}
+              label="Passou por"
+              onChange={(e) => {
+                onPassedThroughFilterChange(e.target.value as PassedThroughFilter);
+                onResetPage();
+              }}
+            >
+              <MenuItem value="Todos">Todos</MenuItem>
+              <MenuItem value="pendencia">Pendência</MenuItem>
+              <MenuItem value="junta_medica">Junta Médica</MenuItem>
+              <MenuItem value="direto">Direto (sem etapas)</MenuItem>
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 160 }}>

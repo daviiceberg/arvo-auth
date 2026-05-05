@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 
 import { useUser } from '@auth0/nextjs-auth0';
@@ -7,6 +9,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import Alert from '@mui/material/Alert';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
@@ -17,11 +21,15 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
+import Snackbar from '@mui/material/Snackbar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 import { signOutWithBackendThenAuth0 } from '@/lib/client-sign-out';
+import { clearDynamicNotifications } from '@/shared/notifications/notification-store';
 import { type Notification } from '@/types/notificacao';
+
+import { cleanupLegacyM1State, resetAllM1State } from '@/modules/analysis/hooks/useM1RequestState';
 
 function userInitials(name: string | undefined, email: string | undefined): string {
   if (name) {
@@ -64,6 +72,15 @@ export default function Topbar({
 }: TopbarProps) {
   const router = useRouter();
   const { user, isLoading } = useUser();
+  const [resetToastOpen, setResetToastOpen] = useState(false);
+
+  const handleResetSimulation = () => {
+    resetAllM1State();
+    cleanupLegacyM1State();
+    clearDynamicNotifications();
+    onCloseUserMenu();
+    setResetToastOpen(true);
+  };
   const displayName = isLoading ? '…' : (user?.name ?? user?.email ?? 'Usuário');
   const displaySubtitle = isLoading ? '…' : (user?.email ?? '—');
   const avatarInitials = userInitials(user?.name, user?.email);
@@ -305,6 +322,22 @@ export default function Topbar({
           </MenuItem>
           <Divider sx={{ my: 0.5 }} />
           <MenuItem
+            onClick={handleResetSimulation}
+            sx={{
+              gap: 1.5,
+              minHeight: 40,
+              borderRadius: 1,
+              mx: 0.5,
+              color: 'text.secondary',
+            }}
+          >
+            <RestartAltIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+            <Typography variant="body2" sx={{ fontSize: 13 }}>
+              Resetar processo
+            </Typography>
+          </MenuItem>
+          <Divider sx={{ my: 0.5 }} />
+          <MenuItem
             onClick={() => {
               onCloseUserMenu();
               void signOutWithBackendThenAuth0();
@@ -316,6 +349,27 @@ export default function Topbar({
           </MenuItem>
         </Menu>
       </Toolbar>
+
+      {/* M1 — Reset simulação confirmation toast */}
+      <Snackbar
+        open={resetToastOpen}
+        autoHideDuration={3500}
+        onClose={() => {
+          setResetToastOpen(false);
+        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          onClose={() => {
+            setResetToastOpen(false);
+          }}
+          sx={{ fontSize: 13 }}
+        >
+          Processo resetado — todos os pedidos voltaram ao estado inicial
+        </Alert>
+      </Snackbar>
     </AppBar>
   );
 }

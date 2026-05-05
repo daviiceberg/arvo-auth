@@ -79,23 +79,29 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
     });
   };
 
-  const handleAddDocAdicional = () => {
-    if (!newDocFile) return;
+  const formatSize = (bytes: number): string =>
+    bytes > 1024 * 1024
+      ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
+      : `${String(Math.round(bytes / 1024))} KB`;
+
+  const addDocAdicionalFile = (file: File, tipo = 'Documento') => {
     setDocsAdicionais((prev) => [
       ...prev,
       {
-        id: `ADD-${String(Date.now())}`,
-        nome: newDocFile.name,
-        tipo: newDocTipo || 'Documento',
-        tamanho:
-          newDocFile.size > 1024 * 1024
-            ? `${(newDocFile.size / 1024 / 1024).toFixed(1)} MB`
-            : `${String(Math.round(newDocFile.size / 1024))} KB`,
+        id: `ADD-${String(Date.now())}-${String(Math.random()).slice(2, 8)}`,
+        nome: file.name,
+        tipo: tipo || 'Documento',
+        tamanho: formatSize(file.size),
         obrigatorio: false,
         status: 'enviado',
-        file: newDocFile,
+        file,
       },
     ]);
+  };
+
+  const handleAddDocAdicional = () => {
+    if (!newDocFile) return;
+    addDocAdicionalFile(newDocFile, newDocTipo);
     setShowAddDocForm(false);
     setNewDocTipo('');
     setNewDocFile(null);
@@ -136,6 +142,7 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
     handleObrigUpload,
     handleRemoveObrigDoc,
     handleAddDocAdicional,
+    addDocAdicionalFile,
     handleRemoveDocAdicional,
     cancelAddDoc,
     resetDocs,

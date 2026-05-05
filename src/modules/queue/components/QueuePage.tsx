@@ -24,10 +24,11 @@ export default function QueuePage() {
   const searchParams = useSearchParams();
 
   const filters = useQueueFilters({ searchParams });
-  const { loading, filtered, pagedItems, warningCount, violatedCount } = useQueueData({
-    filters,
-    pedidos,
-  });
+  const { loading, filtered, pagedItems, warningCount, violatedCount, devolutivasCount } =
+    useQueueData({
+      filters,
+      pedidos,
+    });
   const { scrollContainerRef, lastViewedId, saveScrollPosition } = useScrollRestoration();
 
   const handleRowClick = (requestId: string) => {
@@ -90,6 +91,7 @@ export default function QueuePage() {
           totalCount={pedidos.length}
           warningCount={warningCount}
           violatedCount={violatedCount}
+          devolutivasCount={devolutivasCount}
           onTabChange={handleTabChange}
         />
 
@@ -115,6 +117,28 @@ export default function QueuePage() {
           hasFilters={filters.hasFilters}
           onRowClick={handleRowClick}
           onClearFilters={filters.clearFilters}
+          subGroups={
+            filters.tabValue === 3
+              ? [
+                  {
+                    label: 'Aguardando retorno do prestador',
+                    items: pagedItems.filter(
+                      (p) =>
+                        p.subStatus === 'PENDENTE_AGUARDANDO' ||
+                        p.subStatus === 'PENDENTE_RETORNO_RECEBIDO',
+                    ),
+                  },
+                  {
+                    label: 'Aguardando junta médica',
+                    items: pagedItems.filter(
+                      (p) =>
+                        p.subStatus === 'JUNTA_AGUARDANDO' ||
+                        p.subStatus === 'JUNTA_PARECER_RECEBIDO',
+                    ),
+                  },
+                ]
+              : undefined
+          }
         />
 
         {/* Pagination */}

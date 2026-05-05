@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { useHelpDrawer } from '@/shared/hooks/useHelpDrawer';
 import { type Notification } from '@/types/notificacao';
 import { type Request } from '@/types/pedido';
 
@@ -16,7 +17,7 @@ function buildNavItems(requests: Request[]): NavItem[] {
 export default function useAppShell(requests: Request[], notifications: Notification[]) {
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
-  const [helpDrawerOpen, setHelpDrawerOpen] = useState(false);
+  const help = useHelpDrawer();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const notifOpen = Boolean(notifAnchor);
@@ -44,14 +45,10 @@ export default function useAppShell(requests: Request[], notifications: Notifica
       setNotifAnchor(null);
     },
 
-    // Help drawer
-    helpDrawerOpen,
-    openHelpDrawer: () => {
-      setHelpDrawerOpen(true);
-    },
-    closeHelpDrawer: () => {
-      setHelpDrawerOpen(false);
-    },
+    // Help drawer (shared store — also driven by `?` shortcut on /analise)
+    helpDrawerOpen: help.open,
+    openHelpDrawer: help.open_,
+    closeHelpDrawer: help.close,
 
     // Nav
     navItems,

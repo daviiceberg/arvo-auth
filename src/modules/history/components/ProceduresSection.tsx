@@ -50,7 +50,6 @@ export default function ProceduresSection({ entry }: ProceduresSectionProps) {
           qty: 1,
           authorizedQty: entry.action !== 'Negado' ? 1 : undefined,
           requestDate: entry.protocolDate,
-          passwordExpiryDate: entry.decisionDate,
           cid: entry.cid,
           auditLevel: 'AMBULATORIAL' as const,
           codeType: 'TUSS' as const,

@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
+import { alertOutlines } from '@/shared/constants';
 import { type Request } from '@/types/pedido';
 
 import { type ConsolidatedHistory } from '../constants/consolidated-history-data';
@@ -67,7 +68,7 @@ export default function HistoryWarnings({ warnings, request }: HistoryWarningsPr
           <Alert
             severity="info"
             icon={<InfoOutlinedIcon fontSize="small" />}
-            sx={{ borderRadius: 1.5, py: 0.5 }}
+            sx={{ borderRadius: 1.5, py: 0.5, border: alertOutlines.info }}
           >
             <Typography variant="caption" fontWeight={700} display="block">
               Alta frequência de sessões identificada
@@ -78,18 +79,21 @@ export default function HistoryWarnings({ warnings, request }: HistoryWarningsPr
             </Typography>
           </Alert>
         ) : null}
-        {filteredWarnings.map((sinal) => (
-          <Alert
-            key={sinal.id}
-            severity={alertSeverityColor(sinal.severidade)}
-            sx={{ borderRadius: 1.5, py: 0.5 }}
-          >
-            <Typography variant="caption" fontWeight={700} display="block">
-              {sinal.mensagem}
-            </Typography>
-            {sinal.detalhes ? <Typography variant="caption">{sinal.detalhes}</Typography> : null}
-          </Alert>
-        ))}
+        {filteredWarnings.map((sinal) => {
+          const severity = alertSeverityColor(sinal.severidade);
+          return (
+            <Alert
+              key={sinal.id}
+              severity={severity}
+              sx={{ borderRadius: 1.5, py: 0.5, border: alertOutlines[severity] }}
+            >
+              <Typography variant="caption" fontWeight={700} display="block">
+                {sinal.mensagem}
+              </Typography>
+              {sinal.detalhes ? <Typography variant="caption">{sinal.detalhes}</Typography> : null}
+            </Alert>
+          );
+        })}
       </Box>
     </>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
@@ -11,6 +12,8 @@ interface MultiProcButtonsProps {
   confirmBtnColor: string;
   confirmBtnHover: string;
   onConfirmClick: () => void;
+  canApprove?: boolean;
+  canDeny?: boolean;
 }
 
 interface SingleProcButtonsProps {
@@ -20,6 +23,8 @@ interface SingleProcButtonsProps {
   loadingDeny: boolean;
   onApproveClick: () => void;
   onDenyClick: () => void;
+  canApprove?: boolean;
+  canDeny?: boolean;
 }
 
 type DecisionButtonsProps = MultiProcButtonsProps | SingleProcButtonsProps;
@@ -36,6 +41,8 @@ export default function DecisionButtons(props: DecisionButtonsProps) {
           confirmBtnColor={props.confirmBtnColor}
           confirmBtnHover={props.confirmBtnHover}
           onConfirmClick={props.onConfirmClick}
+          canApprove={props.canApprove}
+          canDeny={props.canDeny}
         />
       ) : (
         <SingleProcApprovalButtons
@@ -44,6 +51,8 @@ export default function DecisionButtons(props: DecisionButtonsProps) {
           loadingDeny={props.loadingDeny}
           onApproveClick={props.onApproveClick}
           onDenyClick={props.onDenyClick}
+          canApprove={props.canApprove}
+          canDeny={props.canDeny}
         />
       )}
     </>
@@ -58,6 +67,8 @@ interface MultiProcConfirmButtonProps {
   confirmBtnColor: string;
   confirmBtnHover: string;
   onConfirmClick: () => void;
+  canApprove?: boolean;
+  canDeny?: boolean;
 }
 
 function MultiProcConfirmButton({
@@ -66,19 +77,27 @@ function MultiProcConfirmButton({
   confirmBtnColor,
   confirmBtnHover,
   onConfirmClick,
+  canApprove = true,
+  canDeny = true,
 }: MultiProcConfirmButtonProps) {
+  const noPermission = !canApprove && !canDeny;
+  const tooltipText = anyPending
+    ? 'Defina a decisão para todos os procedimentos'
+    : noPermission
+      ? 'Auditor não pode aprovar nem negar'
+      : '';
   return (
     <>
       <Tooltip
-        title={anyPending ? 'Defina a decisão para todos os procedimentos' : ''}
+        title={tooltipText}
         placement="top"
-        disableHoverListener={!anyPending}
+        disableHoverListener={!anyPending && !noPermission}
       >
-        <span style={{ width: '100%' }}>
+        <Box component="span" sx={{ width: '100%' }}>
           <Button
             variant="contained"
             fullWidth
-            disabled={anyPending || isGuideFinalized}
+            disabled={anyPending || isGuideFinalized || noPermission}
             onClick={onConfirmClick}
             sx={{
               minHeight: 40,
@@ -89,7 +108,7 @@ function MultiProcConfirmButton({
           >
             Confirmar Decisão
           </Button>
-        </span>
+        </Box>
       </Tooltip>
     </>
   );
@@ -101,6 +120,8 @@ interface SingleProcApprovalButtonsProps {
   loadingDeny: boolean;
   onApproveClick: () => void;
   onDenyClick: () => void;
+  canApprove?: boolean;
+  canDeny?: boolean;
 }
 
 function SingleProcApprovalButtons({
@@ -109,34 +130,52 @@ function SingleProcApprovalButtons({
   loadingDeny,
   onApproveClick,
   onDenyClick,
+  canApprove = true,
+  canDeny = true,
 }: SingleProcApprovalButtonsProps) {
   return (
     <>
-      <Button
-        variant="contained"
-        fullWidth
-        disabled={loadingApprove || isGuideFinalized}
-        onClick={onApproveClick}
-        startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
-        sx={{
-          minHeight: 40,
-          backgroundColor: 'success.main',
-          '&:hover': { backgroundColor: '#15803d' },
-        }}
+      <Tooltip
+        title={!canApprove ? 'Auditor não pode aprovar — apenas Analista Sênior' : ''}
+        placement="top"
+        disableHoverListener={canApprove}
       >
-        {loadingApprove ? 'Processando...' : 'Aprovar'}
-      </Button>
-      <Button
-        variant="contained"
-        color="error"
-        fullWidth
-        disabled={loadingDeny || isGuideFinalized}
-        onClick={onDenyClick}
-        startIcon={loadingDeny ? <CircularProgress size={14} color="inherit" /> : undefined}
-        sx={{ minHeight: 40 }}
+        <Box component="span" sx={{ width: '100%' }}>
+          <Button
+            variant="contained"
+            fullWidth
+            disabled={loadingApprove || isGuideFinalized || !canApprove}
+            onClick={onApproveClick}
+            startIcon={loadingApprove ? <CircularProgress size={14} color="inherit" /> : undefined}
+            sx={{
+              minHeight: 40,
+              backgroundColor: 'success.main',
+              '&:hover': { backgroundColor: '#15803d' },
+            }}
+          >
+            {loadingApprove ? 'Processando...' : 'Aprovar'}
+          </Button>
+        </Box>
+      </Tooltip>
+      <Tooltip
+        title={!canDeny ? 'Auditor não pode negar — apenas Analista Sênior' : ''}
+        placement="top"
+        disableHoverListener={canDeny}
       >
-        {loadingDeny ? 'Processando...' : 'Negar'}
-      </Button>
+        <Box component="span" sx={{ width: '100%' }}>
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            disabled={loadingDeny || isGuideFinalized || !canDeny}
+            onClick={onDenyClick}
+            startIcon={loadingDeny ? <CircularProgress size={14} color="inherit" /> : undefined}
+            sx={{ minHeight: 40 }}
+          >
+            {loadingDeny ? 'Processando...' : 'Negar'}
+          </Button>
+        </Box>
+      </Tooltip>
     </>
   );
 }

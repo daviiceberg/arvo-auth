@@ -1,6 +1,7 @@
 .claude/
 .next/
 .vercel/
+.vercel-backup-*/
 node_modules/
 out/
 public/

@@ -2,7 +2,77 @@ import { type CodeType, type TussCode } from './procedure-codes';
 
 export type ProcessingStatus = 'em_processamento' | 'erro_processamento' | 'processado';
 
-export type GuideStatus = 'Em Análise' | 'Aprovado' | 'Negado' | 'Aprovado Parcial';
+export type GuideStatus =
+  | 'Em Análise'
+  | 'Aprovado'
+  | 'Negado'
+  | 'Aprovado Parcial'
+  | 'Pendente'
+  | 'Devolutiva';
+
+export type SubStatus =
+  | 'PENDENTE_AGUARDANDO'
+  | 'PENDENTE_RETORNO_RECEBIDO'
+  | 'JUNTA_AGUARDANDO'
+  | 'JUNTA_PARECER_RECEBIDO';
+
+export type SLASuspensionReason = 'EXAME_COMPLEMENTAR' | 'AUSENCIA_BENEFICIARIO';
+
+export interface SLASuspension {
+  reason: SLASuspensionReason;
+  startedAt: string;
+  durationBusinessDays: number;
+  resumedAt?: string;
+}
+
+export interface OperatorLock {
+  userId: string;
+  userName: string;
+  lockedAt: string;
+}
+
+export interface PendencyContext {
+  reasons: string[];
+  justification: string;
+  requestedAt: string;
+  deadlineBusinessDays: 3 | 7 | 15;
+  responseReceivedAt?: string;
+}
+
+export type JuntaMedicaSubStatus =
+  | 'aguardando'
+  | 'parecer_recebido'
+  | 'suspenso_exame_complementar'
+  | 'suspenso_ausencia_beneficiario';
+
+export interface JuntaMedicaContext {
+  reason: string;
+  justification: string;
+  forwardedAt: string;
+  desempatadorName?: string;
+  desempatadorCrm?: string;
+  meetingDate?: string;
+  status: JuntaMedicaSubStatus;
+  parecer?: {
+    suggestedDecision: 'aprovado' | 'negado' | 'aprovado_parcial';
+    text: string;
+    issuedAt: string;
+    desempatadorName: string;
+  };
+}
+
+export type PrestadorMessageChannel = 'email' | 'whatsapp';
+export type PrestadorMessageStatus = 'sent' | 'delivered' | 'read' | 'failed';
+
+export interface PrestadorMessage {
+  id: string;
+  channel: PrestadorMessageChannel;
+  subject: string;
+  body: string;
+  sentAt: string;
+  status: PrestadorMessageStatus;
+  triggerEvent: 'pendencia' | 'junta_encaminhada' | 'devolutiva_recebida';
+}
 
 export type GuideType = 'Eleitiva';
 
@@ -22,7 +92,20 @@ export type AuditLevel = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI';
 
 export type SLAStatus = 'ok' | 'warning' | 'violated';
 
-export type IASuggestion = 'Aprovar' | 'Negar';
+export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica' | 'Pendenciar';
+
+/**
+ * Snapshot final da recomendação da IA usado no Histórico.
+ *
+ * Conceitualmente diferente de IASuggestion (operacional, usada na Fila):
+ * - IASuggestion = "o que a IA recomenda fazer agora" (4 valores)
+ * - AISuggestionFinal = "o que a IA recomendou como decisão final" (3 valores)
+ *
+ * Pedidos que passaram por pendência ou junta carregam aqui a recomendação
+ * pós-reprocessamento — a que o analista tinha em mãos no momento da decisão.
+ * "Pendenciar" e "Junta Médica" são etapas, não desfechos.
+ */
+export type AISuggestionFinal = 'Aprovar' | 'Negar' | 'Aprovar Parcial';
 
 export type Category = 'Terapias Especiais';
 
@@ -124,6 +207,8 @@ export interface Adjustment {
   timestamp: string;
 }
 
+export type DocumentOrigem = 'devolutiva_prestador' | 'parecer_junta';
+
 export interface Document {
   id: string;
   nome: string;
@@ -132,6 +217,7 @@ export interface Document {
   enviadoEm?: string;
   obrigatorio: boolean;
   status: 'enviado' | 'pendente';
+  origem?: DocumentOrigem;
 }
 
 export interface Request {
@@ -142,7 +228,7 @@ export interface Request {
   auditLevel: AuditLevel;
   priority: 'alta' | 'media' | 'baixa';
   protocolDate: string;
-  queueTime: string;
+  queueTimeHours: number;
   slaStatus: SLAStatus;
   slaText: string;
   slaDeadlineHours: number;
@@ -178,12 +264,22 @@ export interface Request {
   alerts: string[];
   iaSuggestion: IASuggestion;
   iaJustification: string;
+  iaSuggestionAfterReprocess?: IASuggestion;
+  iaJustificationAfterReprocess?: string;
+  iaChecklistAfterReprocess?: ChecklistItem[];
+  documentsAddedOnDevolutiva?: Document[];
+  iaReprocessing?: boolean;
   iaChecklist: ChecklistItem[];
   observations: string;
   documents: Document[];
   authorizationStage?: 'primeira_solicitacao' | 'continuidade';
   adjustments?: Adjustment[];
-  operatorLock?: { nome: string; desde: string };
+  operatorLock?: OperatorLock;
+  subStatus?: SubStatus;
+  slaSuspension?: SLASuspension;
+  pendencyContext?: PendencyContext;
+  juntaMedicaContext?: JuntaMedicaContext;
+  prestadorMessages?: PrestadorMessage[];
   secondaryCids?: string[];
   guidePassword?: string;
   decisionDate?: string;
@@ -210,7 +306,12 @@ export interface ProcessingRequest {
   erroDescricao?: string;
 }
 
-export type DecisionAction = 'Aprovado' | 'Negado' | 'Aprovado Parcial';
+export type DecisionAction =
+  | 'Aprovado'
+  | 'Negado'
+  | 'Aprovado Parcial'
+  | 'Devolutiva'
+  | 'Junta Médica';
 
 export type DecisionOrigin = 'ia_automatica' | 'analista';
 
@@ -233,7 +334,7 @@ export interface HistoryEntry {
   analyst: string;
   decisionReason: string;
   freeText?: string;
-  iaSuggestion: IASuggestion;
+  iaSuggestion: AISuggestionFinal;
   divergence: boolean;
   divergenceReason?: string;
   analysisTimeMin: number;
@@ -274,4 +375,14 @@ export interface HistoryEntry {
   planScope?: PlanScope;
   isRegulatedPlan?: boolean;
   beneficiaryNotes?: string;
+  passedThroughPendency?: boolean;
+  passedThroughJunta?: boolean;
+  pendencyTimeout?: boolean;
+  juntaParecer?: {
+    text: string;
+    suggestedDecision: 'aprovado' | 'negado' | 'aprovado_parcial';
+    desempatadorName: string;
+    desempatadorCrm?: string;
+    issuedAt: string;
+  };
 }

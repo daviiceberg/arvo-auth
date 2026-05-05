@@ -9,7 +9,6 @@ export function useDialogVisibility() {
   const [showMedicalBoardDialog, setShowMedicalBoardDialog] = useState(false);
   const [showDivergenceDialog, setShowDivergenceDialog] = useState(false);
   const [showPartialDialog, setShowPartialDialog] = useState(false);
-  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
   const [showAdjustApprovalConfirm, setShowAdjustApprovalConfirm] = useState(false);
 
   const isAnyDialogOpen =
@@ -19,7 +18,6 @@ export function useDialogVisibility() {
     showMedicalBoardDialog ||
     showDivergenceDialog ||
     showPartialDialog ||
-    showShortcutsHelp ||
     showAdjustApprovalConfirm;
 
   const closeAllDialogs = useCallback(() => {
@@ -29,7 +27,6 @@ export function useDialogVisibility() {
     setShowMedicalBoardDialog(false);
     setShowDivergenceDialog(false);
     setShowPartialDialog(false);
-    setShowShortcutsHelp(false);
     setShowAdjustApprovalConfirm(false);
   }, []);
 
@@ -46,8 +43,6 @@ export function useDialogVisibility() {
     setShowDivergenceDialog,
     showPartialDialog,
     setShowPartialDialog,
-    showShortcutsHelp,
-    setShowShortcutsHelp,
     showAdjustApprovalConfirm,
     setShowAdjustApprovalConfirm,
     isAnyDialogOpen,

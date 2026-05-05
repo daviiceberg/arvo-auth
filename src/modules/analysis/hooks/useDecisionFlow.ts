@@ -150,8 +150,6 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
     setShowDivergenceDialog: dialogs.setShowDivergenceDialog,
     showPartialDialog: dialogs.showPartialDialog,
     setShowPartialDialog: dialogs.setShowPartialDialog,
-    showShortcutsHelp: dialogs.showShortcutsHelp,
-    setShowShortcutsHelp: dialogs.setShowShortcutsHelp,
     showAdjustApprovalConfirm: dialogs.showAdjustApprovalConfirm,
     setShowAdjustApprovalConfirm: dialogs.setShowAdjustApprovalConfirm,
 

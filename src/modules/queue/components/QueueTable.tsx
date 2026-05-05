@@ -17,6 +17,11 @@ import { type Request } from '@/types/pedido';
 
 import QueueTableRow from './QueueTableRow';
 
+export interface QueueTableSubGroup {
+  label: string;
+  items: Request[];
+}
+
 interface QueueTableProps {
   items: Request[];
   loading: boolean;
@@ -24,6 +29,7 @@ interface QueueTableProps {
   hasFilters: boolean;
   onRowClick: (requestId: string) => void;
   onClearFilters: () => void;
+  subGroups?: QueueTableSubGroup[];
 }
 
 export default function QueueTable({
@@ -33,7 +39,10 @@ export default function QueueTable({
   hasFilters,
   onRowClick,
   onClearFilters,
+  subGroups,
 }: QueueTableProps) {
+  const visibleGroups = subGroups?.filter((g) => g.items.length > 0) ?? null;
+  const hasGroups = visibleGroups !== null && visibleGroups.length > 0;
   if (loading) {
     return (
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -121,6 +130,15 @@ export default function QueueTable({
                 </Box>
               </TableCell>
             </TableRow>
+          ) : hasGroups ? (
+            visibleGroups.map((group) => (
+              <SubGroupRows
+                key={group.label}
+                group={group}
+                lastViewedId={lastViewedId}
+                onRowClick={onRowClick}
+              />
+            ))
           ) : (
             items.map((item) => (
               <QueueTableRow
@@ -134,5 +152,44 @@ export default function QueueTable({
         </TableBody>
       </Table>
     </TableContainer>
+  );
+}
+
+interface SubGroupRowsProps {
+  group: QueueTableSubGroup;
+  lastViewedId: string | null;
+  onRowClick: (requestId: string) => void;
+}
+
+function SubGroupRows({ group, lastViewedId, onRowClick }: SubGroupRowsProps) {
+  return (
+    <>
+      <TableRow>
+        <TableCell
+          colSpan={10}
+          sx={{
+            backgroundColor: 'rgba(0,0,0,0.04)',
+            py: 1,
+            px: 1.5,
+            borderBottom: '1px solid rgba(0,0,0,0.08)',
+            fontSize: 12,
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            color: 'text.secondary',
+          }}
+        >
+          {group.label} ({group.items.length})
+        </TableCell>
+      </TableRow>
+      {group.items.map((item) => (
+        <QueueTableRow
+          key={item.id}
+          request={item}
+          lastViewedId={lastViewedId}
+          onRowClick={onRowClick}
+        />
+      ))}
+    </>
   );
 }

@@ -10,11 +10,16 @@ import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
+import { alertOutlines } from '@/shared/constants';
+import { toggleHelpDrawer } from '@/shared/hooks/useHelpDrawer';
+import { useUserPermissions } from '@/shared/hooks/useUserPermissions';
+
 import { DENIAL_REASONS } from '../constants/denial-reasons';
 import { useAdjustmentState } from '../hooks/useAdjustmentState';
 import { useAnalysis } from '../hooks/useAnalysis';
 import { useDecisionFlow } from '../hooks/useDecisionFlow';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
+import { useM1RequestState } from '../hooks/useM1RequestState';
 
 import AdjustmentDrawer from './AdjustmentDrawer';
 import AlertsBanner from './AlertsBanner';
@@ -27,22 +32,39 @@ import AdjustmentApprovalDialog from './dialogs/AdjustmentApprovalDialog';
 import ApprovalDialog from './dialogs/ApprovalDialog';
 import DenialDialog from './dialogs/DenialDialog';
 import DivergenceDialog from './dialogs/DivergenceDialog';
+import JuntaMedicaDialog from './dialogs/JuntaMedicaDialog';
 import PartialApprovalDialog from './dialogs/PartialApprovalDialog';
-import ShortcutsHelpDialog from './dialogs/ShortcutsHelpDialog';
+import PendencyDialog from './dialogs/PendencyDialog';
 import DocumentsSection from './DocumentsSection';
 import InternalNotesSection from './InternalNotesSection';
+import M1Banners from './M1Banners';
 import ObservationsSection from './ObservationsSection';
 import PageHeader from './PageHeader';
+import PrestadorTimelineSection from './PrestadorTimelineSection';
 import ProceduresSection from './ProceduresSection';
 import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection';
 import ReprocessPromptModal from './ReprocessPromptModal';
 
 const REPROCESS_DURATION_MS = 6000;
 
+const FINALIZED_STATUSES = ['Aprovado', 'Negado', 'Aprovado Parcial'];
+
+function buildPendencyShortcut(args: {
+  status: string;
+  isLocked: boolean;
+  canPendency: boolean;
+  open: () => void;
+}): (() => void) | undefined {
+  if (FINALIZED_STATUSES.includes(args.status)) return undefined;
+  if (args.isLocked) return undefined;
+  if (!args.canPendency) return undefined;
+  return args.open;
+}
+
 function AnalysisInner() {
   const [internalNotes, setInternalNotes] = useState('' as string);
   const {
-    request,
+    request: rawRequest,
     currentIndex,
     total,
     handleNavPrev,
@@ -52,6 +74,13 @@ function AnalysisInner() {
     showSnackbar,
     closeSnackbar,
   } = useAnalysis();
+
+  const m1 = useM1RequestState(rawRequest);
+  const request = m1.effectiveRequest;
+  const permissions = useUserPermissions();
+  const [showPendencyDialog, setShowPendencyDialog] = useState(false);
+  const [showJuntaMedicaDialog, setShowJuntaMedicaDialog] = useState(false);
+  const isLocked = Boolean(request.operatorLock);
 
   const [pendingReprocess, setPendingReprocess] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<string[]>([]);
@@ -98,6 +127,15 @@ function AnalysisInner() {
     showSnackbar,
   });
 
+  const handlePendencyShortcut = buildPendencyShortcut({
+    status: request.status,
+    isLocked,
+    canPendency: permissions.canPendency,
+    open: () => {
+      setShowPendencyDialog(true);
+    },
+  });
+
   useKeyboardNavigation({
     isAnyDialogOpen: decision.isAnyDialogOpen,
     isDrawerOpen: adjustment.drawerOpen,
@@ -107,9 +145,8 @@ function AnalysisInner() {
     onNavigateNext: handleNavNext,
     onApprove: decision.handleApproveClick,
     onDeny: decision.handleDenyClick,
-    onShowShortcuts: () => {
-      decision.setShowShortcutsHelp(true);
-    },
+    onPendency: handlePendencyShortcut,
+    onShowShortcuts: toggleHelpDrawer,
   });
 
   return (
@@ -134,10 +171,16 @@ function AnalysisInner() {
         {/* Left content -- scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <M1Banners
+              request={request}
+              m1={m1}
+              permissions={permissions}
+              showSnackbar={showSnackbar}
+            />
             {pendingReprocess && !showReprocessModal && !isReprocessing ? (
               <Alert
                 severity="warning"
-                sx={{ borderRadius: 2 }}
+                sx={{ borderRadius: 2, border: alertOutlines.warning }}
                 action={
                   <Button
                     size="small"
@@ -193,20 +236,14 @@ function AnalysisInner() {
                   fontWeight: 600,
                   fontSize: 13,
                   borderRadius: 2,
-                  border: '1px solid rgba(212,24,61,0.3)',
+                  border: alertOutlines.error,
                 }}
               >
                 Procedimento já realizado antes da autorização — atenção redobrada na análise
               </Alert>
             ) : null}
             {request.cidDivergence ? (
-              <Alert
-                severity="warning"
-                sx={{
-                  borderRadius: 2,
-                  border: '1px solid rgba(245,158,11,0.35)',
-                }}
-              >
+              <Alert severity="warning" sx={{ borderRadius: 2, border: alertOutlines.warning }}>
                 <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
                   Divergência de CID detectada
                 </Typography>
@@ -245,6 +282,9 @@ function AnalysisInner() {
               onStructuralChange={markStructuralChange}
               attachHandlerRef={openAddFromModalRef}
             />
+            {request.prestadorMessages && request.prestadorMessages.length > 0 ? (
+              <PrestadorTimelineSection messages={request.prestadorMessages} />
+            ) : null}
           </Box>
         </Box>
 
@@ -257,6 +297,14 @@ function AnalysisInner() {
             procDecisoes={decision.procDecisions}
             onProcDecisaoChange={decision.handleProcDecisionChange}
             onConfirmarDecisaoClick={decision.handleConfirmDecisionClick}
+            onPendenciarClick={() => {
+              setShowPendencyDialog(true);
+            }}
+            onJuntaMedicaClick={() => {
+              setShowJuntaMedicaDialog(true);
+            }}
+            permissions={permissions}
+            isLocked={isLocked}
           />
         </Box>
       </Box>
@@ -360,11 +408,34 @@ function AnalysisInner() {
         }}
       />
 
-      {/* Shortcuts Help Dialog */}
-      <ShortcutsHelpDialog
-        open={decision.showShortcutsHelp}
+      {/* Pendency Dialog (M1) */}
+      <PendencyDialog
+        open={showPendencyDialog}
+        requestId={request.id}
         onClose={() => {
-          decision.setShowShortcutsHelp(false);
+          setShowPendencyDialog(false);
+        }}
+        onConfirm={(payload) => {
+          m1.applyPendency({ ...payload, actor: permissions.profile });
+          setShowPendencyDialog(false);
+          showSnackbar(
+            `Pedido ${request.id} pendenciado. Notificação enviada ao prestador.`,
+            'warning',
+          );
+        }}
+      />
+
+      {/* Junta Médica Dialog (M1) */}
+      <JuntaMedicaDialog
+        open={showJuntaMedicaDialog}
+        requestId={request.id}
+        onClose={() => {
+          setShowJuntaMedicaDialog(false);
+        }}
+        onConfirm={(payload) => {
+          m1.applyJuntaMedica({ ...payload, actor: permissions.profile });
+          setShowJuntaMedicaDialog(false);
+          showSnackbar(`Pedido ${request.id} encaminhado para Junta Médica.`, 'info');
         }}
       />
 

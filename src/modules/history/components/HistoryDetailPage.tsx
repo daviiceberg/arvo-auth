@@ -17,6 +17,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 
 import { DecisionActionChip } from '@/shared/components';
+import { aiSuggestionFinalColorMap, alertOutlines } from '@/shared/constants';
 
 import AuditLogSection from '@/modules/analysis/components/AuditLogSection';
 import InternalNotesSection from '@/modules/analysis/components/InternalNotesSection';
@@ -33,6 +34,7 @@ import HistoryAlertsBanner from './HistoryAlertsBanner';
 import HistoryDetailHeader from './HistoryDetailHeader';
 import IAChecklistSection from './IAChecklistSection';
 import IADecisionSection from './IADecisionSection';
+import JuntaParecerCard from './JuntaParecerCard';
 import ObservationsSection from './ObservationsSection';
 import ProceduresSection from './ProceduresSection';
 
@@ -92,17 +94,14 @@ export default function HistoryDetailPage() {
                   fontWeight: 600,
                   fontSize: 13,
                   borderRadius: 2,
-                  border: '1px solid rgba(212,24,61,0.3)',
+                  border: alertOutlines.error,
                 }}
               >
                 Procedimento já realizado antes da autorização
               </Alert>
             ) : null}
             {entry.cidDivergence ? (
-              <Alert
-                severity="warning"
-                sx={{ borderRadius: 2, border: '1px solid rgba(245,158,11,0.35)' }}
-              >
+              <Alert severity="warning" sx={{ borderRadius: 2, border: alertOutlines.warning }}>
                 <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
                   Divergência de CID detectada no momento da análise
                 </Typography>
@@ -119,6 +118,7 @@ export default function HistoryDetailPage() {
             <HistoryAlertsBanner entry={entry} />
             <BeneficiarySection entry={entry} />
             <ProceduresSection entry={entry} />
+            {entry.juntaParecer ? <JuntaParecerCard entry={entry} /> : null}
             <ObservationsSection entry={entry} />
             {entry.internalNotes ? (
               <InternalNotesSection value={entry.internalNotes} onChange={() => undefined} />
@@ -189,11 +189,8 @@ export default function HistoryDetailPage() {
                       fontSize: 12,
                       fontWeight: 700,
                       height: 22,
-                      backgroundColor:
-                        entry.iaSuggestion === 'Aprovar'
-                          ? 'rgba(22,163,74,0.1)'
-                          : 'rgba(212,24,61,0.1)',
-                      color: entry.iaSuggestion === 'Aprovar' ? 'success.main' : 'error.main',
+                      backgroundColor: aiSuggestionFinalColorMap[entry.iaSuggestion].bg,
+                      color: aiSuggestionFinalColorMap[entry.iaSuggestion].color,
                     }}
                   />
                 </Box>
@@ -204,7 +201,12 @@ export default function HistoryDetailPage() {
                     <Alert
                       severity="warning"
                       icon={<WarningAmberIcon sx={{ fontSize: 16 }} />}
-                      sx={{ mb: 2, '& .MuiAlert-message': { fontSize: 12 } }}
+                      sx={{
+                        mb: 2,
+                        borderRadius: 2,
+                        border: alertOutlines.warning,
+                        '& .MuiAlert-message': { fontSize: 12 },
+                      }}
                     >
                       <Typography
                         variant="caption"

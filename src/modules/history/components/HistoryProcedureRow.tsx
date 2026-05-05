@@ -16,8 +16,8 @@ import { type CodeType, type TussCode } from '@/types/procedure-codes';
 
 import { getDutNumberForTuss } from '@/mocks/tuss-dut-mapping';
 
-function formatDates(requestDate: string, expiryDate?: string): string {
-  return `Solic.: ${requestDate} · Val.: ${expiryDate ?? '—'}`;
+function formatDates(requestDate: string): string {
+  return `Solic.: ${requestDate}`;
 }
 
 const TD_SX = { py: '8px', px: 2, verticalAlign: 'top' as const };
@@ -208,7 +208,7 @@ export default function HistoryProcedureRow({
         </TableCell>
         {/* Datas */}
         <TableCell sx={{ ...TD_SX, color: 'text.secondary', fontSize: 12, width: 140 }}>
-          {formatDates(proc.requestDate, proc.passwordExpiryDate)}
+          {formatDates(proc.requestDate)}
         </TableCell>
         {/* CID */}
         <TableCell sx={TD_SX}>

@@ -20,6 +20,15 @@ function isInOperationalQueue(request: Request): boolean {
   return request.status === 'Em Análise';
 }
 
+function isInDevolutivasQueue(request: Request): boolean {
+  return (
+    request.subStatus === 'PENDENTE_AGUARDANDO' ||
+    request.subStatus === 'PENDENTE_RETORNO_RECEBIDO' ||
+    request.subStatus === 'JUNTA_AGUARDANDO' ||
+    request.subStatus === 'JUNTA_PARECER_RECEBIDO'
+  );
+}
+
 function matchesSearch(request: Request, search: string): boolean {
   const q = search.toLowerCase().trim();
   if (q === '') return true;
@@ -81,15 +90,17 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     rowsPerPage,
   } = filters;
 
-  const filteredByTab = useMemo(
-    () =>
-      pedidos.filter(isInOperationalQueue).filter((p) => {
-        if (tabValue === 1) return p.slaStatus === 'warning';
-        if (tabValue === 2) return p.slaStatus === 'violated';
-        return true;
-      }),
-    [pedidos, tabValue],
-  );
+  const filteredByTab = useMemo(() => {
+    if (tabValue === 3) {
+      // Devolutivas tab — independent set, includes pendência + junta médica
+      return pedidos.filter(isInDevolutivasQueue);
+    }
+    return pedidos.filter(isInOperationalQueue).filter((p) => {
+      if (tabValue === 1) return p.slaStatus === 'warning';
+      if (tabValue === 2) return p.slaStatus === 'violated';
+      return true;
+    });
+  }, [pedidos, tabValue]);
 
   const filtered = useMemo(
     () =>
@@ -128,6 +139,8 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     [pedidos],
   );
 
+  const devolutivasCount = useMemo(() => pedidos.filter(isInDevolutivasQueue).length, [pedidos]);
+
   return {
     loading,
     filteredByTab,
@@ -135,5 +148,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     pagedItems,
     warningCount,
     violatedCount,
+    devolutivasCount,
   };
 }

@@ -10,6 +10,7 @@ interface QueueTabBarProps {
   totalCount: number;
   warningCount: number;
   violatedCount: number;
+  devolutivasCount?: number;
   onTabChange: (value: number) => void;
 }
 
@@ -18,6 +19,7 @@ export default function QueueTabBar({
   totalCount,
   warningCount,
   violatedCount,
+  devolutivasCount = 0,
   onTabChange,
 }: QueueTabBarProps) {
   return (
@@ -85,6 +87,25 @@ export default function QueueTabBar({
             </Box>
           }
           aria-label="SLA Violado"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Devolutivas
+              <Chip
+                label={devolutivasCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(124,58,237,0.12)',
+                  color: '#6d28d9',
+                }}
+              />
+            </Box>
+          }
+          aria-label="Devolutivas (Pendência e Junta Médica)"
         />
       </Tabs>
     </Box>

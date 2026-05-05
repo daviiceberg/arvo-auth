@@ -3,6 +3,8 @@
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import GroupsIcon from '@mui/icons-material/Groups';
+import ReplayIcon from '@mui/icons-material/Replay';
 import Chip from '@mui/material/Chip';
 
 import { decisionActionConfigMap } from '@/shared/constants/decision-action-colors';
@@ -12,6 +14,8 @@ const decisionIconMap: Record<DecisionAction, React.ReactNode> = {
   Aprovado: <CheckCircleIcon sx={{ fontSize: 13 }} />,
   Negado: <CancelIcon sx={{ fontSize: 13 }} />,
   'Aprovado Parcial': <CallSplitIcon sx={{ fontSize: 13 }} />,
+  Devolutiva: <ReplayIcon sx={{ fontSize: 13 }} />,
+  'Junta Médica': <GroupsIcon sx={{ fontSize: 13 }} />,
 };
 
 interface DecisionActionChipProps {

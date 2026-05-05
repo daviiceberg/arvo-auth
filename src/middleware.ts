@@ -24,6 +24,10 @@ function appBaseFromRequest(request: NextRequest): string {
 }
 
 export async function middleware(request: NextRequest) {
+  if (!process.env.AUTH0_DOMAIN) {
+    return NextResponse.next();
+  }
+
   if (PUBLIC_FILE.test(request.nextUrl.pathname)) {
     return NextResponse.next();
   }

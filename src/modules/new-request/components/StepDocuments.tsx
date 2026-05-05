@@ -34,8 +34,7 @@ interface StepDocumentsProps {
   docDragOver: boolean;
   setDocDragOver: (v: boolean) => void;
   docFileRef: React.RefObject<HTMLInputElement | null>;
-  setNewDocFile: (v: File | null) => void;
-  handleAddDocAdicional: () => void;
+  addDocAdicionalFile: (file: File, tipo?: string) => void;
   handleRemoveDocAdicional: (id: string) => void;
 }
 
@@ -45,17 +44,13 @@ export function StepDocuments({
   docDragOver,
   setDocDragOver,
   docFileRef,
-  setNewDocFile,
-  handleAddDocAdicional,
+  addDocAdicionalFile,
   handleRemoveDocAdicional,
 }: StepDocumentsProps) {
   const isContinuidade = etapaAutorizacao === 'continuidade';
 
   const handleFileSelect = (file: File) => {
-    setNewDocFile(file);
-    setTimeout(() => {
-      handleAddDocAdicional();
-    }, 100);
+    addDocAdicionalFile(file);
   };
 
   return (
@@ -226,8 +221,9 @@ export function StepDocuments({
         onDrop={(e) => {
           e.preventDefault();
           setDocDragOver(false);
-          const f = e.dataTransfer.files[0];
-          if (f) handleFileSelect(f);
+          Array.from(e.dataTransfer.files).forEach((f) => {
+            handleFileSelect(f);
+          });
         }}
         onClick={() => docFileRef.current?.click()}
         sx={{
@@ -251,8 +247,10 @@ export function StepDocuments({
           multiple
           style={{ display: 'none' }}
           onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFileSelect(f);
+            Array.from(e.target.files ?? []).forEach((f) => {
+              handleFileSelect(f);
+            });
+            e.target.value = '';
           }}
         />
         <UploadFileIcon sx={{ fontSize: 32, color: 'rgba(0,0,0,0.25)' }} />

@@ -44,6 +44,21 @@ export interface QueueFiltersActions {
   hasFilters: boolean;
 }
 
+const TAB_BY_NAME: Record<string, number> = {
+  devolutivas: 3,
+  violado: 2,
+  risco: 1,
+  geral: 0,
+};
+
+function parseTabParam(raw: string | null): number {
+  if (raw === null) return 0;
+  const named = TAB_BY_NAME[raw.toLowerCase()];
+  if (named !== undefined) return named;
+  const numeric = Number(raw);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
 function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
   return {
     search: searchParams.get('beneficiario') ?? '',
@@ -52,7 +67,7 @@ function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
     providerFilter: 'Todos',
     iaSuggestionFilter: searchParams.get('ia') ?? 'Todas',
     statusFilter: searchParams.get('status') ?? 'Todos',
-    tabValue: Number(searchParams.get('tab')) || 0,
+    tabValue: parseTabParam(searchParams.get('tab')),
     returnSubFilter: 'all',
   };
 }
