@@ -216,7 +216,15 @@ export default function Sidebar({
         {!collapsed && (
           <>
             {/* Categorias */}
-            <Box sx={{ px: 1.5, pt: 1.5, flexShrink: 0 }}>
+            <Box
+              sx={{
+                px: 1.5,
+                pt: 1.5,
+                mt: 1,
+                borderTop: '1px solid rgba(0,0,0,0.07)',
+                flexShrink: 0,
+              }}
+            >
               <Box
                 role="button"
                 tabIndex={0}

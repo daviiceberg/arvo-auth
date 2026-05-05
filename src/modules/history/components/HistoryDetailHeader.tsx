@@ -12,7 +12,7 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { DecisionActionChip } from '@/shared/components';
+import { CategoryChip, DecisionActionChip } from '@/shared/components';
 import { type HistoryEntry } from '@/types/pedido';
 
 interface HistoryDetailHeaderProps {
@@ -58,6 +58,7 @@ export default function HistoryDetailHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {entry.id}
           </Typography>
+          <CategoryChip category={entry.category} />
           <DecisionActionChip action={entry.action} />
           {entry.alerts && entry.alerts.length > 0
             ? entry.alerts.map((alerta) => (
