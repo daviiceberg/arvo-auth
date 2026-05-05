@@ -3,11 +3,25 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { dashboardMetrics, pedidos, pedidosEmProcessamento } from '@/data/pedidos';
+import { categoryColorMap } from '@/shared/constants';
 import { type Category } from '@/types/pedido';
+
+const CATEGORIES_ORDER: Category[] = [
+  'Terapias Especiais',
+  'SADT',
+  'Exames Alta Complexidade',
+  'Home Care',
+];
 
 export interface CategoryBreakdownEntry {
   category: Category;
-  count: number;
+  color: string;
+  total: number;
+  emAnalise: number;
+  slaWarning: number;
+  slaViolated: number;
+  iaSugestaoNegar: number;
+  iaSugestaoAprovar: number;
 }
 
 export default function useDashboardData() {
@@ -22,14 +36,20 @@ export default function useDashboardData() {
     };
   }, []);
 
-  // Slot reservado p/ commit 4 — derivação plena por categoria virá quando os mocks
-  // tiverem distribuição multi-categoria. Por ora, agrega apenas as categorias presentes.
   const categoryBreakdown = useMemo<CategoryBreakdownEntry[]>(() => {
-    const counts = new Map<Category, number>();
-    for (const p of pedidos) {
-      counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
-    }
-    return Array.from(counts.entries()).map(([category, count]) => ({ category, count }));
+    return CATEGORIES_ORDER.map((category) => {
+      const slice = pedidos.filter((p) => p.category === category);
+      return {
+        category,
+        color: categoryColorMap[category].color,
+        total: slice.length,
+        emAnalise: slice.filter((p) => p.status === 'Em Análise').length,
+        slaWarning: slice.filter((p) => p.slaStatus === 'warning').length,
+        slaViolated: slice.filter((p) => p.slaStatus === 'violated').length,
+        iaSugestaoNegar: slice.filter((p) => p.iaSuggestion === 'Negar').length,
+        iaSugestaoAprovar: slice.filter((p) => p.iaSuggestion === 'Aprovar').length,
+      };
+    });
   }, []);
 
   return {

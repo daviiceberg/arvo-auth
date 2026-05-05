@@ -19,7 +19,7 @@ import {
   CHECKLIST_GROUP_LABELS,
   type ChecklistGroup,
   getChecklistGroup,
-} from '@/mocks/tea-checklist-catalog';
+} from '@/mocks/checklist-base';
 
 interface ChecklistFullModalProps {
   open: boolean;

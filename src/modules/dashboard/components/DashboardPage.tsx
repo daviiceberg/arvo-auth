@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import useDashboardData from '../hooks/useDashboardData';
 
+import CategoryBreakdownCard from './CategoryBreakdownCard';
 import DashboardKpiStrip from './DashboardKpiStrip';
 import ProcessingQueueTable from './ProcessingQueueTable';
 import RecentRequestsTable from './RecentRequestsTable';
@@ -19,7 +20,7 @@ import TopDenialReasons from './TopDenialReasons';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { loading, metrics, pedidos } = useDashboardData();
+  const { loading, metrics, pedidos, categoryBreakdown } = useDashboardData();
 
   return (
     <Box sx={{ p: 3 }}>
@@ -34,7 +35,7 @@ export default function DashboardPage() {
       >
         <Box>
           <Typography variant="h4" fontWeight={800} sx={{ letterSpacing: '-0.5px' }}>
-            Gestão Inteligente de Pedidos - Terapias Especiais
+            Gestão Inteligente de Pedidos
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
             Visão geral das solicitações —{' '}
@@ -61,6 +62,11 @@ export default function DashboardPage() {
 
       {/* KPI strip */}
       <DashboardKpiStrip metrics={metrics} />
+
+      {/* Category breakdown */}
+      <Box sx={{ mb: 2 }}>
+        <CategoryBreakdownCard entries={categoryBreakdown} />
+      </Box>
 
       {/* Processing Queue */}
       {!loading && <ProcessingQueueTable />}
