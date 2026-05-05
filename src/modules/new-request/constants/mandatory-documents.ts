@@ -1,62 +1,156 @@
 import { type Category } from '@/types/pedido';
 
-export const DOCS_TERAPIAS_PRIMEIRA: { nome: string; descricao: string; obrigatorio: boolean }[] = [
-  {
-    nome: 'Pedido Médico com CID',
-    descricao: 'Solicitação assinada pelo médico responsável',
-    obrigatorio: true,
-  },
-  {
-    nome: 'Laudo Neuropsicológico',
-    descricao: 'Laudo atualizado (validade: 12 meses)',
-    obrigatorio: true,
-  },
-  {
-    nome: 'Plano Terapêutico',
-    descricao: 'Plano elaborado pelo profissional executante',
-    obrigatorio: true,
-  },
-];
-
-export const DOCS_TERAPIAS_CONTINUIDADE: {
+export interface DocSpec {
   nome: string;
   descricao: string;
   obrigatorio: boolean;
-}[] = [
-  {
-    nome: 'Pedido Médico com CID',
-    descricao: 'Solicitação assinada pelo médico responsável',
-    obrigatorio: true,
-  },
-  {
-    nome: 'Relatório de Evolução Terapêutica',
-    descricao: 'Emitido pelo terapeuta responsável',
-    obrigatorio: true,
-  },
-  {
-    nome: 'Laudo Neuropsicológico',
-    descricao: 'Laudo atualizado (validade: 12 meses) — se expirado',
-    obrigatorio: true,
-  },
-];
+}
 
-// TODO(M2 commit 3): preencher docs reais para SADT, Exames Alta Complexidade, Home Care.
-export const DOCS_OBRIGATORIOS: Record<
-  Category,
-  { nome: string; descricao: string; obrigatorio: boolean }[]
-> = {
-  'Terapias Especiais': DOCS_TERAPIAS_PRIMEIRA,
-  SADT: [],
-  'Exames Alta Complexidade': [],
-  'Home Care': [],
-};
+export interface CategoryDocs {
+  primeira: DocSpec[];
+  continuidade: DocSpec[];
+}
 
-export const SUBTITULO_DOC: Record<Category, string> = {
-  'Terapias Especiais': 'Anexe os documentos exigidos para autorização de terapias especiais.',
-  SADT: 'Anexe os documentos exigidos para autorização de SADT.',
-  'Exames Alta Complexidade':
-    'Anexe os documentos exigidos para autorização de exames de alta complexidade.',
-  'Home Care': 'Anexe os documentos exigidos para autorização de home care.',
+export const DOCS_BY_CATEGORY: Record<Category, CategoryDocs> = {
+  'Terapias Especiais': {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Laudo Neuropsicológico',
+        descricao: 'Laudo atualizado (validade: 12 meses)',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano Terapêutico',
+        descricao: 'Plano elaborado pelo profissional executante',
+        obrigatorio: true,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório de Evolução Terapêutica',
+        descricao: 'Emitido pelo terapeuta responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Laudo Neuropsicológico',
+        descricao: 'Laudo atualizado (validade: 12 meses) — se expirado',
+        obrigatorio: true,
+      },
+    ],
+  },
+  SADT: {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Indicação Clínica',
+        descricao: 'Justificativa clínica do procedimento solicitado',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Histórico Clínico',
+        descricao: 'Histórico clínico relevante (quando aplicável)',
+        obrigatorio: false,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório de Evolução',
+        descricao: 'Resultado dos atendimentos anteriores',
+        obrigatorio: true,
+      },
+    ],
+  },
+  'Exames Alta Complexidade': {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Indicação clínica explícita do exame solicitado',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Justificativa Técnica',
+        descricao: 'Laudo médico justificando a necessidade do exame de alta complexidade',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Histórico Clínico Relevante',
+        descricao: 'Exames anteriores e evolução do quadro',
+        obrigatorio: true,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Indicação clínica do reexame',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório do Exame Anterior',
+        descricao: 'Resultado do exame anterior + justificativa do reexame',
+        obrigatorio: true,
+      },
+    ],
+  },
+  'Home Care': {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano de Cuidados Domiciliares',
+        descricao: 'Especifica equipe, frequência e tempo previsto de atendimento',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Histórico Clínico',
+        descricao: 'Estado clínico atual e dependências',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Avaliação Social',
+        descricao: 'Quando aplicável (estrutura familiar / suporte domiciliar)',
+        obrigatorio: false,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação de renovação assinada pelo médico responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório de Evolução',
+        descricao: 'Evolução do quadro durante o período anterior',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano de Cuidados Atualizado',
+        descricao: 'Plano para o próximo ciclo (frequência, equipe, duração)',
+        obrigatorio: true,
+      },
+    ],
+  },
 };
 
 export const TIPOS_DOC_UPLOAD = [

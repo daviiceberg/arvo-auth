@@ -3,7 +3,36 @@
 import { useState } from 'react';
 
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
-import { type FormData, type TerapiaProcedimento } from '../types';
+import {
+  type FormData,
+  type TerapiaProcedimento,
+  type SadtData,
+  type ExamsData,
+  type HomeCareData,
+} from '../types';
+
+const initialSadt: SadtData = {
+  codigoTUSS: '',
+  tipo: '',
+  frequencia: '',
+  quantidade: '',
+};
+
+const initialExams: ExamsData = {
+  codigoTUSS: '',
+  regiaoAnatomica: '',
+  hipoteseDiagnostica: '',
+  historicoExamesAnteriores: '',
+};
+
+const initialHomeCare: HomeCareData = {
+  tipo: '',
+  frequencia: '',
+  duracaoDias: '',
+  escalaCuidadores: '',
+  equipamentos: '',
+  enderecoAtendimento: '',
+};
 
 const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcedimento => ({
   id: crypto.randomUUID(),
@@ -16,7 +45,7 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
 });
 
 export const initialForm: FormData = {
-  category: 'Terapias Especiais',
+  category: '',
   nomeBeneficiario: 'Lucas Martins de Almeida',
   carteirinha: '9876543210987654',
   dataNascimento: '2018-07-22',
@@ -45,12 +74,15 @@ export const initialForm: FormData = {
   terapiaDataSolicitacao: '',
   terapiaDataValidadeSenha: '',
   frequenciaSemanal: '3x por semana',
+  sadt: initialSadt,
+  exams: initialExams,
+  homeCare: initialHomeCare,
 };
 
 export function useNewRequestForm(categoryParam: string) {
   const [form, setForm] = useState({
     ...initialForm,
-    category: (categoryParam || 'Terapias Especiais') as FormData['category'],
+    category: (categoryParam || '') as FormData['category'],
   });
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
@@ -110,10 +142,26 @@ export function useNewRequestForm(categoryParam: string) {
   const resetForm = (categoryParamValue: string) => {
     setForm({
       ...initialForm,
-      category: (categoryParamValue || 'Terapias Especiais') as FormData['category'],
+      category: (categoryParamValue || '') as FormData['category'],
     });
     setTerapiaProcedimentos([newTerapiaProc()]);
     setCidSecundarioInput('');
+  };
+
+  const setCategory = (next: FormData['category']) => {
+    setForm((f) => ({ ...f, category: next }));
+  };
+
+  const setSadtField = <K extends keyof SadtData>(field: K, value: SadtData[K]) => {
+    setForm((f) => ({ ...f, sadt: { ...f.sadt, [field]: value } }));
+  };
+
+  const setExamsField = <K extends keyof ExamsData>(field: K, value: ExamsData[K]) => {
+    setForm((f) => ({ ...f, exams: { ...f.exams, [field]: value } }));
+  };
+
+  const setHomeCareField = <K extends keyof HomeCareData>(field: K, value: HomeCareData[K]) => {
+    setForm((f) => ({ ...f, homeCare: { ...f.homeCare, [field]: value } }));
   };
 
   return {
@@ -121,6 +169,10 @@ export function useNewRequestForm(categoryParam: string) {
     setForm,
     set,
     setSelect,
+    setCategory,
+    setSadtField,
+    setExamsField,
+    setHomeCareField,
     terapiaProcedimentos,
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,

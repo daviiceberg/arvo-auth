@@ -4,9 +4,23 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { type Category } from '@/types/pedido';
+
 import { type FormData, type TerapiaProcedimento } from '../types';
 
-const STEP_3_LABEL = 'Sessões de Terapia';
+const STEP_DYNAMIC_LABEL_BY_CATEGORY: Record<Category, string> = {
+  'Terapias Especiais': 'Sessões de Terapia',
+  SADT: 'Procedimento SADT',
+  'Exames Alta Complexidade': 'Exame de Alta Complexidade',
+  'Home Care': 'Plano de Home Care',
+};
+
+function dynamicStepLabel(category: FormData['category']): string {
+  return category === '' ? 'Específicos' : STEP_DYNAMIC_LABEL_BY_CATEGORY[category];
+}
+
+const TOTAL_STEPS = 7;
+const LAST_STEP = TOTAL_STEPS - 1;
 
 function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | null {
   for (let i = 0; i < procedures.length; i++) {
@@ -25,15 +39,50 @@ function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | 
   return null;
 }
 
+function validateSadt(form: FormData): string | null {
+  if (!form.sadt.codigoTUSS.trim()) return 'Informe o código TUSS do procedimento SADT.';
+  if (!form.sadt.tipo) return 'Selecione o tipo do procedimento SADT.';
+  if (!form.sadt.quantidade.trim() || Number(form.sadt.quantidade) <= 0) {
+    return 'Informe a quantidade.';
+  }
+  return null;
+}
+
+function validateExams(form: FormData): string | null {
+  if (!form.exams.codigoTUSS.trim()) return 'Informe o código TUSS do exame.';
+  if (!form.exams.regiaoAnatomica.trim()) return 'Informe a região anatômica.';
+  if (!form.exams.hipoteseDiagnostica.trim()) return 'Informe a hipótese diagnóstica.';
+  return null;
+}
+
+function validateHomeCare(form: FormData): string | null {
+  if (!form.homeCare.tipo) return 'Selecione o tipo de Home Care.';
+  if (!form.homeCare.frequencia.trim()) return 'Informe a frequência de atendimento.';
+  if (!form.homeCare.duracaoDias.trim() || Number(form.homeCare.duracaoDias) <= 0) {
+    return 'Informe a duração prevista (em dias).';
+  }
+  if (!form.homeCare.enderecoAtendimento.trim()) return 'Informe o endereço de atendimento.';
+  return null;
+}
+
+function validateDynamicStep(form: FormData, procedures: TerapiaProcedimento[]): string | null {
+  if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
+  if (form.category === 'Terapias Especiais') return validateTherapyProcedures(procedures);
+  if (form.category === 'SADT') return validateSadt(form);
+  if (form.category === 'Exames Alta Complexidade') return validateExams(form);
+  if (form.category === 'Home Care') return validateHomeCare(form);
+  return null;
+}
+
 function validateStepTransition(
   currentStep: number,
   form: FormData,
   terapiaProcedimentos: TerapiaProcedimento[],
 ): string | null {
-  if (currentStep === 1 && !form.category) {
-    return 'Por favor, selecione o tipo de solicitação antes de continuar.';
+  if (currentStep === 0 && !form.category) {
+    return 'Selecione uma categoria para continuar.';
   }
-  if (currentStep === 2) {
+  if (currentStep === 3) {
     if (!form.cidPrincipal.trim()) {
       return 'CID Principal é obrigatório. Preencha o CID antes de continuar.';
     }
@@ -41,9 +90,8 @@ function validateStepTransition(
       return 'Indicação Clínica é obrigatória. Preencha a indicação clínica antes de continuar.';
     }
   }
-  if (currentStep === 3 && form.category === 'Terapias Especiais') {
-    if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
-    return validateTherapyProcedures(terapiaProcedimentos);
+  if (currentStep === 4) {
+    return validateDynamicStep(form, terapiaProcedimentos);
   }
   return null;
 }
@@ -63,10 +111,11 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   const activeCategory = form.category;
 
   const steps = [
+    { label: 'Categoria' },
     { label: 'Upload' },
     { label: 'Beneficiário' },
     { label: 'Clínico' },
-    { label: STEP_3_LABEL },
+    { label: dynamicStepLabel(activeCategory) },
     { label: 'Documentos' },
     { label: 'Revisão' },
   ];
@@ -77,12 +126,12 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
       alert(error);
       return;
     }
-    if (currentStep < 5) {
+    if (currentStep < LAST_STEP) {
       setCurrentStep((s) => s + 1);
       return;
     }
 
-    // Step 5 — submit
+    // Last step — submit
     setSubmitting(true);
     setTimeout(() => {
       const id = `REQ-2026-${String(50000 + Math.floor(Math.random() * 49999)).padStart(5, '0')}`;
@@ -93,8 +142,7 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   };
 
   const handleBack = () => {
-    if (currentStep > 1) setCurrentStep((s) => s - 1);
-    else if (currentStep === 1) setCurrentStep(0);
+    if (currentStep > 0) setCurrentStep((s) => s - 1);
   };
 
   const handleCancel = () => {
@@ -123,5 +171,7 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
     handleCancel,
     goToDashboard,
     activeCategory,
+    totalSteps: TOTAL_STEPS,
+    lastStep: LAST_STEP,
   };
 }

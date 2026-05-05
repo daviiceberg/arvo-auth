@@ -9,9 +9,22 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
+import { type Category } from '@/types/pedido';
+
 import { type FormData, type TerapiaProcedimento, type DocUpload } from '../types';
 
-const STEP_3_LABEL = 'Sessões de Terapia';
+const SECTION_TITLE_BY_CATEGORY: Record<Category, string> = {
+  'Terapias Especiais': 'Sessões de Terapia',
+  SADT: 'Procedimento SADT',
+  'Exames Alta Complexidade': 'Exame de Alta Complexidade',
+  'Home Care': 'Plano de Home Care',
+};
+
+function etapaLabel(etapa: string): string {
+  if (etapa === 'continuidade') return 'Continuidade / Renovação';
+  if (etapa === 'primeira_solicitacao') return 'Primeira Solicitação';
+  return '—';
+}
 
 interface StepReviewProps {
   form: FormData;
@@ -31,32 +44,19 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
         {label}
       </Typography>
       <Typography variant="caption" sx={{ fontSize: 12 }}>
-        {value || '\u2014'}
+        {value || '—'}
       </Typography>
     </Box>
   );
 }
 
-// ── Step 3 content: Terapias ─────────────────────────────────────────
-function getStep3Content(
-  form: FormData,
-  terapiaProcedimentos: TerapiaProcedimento[],
-): React.ReactNode {
+// ── Dynamic step content por categoria ───────────────────────────────
+function getTherapiesContent(procedures: TerapiaProcedimento[]): React.ReactNode {
   return (
     <>
-      <ReviewRow
-        label="Etapa da Autorização"
-        value={
-          form.etapaAutorizacao === 'continuidade'
-            ? 'Continuidade / Renovação'
-            : form.etapaAutorizacao === 'primeira_solicitacao'
-              ? 'Primeira Solicitação'
-              : '\u2014'
-        }
-      />
-      {terapiaProcedimentos.map((proc, idx) => (
+      {procedures.map((proc, idx) => (
         <Box key={proc.id} sx={{ mt: 1.5, mb: 0.5 }}>
-          {terapiaProcedimentos.length > 1 && (
+          {procedures.length > 1 && (
             <Typography
               variant="subtitle2"
               sx={{ fontSize: 12, fontWeight: 700, mb: 0.5, color: 'text.secondary' }}
@@ -74,6 +74,46 @@ function getStep3Content(
       ))}
     </>
   );
+}
+
+function getDynamicSectionContent(
+  form: FormData,
+  procedures: TerapiaProcedimento[],
+): React.ReactNode {
+  if (form.category === 'Terapias Especiais') return getTherapiesContent(procedures);
+  if (form.category === 'SADT') {
+    return (
+      <>
+        <ReviewRow label="Código TUSS" value={form.sadt.codigoTUSS} />
+        <ReviewRow label="Tipo" value={form.sadt.tipo} />
+        <ReviewRow label="Quantidade" value={form.sadt.quantidade} />
+        <ReviewRow label="Frequência" value={form.sadt.frequencia} />
+      </>
+    );
+  }
+  if (form.category === 'Exames Alta Complexidade') {
+    return (
+      <>
+        <ReviewRow label="Código TUSS" value={form.exams.codigoTUSS} />
+        <ReviewRow label="Região anatômica" value={form.exams.regiaoAnatomica} />
+        <ReviewRow label="Hipótese diagnóstica" value={form.exams.hipoteseDiagnostica} />
+        <ReviewRow label="Exames anteriores" value={form.exams.historicoExamesAnteriores} />
+      </>
+    );
+  }
+  if (form.category === 'Home Care') {
+    return (
+      <>
+        <ReviewRow label="Tipo" value={form.homeCare.tipo} />
+        <ReviewRow label="Frequência" value={form.homeCare.frequencia} />
+        <ReviewRow label="Duração (dias)" value={form.homeCare.duracaoDias} />
+        <ReviewRow label="Escala de cuidadores" value={form.homeCare.escalaCuidadores} />
+        <ReviewRow label="Equipamentos / materiais" value={form.homeCare.equipamentos} />
+        <ReviewRow label="Endereço" value={form.homeCare.enderecoAtendimento} />
+      </>
+    );
+  }
+  return null;
 }
 
 // ── Documents review section ─────────────────────────────────────────
@@ -167,6 +207,7 @@ export function StepReview({
   docsObrigatorios,
   docsAdicionais,
 }: StepReviewProps) {
+  const dynamicTitle = form.category ? SECTION_TITLE_BY_CATEGORY[form.category] : '';
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -204,7 +245,7 @@ export function StepReview({
         Dados do Beneficiário
       </Typography>
       <Box sx={{ mb: 3 }}>
-        <ReviewRow label="Tipo de Solicitação" value={form.category} />
+        <ReviewRow label="Categoria" value={form.category} />
         <ReviewRow label="Nome" value={form.nomeBeneficiario} />
         <ReviewRow label="Carteirinha" value={form.carteirinha} />
         <ReviewRow label="Data de Nascimento" value={form.dataNascimento} />
@@ -263,7 +304,7 @@ export function StepReview({
         />
         <ReviewRow label="Indicação Clínica" value={form.indicacaoClinica} />
       </Box>
-      {/* Step 3 summary */}
+      {/* Categoria-specific summary */}
       {form.category ? (
         <>
           <Typography
@@ -271,9 +312,12 @@ export function StepReview({
             fontWeight={700}
             sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
           >
-            {STEP_3_LABEL}
+            {dynamicTitle}
           </Typography>
-          <Box sx={{ mb: 3 }}>{getStep3Content(form, terapiaProcedimentos)}</Box>
+          <Box sx={{ mb: 3 }}>
+            <ReviewRow label="Etapa da Autorização" value={etapaLabel(form.etapaAutorizacao)} />
+            {getDynamicSectionContent(form, terapiaProcedimentos)}
+          </Box>
         </>
       ) : null}
 

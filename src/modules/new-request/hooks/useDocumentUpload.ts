@@ -4,10 +4,7 @@ import React, { useState, useReducer, useEffect } from 'react';
 
 import { type Category } from '@/types/pedido';
 
-import {
-  DOCS_TERAPIAS_PRIMEIRA,
-  DOCS_TERAPIAS_CONTINUIDADE,
-} from '../constants/mandatory-documents';
+import { DOCS_BY_CATEGORY } from '../constants/mandatory-documents';
 import { type DocUpload } from '../types';
 
 interface UseDocumentUploadParams {
@@ -26,8 +23,8 @@ function obrigReducer(state: DocUpload[], action: ObrigAction): DocUpload[] {
 
 function buildRequiredDocs(activeCategory: Category | '', etapaAutorizacao: string): DocUpload[] {
   if (!activeCategory) return [];
-  const reqs =
-    etapaAutorizacao === 'continuidade' ? DOCS_TERAPIAS_CONTINUIDADE : DOCS_TERAPIAS_PRIMEIRA;
+  const docs = DOCS_BY_CATEGORY[activeCategory];
+  const reqs = etapaAutorizacao === 'continuidade' ? docs.continuidade : docs.primeira;
   return reqs.map((r, i) => ({
     id: `OBR-${String(i)}`,
     nome: r.nome,

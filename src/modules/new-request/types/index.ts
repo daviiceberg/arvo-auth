@@ -34,6 +34,39 @@ export interface DocUpload {
 
 export type { GuiaProcedure } from '@/types/procedure-codes';
 
+export type SadtTipo = 'coleta' | 'infusao' | 'reabilitacao' | 'outro' | '';
+
+export interface SadtData {
+  codigoTUSS: string;
+  tipo: SadtTipo;
+  frequencia: string;
+  quantidade: string;
+}
+
+export interface ExamsData {
+  codigoTUSS: string;
+  regiaoAnatomica: string;
+  hipoteseDiagnostica: string;
+  historicoExamesAnteriores: string;
+}
+
+export type HomeCareTipo =
+  | 'enfermagem'
+  | 'fisioterapia'
+  | 'fonoaudiologia'
+  | 'paliativo'
+  | 'outro'
+  | '';
+
+export interface HomeCareData {
+  tipo: HomeCareTipo;
+  frequencia: string;
+  duracaoDias: string;
+  escalaCuidadores: string;
+  equipamentos: string;
+  enderecoAtendimento: string;
+}
+
 export interface FormData {
   // Step 1 — Beneficiário
   category: Category | '';
@@ -68,4 +101,10 @@ export interface FormData {
   terapiaDataSolicitacao: string;
   terapiaDataValidadeSenha: string;
   frequenciaSemanal: string;
+  // Step dynamic — sub-objetos por categoria. Apenas o campo correspondente à
+  // categoria ativa é preenchido durante o cadastro; os outros permanecem
+  // com defaults vazios.
+  sadt: SadtData;
+  exams: ExamsData;
+  homeCare: HomeCareData;
 }
