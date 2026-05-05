@@ -6,3 +6,4 @@ export { default as OriginChip } from './OriginChip';
 export { default as PrioDot } from './PrioDot';
 export { default as RequestTypeChip } from './RequestTypeChip';
 export { default as DecisionActionChip } from './DecisionActionChip';
+export { default as CategoryChip } from './CategoryChip';

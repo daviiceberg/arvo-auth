@@ -66,6 +66,10 @@ function matchesStatus(request: Request, statusFilter: string): boolean {
   return statusFilter === 'Todos' || request.status === statusFilter;
 }
 
+function matchesCategory(request: Request, categoryFilter: string): boolean {
+  return categoryFilter === 'Todas' || request.category === categoryFilter;
+}
+
 export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const [loading, setLoading] = useState(true);
 
@@ -86,6 +90,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     iaSuggestionFilter,
     alertFilter,
     statusFilter,
+    categoryFilter,
     page,
     rowsPerPage,
   } = filters;
@@ -111,7 +116,8 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
           matchesProvider(p, providerFilter) &&
           matchesIaSuggestion(p, iaSuggestionFilter) &&
           matchesAlert(p, alertFilter) &&
-          matchesStatus(p, statusFilter),
+          matchesStatus(p, statusFilter) &&
+          matchesCategory(p, categoryFilter),
       ),
     [
       filteredByTab,
@@ -121,6 +127,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
       iaSuggestionFilter,
       alertFilter,
       statusFilter,
+      categoryFilter,
     ],
   );
 

@@ -15,11 +15,13 @@ interface QueueFilterBarProps {
   slaFilter: string;
   providerFilter: string;
   iaSuggestionFilter: string;
+  categoryFilter: string;
   hasFilters: boolean;
   onSearchChange: (value: string) => void;
   onSlaFilterChange: (value: string) => void;
   onProviderFilterChange: (value: string) => void;
   onIaSuggestionFilterChange: (value: string) => void;
+  onCategoryFilterChange: (value: string) => void;
   onClearFilters: () => void;
 }
 
@@ -28,11 +30,13 @@ export default function QueueFilterBar({
   slaFilter,
   providerFilter,
   iaSuggestionFilter,
+  categoryFilter,
   hasFilters,
   onSearchChange,
   onSlaFilterChange,
   onProviderFilterChange,
   onIaSuggestionFilterChange,
+  onCategoryFilterChange,
   onClearFilters,
 }: QueueFilterBarProps) {
   return (
@@ -41,7 +45,7 @@ export default function QueueFilterBar({
         px: 2,
         py: 1.75,
         display: 'grid',
-        gridTemplateColumns: '2fr 1fr 1fr 1fr auto',
+        gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto',
         gap: 1.5,
         alignItems: 'center',
         borderBottom: '1px solid rgba(0,0,0,0.06)',
@@ -108,6 +112,22 @@ export default function QueueFilterBar({
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>
           <MenuItem value="Negar">Negar</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl size="small" fullWidth>
+        <InputLabel>Categoria</InputLabel>
+        <Select
+          value={categoryFilter}
+          label="Categoria"
+          onChange={(e) => {
+            onCategoryFilterChange(e.target.value);
+          }}
+        >
+          <MenuItem value="Todas">Todas</MenuItem>
+          <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
+          <MenuItem value="SADT">SADT</MenuItem>
+          <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
+          <MenuItem value="Home Care">Home Care</MenuItem>
         </Select>
       </FormControl>
       <Button

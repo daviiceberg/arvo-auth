@@ -107,7 +107,7 @@ export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica' | 'Pendenciar';
  */
 export type AISuggestionFinal = 'Aprovar' | 'Negar' | 'Aprovar Parcial';
 
-export type Category = 'Terapias Especiais';
+export type Category = 'Terapias Especiais' | 'SADT' | 'Exames Alta Complexidade' | 'Home Care';
 
 export type AccidentIndication = 'NAO_ACIDENTE' | 'TRABALHO' | 'TRANSITO' | 'OUTROS';
 

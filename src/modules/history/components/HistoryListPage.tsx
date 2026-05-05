@@ -42,6 +42,8 @@ export default function HistoryListPage() {
         onDivergenceFilterChange={vm.setDivergenceFilter}
         passedThroughFilter={vm.passedThroughFilter}
         onPassedThroughFilterChange={vm.setPassedThroughFilter}
+        categoryFilter={vm.categoryFilter}
+        onCategoryFilterChange={vm.setCategoryFilter}
         hasFilters={vm.hasFilters}
         onClearFilters={vm.clearFilters}
         onResetPage={() => {

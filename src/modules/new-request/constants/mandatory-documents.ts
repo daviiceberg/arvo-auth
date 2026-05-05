@@ -40,15 +40,23 @@ export const DOCS_TERAPIAS_CONTINUIDADE: {
   },
 ];
 
+// TODO(M2 commit 3): preencher docs reais para SADT, Exames Alta Complexidade, Home Care.
 export const DOCS_OBRIGATORIOS: Record<
   Category,
   { nome: string; descricao: string; obrigatorio: boolean }[]
 > = {
   'Terapias Especiais': DOCS_TERAPIAS_PRIMEIRA,
+  SADT: [],
+  'Exames Alta Complexidade': [],
+  'Home Care': [],
 };
 
 export const SUBTITULO_DOC: Record<Category, string> = {
   'Terapias Especiais': 'Anexe os documentos exigidos para autorização de terapias especiais.',
+  SADT: 'Anexe os documentos exigidos para autorização de SADT.',
+  'Exames Alta Complexidade':
+    'Anexe os documentos exigidos para autorização de exames de alta complexidade.',
+  'Home Care': 'Anexe os documentos exigidos para autorização de home care.',
 };
 
 export const TIPOS_DOC_UPLOAD = [

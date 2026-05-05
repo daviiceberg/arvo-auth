@@ -13,6 +13,7 @@ interface QueueFilterValues {
   providerFilter: string;
   iaSuggestionFilter: string;
   statusFilter: string;
+  categoryFilter: string;
   tabValue: number;
   returnSubFilter: 'all' | 'aguardando' | 'retorno';
 }
@@ -24,6 +25,7 @@ export interface QueueFilters {
   providerFilter: string;
   iaSuggestionFilter: string;
   statusFilter: string;
+  categoryFilter: string;
   tabValue: number;
   returnSubFilter: 'all' | 'aguardando' | 'retorno';
   page: number;
@@ -37,6 +39,7 @@ export interface QueueFiltersActions {
   setProviderFilter: (value: string) => void;
   setIaSuggestionFilter: (value: string) => void;
   setStatusFilter: (value: string) => void;
+  setCategoryFilter: (value: string) => void;
   setTabValue: (value: number) => void;
   setReturnSubFilter: (value: 'all' | 'aguardando' | 'retorno') => void;
   setPage: (value: number) => void;
@@ -67,6 +70,7 @@ function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
     providerFilter: 'Todos',
     iaSuggestionFilter: searchParams.get('ia') ?? 'Todas',
     statusFilter: searchParams.get('status') ?? 'Todos',
+    categoryFilter: searchParams.get('categoria') ?? 'Todas',
     tabValue: parseTabParam(searchParams.get('tab')),
     returnSubFilter: 'all',
   };
@@ -105,7 +109,8 @@ export function useQueueFilters({
       filters.alertFilter !== 'Todos' ||
       filters.providerFilter !== 'Todos' ||
       filters.iaSuggestionFilter !== 'Todas' ||
-      filters.statusFilter !== 'Todos',
+      filters.statusFilter !== 'Todos' ||
+      filters.categoryFilter !== 'Todas',
     [filters],
   );
 
@@ -116,6 +121,7 @@ export function useQueueFilters({
       slaFilter: 'Todas',
       providerFilter: 'Todos',
       iaSuggestionFilter: 'Todas',
+      categoryFilter: 'Todas',
     }));
     setPage(0);
   }, []);
@@ -142,6 +148,9 @@ export function useQueueFilters({
     },
     setStatusFilter: (value: string) => {
       updateFilter('statusFilter', value);
+    },
+    setCategoryFilter: (value: string) => {
+      updateFilter('categoryFilter', value);
     },
     setTabValue: (value: number) => {
       updateFilter('tabValue', value);

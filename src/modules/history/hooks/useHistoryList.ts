@@ -47,6 +47,7 @@ export default function useHistoryList() {
   const [actionFilter, setActionFilter] = useState<ActionFilter>('Todas');
   const [divergenceFilter, setDivergenceFilter] = useState<DivergenceFilter>('Todas');
   const [passedThroughFilter, setPassedThroughFilter] = useState<PassedThroughFilter>('Todos');
+  const [categoryFilter, setCategoryFilter] = useState('Todas');
 
   // -- Sort state ----------------------------------------------------------
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -61,12 +62,14 @@ export default function useHistoryList() {
       .filter((e) => {
         const matchOrigin = originFilter === 'Todas' || e.origin === originFilter;
         const matchDivergence = divergenceFilter === 'Todas' || e.divergence;
+        const matchCategory = categoryFilter === 'Todas' || e.category === categoryFilter;
         return (
           matchesSearch(e, search) &&
           matchOrigin &&
           matchesAction(e, actionFilter) &&
           matchDivergence &&
-          matchesPassedThrough(e, passedThroughFilter)
+          matchesPassedThrough(e, passedThroughFilter) &&
+          matchCategory
         );
       })
       .sort((a, b) => {
@@ -74,7 +77,15 @@ export default function useHistoryList() {
         const dateB = new Date(b.decisionDate.split('/').reverse().join('-')).getTime();
         return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
       });
-  }, [search, originFilter, actionFilter, divergenceFilter, passedThroughFilter, sortDirection]);
+  }, [
+    search,
+    originFilter,
+    actionFilter,
+    divergenceFilter,
+    passedThroughFilter,
+    categoryFilter,
+    sortDirection,
+  ]);
 
   // -- Derived: paged entries ----------------------------------------------
   const pagedEntries = useMemo(
@@ -88,7 +99,8 @@ export default function useHistoryList() {
     originFilter !== 'Todas' ||
     actionFilter !== 'Todas' ||
     divergenceFilter !== 'Todas' ||
-    passedThroughFilter !== 'Todos';
+    passedThroughFilter !== 'Todos' ||
+    categoryFilter !== 'Todas';
 
   // -- Actions -------------------------------------------------------------
   const clearFilters = () => {
@@ -97,6 +109,7 @@ export default function useHistoryList() {
     setActionFilter('Todas');
     setDivergenceFilter('Todas');
     setPassedThroughFilter('Todos');
+    setCategoryFilter('Todas');
   };
 
   const toggleSortDirection = () => {
@@ -169,6 +182,8 @@ export default function useHistoryList() {
     setDivergenceFilter,
     passedThroughFilter,
     setPassedThroughFilter,
+    categoryFilter,
+    setCategoryFilter,
 
     // Sort
     sortDirection,

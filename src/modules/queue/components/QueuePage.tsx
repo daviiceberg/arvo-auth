@@ -61,6 +61,11 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
+  const handleCategoryFilterChange = (value: string) => {
+    filters.setCategoryFilter(value);
+    filters.setPage(0);
+  };
+
   return (
     <Box ref={scrollContainerRef} sx={{ p: 3, height: '100%', overflowY: 'auto' }}>
       {/* Header */}
@@ -101,11 +106,13 @@ export default function QueuePage() {
           slaFilter={filters.slaFilter}
           providerFilter={filters.providerFilter}
           iaSuggestionFilter={filters.iaSuggestionFilter}
+          categoryFilter={filters.categoryFilter}
           hasFilters={filters.hasFilters}
           onSearchChange={handleSearchChange}
           onSlaFilterChange={handleSlaFilterChange}
           onProviderFilterChange={handleProviderFilterChange}
           onIaSuggestionFilterChange={handleIaSuggestionFilterChange}
+          onCategoryFilterChange={handleCategoryFilterChange}
           onClearFilters={filters.clearFilters}
         />
 

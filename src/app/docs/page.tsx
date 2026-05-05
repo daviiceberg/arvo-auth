@@ -985,6 +985,16 @@ function DesignSystemContent() {
               height: 22,
             }}
           />
+          <Chip
+            label="Home Care"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(13,148,136,0.1)',
+              color: '#0d9488',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
         </Preview>
         <CodeBlock>{`const catColorMap = {
   'Internação':              { bg: 'rgba(144,43,41,0.1)',  color: '#902B29' },
@@ -993,7 +1003,7 @@ function DesignSystemContent() {
   'OPME':                    { bg: 'rgba(245,158,11,0.12)',color: '#b45309' },
   'Exames Alta Complexidade':{ bg: 'rgba(8,145,178,0.1)',  color: '#0891b2' },
   'Cirurgias Eletivas':      { bg: 'rgba(5,150,105,0.1)',  color: '#059669' },
-  'Home Care':               { bg: 'rgba(22,163,74,0.1)',  color: '#16a34a' },
+  'Home Care':               { bg: 'rgba(13,148,136,0.1)', color: '#0d9488' },
   'SADT':                    { bg: 'rgba(22,163,74,0.1)',  color: '#16a34a' },
 }`}</CodeBlock>
 

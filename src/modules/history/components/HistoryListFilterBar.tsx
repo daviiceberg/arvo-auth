@@ -31,6 +31,8 @@ interface HistoryListFilterBarProps {
   onDivergenceFilterChange: (value: DivergenceFilter) => void;
   passedThroughFilter: PassedThroughFilter;
   onPassedThroughFilterChange: (value: PassedThroughFilter) => void;
+  categoryFilter: string;
+  onCategoryFilterChange: (value: string) => void;
   hasFilters: boolean;
   onClearFilters: () => void;
   onResetPage: () => void;
@@ -47,6 +49,8 @@ export default function HistoryListFilterBar({
   onDivergenceFilterChange,
   passedThroughFilter,
   onPassedThroughFilterChange,
+  categoryFilter,
+  onCategoryFilterChange,
   hasFilters,
   onClearFilters,
   onResetPage,
@@ -136,6 +140,23 @@ export default function HistoryListFilterBar({
             >
               <MenuItem value="Todas">Todas</MenuItem>
               <MenuItem value="divergiu">Apenas divergências</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Categoria</InputLabel>
+            <Select
+              value={categoryFilter}
+              label="Categoria"
+              onChange={(e) => {
+                onCategoryFilterChange(e.target.value);
+                onResetPage();
+              }}
+            >
+              <MenuItem value="Todas">Todas</MenuItem>
+              <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
+              <MenuItem value="SADT">SADT</MenuItem>
+              <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
+              <MenuItem value="Home Care">Home Care</MenuItem>
             </Select>
           </FormControl>
           {hasFilters ? (
