@@ -1395,10 +1395,11 @@ export const pedidos: Request[] = [
         codeType: 'TUSS' as const,
       },
     ],
-    alerts: ['Junta médica'],
-    iaSuggestion: 'Junta Médica',
-    iaJustification: 'Indicação fora do protocolo — junta médica recomendada.',
-    iaChecklist: buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
+    alerts: [],
+    iaSuggestion: 'Aprovar',
+    iaJustification:
+      'Parecer da junta favorável parcial — restrição anatômica recomendada pelo desempatador. Reanálise IA recomenda aprovação com escopo restrito ao parecer.',
+    iaChecklist: buildExamsChecklist({ cid: 'C18.9' }),
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Parecer da junta favorável parcial — restrição anatômica recomendada pelo desempatador. Reanálise IA recomenda aprovação com escopo restrito ao parecer.',
@@ -2914,7 +2915,13 @@ export const dashboardMetrics = (() => {
     // Monthly volumes for dashboard KPI strip — realistic operator scale
     aprovadosMes: 312,
     negadosMes: 38,
-    devolutivasAtivas: pedidos.filter((p) => p.status === 'Devolutiva').length,
+    devolutivasAtivas: pedidos.filter(
+      (p) =>
+        p.subStatus === 'PENDENTE_AGUARDANDO' ||
+        p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' ||
+        p.subStatus === 'JUNTA_AGUARDANDO' ||
+        p.subStatus === 'JUNTA_PARECER_RECEBIDO',
+    ).length,
     iaSugestaoAprovar: pedidos.filter((p) => p.iaSuggestion === 'Aprovar').length,
     iaSugestaoNegar: pedidos.filter((p) => p.iaSuggestion === 'Negar').length,
     monthlyTrend: [
