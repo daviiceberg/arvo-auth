@@ -1333,7 +1333,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-EXAM-007',
-    status: 'Pendente',
+    status: 'Devolutiva',
     guideType: 'Eleitiva',
     category: 'Exames Alta Complexidade',
     auditLevel: 'AMBULATORIAL',
