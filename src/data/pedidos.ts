@@ -1,6 +1,7 @@
 import {
   type AuditLogEntry,
   type Category,
+  type ChecklistItem,
   type HistoryEntry,
   type ProcessingRequest,
   type Request,
@@ -575,11 +576,21 @@ export const pedidos: Request[] = [
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Parecer da junta favorável ao protocolo EIBI. Reanálise considera respaldo técnico do desempatador — aprovação integral recomendada.',
-    iaChecklistAfterReprocess: buildTeaChecklist({
-      cid: 'F84.0',
-      authorizationStage: 'continuidade',
-      altaUtilMes: 80,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildTeaChecklist({
+        cid: 'F84.0',
+        authorizationStage: 'continuidade',
+        hasEvolutionReport: true,
+      }),
+      {
+        id: 'JUNTA_MEDICA_PARECER_FAVORAVEL',
+        texto:
+          'Junta Médica (Dra. Patrícia Almeida): protocolo EIBI validado por evidência científica — aprovação integral recomendada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations:
       'Caso encaminhado para junta médica em 08/04/2026 — aguardando parecer do desempatador.',
     documents: [],
