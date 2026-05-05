@@ -70,6 +70,22 @@ export default function QueueFilterBar({
         }}
       />
       <FormControl size="small" fullWidth>
+        <InputLabel>Categoria</InputLabel>
+        <Select
+          value={categoryFilter}
+          label="Categoria"
+          onChange={(e) => {
+            onCategoryFilterChange(e.target.value);
+          }}
+        >
+          <MenuItem value="Todas">Todas</MenuItem>
+          <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
+          <MenuItem value="SADT">SADT</MenuItem>
+          <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
+          <MenuItem value="Home Care">Home Care</MenuItem>
+        </Select>
+      </FormControl>
+      <FormControl size="small" fullWidth>
         <InputLabel>Situação SLA</InputLabel>
         <Select
           value={slaFilter}
@@ -112,22 +128,6 @@ export default function QueueFilterBar({
           <MenuItem value="Todas">Todas</MenuItem>
           <MenuItem value="Aprovar">Aprovar</MenuItem>
           <MenuItem value="Negar">Negar</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl size="small" fullWidth>
-        <InputLabel>Categoria</InputLabel>
-        <Select
-          value={categoryFilter}
-          label="Categoria"
-          onChange={(e) => {
-            onCategoryFilterChange(e.target.value);
-          }}
-        >
-          <MenuItem value="Todas">Todas</MenuItem>
-          <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
-          <MenuItem value="SADT">SADT</MenuItem>
-          <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
-          <MenuItem value="Home Care">Home Care</MenuItem>
         </Select>
       </FormControl>
       <Button

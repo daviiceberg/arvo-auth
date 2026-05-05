@@ -11,6 +11,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import {
+  CategoryChip,
   IASuggestionChip,
   OriginChip,
   PrioDot,
@@ -182,6 +183,9 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
         <Box sx={{ mt: 0.5, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
           <RequestTypeChip type={requestType} />
         </Box>
+      </TableCell>
+      <TableCell sx={{ px: 1.5 }}>
+        <CategoryChip category={request.category} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12 }}>

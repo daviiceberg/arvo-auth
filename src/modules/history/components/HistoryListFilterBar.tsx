@@ -112,6 +112,23 @@ export default function HistoryListFilterBar({
               </MenuItem>
             </Select>
           </FormControl>
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Categoria</InputLabel>
+            <Select
+              value={categoryFilter}
+              label="Categoria"
+              onChange={(e) => {
+                onCategoryFilterChange(e.target.value);
+                onResetPage();
+              }}
+            >
+              <MenuItem value="Todas">Todas</MenuItem>
+              <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
+              <MenuItem value="SADT">SADT</MenuItem>
+              <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
+              <MenuItem value="Home Care">Home Care</MenuItem>
+            </Select>
+          </FormControl>
           <FormControl size="small" sx={{ minWidth: 150 }}>
             <InputLabel>Passou por</InputLabel>
             <Select
@@ -140,23 +157,6 @@ export default function HistoryListFilterBar({
             >
               <MenuItem value="Todas">Todas</MenuItem>
               <MenuItem value="divergiu">Apenas divergências</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>Categoria</InputLabel>
-            <Select
-              value={categoryFilter}
-              label="Categoria"
-              onChange={(e) => {
-                onCategoryFilterChange(e.target.value);
-                onResetPage();
-              }}
-            >
-              <MenuItem value="Todas">Todas</MenuItem>
-              <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
-              <MenuItem value="SADT">SADT</MenuItem>
-              <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
-              <MenuItem value="Home Care">Home Care</MenuItem>
             </Select>
           </FormControl>
           {hasFilters ? (

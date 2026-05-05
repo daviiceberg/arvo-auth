@@ -1,5 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,62 +14,10 @@ interface CategoryBreakdownCardProps {
   entries: CategoryBreakdownEntry[];
 }
 
-interface DonutSegmentProps {
-  startAngle: number;
-  endAngle: number;
-  color: string;
-}
-
-const RADIUS_OUTER = 60;
-const RADIUS_INNER = 40;
-const CENTER = 70;
-
-function polar(angleRad: number, radius: number): { x: number; y: number } {
-  return {
-    x: CENTER + radius * Math.cos(angleRad),
-    y: CENTER + radius * Math.sin(angleRad),
-  };
-}
-
-function DonutSegment({ startAngle, endAngle, color }: DonutSegmentProps) {
-  const largeArc = endAngle - startAngle > Math.PI ? 1 : 0;
-  const outerStart = polar(startAngle, RADIUS_OUTER);
-  const outerEnd = polar(endAngle, RADIUS_OUTER);
-  const innerStart = polar(startAngle, RADIUS_INNER);
-  const innerEnd = polar(endAngle, RADIUS_INNER);
-
-  const d = [
-    `M ${String(outerStart.x)} ${String(outerStart.y)}`,
-    `A ${String(RADIUS_OUTER)} ${String(RADIUS_OUTER)} 0 ${String(largeArc)} 1 ${String(outerEnd.x)} ${String(outerEnd.y)}`,
-    `L ${String(innerEnd.x)} ${String(innerEnd.y)}`,
-    `A ${String(RADIUS_INNER)} ${String(RADIUS_INNER)} 0 ${String(largeArc)} 0 ${String(innerStart.x)} ${String(innerStart.y)}`,
-    'Z',
-  ].join(' ');
-
-  return <path d={d} fill={color} />;
-}
-
-function buildSegments(entries: CategoryBreakdownEntry[]): DonutSegmentProps[] {
-  const total = entries.reduce((s, e) => s + e.total, 0);
-  if (total === 0) return [];
-  let cursor = -Math.PI / 2;
-  return entries
-    .filter((e) => e.total > 0)
-    .map((e) => {
-      const span = (e.total / total) * 2 * Math.PI;
-      const seg: DonutSegmentProps = {
-        startAngle: cursor,
-        endAngle: cursor + span,
-        color: e.color,
-      };
-      cursor += span;
-      return seg;
-    });
-}
-
 export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCardProps) {
+  const router = useRouter();
   const total = entries.reduce((s, e) => s + e.total, 0);
-  const segments = buildSegments(entries);
+  const maxTotal = entries.reduce((m, e) => Math.max(m, e.total), 0);
 
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -83,67 +34,82 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
             Nenhuma guia ativa nas categorias mapeadas.
           </Typography>
         ) : (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
-            <Box sx={{ flexShrink: 0 }}>
-              <svg
-                width={140}
-                height={140}
-                viewBox="0 0 140 140"
-                role="img"
-                aria-label={`Distribuição por categoria — ${String(total)} guias`}
-              >
-                {segments.map((seg, i) => (
-                  <DonutSegment
-                    key={i}
-                    startAngle={seg.startAngle}
-                    endAngle={seg.endAngle}
-                    color={seg.color}
-                  />
-                ))}
-                <text
-                  x={CENTER}
-                  y={CENTER - 4}
-                  textAnchor="middle"
-                  fontSize={20}
-                  fontWeight={700}
-                  fill="#0f172a"
-                >
-                  {total}
-                </text>
-                <text x={CENTER} y={CENTER + 14} textAnchor="middle" fontSize={10} fill="#64748b">
-                  guias na fila
-                </text>
-              </svg>
-            </Box>
-
-            <Box
-              sx={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 1.25 }}
-            >
-              {entries.map((e) => (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {entries.map((e) => {
+              const widthPct = maxTotal > 0 ? (e.total / maxTotal) * 100 : 0;
+              return (
                 <Box
                   key={e.category}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: 12 }}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    router.push(`/fila?categoria=${encodeURIComponent(e.category)}`);
+                  }}
+                  onKeyDown={(ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                      ev.preventDefault();
+                      router.push(`/fila?categoria=${encodeURIComponent(e.category)}`);
+                    }
+                  }}
+                  aria-label={`Filtrar fila por ${e.category} — ${String(e.total)} guias`}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.25,
+                    px: 1,
+                    py: 0.75,
+                    borderRadius: 1,
+                    cursor: 'pointer',
+                    transition: 'background-color 150ms ease',
+                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
+                  }}
                 >
-                  <Box
+                  <Typography
                     sx={{
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      backgroundColor: e.color,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      width: 180,
                       flexShrink: 0,
+                      color: 'text.primary',
                     }}
-                  />
-                  <Typography sx={{ fontSize: 12, fontWeight: 600, flex: 1 }}>
+                  >
                     {e.category}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
-                    {e.total > 0
-                      ? `${String(e.total)} guia${e.total === 1 ? '' : 's'}`
-                      : 'sem guias'}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      height: 12,
+                      backgroundColor: 'rgba(0,0,0,0.04)',
+                      borderRadius: 1,
+                      overflow: 'hidden',
+                      minWidth: 60,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        height: '100%',
+                        width: `${String(widthPct)}%`,
+                        backgroundColor: e.color,
+                        transition: 'width 200ms ease',
+                      }}
+                    />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: 'text.primary',
+                      width: 24,
+                      textAlign: 'right',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {e.total}
                   </Typography>
+                  <ChevronRightIcon sx={{ fontSize: 16, color: 'text.secondary', flexShrink: 0 }} />
                 </Box>
-              ))}
-            </Box>
+              );
+            })}
           </Box>
         )}
       </CardContent>

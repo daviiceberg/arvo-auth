@@ -38,7 +38,6 @@ import { useUploadStep } from '../hooks/useUploadStep';
 import { type SnackbarState } from '../types';
 
 import { StepBeneficiary } from './StepBeneficiary';
-import { StepCategorySelect } from './StepCategorySelect';
 import { StepClinical } from './StepClinical';
 import { StepDocuments } from './StepDocuments';
 import { StepDynamic } from './StepDynamic';
@@ -169,7 +168,7 @@ function NewRequestInner() {
 
   const handleSkipUpload = () => {
     setForm({ ...initialForm, category: form.category });
-    setCurrentStep(2);
+    setCurrentStep(1);
   };
 
   const handleNovaSolicitacao = () => {
@@ -183,8 +182,7 @@ function NewRequestInner() {
   };
 
   const stepContent: Record<number, React.ReactNode> = {
-    0: <StepCategorySelect category={form.category} onSelect={setCategory} />,
-    1: (
+    0: (
       <StepUpload
         uploadState={uploadState}
         uploadProgress={uploadProgress}
@@ -195,8 +193,8 @@ function NewRequestInner() {
         onSkip={handleSkipUpload}
       />
     ),
-    2: <StepBeneficiary form={form} set={set} />,
-    3: (
+    1: <StepBeneficiary form={form} set={set} setCategory={setCategory} />,
+    2: (
       <StepClinical
         form={form}
         set={set}
@@ -207,7 +205,7 @@ function NewRequestInner() {
         removeCidSecundario={removeCidSecundario}
       />
     ),
-    4: (
+    3: (
       <StepDynamic
         form={form}
         setSelect={setSelect}
@@ -220,7 +218,7 @@ function NewRequestInner() {
         setHomeCareField={setHomeCareField}
       />
     ),
-    5: (
+    4: (
       <StepDocuments
         etapaAutorizacao={form.etapaAutorizacao}
         docsAdicionais={docUpload.docsAdicionais}
@@ -231,7 +229,7 @@ function NewRequestInner() {
         handleRemoveDocAdicional={docUpload.handleRemoveDocAdicional}
       />
     ),
-    6: (
+    5: (
       <StepReview
         form={form}
         terapiaProcedimentos={terapiaProcedimentos}
@@ -362,8 +360,8 @@ function NewRequestInner() {
 
       {/* ── Body ── */}
       <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {/* Left: document viewer — hidden em Categoria (0) e Upload (1) */}
-        {currentStep > 1 && (
+        {/* Left: document viewer — hidden em Upload (0) */}
+        {currentStep > 0 && (
           <Box
             sx={{
               width: '45%',
@@ -425,7 +423,7 @@ function NewRequestInner() {
         {/* Right: form */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           {/* Form content */}
-          <Box sx={{ flex: 1, overflowY: 'auto', p: currentStep === 1 ? 0 : 4 }}>
+          <Box sx={{ flex: 1, overflowY: 'auto', p: currentStep === 0 ? 0 : 4 }}>
             {stepContent[currentStep]}
           </Box>
 
@@ -455,7 +453,7 @@ function NewRequestInner() {
               >
                 Voltar
               </Button>
-              {(currentStep !== 1 || uploadState === 'processed') && (
+              {(currentStep !== 0 || uploadState === 'processed') && (
                 <Button
                   variant="contained"
                   endIcon={currentStep < lastStep ? <ChevronRightIcon /> : undefined}
@@ -465,7 +463,7 @@ function NewRequestInner() {
                     ) : undefined
                   }
                   onClick={handleNext}
-                  disabled={submitting || (currentStep === 0 && !form.category)}
+                  disabled={submitting || (currentStep === 1 && !form.category)}
                   sx={{ minHeight: 44, px: 3 }}
                 >
                   {currentStep < lastStep

@@ -81,6 +81,7 @@ export default function QueueTable({
             <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
             <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
+            <TableCell sx={{ minWidth: 145 }}>Categoria</TableCell>
             <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
             <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
             <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
@@ -92,7 +93,7 @@ export default function QueueTable({
         <TableBody>
           {items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} sx={{ py: 6, border: 0 }}>
+              <TableCell colSpan={11} sx={{ py: 6, border: 0 }}>
                 <Box
                   sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}
                 >
@@ -172,7 +173,7 @@ function SubGroupRows({ group, lastViewedId, onRowClick }: SubGroupRowsProps) {
     <>
       <TableRow>
         <TableCell
-          colSpan={10}
+          colSpan={11}
           sx={{
             backgroundColor: 'rgba(0,0,0,0.04)',
             py: 1,

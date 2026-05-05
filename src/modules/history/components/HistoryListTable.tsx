@@ -63,6 +63,7 @@ export default function HistoryListTable({
             >
               <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
               <TableCell sx={{ minWidth: 180 }}>Beneficiário</TableCell>
+              <TableCell sx={{ minWidth: 145 }}>Categoria</TableCell>
               <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
               <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
               <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
@@ -86,7 +87,7 @@ export default function HistoryListTable({
           <TableBody>
             {pagedEntries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                <TableCell colSpan={9} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
                   {emptyText}
                 </TableCell>
               </TableRow>

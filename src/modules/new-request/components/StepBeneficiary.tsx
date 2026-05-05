@@ -6,11 +6,23 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import { type Category } from '@/types/pedido';
+
 import { type FormData } from '../types';
+
+const CATEGORY_OPTIONS: Category[] = [
+  'Terapias Especiais',
+  'SADT',
+  'Exames Alta Complexidade',
+  'Home Care',
+];
 
 // ── Field helpers ─────────────────────────────────────────────────────
 function FieldLabel({
@@ -47,9 +59,10 @@ interface StepBeneficiaryProps {
   set: (
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setCategory: (next: FormData['category']) => void;
 }
 
-export function StepBeneficiary({ form, set }: StepBeneficiaryProps) {
+export function StepBeneficiary({ form, set, setCategory }: StepBeneficiaryProps) {
   return (
     <Box>
       <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
@@ -59,6 +72,33 @@ export function StepBeneficiary({ form, set }: StepBeneficiaryProps) {
         Dados do Beneficiário
       </Typography>
       <Grid container spacing={2}>
+        <Grid size={{ xs: 12 }}>
+          <FieldLabel>Tipo de Solicitação *</FieldLabel>
+          <FormControl fullWidth size="small">
+            <Select<FormData['category']>
+              value={form.category}
+              displayEmpty
+              onChange={(e) => {
+                setCategory(e.target.value as FormData['category']);
+              }}
+              renderValue={(selected) =>
+                selected === '' ? (
+                  <Box component="em" sx={{ color: 'text.disabled' }}>
+                    Selecione o tipo de solicitação...
+                  </Box>
+                ) : (
+                  selected
+                )
+              }
+            >
+              {CATEGORY_OPTIONS.map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <FieldLabel validated>Nome Completo</FieldLabel>
           <TextField

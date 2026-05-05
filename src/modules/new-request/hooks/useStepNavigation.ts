@@ -19,7 +19,7 @@ function dynamicStepLabel(category: FormData['category']): string {
   return category === '' ? 'Específicos' : STEP_DYNAMIC_LABEL_BY_CATEGORY[category];
 }
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 const LAST_STEP = TOTAL_STEPS - 1;
 
 function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | null {
@@ -79,10 +79,12 @@ function validateStepTransition(
   form: FormData,
   terapiaProcedimentos: TerapiaProcedimento[],
 ): string | null {
-  if (currentStep === 0 && !form.category) {
-    return 'Selecione uma categoria para continuar.';
+  // Step 1 = Beneficiário — categoria obrigatória para avançar
+  if (currentStep === 1 && !form.category) {
+    return 'Selecione o tipo de solicitação para continuar.';
   }
-  if (currentStep === 3) {
+  // Step 2 = Clínico
+  if (currentStep === 2) {
     if (!form.cidPrincipal.trim()) {
       return 'CID Principal é obrigatório. Preencha o CID antes de continuar.';
     }
@@ -90,7 +92,8 @@ function validateStepTransition(
       return 'Indicação Clínica é obrigatória. Preencha a indicação clínica antes de continuar.';
     }
   }
-  if (currentStep === 4) {
+  // Step 3 = Dynamic (categoria-specific)
+  if (currentStep === 3) {
     return validateDynamicStep(form, terapiaProcedimentos);
   }
   return null;
@@ -111,7 +114,6 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   const activeCategory = form.category;
 
   const steps = [
-    { label: 'Categoria' },
     { label: 'Upload' },
     { label: 'Beneficiário' },
     { label: 'Clínico' },

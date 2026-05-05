@@ -1,9 +1,13 @@
 'use client';
 
+import { useState } from 'react';
+
 import { usePathname, useRouter } from 'next/navigation';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
@@ -17,6 +21,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import { pedidos } from '@/data/pedidos';
+import { categoryColorMap } from '@/shared/constants';
+import { type Category } from '@/types/pedido';
+
 import { type NavItem } from '../constants/navigation';
 import {
   ADMIN_ITEMS,
@@ -24,6 +32,19 @@ import {
   SIDEBAR_COLLAPSED_WIDTH,
   SIDEBAR_WIDTH,
 } from '../constants/navigation';
+
+const CATEGORIES: Category[] = [
+  'Terapias Especiais',
+  'SADT',
+  'Exames Alta Complexidade',
+  'Home Care',
+];
+
+function categoryActiveCount(category: Category): number {
+  return pedidos.filter(
+    (p) => p.category === category && (p.status === 'Em Análise' || p.status === 'Pendente'),
+  ).length;
+}
 
 interface SidebarProps {
   navItems: NavItem[];
@@ -41,6 +62,7 @@ export default function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const currentWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH;
+  const [categoriesOpen, setCategoriesOpen] = useState(true);
 
   const renderNavItem = (item: NavItem) => {
     const isActive = pathname === item.path || pathname.startsWith(`${item.path}/`);
@@ -193,6 +215,117 @@ export default function Sidebar({
 
         {!collapsed && (
           <>
+            {/* Categorias */}
+            <Box sx={{ px: 1.5, pt: 1.5, flexShrink: 0 }}>
+              <Box
+                role="button"
+                tabIndex={0}
+                onClick={() => {
+                  setCategoriesOpen((v) => !v);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setCategoriesOpen((v) => !v);
+                  }
+                }}
+                aria-expanded={categoriesOpen}
+                sx={{
+                  px: 1.5,
+                  py: 0.75,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  borderRadius: 1,
+                  '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.6,
+                    fontSize: 12,
+                  }}
+                >
+                  Categorias
+                </Typography>
+                {categoriesOpen ? (
+                  <ExpandLessIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                )}
+              </Box>
+              {categoriesOpen ? (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, mt: 0.5 }}>
+                  {CATEGORIES.map((category) => {
+                    const colors = categoryColorMap[category];
+                    const count = categoryActiveCount(category);
+                    return (
+                      <Box
+                        key={category}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => {
+                          router.push(`/fila?categoria=${encodeURIComponent(category)}`);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            router.push(`/fila?categoria=${encodeURIComponent(category)}`);
+                          }
+                        }}
+                        aria-label={`Filtrar fila por categoria ${category}`}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          px: 1.5,
+                          py: 0.6,
+                          borderRadius: 1,
+                          cursor: 'pointer',
+                          minHeight: 32,
+                          '&:hover': { backgroundColor: 'rgba(144,43,41,0.05)' },
+                          transition: 'background-color 150ms ease',
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 14,
+                            height: 14,
+                            borderRadius: 1,
+                            backgroundColor: colors.color,
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{ fontSize: 12, fontWeight: 500, flex: 1, color: 'text.primary' }}
+                        >
+                          {category}
+                        </Typography>
+                        <Chip
+                          label={count}
+                          size="small"
+                          sx={{
+                            height: 18,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            backgroundColor: 'rgba(0,0,0,0.06)',
+                            color: 'text.secondary',
+                            '& .MuiChip-label': { px: 0.75 },
+                          }}
+                        />
+                      </Box>
+                    );
+                  })}
+                </Box>
+              ) : null}
+            </Box>
+
             {/* Spacer pushes external links to the bottom */}
             <Box sx={{ flex: 1 }} />
 

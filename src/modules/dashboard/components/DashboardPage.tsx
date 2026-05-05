@@ -16,7 +16,6 @@ import CategoryBreakdownCard from './CategoryBreakdownCard';
 import DashboardKpiStrip from './DashboardKpiStrip';
 import ProcessingQueueTable from './ProcessingQueueTable';
 import RecentRequestsTable from './RecentRequestsTable';
-import TopDenialReasons from './TopDenialReasons';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -63,15 +62,10 @@ export default function DashboardPage() {
       {/* KPI strip */}
       <DashboardKpiStrip metrics={metrics} />
 
-      {/* Category breakdown */}
-      <Box sx={{ mb: 2 }}>
-        <CategoryBreakdownCard entries={categoryBreakdown} />
-      </Box>
-
       {/* Processing Queue */}
       {!loading && <ProcessingQueueTable />}
 
-      {/* Recent Requests + Denial Reasons */}
+      {/* Recent Requests + Category breakdown */}
       <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
         <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
           <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -90,31 +84,7 @@ export default function DashboardPage() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <CardContent
-              sx={{
-                p: 3,
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                '&:last-child': { pb: 3 },
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: 'text.secondary',
-                  mb: 2,
-                  flexShrink: 0,
-                }}
-              >
-                Principais Motivos de Negativa
-              </Typography>
-              <TopDenialReasons reasons={metrics.topMotivosNegativa} loading={loading} />
-            </CardContent>
-          </Card>
+          <CategoryBreakdownCard entries={categoryBreakdown} />
         </Grid>
       </Grid>
     </Box>
