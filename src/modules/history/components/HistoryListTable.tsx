@@ -23,6 +23,7 @@ interface HistoryListTableProps {
   page: number;
   rowsPerPage: number;
   sortDirection: SortDirection;
+  activeCategory: string;
   onToggleSort: () => void;
   onPageChange: (page: number) => void;
   onNavigate: (id: string) => void;
@@ -34,10 +35,15 @@ export default function HistoryListTable({
   page,
   rowsPerPage,
   sortDirection,
+  activeCategory,
   onToggleSort,
   onPageChange,
   onNavigate,
 }: HistoryListTableProps) {
+  const categoryActive = activeCategory !== 'Todas';
+  const emptyText = categoryActive
+    ? `Nenhuma decisão de ${activeCategory} no histórico`
+    : 'Nenhuma decisão encontrada para os filtros selecionados.';
   return (
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
@@ -81,7 +87,7 @@ export default function HistoryListTable({
             {pagedEntries.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
-                  Nenhuma decisão encontrada para os filtros selecionados.
+                  {emptyText}
                 </TableCell>
               </TableRow>
             ) : (

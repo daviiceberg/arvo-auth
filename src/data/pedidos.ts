@@ -2868,7 +2868,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-SADT-005',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'SADT',
     auditLevel: 'AMBULATORIAL',
@@ -2946,7 +2946,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-SADT-006',
-    status: 'Em Análise',
+    status: 'Devolutiva',
     guideType: 'Eleitiva',
     category: 'SADT',
     auditLevel: 'AMBULATORIAL',
@@ -3161,7 +3161,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-SADT-009',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'SADT',
     auditLevel: 'AMBULATORIAL',
@@ -3378,7 +3378,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-EXAM-002',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'Exames Alta Complexidade',
     auditLevel: 'AMBULATORIAL',
@@ -3390,12 +3390,13 @@ export const pedidos: Request[] = [
     slaStatus: 'warning',
     slaText: '12h restantes',
     slaDeadlineHours: 168,
-    subStatus: 'PENDENTE_AGUARDANDO',
+    subStatus: 'PENDENTE_RETORNO_RECEBIDO',
     pendencyContext: {
       reasons: ['Justificativa técnica insuficiente'],
       justification: 'Justificativa não detalha por que RM é necessária ao invés de TC.',
       requestedAt: '30/04/2026 10:00',
       deadlineBusinessDays: 7,
+      responseReceivedAt: '02/05/2026 16:00',
     },
     beneficiary: {
       name: 'Carlos Henrique Pena',
@@ -3735,7 +3736,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-EXAM-007',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'Exames Alta Complexidade',
     auditLevel: 'AMBULATORIAL',
@@ -3801,6 +3802,10 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Junta Médica',
     iaJustification: 'Indicação fora do protocolo — junta médica recomendada.',
     iaChecklist: buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Parecer da junta favorável parcial. Reanálise considera restrição anatômica recomendada pelo desempatador — aprovar com escopo restrito.',
+    iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'C18.9' }),
     observations: 'Parecer favorável parcial recebido — pronto para decisão.',
     documents: [
       {
@@ -3883,7 +3888,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-EXAM-009',
-    status: 'Em Análise',
+    status: 'Devolutiva',
     guideType: 'Eleitiva',
     category: 'Exames Alta Complexidade',
     auditLevel: 'AMBULATORIAL',
@@ -3895,12 +3900,13 @@ export const pedidos: Request[] = [
     slaStatus: 'ok',
     slaText: '6d restantes',
     slaDeadlineHours: 168,
-    subStatus: 'PENDENTE_AGUARDANDO',
+    subStatus: 'PENDENTE_RETORNO_RECEBIDO',
     pendencyContext: {
       reasons: ['Hipótese diagnóstica genérica'],
       justification: 'Hipótese "investigar abdome" insuficiente. Detalhar.',
       requestedAt: '02/05/2026 14:00',
       deadlineBusinessDays: 7,
+      responseReceivedAt: '03/05/2026 11:00',
     },
     beneficiary: {
       name: 'Ricardo Tavares Mendonça',
@@ -4332,7 +4338,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-HC-005',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'Home Care',
     auditLevel: 'AMBULATORIAL',
@@ -4409,7 +4415,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-HC-006',
-    status: 'Em Análise',
+    status: 'Devolutiva',
     guideType: 'Eleitiva',
     category: 'Home Care',
     auditLevel: 'AMBULATORIAL',
@@ -4576,7 +4582,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-HC-008',
-    status: 'Em Análise',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'Home Care',
     auditLevel: 'AMBULATORIAL',

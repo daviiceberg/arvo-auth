@@ -27,6 +27,7 @@ interface QueueTableProps {
   loading: boolean;
   lastViewedId: string | null;
   hasFilters: boolean;
+  activeCategory: string;
   onRowClick: (requestId: string) => void;
   onClearFilters: () => void;
   subGroups?: QueueTableSubGroup[];
@@ -37,10 +38,15 @@ export default function QueueTable({
   loading,
   lastViewedId,
   hasFilters,
+  activeCategory,
   onRowClick,
   onClearFilters,
   subGroups,
 }: QueueTableProps) {
+  const categoryActive = activeCategory !== 'Todas';
+  const emptyTitle = categoryActive
+    ? `Nenhuma guia de ${activeCategory} na fila`
+    : 'Nenhum pedido encontrado';
   const visibleGroups = subGroups?.filter((g) => g.items.length > 0) ?? null;
   const hasGroups = visibleGroups !== null && visibleGroups.length > 0;
   if (loading) {
@@ -104,7 +110,7 @@ export default function QueueTable({
                     <SearchIcon sx={{ fontSize: 24, color: 'text.disabled' }} />
                   </Box>
                   <Typography variant="body2" fontWeight={600} color="text.secondary">
-                    Nenhum pedido encontrado
+                    {emptyTitle}
                   </Typography>
                   <Typography variant="caption" color="text.disabled">
                     {hasFilters

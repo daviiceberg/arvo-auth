@@ -122,6 +122,7 @@ export default function QueuePage() {
           loading={loading}
           lastViewedId={lastViewedId}
           hasFilters={filters.hasFilters}
+          activeCategory={filters.categoryFilter}
           onRowClick={handleRowClick}
           onClearFilters={filters.clearFilters}
           subGroups={

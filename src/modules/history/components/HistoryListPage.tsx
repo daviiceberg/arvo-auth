@@ -58,6 +58,7 @@ export default function HistoryListPage() {
         page={vm.page}
         rowsPerPage={vm.rowsPerPage}
         sortDirection={vm.sortDirection}
+        activeCategory={vm.categoryFilter}
         onToggleSort={vm.toggleSortDirection}
         onPageChange={vm.setPage}
         onNavigate={(id) => {
