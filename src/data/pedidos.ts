@@ -2797,6 +2797,9 @@ export const pedidosEmProcessamento: ProcessingRequest[] = [
 // ── Dashboard Metrics (computed from real data) ─────────────────────
 export const dashboardMetrics = (() => {
   const _emAnalise = pedidos.filter((p) => p.status === 'Em Análise').length;
+  const _pedidosAtivos = pedidos.filter(
+    (p) => p.status === 'Em Análise' || p.status === 'Pendente',
+  ).length;
   const _aprovados = historicoEntries.filter((h) => h.action === 'Aprovado').length;
   const _negados = historicoEntries.filter((h) => h.action === 'Negado').length;
   const _taxaBase = _aprovados + _negados;
@@ -2852,6 +2855,7 @@ export const dashboardMetrics = (() => {
   return {
     total: pedidos.length + historicoEntries.length,
     emAnalise: _emAnalise,
+    pedidosAtivos: _pedidosAtivos,
     aprovados: _aprovados,
     negados: _negados,
     totalAlertasAtivos: _totalAlertasAtivos,
@@ -2872,13 +2876,7 @@ export const dashboardMetrics = (() => {
     // Monthly volumes for dashboard KPI strip — realistic operator scale
     aprovadosMes: 312,
     negadosMes: 38,
-    devolutivasAtivas: pedidos.filter(
-      (p) =>
-        p.subStatus === 'PENDENTE_AGUARDANDO' ||
-        p.subStatus === 'PENDENTE_RETORNO_RECEBIDO' ||
-        p.subStatus === 'JUNTA_AGUARDANDO' ||
-        p.subStatus === 'JUNTA_PARECER_RECEBIDO',
-    ).length,
+    devolutivasAtivas: pedidos.filter((p) => p.status === 'Devolutiva').length,
     iaSugestaoAprovar: pedidos.filter((p) => p.iaSuggestion === 'Aprovar').length,
     iaSugestaoNegar: pedidos.filter((p) => p.iaSuggestion === 'Negar').length,
     monthlyTrend: [

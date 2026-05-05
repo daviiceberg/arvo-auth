@@ -21,12 +21,7 @@ function isInOperationalQueue(request: Request): boolean {
 }
 
 function isInDevolutivasQueue(request: Request): boolean {
-  return (
-    request.subStatus === 'PENDENTE_AGUARDANDO' ||
-    request.subStatus === 'PENDENTE_RETORNO_RECEBIDO' ||
-    request.subStatus === 'JUNTA_AGUARDANDO' ||
-    request.subStatus === 'JUNTA_PARECER_RECEBIDO'
-  );
+  return request.status === 'Devolutiva';
 }
 
 function matchesSearch(request: Request, search: string): boolean {

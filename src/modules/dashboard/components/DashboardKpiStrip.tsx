@@ -15,6 +15,7 @@ import Typography from '@mui/material/Typography';
 
 interface KpiMetrics {
   emAnalise: number;
+  pedidosAtivos: number;
   slaViolados: number;
   slaEmRisco: number;
   aprovadosMes: number;
@@ -135,7 +136,7 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
       bg: 'rgba(144,43,41,0.1)',
       color: 'text.primary',
       href: '/fila',
-      value: metrics.emAnalise,
+      value: metrics.pedidosAtivos,
     },
     {
       label: 'SLA Violado',

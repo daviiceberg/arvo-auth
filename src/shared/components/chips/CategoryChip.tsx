@@ -21,7 +21,7 @@ export default function CategoryChip({ category, size = 'small' }: CategoryChipP
         backgroundColor: colors.bg,
         color: colors.color,
         fontWeight: 600,
-        fontSize: 11,
+        fontSize: 12,
         height: 22,
         '& .MuiChip-label': { px: 1 },
       }}
