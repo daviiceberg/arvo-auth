@@ -480,7 +480,7 @@ export const pedidos: Request[] = [
 
   {
     id: 'REQ-2026-M1-JUNTA-002',
-    status: 'Pendente',
+    status: 'Devolutiva',
     subStatus: 'JUNTA_PARECER_RECEBIDO',
     guideType: 'Eleitiva',
     category: 'Terapias Especiais',
@@ -2797,9 +2797,11 @@ export const pedidosEmProcessamento: ProcessingRequest[] = [
 // ── Dashboard Metrics (computed from real data) ─────────────────────
 export const dashboardMetrics = (() => {
   const _emAnalise = pedidos.filter((p) => p.status === 'Em Análise').length;
-  // Total na fila = todos os pedidos não-finalizados (Em Análise + Pendente + Devolutiva).
-  // Decisão finalizada vai para historicoEntries — pedidos no array `pedidos` estão todos na fila.
-  const _pedidosAtivos = pedidos.length;
+  // Trabalho ativo do analista = Em Análise + Pendente. Devolutiva aguarda ação do prestador
+  // (KPI próprio em devolutivasAtivas).
+  const _pedidosAtivos = pedidos.filter(
+    (p) => p.status === 'Em Análise' || p.status === 'Pendente',
+  ).length;
   const _aprovados = historicoEntries.filter((h) => h.action === 'Aprovado').length;
   const _negados = historicoEntries.filter((h) => h.action === 'Negado').length;
   const _taxaBase = _aprovados + _negados;

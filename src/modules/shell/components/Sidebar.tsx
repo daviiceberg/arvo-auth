@@ -41,7 +41,9 @@ const CATEGORIES: Category[] = [
 ];
 
 function categoryActiveCount(category: Category): number {
-  return pedidos.filter((p) => p.category === category).length;
+  return pedidos.filter(
+    (p) => p.category === category && (p.status === 'Em Análise' || p.status === 'Pendente'),
+  ).length;
 }
 
 interface SidebarProps {
