@@ -1,4 +1,4 @@
-import { type ModuloType } from '../types';
+import { type Category } from '@/types/pedido';
 
 export const DOCS_TERAPIAS_PRIMEIRA: { nome: string; descricao: string; obrigatorio: boolean }[] = [
   {
@@ -41,14 +41,14 @@ export const DOCS_TERAPIAS_CONTINUIDADE: {
 ];
 
 export const DOCS_OBRIGATORIOS: Record<
-  ModuloType,
+  Category,
   { nome: string; descricao: string; obrigatorio: boolean }[]
 > = {
-  terapias: DOCS_TERAPIAS_PRIMEIRA,
+  'Terapias Especiais': DOCS_TERAPIAS_PRIMEIRA,
 };
 
-export const SUBTITULO_DOC: Record<ModuloType, string> = {
-  terapias: 'Anexe os documentos exigidos para autorização de terapias especiais.',
+export const SUBTITULO_DOC: Record<Category, string> = {
+  'Terapias Especiais': 'Anexe os documentos exigidos para autorização de terapias especiais.',
 };
 
 export const TIPOS_DOC_UPLOAD = [

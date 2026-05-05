@@ -9,8 +9,9 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
-import { moduloLabels, getStep3Label } from '../constants/module-labels';
 import { type FormData, type TerapiaProcedimento, type DocUpload } from '../types';
+
+const STEP_3_LABEL = 'Sessões de Terapia';
 
 interface StepReviewProps {
   form: FormData;
@@ -203,10 +204,7 @@ export function StepReview({
         Dados do Beneficiário
       </Typography>
       <Box sx={{ mb: 3 }}>
-        <ReviewRow
-          label="Tipo de Solicitação"
-          value={form.tipoSolicitacao ? moduloLabels[form.tipoSolicitacao] : ''}
-        />
+        <ReviewRow label="Tipo de Solicitação" value={form.category} />
         <ReviewRow label="Nome" value={form.nomeBeneficiario} />
         <ReviewRow label="Carteirinha" value={form.carteirinha} />
         <ReviewRow label="Data de Nascimento" value={form.dataNascimento} />
@@ -266,14 +264,14 @@ export function StepReview({
         <ReviewRow label="Indicação Clínica" value={form.indicacaoClinica} />
       </Box>
       {/* Step 3 summary */}
-      {form.tipoSolicitacao ? (
+      {form.category ? (
         <>
           <Typography
             variant="body2"
             fontWeight={700}
             sx={{ mb: 1, fontSize: 13, color: 'primary.main' }}
           >
-            {getStep3Label(form.tipoSolicitacao)}
+            {STEP_3_LABEL}
           </Typography>
           <Box sx={{ mb: 3 }}>{getStep3Content(form, terapiaProcedimentos)}</Box>
         </>

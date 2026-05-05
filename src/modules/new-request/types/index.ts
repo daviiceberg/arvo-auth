@@ -1,4 +1,4 @@
-export type ModuloType = 'terapias';
+import { type Category } from '@/types/pedido';
 
 export interface SnackbarState {
   open: boolean;
@@ -36,7 +36,7 @@ export type { GuiaProcedure } from '@/types/procedure-codes';
 
 export interface FormData {
   // Step 1 — Beneficiário
-  tipoSolicitacao: ModuloType | '';
+  category: Category | '';
   nomeBeneficiario: string;
   carteirinha: string;
   dataNascimento: string;

@@ -16,7 +16,7 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
 });
 
 export const initialForm: FormData = {
-  tipoSolicitacao: 'terapias',
+  category: 'Terapias Especiais',
   nomeBeneficiario: 'Lucas Martins de Almeida',
   carteirinha: '9876543210987654',
   dataNascimento: '2018-07-22',
@@ -47,10 +47,10 @@ export const initialForm: FormData = {
   frequenciaSemanal: '3x por semana',
 };
 
-export function useNewRequestForm(moduloParam: string) {
+export function useNewRequestForm(categoryParam: string) {
   const [form, setForm] = useState({
     ...initialForm,
-    tipoSolicitacao: (moduloParam || 'terapias') as FormData['tipoSolicitacao'],
+    category: (categoryParam || 'Terapias Especiais') as FormData['category'],
   });
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
@@ -107,10 +107,10 @@ export function useNewRequestForm(moduloParam: string) {
     setForm((f) => ({ ...f, cidsSecundarios: f.cidsSecundarios.filter((_, i) => i !== index) }));
   };
 
-  const resetForm = (moduloParamValue: string) => {
+  const resetForm = (categoryParamValue: string) => {
     setForm({
       ...initialForm,
-      tipoSolicitacao: (moduloParamValue || 'terapias') as FormData['tipoSolicitacao'],
+      category: (categoryParamValue || 'Terapias Especiais') as FormData['category'],
     });
     setTerapiaProcedimentos([newTerapiaProc()]);
     setCidSecundarioInput('');

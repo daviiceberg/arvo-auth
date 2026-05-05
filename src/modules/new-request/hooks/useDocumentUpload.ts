@@ -2,14 +2,16 @@
 
 import React, { useState, useReducer, useEffect } from 'react';
 
+import { type Category } from '@/types/pedido';
+
 import {
   DOCS_TERAPIAS_PRIMEIRA,
   DOCS_TERAPIAS_CONTINUIDADE,
 } from '../constants/mandatory-documents';
-import { type ModuloType, type DocUpload } from '../types';
+import { type DocUpload } from '../types';
 
 interface UseDocumentUploadParams {
-  activeModulo: ModuloType | '';
+  activeCategory: Category | '';
   etapaAutorizacao: string;
 }
 
@@ -22,8 +24,8 @@ function obrigReducer(state: DocUpload[], action: ObrigAction): DocUpload[] {
   return state.map((d) => (d.id === action.id ? { ...d, ...action.patch } : d));
 }
 
-function buildRequiredDocs(activeModulo: ModuloType | '', etapaAutorizacao: string): DocUpload[] {
-  if (!activeModulo) return [];
+function buildRequiredDocs(activeCategory: Category | '', etapaAutorizacao: string): DocUpload[] {
+  if (!activeCategory) return [];
   const reqs =
     etapaAutorizacao === 'continuidade' ? DOCS_TERAPIAS_CONTINUIDADE : DOCS_TERAPIAS_PRIMEIRA;
   return reqs.map((r, i) => ({
@@ -36,9 +38,9 @@ function buildRequiredDocs(activeModulo: ModuloType | '', etapaAutorizacao: stri
   }));
 }
 
-export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumentUploadParams) {
+export function useDocumentUpload({ activeCategory, etapaAutorizacao }: UseDocumentUploadParams) {
   const [docsObrigatorios, dispatchObrig] = useReducer(obrigReducer, undefined, () =>
-    buildRequiredDocs(activeModulo, etapaAutorizacao),
+    buildRequiredDocs(activeCategory, etapaAutorizacao),
   );
   const [docsAdicionais, setDocsAdicionais] = useState<DocUpload[]>([]);
   const [showAddDocForm, setShowAddDocForm] = useState(false);
@@ -48,10 +50,10 @@ export function useDocumentUpload({ activeModulo, etapaAutorizacao }: UseDocumen
   const [docDragOver, setDocDragOver] = useState(false);
   const docFileRef = React.useRef<HTMLInputElement>(null);
 
-  // Reset mandatory docs when modulo or etapaAutorizacao changes
+  // Reset mandatory docs when category or etapaAutorizacao changes
   useEffect(() => {
-    dispatchObrig({ type: 'RESET', payload: buildRequiredDocs(activeModulo, etapaAutorizacao) });
-  }, [activeModulo, etapaAutorizacao]);
+    dispatchObrig({ type: 'RESET', payload: buildRequiredDocs(activeCategory, etapaAutorizacao) });
+  }, [activeCategory, etapaAutorizacao]);
 
   const pendentesObrig = docsObrigatorios.filter((d) => d.obrigatorio && d.status === 'pendente');
 

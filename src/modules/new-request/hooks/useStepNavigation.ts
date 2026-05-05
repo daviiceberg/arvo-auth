@@ -4,8 +4,9 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { getStep3Label } from '../constants/module-labels';
 import { type FormData, type TerapiaProcedimento } from '../types';
+
+const STEP_3_LABEL = 'Sessões de Terapia';
 
 function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | null {
   for (let i = 0; i < procedures.length; i++) {
@@ -29,7 +30,7 @@ function validateStepTransition(
   form: FormData,
   terapiaProcedimentos: TerapiaProcedimento[],
 ): string | null {
-  if (currentStep === 1 && !form.tipoSolicitacao) {
+  if (currentStep === 1 && !form.category) {
     return 'Por favor, selecione o tipo de solicitação antes de continuar.';
   }
   if (currentStep === 2) {
@@ -40,7 +41,7 @@ function validateStepTransition(
       return 'Indicação Clínica é obrigatória. Preencha a indicação clínica antes de continuar.';
     }
   }
-  if (currentStep === 3 && form.tipoSolicitacao === 'terapias') {
+  if (currentStep === 3 && form.category === 'Terapias Especiais') {
     if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
     return validateTherapyProcedures(terapiaProcedimentos);
   }
@@ -59,13 +60,13 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   const [modalAberto, setModalAberto] = useState(false);
   const [numeroProtocolo, setNumeroProtocolo] = useState('');
 
-  const activeModulo = form.tipoSolicitacao;
+  const activeCategory = form.category;
 
   const steps = [
     { label: 'Upload' },
     { label: 'Beneficiário' },
     { label: 'Clínico' },
-    { label: getStep3Label(activeModulo) },
+    { label: STEP_3_LABEL },
     { label: 'Documentos' },
     { label: 'Revisão' },
   ];
@@ -121,6 +122,6 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
     handleBack,
     handleCancel,
     goToDashboard,
-    activeModulo,
+    activeCategory,
   };
 }

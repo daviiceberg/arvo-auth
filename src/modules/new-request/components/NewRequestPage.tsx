@@ -29,12 +29,13 @@ import Typography from '@mui/material/Typography';
 
 import theme from '@/core/theme';
 
-import { moduloLabels } from '../constants/module-labels';
+import { type Category } from '@/types/pedido';
+
 import { useDocumentUpload } from '../hooks/useDocumentUpload';
 import { useNewRequestForm, initialForm } from '../hooks/useNewRequestForm';
 import { useStepNavigation } from '../hooks/useStepNavigation';
 import { useUploadStep } from '../hooks/useUploadStep';
-import { type ModuloType, type SnackbarState } from '../types';
+import { type SnackbarState } from '../types';
 
 import { StepBeneficiary } from './StepBeneficiary';
 import { StepClinical } from './StepClinical';
@@ -80,7 +81,7 @@ function StepIcon({
 // ── Inner component (uses useSearchParams) ────────────────────────────
 function NewRequestInner() {
   const searchParams = useSearchParams();
-  const moduloParam = (searchParams.get('modulo') ?? 'terapias') as ModuloType;
+  const categoryParam = (searchParams.get('category') ?? 'Terapias Especiais') as Category;
 
   const {
     form,
@@ -96,7 +97,7 @@ function NewRequestInner() {
     addCidSecundario,
     removeCidSecundario,
     resetForm,
-  } = useNewRequestForm(moduloParam);
+  } = useNewRequestForm(categoryParam);
 
   const {
     currentStep,
@@ -112,7 +113,7 @@ function NewRequestInner() {
     handleBack,
     handleCancel,
     goToDashboard,
-    activeModulo,
+    activeCategory,
   } = useStepNavigation({ form, terapiaProcedimentos });
 
   const {
@@ -131,7 +132,7 @@ function NewRequestInner() {
   } = useUploadStep();
 
   const docUpload = useDocumentUpload({
-    activeModulo,
+    activeCategory,
     etapaAutorizacao: form.etapaAutorizacao,
   });
 
@@ -161,7 +162,7 @@ function NewRequestInner() {
   );
 
   const handleSkipUpload = () => {
-    setForm({ ...initialForm, tipoSolicitacao: 'terapias' });
+    setForm({ ...initialForm, category: 'Terapias Especiais' });
     setCurrentStep(1);
   };
 
@@ -171,7 +172,7 @@ function NewRequestInner() {
     setSubmitting(false);
     setCurrentStep(0);
     resetUpload();
-    resetForm(moduloParam);
+    resetForm(categoryParam);
     docUpload.resetDocs();
   };
 
@@ -268,9 +269,9 @@ function NewRequestInner() {
           <Typography variant="body1" fontWeight={700} sx={{ fontSize: 15 }}>
             Nova Solicitação: Pré-Autorização
           </Typography>
-          {form.tipoSolicitacao ? (
+          {form.category ? (
             <Chip
-              label={moduloLabels[form.tipoSolicitacao]}
+              label={form.category}
               size="small"
               sx={{
                 fontWeight: 600,
