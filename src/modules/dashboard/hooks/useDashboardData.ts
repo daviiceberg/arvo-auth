@@ -3,15 +3,8 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { dashboardMetrics, pedidos, pedidosEmProcessamento } from '@/data/pedidos';
-import { categoryColorMap } from '@/shared/constants';
+import { CATEGORIES_ORDER, categoryColorMap } from '@/shared/constants';
 import { type Category } from '@/types/pedido';
-
-const CATEGORIES_ORDER: Category[] = [
-  'Terapias Especiais',
-  'SADT',
-  'Exames Alta Complexidade',
-  'Home Care',
-];
 
 export interface CategoryBreakdownEntry {
   category: Category;

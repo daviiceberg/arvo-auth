@@ -304,6 +304,89 @@ function ProcedureProviderCell({
   );
 }
 
+interface ProcedureDutCellProps {
+  dutNumber: number | null;
+  dutAdjustment: Adjustment | undefined;
+  adjDutNumber: number | null;
+  onDutClick: (n: number) => void;
+}
+
+function ProcedureDutCell({
+  dutNumber,
+  dutAdjustment,
+  adjDutNumber,
+  onDutClick,
+}: ProcedureDutCellProps) {
+  if (dutAdjustment) {
+    return (
+      <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
+        <Box>
+          {dutNumber ? (
+            <Typography
+              sx={{ fontSize: 11, textDecoration: 'line-through', color: 'text.disabled' }}
+            >
+              DUT {String(dutNumber)}
+            </Typography>
+          ) : null}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: dutNumber ? 0.3 : 0 }}>
+            <EditIcon sx={{ fontSize: 11, color: 'warning.main', flexShrink: 0 }} />
+            <Typography
+              component="button"
+              onClick={() => {
+                if (adjDutNumber !== null && !isNaN(adjDutNumber)) onDutClick(adjDutNumber);
+              }}
+              sx={{
+                fontSize: 12,
+                fontWeight: 700,
+                color: 'warning.main',
+                cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                p: 0,
+                whiteSpace: 'nowrap',
+                textAlign: 'left',
+                textDecoration: 'none',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              {dutAdjustment.newValue}
+            </Typography>
+          </Box>
+        </Box>
+      </TableCell>
+    );
+  }
+  return (
+    <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
+      {dutNumber ? (
+        <Typography
+          component="button"
+          onClick={() => {
+            onDutClick(dutNumber);
+          }}
+          sx={{
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'primary.main',
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            p: 0,
+            whiteSpace: 'nowrap',
+            textAlign: 'left',
+            textDecoration: 'none',
+            '&:hover': { textDecoration: 'underline' },
+          }}
+        >
+          DUT {String(dutNumber)}
+        </Typography>
+      ) : (
+        <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>—</Typography>
+      )}
+    </TableCell>
+  );
+}
+
 interface ProcedureCidCellProps {
   cid: string;
 }
@@ -356,11 +439,15 @@ function ProcedureRow({
   const qtyAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'quantidade');
   const providerAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'prestador');
   const codeAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'codigo');
+  const dutAdjustment = getAdjustmentForField(allAdjustments, proc.code, 'dut');
   const habilitado = getProviderEnablementStatus(proc.code) === 'ok';
   const codeType = proc.codeType ?? 'TUSS';
   const isPackage = codeType === 'PACKAGE';
   const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
   const dutNumber = getDutNumberForTuss(proc.code);
+  const adjDutNumber = dutAdjustment
+    ? parseInt(dutAdjustment.newValue.replace('DUT ', ''), 10)
+    : null;
 
   return (
     <>
@@ -411,34 +498,12 @@ function ProcedureRow({
           {/* Val. (validade da senha) removida em M1 — reintroduzir em M2 após decisão favorável */}
         </TableCell>
         <ProcedureCidCell cid={proc.cid} />
-        {/* DUT */}
-        <TableCell sx={{ ...TD_SX, width: 70, textAlign: 'left' }}>
-          {dutNumber ? (
-            <Typography
-              component="button"
-              onClick={() => {
-                onDutClick(dutNumber);
-              }}
-              sx={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: 'primary.main',
-                cursor: 'pointer',
-                background: 'none',
-                border: 'none',
-                p: 0,
-                whiteSpace: 'nowrap',
-                textAlign: 'left',
-                textDecoration: 'none',
-                '&:hover': { textDecoration: 'underline' },
-              }}
-            >
-              DUT {String(dutNumber)}
-            </Typography>
-          ) : (
-            <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>—</Typography>
-          )}
-        </TableCell>
+        <ProcedureDutCell
+          dutNumber={dutNumber}
+          dutAdjustment={dutAdjustment}
+          adjDutNumber={adjDutNumber}
+          onDutClick={onDutClick}
+        />
         <ProcedureActionCell
           isGuideFinalized={isGuideFinalized}
           proc={proc}

@@ -281,11 +281,21 @@ export const pedidos: Request[] = [
       laudoVencido: true,
       hasEvolutionReport: false,
     }),
-    iaChecklistAfterReprocess: buildTeaChecklist({
-      cid: 'F84.0',
-      authorizationStage: 'continuidade',
-      hasEvolutionReport: true,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildTeaChecklist({
+        cid: 'F84.0',
+        authorizationStage: 'continuidade',
+        hasEvolutionReport: true,
+      }),
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto:
+          'Critérios da DUT atendidos — documentação atualizada confirma continuidade do tratamento',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     documentsAddedOnDevolutiva: [
       {
         id: 'DOC-PEND-001-DEV-A',
@@ -446,11 +456,21 @@ export const pedidos: Request[] = [
       altaUtilMes: 92,
       quantidadeAcima: true,
     }),
-    iaChecklistAfterReprocess: buildTeaChecklist({
-      cid: 'F84.0',
-      authorizationStage: 'continuidade',
-      hasEvolutionReport: true,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildTeaChecklist({
+        cid: 'F84.0',
+        authorizationStage: 'continuidade',
+        hasEvolutionReport: true,
+      }),
+      {
+        id: 'JUNTA_MEDICA_PARECER_FAVORAVEL',
+        texto:
+          'Junta Médica: protocolo intensivo TEA grau 2 validado — aprovação integral com reavaliação em 6 meses',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     documentsAddedOnDevolutiva: [
       {
         id: 'DOC-JUNTA-001-PARECER',
@@ -673,10 +693,26 @@ export const pedidos: Request[] = [
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification: 'Pedido elegível e completo.',
-    iaChecklist: buildTeaChecklist({
-      cid: 'F84.0',
-      authorizationStage: 'primeira_solicitacao',
-    }),
+    iaChecklist: [
+      ...buildTeaChecklist({
+        cid: 'F84.0',
+        authorizationStage: 'primeira_solicitacao',
+      }),
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — Terapia Ocupacional indicada para F84.0',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PLANO_CUIDADOS_DETALHADO',
+        texto: 'Plano terapêutico de Terapia Ocupacional com objetivos e frequência definidos',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Outro analista já está com o pedido aberto.',
     documents: [
       {
@@ -711,6 +747,7 @@ export const pedidos: Request[] = [
     slaStatus: 'ok',
     slaText: '3d restantes',
     slaDeadlineHours: 120,
+    secondaryCids: ['M79.7'],
     beneficiary: {
       name: 'Roberto Almeida Tavares',
       cardNumber: '0034978900410002',
@@ -735,41 +772,77 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Centro de Reabilitação RJ', cnesCode: '8221144' },
     procedures: [
       {
-        code: '98911201',
-        tuss: '98911201',
-        description: 'PCT-SADT — Pacote de Fisioterapia 10 sessões',
+        code: '40901483',
+        tuss: '40901483',
+        description: 'Avaliação fisioterapêutica',
         qty: 1,
         requestDate: '04/05/2026',
         cid: 'M54.5',
         auditLevel: 'AMBULATORIAL',
         tableNumber: 22,
-        codeType: 'PACKAGE' as const,
-        packageId: 'pkg-sadt-fisio-10',
-        tussCodesIncluded: [
-          {
-            code: '40901483',
-            description: 'Avaliação fisioterapêutica',
-            tableNumber: 22,
-          },
-          {
-            code: '40901653',
-            description: 'Sessão de fisioterapia motora',
-            tableNumber: 22,
-          },
-          {
-            code: '40901661',
-            description: 'Sessão de fisioterapia respiratória',
-            tableNumber: 22,
-          },
-        ],
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40901653',
+        tuss: '40901653',
+        description: 'Sessão de fisioterapia motora',
+        qty: 5,
+        requestDate: '04/05/2026',
+        cid: 'M54.5',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40901661',
+        tuss: '40901661',
+        description: 'Sessão de fisioterapia respiratória',
+        qty: 5,
+        requestDate: '04/05/2026',
+        cid: 'M54.5',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
       },
     ],
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Pacote de fisioterapia 10 sessões (98911201) para reabilitação pós-lombalgia. Pacote registrado na operadora. Documentação adequada.',
-    iaChecklist: buildSadtChecklist({ cid: 'M54.5' }),
-    observations: 'Prestador utiliza código de pacote da operadora — 3 modalidades agrupadas.',
+      'Avaliação fisioterapêutica aprovada. Sessões de fisioterapia motora e respiratória aprovadas para reabilitação pós-lombalgia. Documentação adequada.',
+    iaChecklist: [
+      ...buildSadtChecklist({ cid: 'M54.5' }),
+      {
+        id: 'PROCEDIMENTOS_VALIDOS',
+        texto:
+          '3 procedimentos individuais validados: avaliação + 5 sessões motoras + 5 sessões respiratórias',
+        status: 'ok',
+        origin: 'engenharia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Protocolo clínico compatível com lombalgia crônica (M54.5) — fisioterapia indicada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — lombalgia com comprometimento funcional documentado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente ao diagnóstico — coluna lombar confirmada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
+    observations:
+      'Solicitação com 3 procedimentos de fisioterapia — avaliação + sessões motoras e respiratórias para reabilitação pós-lombalgia.',
     documents: [
       {
         id: 'DOC-SADT-002-1',
@@ -834,7 +907,23 @@ export const pedidos: Request[] = [
     alerts: ['SLA Violado', 'Carência ativa'],
     iaSuggestion: 'Negar',
     iaJustification: 'Beneficiário em período de carência para o procedimento.',
-    iaChecklist: buildSadtChecklist({ cid: 'M54.4', carencia: true }),
+    iaChecklist: [
+      ...buildSadtChecklist({ cid: 'M54.4', carencia: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Protocolo de RPG compatível com M54.4 (cervicalgia) — indicação clínica adequada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente — coluna cervical confirmada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: '',
     documents: [
       {
@@ -908,15 +997,63 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Pendenciar',
     iaJustification:
       'Quantidade acima do esperado para diagnóstico — pendenciar para esclarecimento.',
-    iaChecklist: buildSadtChecklist({
-      cid: 'M25.5',
-      indicacaoClinicaInsuficiente: true,
-      quantidadeAcima: true,
-    }),
+    iaChecklist: [
+      ...buildSadtChecklist({
+        cid: 'M25.5',
+        indicacaoClinicaInsuficiente: true,
+        quantidadeAcima: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto:
+          'Fisioterapia motora compatível com M25.5 (artralgia) — indicação clínica respaldada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente — articulação confirmada no laudo',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Justificativa clínica detalhada recebida do prestador. Quantidade alinhada ao protocolo após esclarecimento — aprovação recomendada.',
-    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'M25.5' }),
+    iaChecklistAfterReprocess: [
+      ...buildSadtChecklist({ cid: 'M25.5' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto:
+          'Fisioterapia motora compatível com M25.5 — protocolo confirmado após esclarecimento',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos com justificativa clínica recebida do prestador',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente — articulação confirmada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Justificativa clínica do prestador revisada — quantidade de sessões corroborada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Aguardando retorno do prestador.',
     documents: [
       {
@@ -990,11 +1127,71 @@ export const pedidos: Request[] = [
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification: 'Retorno do prestador completa a documentação. Indicação clínica adequada.',
-    iaChecklist: buildSadtChecklist({ cid: 'I10' }),
+    iaChecklist: [
+      ...buildSadtChecklist({ cid: 'I10' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Exames laboratoriais adequados ao monitoramento de I10 (hipertensão arterial)',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — hemograma e bioquímica indicados no protocolo',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'CICLO_ANTERIOR_REGISTRADO',
+        texto: 'Ciclo anterior de controle laboratorial registrado — renovação rastreável',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Relatório de evolução do prestador anexado e coerente com a continuidade',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Documentação completa após devolutiva — indicação clínica e prestador validados. Aprovação confirmada.',
-    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'I10' }),
+    iaChecklistAfterReprocess: [
+      ...buildSadtChecklist({ cid: 'I10' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Exames laboratoriais indicados para monitoramento de I10 — protocolo confirmado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — documentação agora completa após devolutiva',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'CICLO_ANTERIOR_REGISTRADO',
+        texto: 'Histórico de controle laboratorial confirmado — continuidade rastreável',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Relatório de evolução anexado após devolutiva — análise completada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Retorno recebido — pronto para nova avaliação.',
     documents: [
       {
@@ -1083,11 +1280,58 @@ export const pedidos: Request[] = [
     alerts: ['Junta médica'],
     iaSuggestion: 'Junta Médica',
     iaJustification: 'Quantidade significativamente acima do protocolo — junta médica indicada.',
-    iaChecklist: buildSadtChecklist({ cid: 'M54.5', quantidadeAcima: true, juntaIndicada: true }),
+    iaChecklist: [
+      ...buildSadtChecklist({ cid: 'M54.5', quantidadeAcima: true, juntaIndicada: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Protocolo de RPG compatível com M54.5 (lombalgia) — indicação clínica adequada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente — coluna lombar confirmada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Parecer da junta favorável parcial — quantidade ajustada de 30 para 18 sessões com reavaliação. Reanálise IA recomenda aprovação com escopo restrito.',
-    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'M54.5' }),
+    iaChecklistAfterReprocess: [
+      ...buildSadtChecklist({ cid: 'M54.5' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Protocolo de RPG confirmado — 18 sessões validadas pela junta médica',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos com escopo ajustado pelo parecer da junta',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'REGIAO_ANATOMICA_PERTINENTE',
+        texto: 'Região anatômica pertinente — coluna lombar confirmada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'JUNTA_MEDICA_PARECER_FAVORAVEL',
+        texto:
+          'Junta médica (Dr. Roberto Mendes): 18 sessões aprovadas com reavaliação em 6 semanas',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Aguardando reunião da junta médica.',
     documents: [
       {
@@ -1118,6 +1362,7 @@ export const pedidos: Request[] = [
     slaStatus: 'ok',
     slaText: '3d restantes',
     slaDeadlineHours: 168,
+    secondaryCids: ['I10'],
     beneficiary: {
       name: 'Fernanda Bueno Carvalho',
       cardNumber: '0034978900420001',
@@ -1142,41 +1387,62 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Imagem Diagnóstica SP', cnesCode: '9112233' },
     procedures: [
       {
-        code: '98911401',
-        tuss: '98911401',
-        description: 'PCT-EXAMES — RM com contraste',
+        code: '40806011',
+        tuss: '40806011',
+        description: 'Ressonância magnética de crânio',
         qty: 1,
         requestDate: '06/05/2026',
         cid: 'G44.0',
         auditLevel: 'AMBULATORIAL',
         tableNumber: 22,
-        codeType: 'PACKAGE' as const,
-        packageId: 'pkg-exames-rm-contraste',
-        tussCodesIncluded: [
-          {
-            code: '40806011',
-            description: 'Ressonância magnética de crânio',
-            tableNumber: 22,
-          },
-          {
-            code: '40806020',
-            description: 'Contraste endovenoso',
-            tableNumber: 22,
-          },
-          {
-            code: '41001057',
-            description: 'Sedação para exame',
-            tableNumber: 22,
-          },
-        ],
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40806020',
+        tuss: '40806020',
+        description: 'Contraste endovenoso',
+        qty: 1,
+        requestDate: '06/05/2026',
+        cid: 'G44.0',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '41001057',
+        tuss: '41001057',
+        description: 'Sedação para exame',
+        qty: 1,
+        requestDate: '06/05/2026',
+        cid: 'G44.0',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
       },
     ],
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Pacote RM com contraste (98911401) para cefaleia em salvas refratária. Justificativa técnica adequada.',
-    iaChecklist: buildExamsChecklist({ cid: 'G44.0' }),
-    observations: 'Prestador utiliza pacote registrado — RM + contraste + sedação agrupados.',
+      'RM de crânio, contraste e sedação para cefaleia em salvas refratária. Justificativa técnica adequada para todos os procedimentos.',
+    iaChecklist: [
+      ...buildExamsChecklist({ cid: 'G44.0' }),
+      {
+        id: 'PROCEDIMENTOS_VALIDOS',
+        texto: '3 procedimentos individuais validados: RM crânio + contraste EV + sedação',
+        status: 'ok',
+        origin: 'engenharia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios DUT atendidos — cefaleia em salvas refratária justifica RM com contraste',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
+    observations:
+      'Solicitação com 3 procedimentos de imagem — RM de crânio com contraste endovenoso sob sedação para cefaleia refratária.',
     documents: [
       {
         id: 'DOC-EXAM-001-1',
@@ -1250,7 +1516,23 @@ export const pedidos: Request[] = [
     alerts: ['SLA Violado'],
     iaSuggestion: 'Aprovar',
     iaJustification: 'Avaliação de isquemia miocárdica — exame indicado.',
-    iaChecklist: buildExamsChecklist({ cid: 'I25.9', planoNaoRegulamentado: true }),
+    iaChecklist: [
+      ...buildExamsChecklist({ cid: 'I25.9', planoNaoRegulamentado: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Cintilografia miocárdica indicada para avaliação de isquemia em I25.9',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — avaliação funcional miocárdica fundamentada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Pedido aguardando análise — SLA violado.',
     documents: [
       {
@@ -1323,11 +1605,50 @@ export const pedidos: Request[] = [
     alerts: ['Pendência ativa'],
     iaSuggestion: 'Pendenciar',
     iaJustification: 'Exames anteriores citados pelo solicitante não foram anexados.',
-    iaChecklist: buildExamsChecklist({ cid: 'M50.0', examesAnterioresAusentes: true }),
+    iaChecklist: [
+      ...buildExamsChecklist({ cid: 'M50.0', examesAnterioresAusentes: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'RM coluna cervical compatível com M50.0 — indicação clínica fundamentada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT aplicáveis — RM cervical clinicamente justificado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Exames anteriores anexados após devolutiva — evolução do quadro confirmada. Justificativa técnica respaldada — aprovação recomendada.',
-    iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'M50.0' }),
+    iaChecklistAfterReprocess: [
+      ...buildExamsChecklist({ cid: 'M50.0' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'RM coluna cervical indicada para M50.0 — protocolo confirmado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios DUT atendidos com exames anteriores agora anexados',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Exames anteriores do prestador revisados — evolução do quadro confirmada',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Aguardando exames anteriores.',
     documents: [
       {
@@ -1403,11 +1724,51 @@ export const pedidos: Request[] = [
     alerts: ['Junta médica'],
     iaSuggestion: 'Junta Médica',
     iaJustification: 'Indicação fora do protocolo — junta médica recomendada.',
-    iaChecklist: buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
+    iaChecklist: [
+      ...buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'PET-CT oncológico pertinente ao estadiamento de C18.9 (neoplasia de cólon)',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Documentação oncológica do prestador revisada e coerente com a indicação',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Parecer da junta favorável à aprovação integral do PET-CT oncológico. Reanálise confirma indicação clínica respaldada pelo desempatador.',
-    iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'C18.9' }),
+    iaChecklistAfterReprocess: [
+      ...buildExamsChecklist({ cid: 'C18.9' }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'PET-CT oncológico aprovado — indicação respaldada pelo parecer da junta',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'JUNTA_MEDICA_PARECER_FAVORAVEL',
+        texto:
+          'Junta médica (Dr. Antonio Sevallo): PET-CT indicado — aprovação integral recomendada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Laudo oncológico do prestador consistente com a solicitação',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations:
       'Caso encaminhado para junta médica em 23/04/2026 — aguardando parecer especializado sobre indicação de PET-CT.',
     auditLog: [
@@ -1484,11 +1845,28 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Negar',
     iaJustification:
       'TC tórax solicitada sem justificativa técnica e sem exames anteriores anexados. Critérios para alta complexidade não atendidos.',
-    iaChecklist: buildExamsChecklist({
-      cid: 'C34.9',
-      justificativaTecnicaAusente: true,
-      examesAnterioresAusentes: true,
-    }),
+    iaChecklist: [
+      ...buildExamsChecklist({
+        cid: 'C34.9',
+        justificativaTecnicaAusente: true,
+        examesAnterioresAusentes: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto:
+          'TC de tórax compatível com C34.9, mas critérios clínicos incompletos para alta complexidade',
+        status: 'warning',
+        origin: 'ia',
+        severity: 70,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'DUT não atendida — laudos e exames anteriores exigidos não foram apresentados',
+        status: 'warning',
+        origin: 'ia',
+        severity: 65,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Falta laudo justificativo e exames prévios.',
     documents: [
       {
@@ -1519,6 +1897,7 @@ export const pedidos: Request[] = [
     slaStatus: 'ok',
     slaText: '4d restantes',
     slaDeadlineHours: 168,
+    secondaryCids: ['I10', 'E11'],
     beneficiary: {
       name: 'Adelina Quental Brito',
       cardNumber: '0034978900430001',
@@ -1543,46 +1922,75 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Home Care Bem-Cuidar', cnesCode: '9112200' },
     procedures: [
       {
-        code: '98911601',
-        tuss: '98911601',
-        description: 'PCT-HC — Atendimento domiciliar 12h/dia',
+        code: '40802237',
+        tuss: '40802237',
+        description: 'Visita domiciliar — enfermeiro',
         qty: 30,
         requestDate: '05/05/2026',
         cid: 'I63.9',
         auditLevel: 'AMBULATORIAL',
         tableNumber: 22,
-        codeType: 'PACKAGE' as const,
-        packageId: 'pkg-hc-cuidado-12h',
-        tussCodesIncluded: [
-          {
-            code: '40802237',
-            description: 'Visita domiciliar — enfermeiro',
-            tableNumber: 22,
-          },
-          {
-            code: '40802032',
-            description: 'Visita domiciliar — fisioterapeuta',
-            tableNumber: 22,
-          },
-          {
-            code: '40802067',
-            description: 'Visita domiciliar — fonoaudiólogo',
-            tableNumber: 22,
-          },
-          {
-            code: '40802008',
-            description: 'Cuidador 12h',
-            tableNumber: 22,
-          },
-        ],
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40802032',
+        tuss: '40802032',
+        description: 'Visita domiciliar — fisioterapeuta',
+        qty: 20,
+        requestDate: '05/05/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40802067',
+        tuss: '40802067',
+        description: 'Visita domiciliar — fonoaudiólogo',
+        qty: 15,
+        requestDate: '05/05/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
+      },
+      {
+        code: '40802008',
+        tuss: '40802008',
+        description: 'Cuidador 12h',
+        qty: 30,
+        requestDate: '05/05/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL',
+        tableNumber: 22,
+        codeType: 'TUSS' as const,
       },
     ],
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Pacote Home Care 12h (98911601) pós-AVC com dependência funcional. Pacote registrado na operadora — equipe multi-profissional agrupada.',
-    iaChecklist: buildHomeCareChecklist({ cid: 'I63.9', prestadorAutorizadoDomiciliar: true }),
-    observations: 'Prestador utiliza pacote — enfermeiro + fisio + fono + cuidador agrupados.',
+      'Home Care pós-AVC com dependência funcional — 4 modalidades: enfermeiro, fisioterapeuta, fonoaudiólogo e cuidador. Equipe multi-profissional adequada.',
+    iaChecklist: [
+      ...buildHomeCareChecklist({ cid: 'I63.9', prestadorAutorizadoDomiciliar: true }),
+      {
+        id: 'PROCEDIMENTOS_VALIDOS',
+        texto:
+          '4 procedimentos individuais validados: enfermeiro + fisio + fono + cuidador domiciliar',
+        status: 'ok',
+        origin: 'engenharia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto:
+          'Indicação de Home Care pós-AVC (I63.9) com dependência funcional — protocolo adequado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
+    observations:
+      'Solicitação com 4 procedimentos de Home Care pós-AVC — 30d enfermagem, 20d fisioterapia, 15d fonoaudiologia, 30d cuidador 12h.',
     documents: [
       {
         id: 'DOC-HC-001-1',
@@ -1656,11 +2064,27 @@ export const pedidos: Request[] = [
     alerts: ['SLA Violado', 'CRM inválido'],
     iaSuggestion: 'Negar',
     iaJustification: 'CRM do solicitante inválido.',
-    iaChecklist: buildHomeCareChecklist({
-      cid: 'F03',
-      crmInvalid: true,
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklist: [
+      ...buildHomeCareChecklist({
+        cid: 'F03',
+        crmInvalid: true,
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Home Care compatível com F03 (demência) — indicação clínica pertinente',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios clínicos da DUT atendidos — bloqueio por CRM inválido do solicitante',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: '',
     documents: [
       {
@@ -1733,18 +2157,65 @@ export const pedidos: Request[] = [
     alerts: ['Pendência ativa'],
     iaSuggestion: 'Pendenciar',
     iaJustification: 'Plano de cuidados sem detalhamento adequado.',
-    iaChecklist: buildHomeCareChecklist({
-      cid: 'I63.9',
-      planoCuidadosAusente: true,
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklist: [
+      ...buildHomeCareChecklist({
+        cid: 'I63.9',
+        planoCuidadosAusente: true,
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Fisioterapia domiciliar compatível com I63.9 — indicação clínica adequada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto:
+          'DUT aplicável — aprovação condicionada à apresentação do plano de cuidados detalhado',
+        status: 'warning',
+        origin: 'ia',
+        severity: 60,
+      } satisfies ChecklistItem,
+      {
+        id: 'PRESTADOR_AUTORIZADO_DOMICILIAR',
+        texto: 'Prestador autorizado para atendimento domiciliar — CNES verificado',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Plano de cuidados completo recebido — equipe, frequência e duração agora especificados. Indicação técnica adequada — aprovação recomendada.',
-    iaChecklistAfterReprocess: buildHomeCareChecklist({
-      cid: 'I63.9',
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildHomeCareChecklist({
+        cid: 'I63.9',
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Fisioterapia domiciliar indicada para I63.9 — protocolo confirmado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — plano de cuidados agora completo',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PRESTADOR_AUTORIZADO_DOMICILIAR',
+        texto: 'Prestador autorizado para atendimento domiciliar — CNES verificado',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Aguardando plano de cuidados detalhado.',
     documents: [
       {
@@ -1818,14 +2289,61 @@ export const pedidos: Request[] = [
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification: 'Demência avançada com avaliação social favorável.',
-    iaChecklist: buildHomeCareChecklist({ cid: 'F03', prestadorAutorizadoDomiciliar: true }),
+    iaChecklist: [
+      ...buildHomeCareChecklist({ cid: 'F03', prestadorAutorizadoDomiciliar: true }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto:
+          'Home Care 24h compatível com F03 (demência avançada) — indicação clínica sustentada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto: 'Critérios da DUT atendidos — avaliação social favorável ao cuidado domiciliar',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PRESTADOR_AUTORIZADO_DOMICILIAR',
+        texto: 'Prestador autorizado para atendimento domiciliar — CNES verificado',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Avaliação social anexada após devolutiva — estrutura familiar adequada para cuidado domiciliar. Aprovação confirmada.',
-    iaChecklistAfterReprocess: buildHomeCareChecklist({
-      cid: 'F03',
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildHomeCareChecklist({
+        cid: 'F03',
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Home Care 24h indicado para F03 — avaliação social confirmou adequação',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'RELATORIO_EXECUTANTE',
+        texto: 'Avaliação social recebida — estrutura familiar adequada para cuidado domiciliar',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PRESTADOR_AUTORIZADO_DOMICILIAR',
+        texto: 'Prestador autorizado para atendimento domiciliar — CNES verificado',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Retorno recebido.',
     documents: [
       {
@@ -1923,18 +2441,59 @@ export const pedidos: Request[] = [
     alerts: ['Junta médica'],
     iaSuggestion: 'Junta Médica',
     iaJustification: 'Caso complexo — junta médica necessária.',
-    iaChecklist: buildHomeCareChecklist({
-      cid: 'C61',
-      juntaIndicada: true,
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklist: [
+      ...buildHomeCareChecklist({
+        cid: 'C61',
+        juntaIndicada: true,
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Home Care oncológico paliativo compatível com C61 — indicação clínica sustentada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'DUT_CRITERIOS_ATENDIDOS',
+        texto:
+          'Escala 24h vs 12h — DUT não define claramente; junta médica necessária para determinar adequação',
+        status: 'warning',
+        origin: 'ia',
+        severity: 60,
+      } satisfies ChecklistItem,
+    ],
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
       'Parecer da junta favorável à escala 24h. Quadro oncológico avançado justifica protocolo integral — aprovação recomendada com reavaliação em 60 dias.',
-    iaChecklistAfterReprocess: buildHomeCareChecklist({
-      cid: 'C61',
-      prestadorAutorizadoDomiciliar: true,
-    }),
+    iaChecklistAfterReprocess: [
+      ...buildHomeCareChecklist({
+        cid: 'C61',
+        prestadorAutorizadoDomiciliar: true,
+      }),
+      {
+        id: 'PROTOCOLO_CLINICO',
+        texto: 'Protocolo paliativo integral confirmado pela junta — escala 24h justificada',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'JUNTA_MEDICA_PARECER_FAVORAVEL',
+        texto:
+          'Junta médica (Dra. Patrícia Almeida): Home Care 24h aprovado — reavaliação em 60 dias',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+      {
+        id: 'PRESTADOR_AUTORIZADO_DOMICILIAR',
+        texto: 'Prestador autorizado para atendimento domiciliar — CNES verificado',
+        status: 'ok',
+        origin: 'dados',
+        showWhenOk: true,
+      } satisfies ChecklistItem,
+    ],
     observations: 'Aguardando junta médica.',
     documents: [
       {
@@ -2291,12 +2850,12 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '10/03/2026 09:00',
     decisionDate: '24/03/2026',
-    action: 'Aprovado Parcial',
+    action: 'Aprovado',
     origin: 'analista',
     analyst: 'Mariana Costa',
     decisionReason:
       'ABA aprovada integralmente conforme plano. Fono aprovada integralmente. TO ajustada de 16 para 12 sessões/mês com base nas considerações técnicas do parecer da Junta Médica sobre proporcionalidade ao quadro.',
-    iaSuggestion: 'Aprovar Parcial',
+    iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 92,
     sex: 'F',
@@ -2467,7 +3026,7 @@ export const historicoEntries: HistoryEntry[] = [
     cardNumber: '0034978900460004',
     plan: 'Premium Familiar',
     category: 'SADT',
-    procedure: 'Sessão de imunoterapia (6)',
+    procedure: 'Bateria laboratorial pré-imunoterapia (3 exames)',
     cid: 'L20.9 — Dermatite atópica',
     requestingProviderName: 'Clínica Dermatológica Recife',
     executingProviderName: 'Centro Imunológico Recife',
@@ -2475,14 +3034,58 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '22/03/2026 11:00',
     decisionDate: '24/03/2026',
-    action: 'Aprovado',
+    action: 'Aprovado Parcial',
     origin: 'analista',
     analyst: 'Mariana Costa',
-    decisionReason: 'Pendência respondida — documentação completa após retorno.',
-    iaSuggestion: 'Aprovar',
+    decisionReason:
+      'Hemograma e bioquímica aprovados — exames de rotina pré-imunoterapia. Painel autoimune negado — fora do escopo de avaliação pré-imunoterapia padrão; deve ser solicitado em pedido separado com justificativa reumatológica.',
+    iaSuggestion: 'Aprovar Parcial',
     divergence: false,
     analysisTimeMin: 12,
     passedThroughPendency: true,
+    secondaryCids: ['J45.9'],
+    detailedProcedures: [
+      {
+        code: '40302024',
+        tuss: '40302024',
+        description: 'Hemograma completo',
+        qty: 1,
+        authorizedQty: 1,
+        requestDate: '22/03/2026',
+        passwordExpiryDate: '22/06/2026',
+        cid: 'L20.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao: 'Exame de rotina pré-imunoterapia',
+      },
+      {
+        code: '40302091',
+        tuss: '40302091',
+        description: 'Bioquímica ampliada (TGO/TGP/Creatinina/Ureia)',
+        qty: 1,
+        authorizedQty: 1,
+        requestDate: '22/03/2026',
+        passwordExpiryDate: '22/06/2026',
+        cid: 'L20.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao: 'Exame de rotina pré-imunoterapia',
+      },
+      {
+        code: '40316234',
+        tuss: '40316234',
+        description: 'Painel autoimune ANCA + FAN + Anti-DNA',
+        qty: 1,
+        authorizedQty: 0,
+        requestDate: '22/03/2026',
+        passwordExpiryDate: undefined,
+        cid: 'L20.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'negado',
+        motivoDecisao:
+          'Protocolo da operadora exige solicitação separada com indicação reumatológica específica — perfil autoimune não justificado pelo CID L20.9',
+      },
+    ],
   },
   {
     id: 'HIS-2026-SADT-005',
@@ -2498,14 +3101,30 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '25/03/2026 09:00',
     decisionDate: '28/03/2026',
-    action: 'Aprovado Parcial',
+    action: 'Aprovado',
     origin: 'analista',
     analyst: 'Carlos Eduardo Ramos',
-    decisionReason: 'Quantidade ajustada — 10 sessões aprovadas após avaliação.',
+    decisionReason:
+      'Quantidade ajustada após avaliação técnica — 10 sessões aprovadas no lugar das 15 solicitadas, conforme protocolo de fisioterapia respiratória para DPOC estável.',
     iaSuggestion: 'Aprovar',
     divergence: true,
     divergenceReason: 'Analista ajustou quantidade — IA havia sugerido aprovação integral.',
     analysisTimeMin: 18,
+    detailedProcedures: [
+      {
+        code: '40901661',
+        tuss: '40901661',
+        description: 'Sessão de fisioterapia respiratória',
+        qty: 15,
+        authorizedQty: 10,
+        requestDate: '25/03/2026',
+        passwordExpiryDate: '25/06/2026',
+        cid: 'J44.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao: 'Quantidade ajustada conforme protocolo de avaliação técnica.',
+      },
+    ],
   },
 
   // ── EXAMES AC (5) ─────────────────────────────────────────────────────
@@ -2559,7 +3178,7 @@ export const historicoEntries: HistoryEntry[] = [
     cardNumber: '0034978900470003',
     plan: 'Básico',
     category: 'Exames Alta Complexidade',
-    procedure: 'Ressonância magnética de coluna lombar',
+    procedure: 'Sequenciamento de imagem para investigação lombar (2 exames)',
     cid: 'M51.1 — Hérnia discal',
     requestingProviderName: 'Clínica Ortopédica BH',
     executingProviderName: 'Imagem BH',
@@ -2567,15 +3186,45 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '18/03/2026 14:00',
     decisionDate: '22/03/2026',
-    action: 'Negado',
+    action: 'Aprovado Parcial',
     origin: 'analista',
     analyst: 'Mariana Costa',
-    decisionReason: 'Pendência sem retorno no prazo. Encerrado por timeout.',
-    iaSuggestion: 'Negar',
+    decisionReason:
+      'RM lombar aprovada — indicada para investigação de dor lombar refratária com suspeita de hérnia. TC com contraste do mesmo segmento negada — redundância diagnóstica; sequenciamento incremental USG→TC→RM não respeitado pelo prestador.',
+    iaSuggestion: 'Aprovar Parcial',
     divergence: false,
     analysisTimeMin: 24,
     passedThroughPendency: true,
-    pendencyTimeout: true,
+    detailedProcedures: [
+      {
+        code: '40901293',
+        tuss: '40901293',
+        description: 'Ressonância magnética de coluna lombar',
+        qty: 1,
+        authorizedQty: 1,
+        requestDate: '18/03/2026',
+        passwordExpiryDate: '18/06/2026',
+        cid: 'M51.1',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao:
+          'RM indicada para investigação de dor lombar refratária com suspeita de hérnia discal',
+      },
+      {
+        code: '40802370',
+        tuss: '40802370',
+        description: 'Tomografia computadorizada de coluna lombossacra com contraste',
+        qty: 1,
+        authorizedQty: 0,
+        requestDate: '18/03/2026',
+        passwordExpiryDate: undefined,
+        cid: 'M51.1',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'negado',
+        motivoDecisao:
+          'Redundância com RM no mesmo segmento anatômico — TC não acrescenta informação diagnóstica relevante após RM',
+      },
+    ],
   },
   {
     id: 'HIS-2026-EXAM-004',
@@ -2591,20 +3240,37 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '20/03/2026 09:00',
     decisionDate: '22/03/2026',
-    action: 'Aprovado Parcial',
+    action: 'Aprovado',
     origin: 'analista',
     analyst: 'Carlos Eduardo Ramos',
-    decisionReason: 'Junta médica recomendou aprovação parcial com restrição anatômica.',
-    iaSuggestion: 'Aprovar Parcial',
+    decisionReason:
+      'Cintilografia miocárdica autorizada conforme protocolo de junta médica — exame segmentado (perfusão em repouso e estresse) cobrindo área de interesse clínico.',
+    iaSuggestion: 'Aprovar',
     divergence: false,
     analysisTimeMin: 240,
     passedThroughJunta: true,
     juntaParecer: {
       text: 'Aprovar com restrição de área. Cintilografia segmentada.',
-      suggestedDecision: 'aprovado_parcial',
+      suggestedDecision: 'aprovado',
       desempatadorName: 'Dr. Antonio Sevallo',
       issuedAt: '22/03/2026 14:00',
     },
+    detailedProcedures: [
+      {
+        code: '40814007',
+        tuss: '40814007',
+        description: 'Cintilografia miocárdica',
+        qty: 1,
+        authorizedQty: 1,
+        requestDate: '20/03/2026',
+        passwordExpiryDate: '20/06/2026',
+        cid: 'I25.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao:
+          'Aprovado conforme parecer da junta — exame segmentado em repouso e estresse',
+      },
+    ],
   },
   {
     id: 'HIS-2026-EXAM-005',
@@ -2710,15 +3376,32 @@ export const historicoEntries: HistoryEntry[] = [
     guideType: 'Eleitiva',
     protocolDate: '14/03/2026 09:00',
     decisionDate: '18/03/2026',
-    action: 'Aprovado Parcial',
+    action: 'Aprovado',
     origin: 'analista',
     analyst: 'Carlos Eduardo Ramos',
-    decisionReason: 'Pendência respondida — quantidade ajustada para o protocolo padrão.',
+    decisionReason:
+      'Plano de fisioterapia motora domiciliar autorizado com duração ajustada para 24 dias conforme protocolo pós-AVC subagudo — primeira reavaliação prevista para esse marco.',
     iaSuggestion: 'Aprovar',
     divergence: true,
     divergenceReason: 'IA sugeriu aprovação integral, analista ajustou pelo protocolo.',
     analysisTimeMin: 30,
     passedThroughPendency: true,
+    detailedProcedures: [
+      {
+        code: '50000099',
+        tuss: '50000099',
+        description: 'Home Care — fisioterapia motora 5x/semana',
+        qty: 40,
+        authorizedQty: 24,
+        requestDate: '14/03/2026',
+        passwordExpiryDate: '13/04/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao:
+          'Duração ajustada conforme protocolo pós-AVC — primeira reavaliação em 24 dias',
+      },
+    ],
   },
   {
     id: 'HIS-2026-HC-005',
@@ -2726,28 +3409,87 @@ export const historicoEntries: HistoryEntry[] = [
     cardNumber: '0034978900480005',
     plan: 'Premium',
     category: 'Home Care',
-    procedure: 'Home Care — enfermagem 24h + multidisciplinar (90d)',
-    cid: 'C61 — Neoplasia prostática avançada',
+    procedure: 'Home Care — plano multidisciplinar pós-AVC (4 modalidades, 90d)',
+    cid: 'I63.9 — Sequela de AVC isquêmico',
     requestingProviderName: 'Hospital Sírio',
     executingProviderName: 'Lar+ SP',
     requestingProfessional: 'Dr. Cláudio Pieve — CRM/SP 710987',
     guideType: 'Eleitiva',
     protocolDate: '15/03/2026 09:00',
     decisionDate: '02/04/2026',
-    action: 'Aprovado',
+    action: 'Aprovado Parcial',
     origin: 'analista',
     analyst: 'Mariana Costa',
-    decisionReason: 'Junta médica favorável — aprovado.',
-    iaSuggestion: 'Aprovar',
+    decisionReason:
+      'Plano multidisciplinar pós-AVC parcialmente aprovado. Enfermagem 24h, fisioterapia motora e fonoaudiologia autorizadas integralmente — adequadas ao quadro de dependência funcional. Acompanhamento psicológico domiciliar negado — paciente tem mobilidade para deslocamento ambulatorial conforme avaliação da junta.',
+    iaSuggestion: 'Aprovar Parcial',
     divergence: false,
     analysisTimeMin: 380,
     passedThroughJunta: true,
     juntaParecer: {
-      text: 'Aprovar Home Care 24h. Caso oncológico avançado justifica escala integral.',
-      suggestedDecision: 'aprovado',
+      text: 'Aprovar Home Care multidisciplinar com exceção de psicologia. Caso de AVC com dependência justifica enfermagem, fisioterapia e fonoaudiologia 24/7. Psicologia pode ser feita em modalidade ambulatorial.',
+      suggestedDecision: 'aprovado_parcial',
       desempatadorName: 'Dra. Patrícia Almeida',
       issuedAt: '01/04/2026 16:00',
     },
+    secondaryCids: ['I10', 'E11'],
+    detailedProcedures: [
+      {
+        code: '50000080',
+        tuss: '50000080',
+        description: 'Enfermagem domiciliar 24h',
+        qty: 90,
+        authorizedQty: 90,
+        requestDate: '15/03/2026',
+        passwordExpiryDate: '13/06/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao:
+          'Aprovada integralmente — dependência funcional pós-AVC justifica escala 24h',
+      },
+      {
+        code: '50000099',
+        tuss: '50000099',
+        description: 'Fisioterapia motora domiciliar 5x/semana',
+        qty: 90,
+        authorizedQty: 90,
+        requestDate: '15/03/2026',
+        passwordExpiryDate: '13/06/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao:
+          'Aprovada integralmente — reabilitação motora essencial no protocolo pós-AVC',
+      },
+      {
+        code: '50000370',
+        tuss: '50000370',
+        description: 'Fonoaudiologia domiciliar 3x/semana',
+        qty: 90,
+        authorizedQty: 90,
+        requestDate: '15/03/2026',
+        passwordExpiryDate: '13/06/2026',
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'aprovado',
+        motivoDecisao: 'Aprovada integralmente — disfagia comum em AVC justifica intervenção fono',
+      },
+      {
+        code: '50000111',
+        tuss: '50000111',
+        description: 'Acompanhamento psicológico domiciliar 2x/semana',
+        qty: 90,
+        authorizedQty: 0,
+        requestDate: '15/03/2026',
+        passwordExpiryDate: undefined,
+        cid: 'I63.9',
+        auditLevel: 'AMBULATORIAL' as const,
+        decisao: 'negado',
+        motivoDecisao:
+          'Negada modalidade domiciliar — psicologia ambulatorial é alternativa adequada; paciente tem mobilidade para deslocamento',
+      },
+    ],
   },
 ];
 
