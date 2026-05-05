@@ -1333,7 +1333,7 @@ export const pedidos: Request[] = [
   },
   {
     id: 'REQ-2026-EXAM-007',
-    status: 'Devolutiva',
+    status: 'Pendente',
     guideType: 'Eleitiva',
     category: 'Exames Alta Complexidade',
     auditLevel: 'AMBULATORIAL',
@@ -1343,9 +1343,9 @@ export const pedidos: Request[] = [
     protocolDate: '20/04/2026 09:00',
     queueTimeHours: 312,
     slaStatus: 'ok',
-    slaText: 'Junta médica em curso',
+    slaText: '12d restantes',
     slaDeadlineHours: 720,
-    subStatus: 'JUNTA_PARECER_RECEBIDO',
+    subStatus: 'JUNTA_AGUARDANDO',
     juntaMedicaContext: {
       reason: 'Divergência sobre indicação de PET',
       justification: 'Indicação fora do protocolo padrão — encaminhada para junta.',
@@ -1353,13 +1353,7 @@ export const pedidos: Request[] = [
       meetingDate: '02/05/2026 14:00',
       desempatadorName: 'Dr. Antonio Sevallo',
       desempatadorCrm: 'CRM/SP 56789',
-      status: 'parecer_recebido',
-      parecer: {
-        suggestedDecision: 'aprovado_parcial',
-        text: 'Indicação parcialmente justificada. Aprovar PET com restrição de área anatômica.',
-        issuedAt: '02/05/2026 16:00',
-        desempatadorName: 'Dr. Antonio Sevallo',
-      },
+      status: 'aguardando',
     },
     beneficiary: {
       name: 'Cristina Vasconcelos',
@@ -1395,16 +1389,25 @@ export const pedidos: Request[] = [
         codeType: 'TUSS' as const,
       },
     ],
-    alerts: [],
-    iaSuggestion: 'Aprovar',
-    iaJustification:
-      'Parecer da junta favorável parcial — restrição anatômica recomendada pelo desempatador. Reanálise IA recomenda aprovação com escopo restrito ao parecer.',
-    iaChecklist: buildExamsChecklist({ cid: 'C18.9' }),
+    alerts: ['Junta médica'],
+    iaSuggestion: 'Junta Médica',
+    iaJustification: 'Indicação fora do protocolo — junta médica recomendada.',
+    iaChecklist: buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
-      'Parecer da junta favorável parcial — restrição anatômica recomendada pelo desempatador. Reanálise IA recomenda aprovação com escopo restrito ao parecer.',
+      'Parecer da junta favorável à aprovação integral do PET-CT oncológico. Reanálise confirma indicação clínica respaldada pelo desempatador.',
     iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'C18.9' }),
-    observations: 'Parecer favorável parcial recebido — pronto para decisão.',
+    observations:
+      'Caso encaminhado para junta médica em 23/04/2026 — aguardando parecer especializado sobre indicação de PET-CT.',
+    auditLog: [
+      { action: 'Guia recebida', actor: 'Sistema', timestamp: '20/04/2026 09:00' },
+      {
+        action: 'Encaminhado para Junta Médica',
+        actor: 'gestor',
+        timestamp: '23/04/2026 11:00',
+        details: 'Motivo: Divergência sobre indicação de PET',
+      },
+    ] as AuditLogEntry[],
     documents: [
       {
         id: 'DOC-EXAM-007-1',

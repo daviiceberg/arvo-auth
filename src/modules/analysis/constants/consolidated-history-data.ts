@@ -1044,9 +1044,9 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     sinaisAtencao: [
       {
         id: 'sa-cristina-1',
-        mensagem: 'Protocolo oncológico: exame de estadiamento pós-operatório — prioridade elevada',
+        mensagem: 'Junta Médica: indicação de PET-CT fora do protocolo padrão — aguardando parecer',
         detalhes:
-          'PET-CT solicitado dentro do protocolo de estadiamento oncológico após ressecção cirúrgica e início de QT adjuvante. Indicação de alta relevância clínica.',
+          'PET-CT oncológico encaminhado para Junta Médica por divergência sobre indicação no protocolo da operadora. Indicação clínica respaldada por Oncologia e Cirurgia Geral.',
         severidade: 'high',
       },
     ],
