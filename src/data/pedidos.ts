@@ -480,8 +480,8 @@ export const pedidos: Request[] = [
 
   {
     id: 'REQ-2026-M1-JUNTA-002',
-    status: 'Devolutiva',
-    subStatus: 'JUNTA_PARECER_RECEBIDO',
+    status: 'Pendente',
+    subStatus: 'JUNTA_AGUARDANDO',
     guideType: 'Eleitiva',
     category: 'Terapias Especiais',
     auditLevel: 'AMBULATORIAL',
@@ -533,7 +533,7 @@ export const pedidos: Request[] = [
       desempatadorName: 'Dra. Patrícia Almeida',
       desempatadorCrm: 'CRM/RJ 98765',
       meetingDate: '20/04/2026 14:00',
-      status: 'parecer_recebido',
+      status: 'aguardando',
       parecer: {
         suggestedDecision: 'aprovado',
         text: 'Após análise dos documentos clínicos, do plano terapêutico e da literatura específica para TEA grau 2, a junta entende que o protocolo EIBI proposto está respaldado por evidência científica robusta e é tecnicamente justificado para o quadro do beneficiário. Recomenda-se aprovação integral, com reavaliação em 6 meses.',
@@ -549,17 +549,6 @@ export const pedidos: Request[] = [
         timestamp: '08/04/2026 13:00',
         details: 'Motivo: Divergência técnico-assistencial',
       },
-      {
-        action: 'Parecer da Junta Médica recebido',
-        actor: 'Junta Médica (mock)',
-        timestamp: '24/04/2026 16:30',
-        details: 'Decisão sugerida: aprovado',
-      },
-      {
-        action: 'Reprocessamento da IA disparado',
-        actor: 'Sistema',
-        timestamp: '24/04/2026 16:31',
-      },
     ] as AuditLogEntry[],
     procedures: [
       {
@@ -574,26 +563,26 @@ export const pedidos: Request[] = [
       },
     ],
     alerts: [],
-    iaSuggestion: 'Aprovar',
-    iaJustification: 'Parecer da junta favorável — IA reprocessou e confirma alinhamento.',
+    iaSuggestion: 'Junta Médica',
+    iaJustification:
+      'Caso encaminhado para junta médica devido à divergência técnico-assistencial — aguardando parecer especializado.',
     iaChecklist: buildTeaChecklist({
+      cid: 'F84.0',
+      authorizationStage: 'continuidade',
+      altaUtilMes: 80,
+      juntaIndicada: true,
+    }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Parecer da junta favorável ao protocolo EIBI. Reanálise considera respaldo técnico do desempatador — aprovação integral recomendada.',
+    iaChecklistAfterReprocess: buildTeaChecklist({
       cid: 'F84.0',
       authorizationStage: 'continuidade',
       altaUtilMes: 80,
     }),
     observations:
-      'Parecer da junta recebido — decisão sugerida: aprovar. Pronto para tomada de decisão final.',
-    documents: [
-      {
-        id: 'DOC-JP-001',
-        nome: 'Parecer-Junta-Medica.pdf',
-        tipo: 'Parecer da Junta',
-        tamanho: '450 KB',
-        enviadoEm: '24/04/2026',
-        obrigatorio: false,
-        status: 'enviado',
-      },
-    ],
+      'Caso encaminhado para junta médica em 08/04/2026 — aguardando parecer do desempatador.',
+    documents: [],
     authorizationStage: 'continuidade',
   },
 
@@ -913,6 +902,10 @@ export const pedidos: Request[] = [
       indicacaoClinicaInsuficiente: true,
       quantidadeAcima: true,
     }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Justificativa clínica detalhada recebida do prestador. Quantidade alinhada ao protocolo após esclarecimento — aprovação recomendada.',
+    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'M25.5' }),
     observations: 'Aguardando retorno do prestador.',
     documents: [
       {
@@ -987,6 +980,10 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification: 'Retorno do prestador completa a documentação. Indicação clínica adequada.',
     iaChecklist: buildSadtChecklist({ cid: 'I10' }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Documentação completa após devolutiva — indicação clínica e prestador validados. Aprovação confirmada.',
+    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'I10' }),
     observations: 'Retorno recebido — pronto para nova avaliação.',
     documents: [
       {
@@ -1031,6 +1028,12 @@ export const pedidos: Request[] = [
       forwardedAt: '20/04/2026 11:00',
       meetingDate: '08/05/2026 14:00',
       status: 'aguardando',
+      parecer: {
+        suggestedDecision: 'aprovado_parcial',
+        text: 'Indicação clínica respaldada, mas quantidade solicitada acima do necessário. Aprovar 18 sessões em 6 semanas com reavaliação ao final.',
+        issuedAt: '08/05/2026 16:00',
+        desempatadorName: 'Dr. Roberto Mendes',
+      },
     },
     beneficiary: {
       name: 'Gisele Tavares Pacheco',
@@ -1070,6 +1073,10 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Junta Médica',
     iaJustification: 'Quantidade significativamente acima do protocolo — junta médica indicada.',
     iaChecklist: buildSadtChecklist({ cid: 'M54.5', quantidadeAcima: true, juntaIndicada: true }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Parecer da junta favorável parcial — quantidade ajustada de 30 para 18 sessões com reavaliação. Reanálise IA recomenda aprovação com escopo restrito.',
+    iaChecklistAfterReprocess: buildSadtChecklist({ cid: 'M54.5' }),
     observations: 'Aguardando reunião da junta médica.',
     documents: [
       {
@@ -1306,6 +1313,10 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Pendenciar',
     iaJustification: 'Exames anteriores citados pelo solicitante não foram anexados.',
     iaChecklist: buildExamsChecklist({ cid: 'M50.0', examesAnterioresAusentes: true }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Exames anteriores anexados após devolutiva — evolução do quadro confirmada. Justificativa técnica respaldada — aprovação recomendada.',
+    iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'M50.0' }),
     observations: 'Aguardando exames anteriores.',
     documents: [
       {
@@ -1390,7 +1401,7 @@ export const pedidos: Request[] = [
     iaChecklist: buildExamsChecklist({ cid: 'C18.9', juntaIndicada: true }),
     iaSuggestionAfterReprocess: 'Aprovar',
     iaJustificationAfterReprocess:
-      'Parecer da junta favorável parcial. Reanálise considera restrição anatômica recomendada pelo desempatador — aprovar com escopo restrito.',
+      'Parecer da junta favorável parcial — restrição anatômica recomendada pelo desempatador. Reanálise IA recomenda aprovação com escopo restrito ao parecer.',
     iaChecklistAfterReprocess: buildExamsChecklist({ cid: 'C18.9' }),
     observations: 'Parecer favorável parcial recebido — pronto para decisão.',
     documents: [
@@ -1712,6 +1723,13 @@ export const pedidos: Request[] = [
       planoCuidadosAusente: true,
       prestadorAutorizadoDomiciliar: true,
     }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Plano de cuidados completo recebido — equipe, frequência e duração agora especificados. Indicação técnica adequada — aprovação recomendada.',
+    iaChecklistAfterReprocess: buildHomeCareChecklist({
+      cid: 'I63.9',
+      prestadorAutorizadoDomiciliar: true,
+    }),
     observations: 'Aguardando plano de cuidados detalhado.',
     documents: [
       {
@@ -1786,6 +1804,13 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Aprovar',
     iaJustification: 'Demência avançada com avaliação social favorável.',
     iaChecklist: buildHomeCareChecklist({ cid: 'F03', prestadorAutorizadoDomiciliar: true }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Avaliação social anexada após devolutiva — estrutura familiar adequada para cuidado domiciliar. Aprovação confirmada.',
+    iaChecklistAfterReprocess: buildHomeCareChecklist({
+      cid: 'F03',
+      prestadorAutorizadoDomiciliar: true,
+    }),
     observations: 'Retorno recebido.',
     documents: [
       {
@@ -1839,6 +1864,12 @@ export const pedidos: Request[] = [
       forwardedAt: '20/04/2026 11:00',
       meetingDate: '10/05/2026 15:00',
       status: 'aguardando',
+      parecer: {
+        suggestedDecision: 'aprovado',
+        text: 'Quadro oncológico avançado com paliativos integrais justifica escala 24h. Aprovar Home Care 24h conforme solicitado, com reavaliação em 60 dias.',
+        issuedAt: '10/05/2026 17:00',
+        desempatadorName: 'Dra. Patrícia Almeida',
+      },
     },
     beneficiary: {
       name: 'Gertrudes Vasques Andrade',
@@ -1880,6 +1911,13 @@ export const pedidos: Request[] = [
     iaChecklist: buildHomeCareChecklist({
       cid: 'C61',
       juntaIndicada: true,
+      prestadorAutorizadoDomiciliar: true,
+    }),
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Parecer da junta favorável à escala 24h. Quadro oncológico avançado justifica protocolo integral — aprovação recomendada com reavaliação em 60 dias.',
+    iaChecklistAfterReprocess: buildHomeCareChecklist({
+      cid: 'C61',
       prestadorAutorizadoDomiciliar: true,
     }),
     observations: 'Aguardando junta médica.',

@@ -400,7 +400,7 @@ export function useM1RequestState(initialRequest: Request): UseM1RequestStateRes
           : baseAlerts;
       persist({
         ...override,
-        status: 'Pendente',
+        status: 'Devolutiva',
         subStatus: 'JUNTA_PARECER_RECEBIDO',
         juntaMedicaContext: {
           ...ctx,
