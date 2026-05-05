@@ -2,15 +2,6 @@ import { type Notification } from '@/types/notificacao';
 
 export const NOTIFICACOES: Notification[] = [
   {
-    id: 'REQ-2026-04801',
-    type: 'processamento_ok',
-    title: 'REQ-2026-04801 pronto para análise',
-    message: 'Pedro Henrique Souza · Terapias Especiais · Sugestão da IA: Aprovar',
-    time: '2min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-04801',
-  },
-  {
     id: 'REQ-2026-04895',
     type: 'novo_pedido_fila',
     title: 'REQ-2026-04895 entrou na fila operacional',
@@ -18,15 +9,6 @@ export const NOTIFICACOES: Notification[] = [
     time: '5min atrás',
     read: false,
     href: '/analise?id=REQ-2026-04895',
-  },
-  {
-    id: 'REQ-2026-04870',
-    type: 'novo_pedido_fila',
-    title: 'Nova solicitação na fila de Terapias Especiais',
-    message: 'REQ-2026-04870 · Valentina Costa Nunes · entrou na fila operacional',
-    time: '8min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-04870',
   },
   {
     id: 'REQ-2026-05004',
@@ -38,54 +20,6 @@ export const NOTIFICACOES: Notification[] = [
     href: '/dashboard',
   },
   {
-    id: 'REQ-2026-04797',
-    type: 'sla_violado',
-    title: 'SLA violado — REQ-2026-04797',
-    message: 'Ana Paula Ferreira · Terapias Especiais · prazo vencido há 24h',
-    time: '32min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-04797',
-  },
-  {
-    id: 'REQ-2026-04825',
-    type: 'sla_risco',
-    title: 'SLA em risco — REQ-2026-04825',
-    message: 'Isabela Cristina Rocha · Terapias Especiais · vence em menos de 2h',
-    time: '45min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-04825',
-  },
-  {
-    id: 'REQ-2026-04891',
-    type: 'processamento_ok',
-    title: 'REQ-2026-04891 pronto para análise',
-    message:
-      'Caio Rodrigues Barros · Terapias Especiais · sugestão da IA disponível para revisão humana',
-    time: '1h atrás',
-    read: true,
-    href: '/analise?id=REQ-2026-04891',
-  },
-  {
-    id: 'REQ-2026-04797-doc',
-    type: 'documento_processado',
-    title: 'REQ-2026-04797 — reanálise da IA concluída',
-    message:
-      'Ana Paula Ferreira · Terapias Especiais · checklist atualizado após anexo/remoção de documento',
-    time: '2h atrás',
-    read: true,
-    href: '/analise?id=REQ-2026-04797',
-  },
-  {
-    id: 'notif-m1-devolutiva',
-    type: 'devolutiva_recebida',
-    title: 'Retorno do prestador recebido',
-    message:
-      'REQ-2026-M1-PEND-002 · Mateus Oliveira Pereira · Documentação atualizada anexada — pronto para sua análise',
-    time: '12min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-M1-PEND-002',
-  },
-  {
     id: 'notif-m1-parecer',
     type: 'junta_parecer_recebido',
     title: 'Parecer da Junta Médica disponível',
@@ -94,15 +28,6 @@ export const NOTIFICACOES: Notification[] = [
     time: '1h atrás',
     read: false,
     href: '/analise?id=REQ-2026-M1-JUNTA-002',
-  },
-  {
-    id: 'notif-m1-prazo',
-    type: 'pendencia_prazo_vencido',
-    title: 'Prazo de pendência expirado',
-    message: 'REQ-2026-M1-PEND-003 · Prestador não respondeu em 7 dias úteis — requer sua decisão',
-    time: '2h atrás',
-    read: false,
-    href: '/fila?sla=Violado',
   },
   {
     id: 'notif-m1-junta-agendada',
