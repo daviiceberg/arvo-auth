@@ -56,8 +56,8 @@ export default function QueuePage() {
     filters.setPage(0);
   };
 
-  const handleIaSuggestionFilterChange = (value: string) => {
-    filters.setIaSuggestionFilter(value);
+  const handleStageFilterChange = (value: string) => {
+    filters.setStageFilter(value);
     filters.setPage(0);
   };
 
@@ -105,13 +105,13 @@ export default function QueuePage() {
           search={filters.search}
           slaFilter={filters.slaFilter}
           providerFilter={filters.providerFilter}
-          iaSuggestionFilter={filters.iaSuggestionFilter}
+          stageFilter={filters.stageFilter}
           categoryFilter={filters.categoryFilter}
           hasFilters={filters.hasFilters}
           onSearchChange={handleSearchChange}
           onSlaFilterChange={handleSlaFilterChange}
           onProviderFilterChange={handleProviderFilterChange}
-          onIaSuggestionFilterChange={handleIaSuggestionFilterChange}
+          onStageFilterChange={handleStageFilterChange}
           onCategoryFilterChange={handleCategoryFilterChange}
           onClearFilters={filters.clearFilters}
         />

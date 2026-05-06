@@ -84,32 +84,53 @@ function getDynamicSectionContent(
   if (form.category === 'SADT') {
     return (
       <>
-        <ReviewRow label="Código TUSS" value={form.sadt.codigoTUSS} />
-        <ReviewRow label="Tipo" value={form.sadt.tipo} />
-        <ReviewRow label="Quantidade" value={form.sadt.quantidade} />
-        <ReviewRow label="Frequência" value={form.sadt.frequencia} />
+        {form.sadtProcedimentos.map((proc, index) => (
+          <Box key={proc.id} sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+              Procedimento {index + 1}
+            </Typography>
+            <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+            <ReviewRow label="Tipo" value={proc.tipo} />
+            <ReviewRow label="Quantidade" value={proc.quantidade} />
+            <ReviewRow label="Frequência" value={proc.frequencia} />
+          </Box>
+        ))}
       </>
     );
   }
   if (form.category === 'Exames Alta Complexidade') {
     return (
       <>
-        <ReviewRow label="Código TUSS" value={form.exams.codigoTUSS} />
-        <ReviewRow label="Região anatômica" value={form.exams.regiaoAnatomica} />
-        <ReviewRow label="Hipótese diagnóstica" value={form.exams.hipoteseDiagnostica} />
-        <ReviewRow label="Exames anteriores" value={form.exams.historicoExamesAnteriores} />
+        {form.examsProcedimentos.map((proc, index) => (
+          <Box key={proc.id} sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+              Procedimento {index + 1}
+            </Typography>
+            <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+            <ReviewRow label="Região anatômica" value={proc.regiaoAnatomica} />
+            <ReviewRow label="Hipótese diagnóstica" value={proc.hipoteseDiagnostica} />
+            <ReviewRow label="Exames anteriores" value={proc.historicoExamesAnteriores} />
+          </Box>
+        ))}
       </>
     );
   }
   if (form.category === 'Home Care') {
     return (
       <>
-        <ReviewRow label="Tipo" value={form.homeCare.tipo} />
-        <ReviewRow label="Frequência" value={form.homeCare.frequencia} />
-        <ReviewRow label="Duração (dias)" value={form.homeCare.duracaoDias} />
-        <ReviewRow label="Escala de cuidadores" value={form.homeCare.escalaCuidadores} />
-        <ReviewRow label="Equipamentos / materiais" value={form.homeCare.equipamentos} />
-        <ReviewRow label="Endereço" value={form.homeCare.enderecoAtendimento} />
+        {form.homeCareProcedimentos.map((proc, index) => (
+          <Box key={proc.id} sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+              Plano {index + 1}
+            </Typography>
+            <ReviewRow label="Tipo" value={proc.tipo} />
+            <ReviewRow label="Frequência" value={proc.frequencia} />
+            <ReviewRow label="Duração (dias)" value={proc.duracaoDias} />
+            <ReviewRow label="Escala de cuidadores" value={proc.escalaCuidadores} />
+            <ReviewRow label="Equipamentos / materiais" value={proc.equipamentos} />
+            <ReviewRow label="Endereço" value={proc.enderecoAtendimento} />
+          </Box>
+        ))}
       </>
     );
   }

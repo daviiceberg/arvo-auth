@@ -1,7 +1,7 @@
 'use client';
 
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -67,17 +67,16 @@ export default function HistoryListTable({
               <TableCell sx={{ minWidth: 280, maxWidth: 280 }}>Procedimento</TableCell>
               <TableCell sx={{ minWidth: 120 }}>Decisão</TableCell>
               <TableCell sx={{ minWidth: 185 }}>Origem / Responsável</TableCell>
-              <TableCell sx={{ minWidth: 130 }}>Sugestão IA</TableCell>
               <TableCell
                 sx={{ minWidth: 135, cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
                 onClick={onToggleSort}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   Data Decisão
-                  {sortDirection === 'desc' ? (
-                    <ArrowDownwardIcon sx={{ fontSize: 14 }} />
+                  {sortDirection === 'asc' ? (
+                    <KeyboardArrowDownIcon sx={{ fontSize: 16, color: 'primary.main' }} />
                   ) : (
-                    <ArrowUpwardIcon sx={{ fontSize: 14 }} />
+                    <KeyboardArrowUpIcon sx={{ fontSize: 16, color: 'primary.main' }} />
                   )}
                 </Box>
               </TableCell>
@@ -87,7 +86,7 @@ export default function HistoryListTable({
           <TableBody>
             {pagedEntries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
+                <TableCell colSpan={8} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
                   {emptyText}
                 </TableCell>
               </TableRow>

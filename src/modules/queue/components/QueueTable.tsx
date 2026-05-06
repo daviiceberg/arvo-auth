@@ -1,5 +1,7 @@
 'use client';
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,11 +17,50 @@ import Typography from '@mui/material/Typography';
 
 import { type Request } from '@/types/pedido';
 
+import { useQueueTableSort } from '../hooks/useQueueTableSort';
+
 import QueueTableRow from './QueueTableRow';
 
 export interface QueueTableSubGroup {
   label: string;
   items: Request[];
+}
+
+interface SortableHeaderProps {
+  label: string;
+  isSorted: boolean;
+  isAsc: boolean;
+  onClick: () => void;
+  minWidth?: number;
+}
+
+function SortableHeader({ label, isSorted, isAsc, onClick, minWidth = 130 }: SortableHeaderProps) {
+  const nextDirection = !isSorted || isAsc ? 'desc' : 'asc';
+  const showDownArrow = nextDirection === 'desc';
+  const iconColor = isSorted ? 'primary.main' : 'text.disabled';
+
+  return (
+    <TableCell
+      onClick={onClick}
+      sx={{
+        cursor: 'pointer',
+        userSelect: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.5,
+        px: 1.5,
+        minWidth,
+        '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
+      }}
+    >
+      <span>{label}</span>
+      {showDownArrow ? (
+        <KeyboardArrowDownIcon sx={{ fontSize: 16, color: iconColor }} />
+      ) : (
+        <KeyboardArrowUpIcon sx={{ fontSize: 16, color: iconColor }} />
+      )}
+    </TableCell>
+  );
 }
 
 interface QueueTableProps {
@@ -43,12 +84,14 @@ export default function QueueTable({
   onClearFilters,
   subGroups,
 }: QueueTableProps) {
+  const { sort, toggleSort, sortItems } = useQueueTableSort();
   const categoryActive = activeCategory !== 'Todas';
   const emptyTitle = categoryActive
     ? `Nenhuma guia de ${activeCategory} na fila`
     : 'Nenhum pedido encontrado';
   const visibleGroups = subGroups?.filter((g) => g.items.length > 0) ?? null;
   const hasGroups = visibleGroups !== null && visibleGroups.length > 0;
+  const sortedItems = sortItems(items);
   if (loading) {
     return (
       <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -75,25 +118,37 @@ export default function QueueTable({
               },
             }}
           >
-            <TableCell align="center" sx={{ width: 44 }}>
-              Prio.
-            </TableCell>
-            <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
-            <TableCell sx={{ minWidth: 110 }}>Origem</TableCell>
+            <SortableHeader
+              label="ID"
+              isSorted={sort.column === 'id'}
+              isAsc={sort.direction === 'asc'}
+              onClick={() => {
+                toggleSort('id');
+              }}
+              minWidth={130}
+            />
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
             <TableCell sx={{ minWidth: 145 }}>Categoria</TableCell>
             <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
             <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
             <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
-            <TableCell sx={{ minWidth: 120 }}>SLA</TableCell>
-            <TableCell sx={{ minWidth: 110 }}>Sugestão IA</TableCell>
+            <SortableHeader
+              label="SLA"
+              isSorted={sort.column === 'sla'}
+              isAsc={sort.direction === 'asc'}
+              onClick={() => {
+                toggleSort('sla');
+              }}
+              minWidth={120}
+            />
+            <TableCell sx={{ minWidth: 140 }}>Etapa</TableCell>
             <TableCell sx={{ minWidth: 115 }}>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={11} sx={{ py: 6, border: 0 }}>
+              <TableCell colSpan={9} sx={{ py: 6, border: 0 }}>
                 <Box
                   sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}
                 >
@@ -144,10 +199,11 @@ export default function QueueTable({
                 group={group}
                 lastViewedId={lastViewedId}
                 onRowClick={onRowClick}
+                sortItems={sortItems}
               />
             ))
           ) : (
-            items.map((item) => (
+            sortedItems.map((item) => (
               <QueueTableRow
                 key={item.id}
                 request={item}
@@ -166,14 +222,16 @@ interface SubGroupRowsProps {
   group: QueueTableSubGroup;
   lastViewedId: string | null;
   onRowClick: (requestId: string) => void;
+  sortItems: (items: Request[]) => Request[];
 }
 
-function SubGroupRows({ group, lastViewedId, onRowClick }: SubGroupRowsProps) {
+function SubGroupRows({ group, lastViewedId, onRowClick, sortItems }: SubGroupRowsProps) {
+  const sortedGroupItems = sortItems(group.items);
   return (
     <>
       <TableRow>
         <TableCell
-          colSpan={11}
+          colSpan={9}
           sx={{
             backgroundColor: 'rgba(0,0,0,0.04)',
             py: 1,
@@ -189,7 +247,7 @@ function SubGroupRows({ group, lastViewedId, onRowClick }: SubGroupRowsProps) {
           {group.label} ({group.items.length})
         </TableCell>
       </TableRow>
-      {group.items.map((item) => (
+      {sortedGroupItems.map((item) => (
         <QueueTableRow
           key={item.id}
           request={item}

@@ -1,20 +1,32 @@
 'use client';
 
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SearchIcon from '@mui/icons-material/Search';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type FormData, type ExamsData } from '@/modules/new-request/types';
+import { type FormData, type ExamsProcedimento } from '@/modules/new-request/types';
 
 interface StepExamsProps {
   form: FormData;
   setSelect: (field: keyof FormData) => (value: string) => void;
-  setExamsField: <K extends keyof ExamsData>(field: K, value: ExamsData[K]) => void;
+  handleAddExamsProcedimento: () => void;
+  handleRemoveExamsProcedimento: (id: string) => void;
+  handleUpdateExamsProcedimento: (
+    id: string,
+    field: keyof Omit<ExamsProcedimento, 'id'>,
+    value: string,
+  ) => void;
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -28,7 +40,13 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function StepExams({ form, setSelect, setExamsField }: StepExamsProps) {
+export function StepExams({
+  form,
+  setSelect,
+  handleAddExamsProcedimento,
+  handleRemoveExamsProcedimento,
+  handleUpdateExamsProcedimento,
+}: StepExamsProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -62,62 +80,134 @@ export function StepExams({ form, setSelect, setExamsField }: StepExamsProps) {
         </Grid>
       </Grid>
 
-      <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', p: 2 }}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Código TUSS *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Ex: 40901076"
-              value={form.exams.codigoTUSS}
-              onChange={(e) => {
-                setExamsField('codigoTUSS', e.target.value);
-              }}
-            />
+      {form.examsProcedimentos.map((proc, index) => (
+        <Box
+          key={proc.id}
+          sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', p: 2, mb: 2 }}
+        >
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
+            <Typography variant="body2" fontWeight={600}>
+              Procedimento {index + 1}
+            </Typography>
+            {form.examsProcedimentos.length > 1 && (
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() => {
+                  handleRemoveExamsProcedimento(proc.id);
+                }}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
+
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Código TUSS *</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ex: 40901076"
+                value={proc.codigoTUSS}
+                onChange={(e) => {
+                  handleUpdateExamsProcedimento(proc.id, 'codigoTUSS', e.target.value);
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title="Clique para buscar código TUSS" placement="top">
+                          <SearchIcon
+                            sx={{ fontSize: 16, color: 'text.secondary', cursor: 'pointer' }}
+                            onClick={() => {
+                              window.open('https://arvoredecodigos.com.br/', '_blank');
+                            }}
+                          />
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Descrição TUSS</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Descrição do procedimento"
+                value={proc.descricaoTUSS}
+                onChange={(e) => {
+                  handleUpdateExamsProcedimento(proc.id, 'descricaoTUSS', e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Região anatômica *</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ex: crânio, tórax, abdome total"
+                value={proc.regiaoAnatomica}
+                onChange={(e) => {
+                  handleUpdateExamsProcedimento(proc.id, 'regiaoAnatomica', e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FieldLabel>Hipótese diagnóstica *</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                multiline
+                minRows={2}
+                placeholder="Hipótese clínica que justifica o exame"
+                value={proc.hipoteseDiagnostica}
+                onChange={(e) => {
+                  handleUpdateExamsProcedimento(proc.id, 'hipoteseDiagnostica', e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FieldLabel>Exames anteriores</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                multiline
+                minRows={2}
+                placeholder="Exames já realizados e evolução do quadro"
+                value={proc.historicoExamesAnteriores}
+                onChange={(e) => {
+                  handleUpdateExamsProcedimento(
+                    proc.id,
+                    'historicoExamesAnteriores',
+                    e.target.value,
+                  );
+                }}
+              />
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Região anatômica *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Ex: crânio, tórax, abdome total"
-              value={form.exams.regiaoAnatomica}
-              onChange={(e) => {
-                setExamsField('regiaoAnatomica', e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <FieldLabel>Hipótese diagnóstica *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              multiline
-              minRows={2}
-              placeholder="Hipótese clínica que justifica o exame"
-              value={form.exams.hipoteseDiagnostica}
-              onChange={(e) => {
-                setExamsField('hipoteseDiagnostica', e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <FieldLabel>Exames anteriores</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              multiline
-              minRows={2}
-              placeholder="Exames já realizados e evolução do quadro"
-              value={form.exams.historicoExamesAnteriores}
-              onChange={(e) => {
-                setExamsField('historicoExamesAnteriores', e.target.value);
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      ))}
+
+      <Button
+        variant="text"
+        onClick={handleAddExamsProcedimento}
+        disabled={form.examsProcedimentos.length >= 5}
+        sx={{
+          color: 'primary.main',
+          fontWeight: 600,
+          fontSize: 13,
+          p: '4px 5px',
+          justifyContent: 'flex-start',
+          '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
+        }}
+      >
+        + Adicionar Procedimento
+      </Button>
     </Box>
   );
 }

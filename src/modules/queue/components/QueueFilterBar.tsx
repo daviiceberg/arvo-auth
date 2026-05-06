@@ -14,13 +14,13 @@ interface QueueFilterBarProps {
   search: string;
   slaFilter: string;
   providerFilter: string;
-  iaSuggestionFilter: string;
+  stageFilter: string;
   categoryFilter: string;
   hasFilters: boolean;
   onSearchChange: (value: string) => void;
   onSlaFilterChange: (value: string) => void;
   onProviderFilterChange: (value: string) => void;
-  onIaSuggestionFilterChange: (value: string) => void;
+  onStageFilterChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
   onClearFilters: () => void;
 }
@@ -29,13 +29,13 @@ export default function QueueFilterBar({
   search,
   slaFilter,
   providerFilter,
-  iaSuggestionFilter,
+  stageFilter,
   categoryFilter,
   hasFilters,
   onSearchChange,
   onSlaFilterChange,
   onProviderFilterChange,
-  onIaSuggestionFilterChange,
+  onStageFilterChange,
   onCategoryFilterChange,
   onClearFilters,
 }: QueueFilterBarProps) {
@@ -117,17 +117,20 @@ export default function QueueFilterBar({
         </Select>
       </FormControl>
       <FormControl size="small" fullWidth>
-        <InputLabel>Sugestão IA</InputLabel>
+        <InputLabel>Etapa</InputLabel>
         <Select
-          value={iaSuggestionFilter}
-          label="Sugestão IA"
+          value={stageFilter}
+          label="Etapa"
           onChange={(e) => {
-            onIaSuggestionFilterChange(e.target.value);
+            onStageFilterChange(e.target.value);
           }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
-          <MenuItem value="Aprovar">Aprovar</MenuItem>
-          <MenuItem value="Negar">Negar</MenuItem>
+          <MenuItem value="Aguardando análise">Aguardando análise</MenuItem>
+          <MenuItem value="IA Reprocessando">IA Reprocessando</MenuItem>
+          <MenuItem value="Pendência aberta">Pendência aberta</MenuItem>
+          <MenuItem value="Aguardando junta">Aguardando junta</MenuItem>
+          <MenuItem value="Aguardando reanálise">Aguardando reanálise</MenuItem>
         </Select>
       </FormControl>
       <Button

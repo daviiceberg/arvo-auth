@@ -9,9 +9,9 @@ import { type Category } from '@/types/pedido';
 import {
   type FormData,
   type TerapiaProcedimento,
-  type SadtData,
-  type ExamsData,
-  type HomeCareData,
+  type SadtProcedimento,
+  type ExamsProcedimento,
+  type HomeCareItem,
 } from '../types';
 
 import { StepExams } from './steps/StepExams';
@@ -30,9 +30,27 @@ interface StepDynamicProps {
     field: keyof Omit<TerapiaProcedimento, 'id'>,
     value: string,
   ) => void;
-  setSadtField: <K extends keyof SadtData>(field: K, value: SadtData[K]) => void;
-  setExamsField: <K extends keyof ExamsData>(field: K, value: ExamsData[K]) => void;
-  setHomeCareField: <K extends keyof HomeCareData>(field: K, value: HomeCareData[K]) => void;
+  handleAddSadtProcedimento: () => void;
+  handleRemoveSadtProcedimento: (id: string) => void;
+  handleUpdateSadtProcedimento: (
+    id: string,
+    field: keyof Omit<SadtProcedimento, 'id'>,
+    value: string,
+  ) => void;
+  handleAddExamsProcedimento: () => void;
+  handleRemoveExamsProcedimento: (id: string) => void;
+  handleUpdateExamsProcedimento: (
+    id: string,
+    field: keyof Omit<ExamsProcedimento, 'id'>,
+    value: string,
+  ) => void;
+  handleAddHomeCareProcedimento: () => void;
+  handleRemoveHomeCareProcedimento: (id: string) => void;
+  handleUpdateHomeCareProcedimento: (
+    id: string,
+    field: keyof Omit<HomeCareItem, 'id'>,
+    value: string,
+  ) => void;
 }
 
 // Mitigação obrigatória de R-M2-02: roteamento por categoria via Record<Category, ReactNode>.
@@ -51,20 +69,30 @@ function buildStepByCategory(props: StepDynamicProps): Record<Category, ReactNod
       />
     ),
     SADT: (
-      <StepSadt form={props.form} setSelect={props.setSelect} setSadtField={props.setSadtField} />
+      <StepSadt
+        form={props.form}
+        setSelect={props.setSelect}
+        handleAddSadtProcedimento={props.handleAddSadtProcedimento}
+        handleRemoveSadtProcedimento={props.handleRemoveSadtProcedimento}
+        handleUpdateSadtProcedimento={props.handleUpdateSadtProcedimento}
+      />
     ),
     'Exames Alta Complexidade': (
       <StepExams
         form={props.form}
         setSelect={props.setSelect}
-        setExamsField={props.setExamsField}
+        handleAddExamsProcedimento={props.handleAddExamsProcedimento}
+        handleRemoveExamsProcedimento={props.handleRemoveExamsProcedimento}
+        handleUpdateExamsProcedimento={props.handleUpdateExamsProcedimento}
       />
     ),
     'Home Care': (
       <StepHomeCare
         form={props.form}
         setSelect={props.setSelect}
-        setHomeCareField={props.setHomeCareField}
+        handleAddHomeCareProcedimento={props.handleAddHomeCareProcedimento}
+        handleRemoveHomeCareProcedimento={props.handleRemoveHomeCareProcedimento}
+        handleUpdateHomeCareProcedimento={props.handleUpdateHomeCareProcedimento}
       />
     ),
   };

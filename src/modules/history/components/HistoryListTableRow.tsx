@@ -11,33 +11,9 @@ import Typography from '@mui/material/Typography';
 
 import { CategoryChip, DecisionActionChip } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
-import { aiSuggestionFinalColorMap } from '@/shared/constants';
-import { type AISuggestionFinal, type HistoryEntry } from '@/types/pedido';
+import { type HistoryEntry } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
-
-interface IASuggestionCellProps {
-  iaSuggestion: AISuggestionFinal;
-}
-
-function IASuggestionCell({ iaSuggestion }: IASuggestionCellProps) {
-  const colors = aiSuggestionFinalColorMap[iaSuggestion];
-
-  return (
-    <Chip
-      label={iaSuggestion}
-      size="small"
-      variant="outlined"
-      sx={{
-        fontSize: 12,
-        fontWeight: 600,
-        height: 20,
-        borderColor: colors.color,
-        color: colors.color,
-      }}
-    />
-  );
-}
 
 interface HistoryListTableRowProps {
   entry: HistoryEntry;
@@ -152,11 +128,8 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         ) : null}
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <IASuggestionCell iaSuggestion={entry.iaSuggestion} />
-      </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>
-          {`${entry.decisionDate.slice(0, 5)}/${entry.decisionDate.slice(8, 10)} · ${entry.decisionDate.split(' ')[1] ?? ''}`}
+          {`${entry.decisionDate.slice(0, 5)}/${entry.decisionDate.slice(8, 10)}`}
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>

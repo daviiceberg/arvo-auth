@@ -11,7 +11,7 @@ interface QueueFilterValues {
   slaFilter: string;
   alertFilter: string;
   providerFilter: string;
-  iaSuggestionFilter: string;
+  stageFilter: string;
   statusFilter: string;
   categoryFilter: string;
   tabValue: number;
@@ -23,7 +23,7 @@ export interface QueueFilters {
   slaFilter: string;
   alertFilter: string;
   providerFilter: string;
-  iaSuggestionFilter: string;
+  stageFilter: string;
   statusFilter: string;
   categoryFilter: string;
   tabValue: number;
@@ -37,7 +37,7 @@ export interface QueueFiltersActions {
   setSlaFilter: (value: string) => void;
   setAlertFilter: (value: string) => void;
   setProviderFilter: (value: string) => void;
-  setIaSuggestionFilter: (value: string) => void;
+  setStageFilter: (value: string) => void;
   setStatusFilter: (value: string) => void;
   setCategoryFilter: (value: string) => void;
   setTabValue: (value: number) => void;
@@ -68,7 +68,7 @@ function buildInitialFilters(searchParams: URLSearchParams): QueueFilterValues {
     slaFilter: searchParams.get('sla') ?? 'Todas',
     alertFilter: searchParams.get('alerta') ?? 'Todos',
     providerFilter: 'Todos',
-    iaSuggestionFilter: searchParams.get('ia') ?? 'Todas',
+    stageFilter: searchParams.get('stage') ?? 'Todas',
     statusFilter: searchParams.get('status') ?? 'Todos',
     categoryFilter: searchParams.get('categoria') ?? 'Todas',
     tabValue: parseTabParam(searchParams.get('tab')),
@@ -108,7 +108,7 @@ export function useQueueFilters({
       filters.slaFilter !== 'Todas' ||
       filters.alertFilter !== 'Todos' ||
       filters.providerFilter !== 'Todos' ||
-      filters.iaSuggestionFilter !== 'Todas' ||
+      filters.stageFilter !== 'Todas' ||
       filters.statusFilter !== 'Todos' ||
       filters.categoryFilter !== 'Todas',
     [filters],
@@ -120,7 +120,7 @@ export function useQueueFilters({
       search: '',
       slaFilter: 'Todas',
       providerFilter: 'Todos',
-      iaSuggestionFilter: 'Todas',
+      stageFilter: 'Todas',
       categoryFilter: 'Todas',
     }));
     setPage(0);
@@ -143,8 +143,8 @@ export function useQueueFilters({
     setProviderFilter: (value: string) => {
       updateFilter('providerFilter', value);
     },
-    setIaSuggestionFilter: (value: string) => {
-      updateFilter('iaSuggestionFilter', value);
+    setStageFilter: (value: string) => {
+      updateFilter('stageFilter', value);
     },
     setStatusFilter: (value: string) => {
       updateFilter('statusFilter', value);

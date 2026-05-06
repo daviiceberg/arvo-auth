@@ -1227,7 +1227,7 @@ export const pedidos: Request[] = [
     protocolDate: '15/04/2026 09:00',
     queueTimeHours: 360,
     slaStatus: 'ok',
-    slaText: 'Junta médica em curso',
+    slaText: '5d restantes',
     slaDeadlineHours: 720,
     subStatus: 'JUNTA_AGUARDANDO',
     juntaMedicaContext: {
@@ -2388,7 +2388,7 @@ export const pedidos: Request[] = [
     protocolDate: '15/04/2026 11:00',
     queueTimeHours: 432,
     slaStatus: 'ok',
-    slaText: 'Junta médica em curso',
+    slaText: '5d restantes',
     slaDeadlineHours: 720,
     subStatus: 'JUNTA_AGUARDANDO',
     juntaMedicaContext: {

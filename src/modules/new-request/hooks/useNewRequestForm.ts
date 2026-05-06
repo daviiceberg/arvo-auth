@@ -2,42 +2,52 @@
 
 import { useState } from 'react';
 
+import { categoryMocks } from '../constants/category-mocks';
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
 import {
   type FormData,
   type TerapiaProcedimento,
-  type SadtData,
-  type ExamsData,
-  type HomeCareData,
+  type SadtProcedimento,
+  type ExamsProcedimento,
+  type HomeCareItem,
 } from '../types';
 
-const initialSadt: SadtData = {
+const newSadtProcedimento = (base?: Partial<SadtProcedimento>): SadtProcedimento => ({
+  id: crypto.randomUUID(),
   codigoTUSS: '',
+  descricaoTUSS: '',
   tipo: '',
   frequencia: '',
   quantidade: '',
-};
+  ...base,
+});
 
-const initialExams: ExamsData = {
+const newExamsProcedimento = (base?: Partial<ExamsProcedimento>): ExamsProcedimento => ({
+  id: crypto.randomUUID(),
   codigoTUSS: '',
+  descricaoTUSS: '',
   regiaoAnatomica: '',
   hipoteseDiagnostica: '',
   historicoExamesAnteriores: '',
-};
+  ...base,
+});
 
-const initialHomeCare: HomeCareData = {
+const newHomeCareItem = (base?: Partial<HomeCareItem>): HomeCareItem => ({
+  id: crypto.randomUUID(),
   tipo: '',
   frequencia: '',
   duracaoDias: '',
   escalaCuidadores: '',
   equipamentos: '',
   enderecoAtendimento: '',
-};
+  ...base,
+});
 
 const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcedimento => ({
   id: crypto.randomUUID(),
   tipoTerapia: '',
   codigoTUSS: '',
+  descricaoTUSS: '',
   numeroSessoes: '',
   dataSolicitacao: base?.dataSolicitacao ?? '',
   dataValidadeSenha: base?.dataValidadeSenha ?? '',
@@ -74,9 +84,9 @@ export const initialForm: FormData = {
   terapiaDataSolicitacao: '',
   terapiaDataValidadeSenha: '',
   frequenciaSemanal: '3x por semana',
-  sadt: initialSadt,
-  exams: initialExams,
-  homeCare: initialHomeCare,
+  sadtProcedimentos: [newSadtProcedimento()],
+  examsProcedimentos: [newExamsProcedimento()],
+  homeCareProcedimentos: [newHomeCareItem()],
 };
 
 export function useNewRequestForm(categoryParam: string) {
@@ -87,6 +97,7 @@ export function useNewRequestForm(categoryParam: string) {
 
   const [terapiaProcedimentos, setTerapiaProcedimentos] = useState([newTerapiaProc()]);
   const [cidSecundarioInput, setCidSecundarioInput] = useState('');
+  const [isManualEntry, setIsManualEntry] = useState(false);
 
   const set =
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -149,19 +160,98 @@ export function useNewRequestForm(categoryParam: string) {
   };
 
   const setCategory = (next: FormData['category']) => {
-    setForm((f) => ({ ...f, category: next }));
+    const mockData = next ? categoryMocks[next] : {};
+    setForm({ ...initialForm, category: next, ...mockData });
+    setTerapiaProcedimentos([newTerapiaProc()]);
+    setCidSecundarioInput('');
+    setIsManualEntry(false);
   };
 
-  const setSadtField = <K extends keyof SadtData>(field: K, value: SadtData[K]) => {
-    setForm((f) => ({ ...f, sadt: { ...f.sadt, [field]: value } }));
+  const handleAddSadtProcedimento = () => {
+    if (form.sadtProcedimentos.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      sadtProcedimentos: [...f.sadtProcedimentos, newSadtProcedimento()],
+    }));
   };
 
-  const setExamsField = <K extends keyof ExamsData>(field: K, value: ExamsData[K]) => {
-    setForm((f) => ({ ...f, exams: { ...f.exams, [field]: value } }));
+  const handleRemoveSadtProcedimento = (id: string) => {
+    if (form.sadtProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      sadtProcedimentos: f.sadtProcedimentos.filter((p) => p.id !== id),
+    }));
   };
 
-  const setHomeCareField = <K extends keyof HomeCareData>(field: K, value: HomeCareData[K]) => {
-    setForm((f) => ({ ...f, homeCare: { ...f.homeCare, [field]: value } }));
+  const handleUpdateSadtProcedimento = (
+    id: string,
+    field: keyof Omit<SadtProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      sadtProcedimentos: f.sadtProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
+  };
+
+  const handleAddExamsProcedimento = () => {
+    if (form.examsProcedimentos.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      examsProcedimentos: [...f.examsProcedimentos, newExamsProcedimento()],
+    }));
+  };
+
+  const handleRemoveExamsProcedimento = (id: string) => {
+    if (form.examsProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      examsProcedimentos: f.examsProcedimentos.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleUpdateExamsProcedimento = (
+    id: string,
+    field: keyof Omit<ExamsProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      examsProcedimentos: f.examsProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
+  };
+
+  const handleAddHomeCareProcedimento = () => {
+    if (form.homeCareProcedimentos.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      homeCareProcedimentos: [...f.homeCareProcedimentos, newHomeCareItem()],
+    }));
+  };
+
+  const handleRemoveHomeCareProcedimento = (id: string) => {
+    if (form.homeCareProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      homeCareProcedimentos: f.homeCareProcedimentos.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleUpdateHomeCareProcedimento = (
+    id: string,
+    field: keyof Omit<HomeCareItem, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      homeCareProcedimentos: f.homeCareProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
   };
 
   return {
@@ -170,17 +260,25 @@ export function useNewRequestForm(categoryParam: string) {
     set,
     setSelect,
     setCategory,
-    setSadtField,
-    setExamsField,
-    setHomeCareField,
     terapiaProcedimentos,
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
+    handleAddSadtProcedimento,
+    handleRemoveSadtProcedimento,
+    handleUpdateSadtProcedimento,
+    handleAddExamsProcedimento,
+    handleRemoveExamsProcedimento,
+    handleUpdateExamsProcedimento,
+    handleAddHomeCareProcedimento,
+    handleRemoveHomeCareProcedimento,
+    handleUpdateHomeCareProcedimento,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
     removeCidSecundario,
     resetForm,
+    isManualEntry,
+    setIsManualEntry,
   };
 }

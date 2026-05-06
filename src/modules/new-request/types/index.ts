@@ -16,6 +16,7 @@ export interface TerapiaProcedimento {
   id: string;
   tipoTerapia: string;
   codigoTUSS: string;
+  descricaoTUSS: string;
   numeroSessoes: string;
   dataSolicitacao: string;
   dataValidadeSenha: string;
@@ -36,15 +37,19 @@ export type { GuiaProcedure } from '@/types/procedure-codes';
 
 export type SadtTipo = 'coleta' | 'infusao' | 'reabilitacao' | 'outro' | '';
 
-export interface SadtData {
+export interface SadtProcedimento {
+  id: string;
   codigoTUSS: string;
+  descricaoTUSS: string;
   tipo: SadtTipo;
   frequencia: string;
   quantidade: string;
 }
 
-export interface ExamsData {
+export interface ExamsProcedimento {
+  id: string;
   codigoTUSS: string;
+  descricaoTUSS: string;
   regiaoAnatomica: string;
   hipoteseDiagnostica: string;
   historicoExamesAnteriores: string;
@@ -58,7 +63,8 @@ export type HomeCareTipo =
   | 'outro'
   | '';
 
-export interface HomeCareData {
+export interface HomeCareItem {
+  id: string;
   tipo: HomeCareTipo;
   frequencia: string;
   duracaoDias: string;
@@ -101,10 +107,10 @@ export interface FormData {
   terapiaDataSolicitacao: string;
   terapiaDataValidadeSenha: string;
   frequenciaSemanal: string;
-  // Step dynamic — sub-objetos por categoria. Apenas o campo correspondente à
-  // categoria ativa é preenchido durante o cadastro; os outros permanecem
-  // com defaults vazios.
-  sadt: SadtData;
-  exams: ExamsData;
-  homeCare: HomeCareData;
+  // Step dynamic — arrays de procedimentos por categoria. Apenas o campo
+  // correspondente à categoria ativa é preenchido durante o cadastro;
+  // os outros permanecem com arrays vazios.
+  sadtProcedimentos: SadtProcedimento[];
+  examsProcedimentos: ExamsProcedimento[];
+  homeCareProcedimentos: HomeCareItem[];
 }

@@ -5,7 +5,7 @@ import React from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -134,7 +134,7 @@ export function StepTherapies({
               {terapiaProcedimentos.length > 1 && (
                 <IconButton
                   size="small"
-                  color="error"
+                  color="primary"
                   onClick={() => {
                     handleRemoveTerapiaProc(proc.id);
                   }}
@@ -184,17 +184,29 @@ export function StepTherapies({
                     input: {
                       endAdornment: (
                         <InputAdornment position="end">
-                          <Tooltip
-                            title="Sugerido com base no tipo de terapia. Editável."
-                            placement="top"
-                          >
-                            <InfoOutlinedIcon
-                              sx={{ fontSize: 16, color: 'text.disabled', cursor: 'default' }}
+                          <Tooltip title="Clique para buscar código TUSS" placement="top">
+                            <SearchIcon
+                              sx={{ fontSize: 16, color: 'text.secondary', cursor: 'pointer' }}
+                              onClick={() => {
+                                window.open('https://arvoredecodigos.com.br/', '_blank');
+                              }}
                             />
                           </Tooltip>
                         </InputAdornment>
                       ),
                     },
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 6 }}>
+                <FieldLabel>Descrição TUSS</FieldLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Descrição do procedimento"
+                  value={proc.descricaoTUSS}
+                  onChange={(e) => {
+                    handleUpdateTerapiaProc(proc.id, 'descricaoTUSS', e.target.value);
                   }}
                 />
               </Grid>
@@ -270,12 +282,12 @@ export function StepTherapies({
             onClick={handleAddTerapiaProc}
             disabled={terapiaProcedimentos.length >= 5}
             sx={{
-              color: 'error.main',
+              color: 'primary.main',
               fontWeight: 600,
               fontSize: 13,
               p: '4px 5px',
               justifyContent: 'flex-start',
-              '& .MuiButton-startIcon': { color: 'error.main' },
+              '& .MuiButton-startIcon': { color: 'primary.main' },
               '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
             }}
           >

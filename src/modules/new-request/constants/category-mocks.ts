@@ -1,0 +1,82 @@
+import { type Category } from '@/types/pedido';
+
+import { type FormData } from '../types';
+
+import { TUSS_POR_TERAPIA } from './tuss-therapy-codes';
+
+export const categoryMocks: Record<Category, Partial<FormData>> = {
+  'Terapias Especiais': {
+    nomeBeneficiario: 'Lucas Martins de Almeida',
+    carteirinha: '9876543210987654',
+    dataNascimento: '2018-07-22',
+    cidPrincipal: 'F84.0 - Autismo infantil',
+    indicacaoClinica:
+      'Paciente pediátrico com diagnóstico de TEA (F84.0) em acompanhamento multidisciplinar. Indicada continuidade do plano terapêutico com Fonoaudiologia, Terapia Ocupacional e Psicologia/ABA.',
+    profissionalSolicitante: 'Dra. Helena Rocha',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '98765',
+    conselhoUF: 'SP',
+    cboCodigo: '225142',
+    nomeContratadoSolicitante: 'Clínica Neuropediátrica Esperança',
+    nomeContratadoExecutante: 'Clínica Integrar TEA',
+    cnesExecutante: '7547277',
+    tipoTerapia: 'Fonoaudiologia',
+    codigoTuss: TUSS_POR_TERAPIA.Fonoaudiologia ?? '',
+    frequenciaSemanal: '3x por semana',
+  },
+  SADT: {
+    nomeBeneficiario: 'Maria Silva Santos',
+    carteirinha: '1234567890123456',
+    dataNascimento: '1965-03-15',
+    cidPrincipal: 'M54.5 - Lombalgia',
+    indicacaoClinica:
+      'Paciente com diagnóstico de lombalgia crônica. Solicitação de coleta laboratorial para avaliação de marcadores inflamatórios.',
+    profissionalSolicitante: 'Dr. João Pedro',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '123456',
+    conselhoUF: 'RJ',
+    cboCodigo: '225135',
+    nomeContratadoSolicitante: 'Hospital Central RJ',
+    nomeContratadoExecutante: 'Laboratório Análises',
+    cnesExecutante: '2234567',
+  },
+  'Exames Alta Complexidade': {
+    nomeBeneficiario: 'Roberto Costa Oliveira',
+    carteirinha: '5678901234567890',
+    dataNascimento: '1950-11-20',
+    cidPrincipal: 'C61 - Neoplasia da próstata',
+    indicacaoClinica:
+      'Paciente oncológico com suspeita de metástase. Indicado PET-CT para estadiamento completo.',
+    profissionalSolicitante: 'Dra. Carla Mendes',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '654321',
+    conselhoUF: 'SP',
+    cboCodigo: '225135',
+    nomeContratadoSolicitante: 'Instituto Oncológico SP',
+    nomeContratadoExecutante: 'Centro Diagnóstico Premium',
+    cnesExecutante: '3345678',
+  },
+  'Home Care': {
+    nomeBeneficiario: 'Gertrudes Vasques Andrade',
+    carteirinha: '9012345678901234',
+    dataNascimento: '1936-01-05',
+    cidPrincipal: 'C61 - Câncer avançado',
+    indicacaoClinica:
+      'Paciente oncológico em fase paliativa. Necessário suporte de enfermagem 24h e cuidados multidisciplinares domiciliares.',
+    profissionalSolicitante: 'Dr. Cláudio Pieve',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '710987',
+    conselhoUF: 'SP',
+    cboCodigo: '225135',
+    nomeContratadoSolicitante: 'Hospital Sírio',
+    nomeContratadoExecutante: 'Lar+ SP',
+    cnesExecutante: '9889977',
+  },
+};
+
+export const categoryDocumentLabels: Record<Category, string> = {
+  'Terapias Especiais': 'Documentos necessários para autorização de Terapias Especiais:',
+  SADT: 'Documentos necessários para autorização de SADT:',
+  'Exames Alta Complexidade': 'Documentos necessários para autorização de Exames:',
+  'Home Care': 'Documentos necessários para autorização de Home Care:',
+};

@@ -40,28 +40,43 @@ function validateTherapyProcedures(procedures: TerapiaProcedimento[]): string | 
 }
 
 function validateSadt(form: FormData): string | null {
-  if (!form.sadt.codigoTUSS.trim()) return 'Informe o código TUSS do procedimento SADT.';
-  if (!form.sadt.tipo) return 'Selecione o tipo do procedimento SADT.';
-  if (!form.sadt.quantidade.trim() || Number(form.sadt.quantidade) <= 0) {
-    return 'Informe a quantidade.';
+  for (let i = 0; i < form.sadtProcedimentos.length; i++) {
+    const p = form.sadtProcedimentos[i];
+    if (!p) continue;
+    const n = form.sadtProcedimentos.length > 1 ? ` no Procedimento ${String(i + 1)}` : '';
+    if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
+    if (!p.tipo) return `Selecione o tipo${n}.`;
+    if (!p.quantidade.trim() || Number(p.quantidade) <= 0) {
+      return `Informe a quantidade${n}.`;
+    }
   }
   return null;
 }
 
 function validateExams(form: FormData): string | null {
-  if (!form.exams.codigoTUSS.trim()) return 'Informe o código TUSS do exame.';
-  if (!form.exams.regiaoAnatomica.trim()) return 'Informe a região anatômica.';
-  if (!form.exams.hipoteseDiagnostica.trim()) return 'Informe a hipótese diagnóstica.';
+  for (let i = 0; i < form.examsProcedimentos.length; i++) {
+    const p = form.examsProcedimentos[i];
+    if (!p) continue;
+    const n = form.examsProcedimentos.length > 1 ? ` no Procedimento ${String(i + 1)}` : '';
+    if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
+    if (!p.regiaoAnatomica.trim()) return `Informe a região anatômica${n}.`;
+    if (!p.hipoteseDiagnostica.trim()) return `Informe a hipótese diagnóstica${n}.`;
+  }
   return null;
 }
 
 function validateHomeCare(form: FormData): string | null {
-  if (!form.homeCare.tipo) return 'Selecione o tipo de Home Care.';
-  if (!form.homeCare.frequencia.trim()) return 'Informe a frequência de atendimento.';
-  if (!form.homeCare.duracaoDias.trim() || Number(form.homeCare.duracaoDias) <= 0) {
-    return 'Informe a duração prevista (em dias).';
+  for (let i = 0; i < form.homeCareProcedimentos.length; i++) {
+    const p = form.homeCareProcedimentos[i];
+    if (!p) continue;
+    const n = form.homeCareProcedimentos.length > 1 ? ` no Plano ${String(i + 1)}` : '';
+    if (!p.tipo) return `Selecione o tipo${n}.`;
+    if (!p.frequencia.trim()) return `Informe a frequência de atendimento${n}.`;
+    if (!p.duracaoDias.trim() || Number(p.duracaoDias) <= 0) {
+      return `Informe a duração prevista (em dias)${n}.`;
+    }
+    if (!p.enderecoAtendimento.trim()) return `Informe o endereço de atendimento${n}.`;
   }
-  if (!form.homeCare.enderecoAtendimento.trim()) return 'Informe o endereço de atendimento.';
   return null;
 }
 

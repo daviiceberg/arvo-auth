@@ -17,7 +17,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { COUNCIL_TYPES } from '@/shared/constants';
-import { CID_DATABASE, CID_GROUP_LABELS, type CidEntry } from '@/shared/constants/cid-codes';
+import {
+  CID_DATABASE,
+  CID_GROUP_LABELS,
+  CID_GROUPS_BY_CATEGORY,
+  type CidEntry,
+} from '@/shared/constants/cid-codes';
 
 import { type FormData } from '../types';
 
@@ -25,14 +30,19 @@ function formatCidOption(entry: CidEntry): string {
   return `${entry.code} — ${entry.description}`;
 }
 
-function filterCids(options: CidEntry[], { inputValue }: { inputValue: string }): CidEntry[] {
-  const q = inputValue.toLowerCase().trim();
-  if (q.length < 2) {
-    return options.filter((c) => c.group === 'tea');
-  }
-  return options.filter(
-    (c) => c.code.toLowerCase().startsWith(q) || c.description.toLowerCase().includes(q),
-  );
+function createCidFilter(category: string) {
+  return (options: CidEntry[], { inputValue }: { inputValue: string }): CidEntry[] => {
+    const q = inputValue.toLowerCase().trim();
+    const allowedGroups = CID_GROUPS_BY_CATEGORY[category] ?? ['tea', 'comorbidade', 'outro'];
+    const filtered = options.filter((c) => allowedGroups.includes(c.group));
+
+    if (q.length < 2) {
+      return filtered;
+    }
+    return filtered.filter(
+      (c) => c.code.toLowerCase().startsWith(q) || c.description.toLowerCase().includes(q),
+    );
+  };
 }
 
 // ── Field helpers ─────────────────────────────────────────────────────
@@ -75,6 +85,8 @@ interface StepClinicalProps {
   setCidSecundarioInput: (v: string) => void;
   addCidSecundario: (cid: string) => void;
   removeCidSecundario: (index: number) => void;
+  isManualEntry: boolean;
+  category: string;
 }
 
 export function StepClinical({
@@ -85,12 +97,19 @@ export function StepClinical({
   setCidSecundarioInput,
   addCidSecundario,
   removeCidSecundario,
+  isManualEntry,
+  category,
 }: StepClinicalProps) {
+  const hasAiData = !isManualEntry && form.cidPrincipal && form.cidPrincipal !== '';
+  const filterCids = createCidFilter(category);
+
   return (
     <Box>
-      <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
-        Preenchido por IA — Revise os dados abaixo
-      </Alert>
+      {hasAiData ? (
+        <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
+          Preenchido por IA — Revise os dados abaixo
+        </Alert>
+      ) : null}
 
       {/* ── Bloco 1: Dados Clínicos ── */}
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -121,63 +140,71 @@ export function StepClinical({
               <TextField
                 {...params}
                 size="small"
-                placeholder="Clique para ver sugestões TEA ou digite para buscar..."
+                placeholder="Clique para ver sugestões ou digite para buscar..."
                 sx={inputSx(!!form.cidPrincipal, !form.cidPrincipal)}
               />
             )}
-            renderOption={(props, option) => (
-              <li {...props} key={option.code}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
-                  <Typography
+            renderOption={(props, option) => {
+              const highlightThisGroup =
+                category === 'Terapias Especiais' && option.group === 'tea';
+              return (
+                <li {...props} key={option.code}>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        fontFamily: 'monospace',
+                        color: highlightThisGroup ? '#166534' : 'text.secondary',
+                        flexShrink: 0,
+                        minWidth: 56,
+                      }}
+                    >
+                      {option.code}
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
+                      {option.description}
+                    </Typography>
+                  </Box>
+                </li>
+              );
+            }}
+            renderGroup={(params) => {
+              const isTEAGroup = params.group.includes('TEA');
+              const highlightThisGroup = category === 'Terapias Especiais' && isTEAGroup;
+              return (
+                <li key={params.key}>
+                  <Box
                     sx={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      fontFamily: 'monospace',
-                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
-                      flexShrink: 0,
-                      minWidth: 56,
+                      px: 1.5,
+                      py: 0.5,
+                      backgroundColor: highlightThisGroup
+                        ? 'rgba(22,163,74,0.06)'
+                        : 'rgba(0,0,0,0.03)',
+                      borderBottom: '1px solid rgba(0,0,0,0.06)',
                     }}
                   >
-                    {option.code}
-                  </Typography>
-                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
-                    {option.description}
-                  </Typography>
-                </Box>
-              </li>
-            )}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <Box
-                  sx={{
-                    px: 1.5,
-                    py: 0.5,
-                    backgroundColor: params.group.includes('TEA')
-                      ? 'rgba(22,163,74,0.06)'
-                      : 'rgba(0,0,0,0.03)',
-                    borderBottom: '1px solid rgba(0,0,0,0.06)',
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: 0.4,
-                      color: params.group.includes('TEA') ? '#166534' : 'text.secondary',
-                    }}
-                  >
-                    {params.group}
-                  </Typography>
-                </Box>
-                <ul style={{ padding: 0 }}>{params.children}</ul>
-              </li>
-            )}
+                    <Typography
+                      sx={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.4,
+                        color: highlightThisGroup ? '#166534' : 'text.secondary',
+                      }}
+                    >
+                      {params.group}
+                    </Typography>
+                  </Box>
+                  <ul style={{ padding: 0 }}>{params.children}</ul>
+                </li>
+              );
+            }}
             noOptionsText="Nenhum CID encontrado"
             size="small"
           />
-          {/* Inline feedback */}
-          {form.cidPrincipal.startsWith('F84') ? (
+          {/* Inline feedback (Terapias Especiais only) */}
+          {category === 'Terapias Especiais' && form.cidPrincipal.startsWith('F84') ? (
             <Typography
               sx={{
                 fontSize: 12,
@@ -191,7 +218,9 @@ export function StepClinical({
               ✓ RN 539/2022 — sessões ilimitadas aplicáveis
             </Typography>
           ) : null}
-          {form.cidPrincipal && !form.cidPrincipal.startsWith('F84') ? (
+          {category === 'Terapias Especiais' &&
+          form.cidPrincipal &&
+          !form.cidPrincipal.startsWith('F84') ? (
             <Typography sx={{ fontSize: 12, color: '#b45309', mt: 0.5 }}>
               CID fora do espectro F84 — RN 539 (sessões ilimitadas) não se aplica automaticamente
             </Typography>
@@ -269,54 +298,62 @@ export function StepClinical({
                 }}
               />
             )}
-            renderOption={(props, option) => (
-              <li {...props} key={option.code}>
-                <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
-                  <Typography
+            renderOption={(props, option) => {
+              const highlightThisGroup =
+                category === 'Terapias Especiais' && option.group === 'tea';
+              return (
+                <li {...props} key={option.code}>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', width: '100%' }}>
+                    <Typography
+                      sx={{
+                        fontSize: 13,
+                        fontWeight: 500,
+                        fontFamily: 'monospace',
+                        color: highlightThisGroup ? '#166534' : 'text.secondary',
+                        flexShrink: 0,
+                        minWidth: 56,
+                      }}
+                    >
+                      {option.code}
+                    </Typography>
+                    <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
+                      {option.description}
+                    </Typography>
+                  </Box>
+                </li>
+              );
+            }}
+            renderGroup={(params) => {
+              const isTEAGroup = params.group.includes('TEA');
+              const highlightThisGroup = category === 'Terapias Especiais' && isTEAGroup;
+              return (
+                <li key={params.key}>
+                  <Box
                     sx={{
-                      fontSize: 13,
-                      fontWeight: 500,
-                      fontFamily: 'monospace',
-                      color: option.group === 'tea' ? '#166534' : 'text.secondary',
-                      flexShrink: 0,
-                      minWidth: 56,
+                      px: 1.5,
+                      py: 0.5,
+                      backgroundColor: highlightThisGroup
+                        ? 'rgba(22,163,74,0.06)'
+                        : 'rgba(0,0,0,0.03)',
+                      borderBottom: '1px solid rgba(0,0,0,0.06)',
                     }}
                   >
-                    {option.code}
-                  </Typography>
-                  <Typography sx={{ fontSize: 13, color: 'text.primary' }}>
-                    {option.description}
-                  </Typography>
-                </Box>
-              </li>
-            )}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <Box
-                  sx={{
-                    px: 1.5,
-                    py: 0.5,
-                    backgroundColor: params.group.includes('TEA')
-                      ? 'rgba(22,163,74,0.06)'
-                      : 'rgba(0,0,0,0.03)',
-                    borderBottom: '1px solid rgba(0,0,0,0.06)',
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: 0.4,
-                      color: params.group.includes('TEA') ? '#166534' : 'text.secondary',
-                    }}
-                  >
-                    {params.group}
-                  </Typography>
-                </Box>
-                <ul style={{ padding: 0 }}>{params.children}</ul>
-              </li>
-            )}
+                    <Typography
+                      sx={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.4,
+                        color: highlightThisGroup ? '#166534' : 'text.secondary',
+                      }}
+                    >
+                      {params.group}
+                    </Typography>
+                  </Box>
+                  <ul style={{ padding: 0 }}>{params.children}</ul>
+                </li>
+              );
+            }}
             noOptionsText="Nenhum CID encontrado"
             value={null}
             size="small"

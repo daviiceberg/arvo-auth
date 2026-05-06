@@ -1,20 +1,32 @@
 'use client';
 
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SearchIcon from '@mui/icons-material/Search';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { type FormData, type SadtData, type SadtTipo } from '@/modules/new-request/types';
+import { type FormData, type SadtProcedimento, type SadtTipo } from '@/modules/new-request/types';
 
 interface StepSadtProps {
   form: FormData;
   setSelect: (field: keyof FormData) => (value: string) => void;
-  setSadtField: <K extends keyof SadtData>(field: K, value: SadtData[K]) => void;
+  handleAddSadtProcedimento: () => void;
+  handleRemoveSadtProcedimento: (id: string) => void;
+  handleUpdateSadtProcedimento: (
+    id: string,
+    field: keyof Omit<SadtProcedimento, 'id'>,
+    value: string,
+  ) => void;
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -28,7 +40,13 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function StepSadt({ form, setSelect, setSadtField }: StepSadtProps) {
+export function StepSadt({
+  form,
+  setSelect,
+  handleAddSadtProcedimento,
+  handleRemoveSadtProcedimento,
+  handleUpdateSadtProcedimento,
+}: StepSadtProps) {
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
@@ -64,72 +82,139 @@ export function StepSadt({ form, setSelect, setSadtField }: StepSadtProps) {
         ) : null}
       </Grid>
 
-      <Box
+      {form.sadtProcedimentos.map((proc, index) => (
+        <Box
+          key={proc.id}
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            p: 2,
+            mb: 2,
+          }}
+        >
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
+          >
+            <Typography variant="body2" fontWeight={600}>
+              Procedimento {index + 1}
+            </Typography>
+            {form.sadtProcedimentos.length > 1 && (
+              <IconButton
+                size="small"
+                color="primary"
+                onClick={() => {
+                  handleRemoveSadtProcedimento(proc.id);
+                }}
+              >
+                <DeleteOutlineIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
+
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Código TUSS *</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ex: 40101010"
+                value={proc.codigoTUSS}
+                onChange={(e) => {
+                  handleUpdateSadtProcedimento(proc.id, 'codigoTUSS', e.target.value);
+                }}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Tooltip title="Clique para buscar código TUSS" placement="top">
+                          <SearchIcon
+                            sx={{ fontSize: 16, color: 'text.secondary', cursor: 'pointer' }}
+                            onClick={() => {
+                              window.open('https://arvoredecodigos.com.br/', '_blank');
+                            }}
+                          />
+                        </Tooltip>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Descrição TUSS</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Descrição do procedimento"
+                value={proc.descricaoTUSS}
+                onChange={(e) => {
+                  handleUpdateSadtProcedimento(proc.id, 'descricaoTUSS', e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Tipo *</FieldLabel>
+              <FormControl fullWidth size="small">
+                <Select
+                  value={proc.tipo}
+                  onChange={(e) => {
+                    handleUpdateSadtProcedimento(proc.id, 'tipo', e.target.value as SadtTipo);
+                  }}
+                  displayEmpty
+                >
+                  <MenuItem value="" disabled>
+                    <em>Selecione</em>
+                  </MenuItem>
+                  <MenuItem value="coleta">Coleta laboratorial</MenuItem>
+                  <MenuItem value="infusao">Infusão</MenuItem>
+                  <MenuItem value="reabilitacao">Reabilitação</MenuItem>
+                  <MenuItem value="outro">Outro procedimento auxiliar</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Quantidade *</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                type="number"
+                value={proc.quantidade}
+                onChange={(e) => {
+                  handleUpdateSadtProcedimento(proc.id, 'quantidade', e.target.value);
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 6 }}>
+              <FieldLabel>Frequência prevista</FieldLabel>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Ex: dose única, 1x por semana"
+                value={proc.frequencia}
+                onChange={(e) => {
+                  handleUpdateSadtProcedimento(proc.id, 'frequencia', e.target.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+      ))}
+
+      <Button
+        variant="text"
+        onClick={handleAddSadtProcedimento}
+        disabled={form.sadtProcedimentos.length >= 5}
         sx={{
-          border: '1px solid rgba(0,0,0,0.1)',
-          borderRadius: '16px',
-          p: 2,
+          color: 'primary.main',
+          fontWeight: 600,
+          fontSize: 13,
+          p: '4px 5px',
+          justifyContent: 'flex-start',
+          '&:hover': { backgroundColor: 'transparent', textDecoration: 'underline' },
         }}
       >
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Código TUSS *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Ex: 40101010"
-              value={form.sadt.codigoTUSS}
-              onChange={(e) => {
-                setSadtField('codigoTUSS', e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Tipo *</FieldLabel>
-            <FormControl fullWidth size="small">
-              <Select
-                value={form.sadt.tipo}
-                onChange={(e) => {
-                  setSadtField('tipo', e.target.value as SadtTipo);
-                }}
-                displayEmpty
-              >
-                <MenuItem value="" disabled>
-                  <em>Selecione</em>
-                </MenuItem>
-                <MenuItem value="coleta">Coleta laboratorial</MenuItem>
-                <MenuItem value="infusao">Infusão</MenuItem>
-                <MenuItem value="reabilitacao">Reabilitação</MenuItem>
-                <MenuItem value="outro">Outro procedimento auxiliar</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Quantidade *</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              type="number"
-              value={form.sadt.quantidade}
-              onChange={(e) => {
-                setSadtField('quantidade', e.target.value);
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 6 }}>
-            <FieldLabel>Frequência prevista</FieldLabel>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="Ex: dose única, 1x por semana"
-              value={form.sadt.frequencia}
-              onChange={(e) => {
-                setSadtField('frequencia', e.target.value);
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+        + Adicionar Procedimento
+      </Button>
     </Box>
   );
 }

@@ -32,10 +32,10 @@ import theme from '@/core/theme';
 import { type Category } from '@/types/pedido';
 
 import { useDocumentUpload } from '../hooks/useDocumentUpload';
-import { useNewRequestForm, initialForm } from '../hooks/useNewRequestForm';
+import { useNewRequestForm } from '../hooks/useNewRequestForm';
 import { useStepNavigation } from '../hooks/useStepNavigation';
 import { useUploadStep } from '../hooks/useUploadStep';
-import { type SnackbarState } from '../types';
+import { type FormData, type SnackbarState } from '../types';
 
 import { StepBeneficiary } from './StepBeneficiary';
 import { StepClinical } from './StepClinical';
@@ -89,18 +89,26 @@ function NewRequestInner() {
     set,
     setSelect,
     setCategory,
-    setSadtField,
-    setExamsField,
-    setHomeCareField,
     terapiaProcedimentos,
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
     handleUpdateTerapiaProc,
+    handleAddSadtProcedimento,
+    handleRemoveSadtProcedimento,
+    handleUpdateSadtProcedimento,
+    handleAddExamsProcedimento,
+    handleRemoveExamsProcedimento,
+    handleUpdateExamsProcedimento,
+    handleAddHomeCareProcedimento,
+    handleRemoveHomeCareProcedimento,
+    handleUpdateHomeCareProcedimento,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
     removeCidSecundario,
     resetForm,
+    isManualEntry,
+    setIsManualEntry,
   } = useNewRequestForm(categoryParam);
 
   const {
@@ -167,7 +175,41 @@ function NewRequestInner() {
   );
 
   const handleSkipUpload = () => {
-    setForm({ ...initialForm, category: form.category });
+    const emptyForm: FormData = {
+      category: form.category,
+      nomeBeneficiario: '',
+      carteirinha: '',
+      dataNascimento: '',
+      cpf: '',
+      operadora: '',
+      validadeCarteirinha: '',
+      telefoneContato: '',
+      dataInclusaoPlano: '',
+      cidPrincipal: '',
+      cidsSecundarios: [],
+      indicacaoClinica: '',
+      procedimentoJaRealizado: '',
+      profissionalSolicitante: '',
+      conselhoTipo: '',
+      conselhoNumero: '',
+      conselhoUF: '',
+      cboCodigo: '',
+      nomeContratadoSolicitante: '',
+      nomeContratadoExecutante: '',
+      cnesExecutante: '',
+      etapaAutorizacao: '',
+      tipoTerapia: '',
+      codigoTuss: '',
+      numSessoes: '',
+      terapiaDataSolicitacao: '',
+      terapiaDataValidadeSenha: '',
+      frequenciaSemanal: '',
+      sadtProcedimentos: [],
+      examsProcedimentos: [],
+      homeCareProcedimentos: [],
+    };
+    setForm(emptyForm);
+    setIsManualEntry(true);
     setCurrentStep(1);
   };
 
@@ -193,7 +235,14 @@ function NewRequestInner() {
         onSkip={handleSkipUpload}
       />
     ),
-    1: <StepBeneficiary form={form} set={set} setCategory={setCategory} />,
+    1: (
+      <StepBeneficiary
+        form={form}
+        set={set}
+        setCategory={setCategory}
+        isManualEntry={isManualEntry}
+      />
+    ),
     2: (
       <StepClinical
         form={form}
@@ -203,6 +252,8 @@ function NewRequestInner() {
         setCidSecundarioInput={setCidSecundarioInput}
         addCidSecundario={addCidSecundario}
         removeCidSecundario={removeCidSecundario}
+        isManualEntry={isManualEntry}
+        category={form.category}
       />
     ),
     3: (
@@ -213,13 +264,20 @@ function NewRequestInner() {
         handleAddTerapiaProc={handleAddTerapiaProc}
         handleRemoveTerapiaProc={handleRemoveTerapiaProc}
         handleUpdateTerapiaProc={handleUpdateTerapiaProc}
-        setSadtField={setSadtField}
-        setExamsField={setExamsField}
-        setHomeCareField={setHomeCareField}
+        handleAddSadtProcedimento={handleAddSadtProcedimento}
+        handleRemoveSadtProcedimento={handleRemoveSadtProcedimento}
+        handleUpdateSadtProcedimento={handleUpdateSadtProcedimento}
+        handleAddExamsProcedimento={handleAddExamsProcedimento}
+        handleRemoveExamsProcedimento={handleRemoveExamsProcedimento}
+        handleUpdateExamsProcedimento={handleUpdateExamsProcedimento}
+        handleAddHomeCareProcedimento={handleAddHomeCareProcedimento}
+        handleRemoveHomeCareProcedimento={handleRemoveHomeCareProcedimento}
+        handleUpdateHomeCareProcedimento={handleUpdateHomeCareProcedimento}
       />
     ),
     4: (
       <StepDocuments
+        category={form.category}
         etapaAutorizacao={form.etapaAutorizacao}
         docsAdicionais={docUpload.docsAdicionais}
         docDragOver={docUpload.docDragOver}

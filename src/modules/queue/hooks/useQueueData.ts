@@ -4,6 +4,8 @@ import { useState, useEffect, useMemo } from 'react';
 
 import { type Request } from '@/types/pedido';
 
+import { getRequestStage } from '../utils/request-stage';
+
 import { type QueueFilters } from './useQueueFilters';
 
 interface UseQueueDataParams {
@@ -54,8 +56,8 @@ function matchesProvider(request: Request, providerFilter: string): boolean {
   return providerFilter === 'Todos' || request.executingProvider.name === providerFilter;
 }
 
-function matchesIaSuggestion(request: Request, iaSuggestionFilter: string): boolean {
-  return iaSuggestionFilter === 'Todas' || request.iaSuggestion === iaSuggestionFilter;
+function matchesStage(request: Request, stageFilter: string): boolean {
+  return stageFilter === 'Todas' || getRequestStage(request) === stageFilter;
 }
 
 function matchesAlert(request: Request, alertFilter: string): boolean {
@@ -87,7 +89,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     search,
     slaFilter,
     providerFilter,
-    iaSuggestionFilter,
+    stageFilter,
     alertFilter,
     statusFilter,
     categoryFilter,
@@ -114,7 +116,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
           matchesSearch(p, search) &&
           matchesSla(p, slaFilter) &&
           matchesProvider(p, providerFilter) &&
-          matchesIaSuggestion(p, iaSuggestionFilter) &&
+          matchesStage(p, stageFilter) &&
           matchesAlert(p, alertFilter) &&
           matchesStatus(p, statusFilter) &&
           matchesCategory(p, categoryFilter),
@@ -124,7 +126,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
       search,
       slaFilter,
       providerFilter,
-      iaSuggestionFilter,
+      stageFilter,
       alertFilter,
       statusFilter,
       categoryFilter,

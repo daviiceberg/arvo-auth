@@ -24,35 +24,174 @@ const CATEGORY_OPTIONS: Category[] = [
   'Home Care',
 ];
 
+function inputSx(validated = false) {
+  return validated
+    ? {
+        backgroundColor: 'rgba(22,163,74,0.04)',
+        borderColor: 'rgba(22,163,74,0.3)',
+        '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: 'rgba(22,163,74,0.5)',
+        },
+      }
+    : undefined;
+}
+
 // ── Field helpers ─────────────────────────────────────────────────────
-function FieldLabel({
-  children,
-  validated,
-  warning,
-}: {
-  children: React.ReactNode;
-  validated?: boolean;
-  warning?: boolean;
-}) {
+function FieldLabel({ children, validated }: { children: React.ReactNode; validated?: boolean }) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.75 }}>
-      <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600, color: '#333' }}>
+      <Typography
+        variant="caption"
+        sx={{ fontSize: 12, fontWeight: 600, color: '#333', display: 'block' }}
+      >
         {children}
       </Typography>
-      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#16a34a' }} /> : null}
-      {warning ? <WarningAmberIcon sx={{ fontSize: 14, color: '#f59e0b' }} /> : null}
+      {validated ? <CheckCircleOutlineIcon sx={{ fontSize: 16, color: '#166534' }} /> : null}
     </Box>
   );
 }
 
-const inputSx = (validated?: boolean, warning?: boolean) => ({
-  '& .MuiOutlinedInput-root': {
-    backgroundColor: validated ? '#f0fdf4' : warning ? '#fffbeb' : '#fff',
-    '& fieldset': {
-      borderColor: validated ? '#16a34a' : warning ? '#f59e0b' : undefined,
-    },
-  },
-});
+interface BeneficiaryFieldsProps {
+  form: FormData;
+  set: (
+    field: keyof FormData,
+  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setCategory: (next: FormData['category']) => void;
+  isManualEntry: boolean;
+}
+
+// eslint-disable-next-line complexity
+function BeneficiaryFields({ form, set, setCategory, isManualEntry }: BeneficiaryFieldsProps) {
+  return (
+    <Grid container spacing={2}>
+      <Grid size={{ xs: 12 }}>
+        <FieldLabel>Tipo de Solicitação *</FieldLabel>
+        <FormControl fullWidth size="small">
+          <Select<FormData['category']>
+            value={form.category}
+            displayEmpty
+            onChange={(e) => {
+              setCategory(e.target.value as FormData['category']);
+            }}
+            renderValue={(selected) =>
+              selected === '' ? (
+                <Box component="em" sx={{ color: 'text.disabled' }}>
+                  Selecione o tipo de solicitação...
+                </Box>
+              ) : (
+                selected
+              )
+            }
+          >
+            {CATEGORY_OPTIONS.map((cat) => (
+              <MenuItem key={cat} value={cat}>
+                {cat}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.nomeBeneficiario}>
+          Nome Completo *
+        </FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          value={form.nomeBeneficiario}
+          onChange={set('nomeBeneficiario')}
+          sx={!isManualEntry && form.nomeBeneficiario ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.carteirinha}>Carteirinha *</FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          value={form.carteirinha}
+          onChange={set('carteirinha')}
+          sx={!isManualEntry && form.carteirinha ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.dataNascimento}>
+          Data de Nascimento *
+        </FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          type="date"
+          value={form.dataNascimento}
+          onChange={set('dataNascimento')}
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={!isManualEntry && form.dataNascimento ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.cpf}>CPF</FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="000.000.000-00"
+          value={form.cpf}
+          onChange={set('cpf')}
+          sx={!isManualEntry && form.cpf ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.operadora}>Operadora / Plano *</FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          value={form.operadora}
+          onChange={set('operadora')}
+          sx={!isManualEntry && form.operadora ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.validadeCarteirinha}>
+          Validade da Carteirinha
+        </FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          type="date"
+          value={form.validadeCarteirinha}
+          onChange={set('validadeCarteirinha')}
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={!isManualEntry && form.validadeCarteirinha ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.telefoneContato}>
+          Telefone de Contato
+        </FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="(11) 99999-9999"
+          value={form.telefoneContato}
+          onChange={set('telefoneContato')}
+          sx={!isManualEntry && form.telefoneContato ? inputSx(true) : undefined}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FieldLabel validated={!isManualEntry && !!form.dataInclusaoPlano}>
+          Data de Inclusão no Plano
+        </FieldLabel>
+        <TextField
+          fullWidth
+          size="small"
+          type="date"
+          value={form.dataInclusaoPlano}
+          onChange={set('dataInclusaoPlano')}
+          slotProps={{ inputLabel: { shrink: true } }}
+          sx={!isManualEntry && form.dataInclusaoPlano ? inputSx(true) : undefined}
+        />
+      </Grid>
+    </Grid>
+  );
+}
 
 interface StepBeneficiaryProps {
   form: FormData;
@@ -60,130 +199,28 @@ interface StepBeneficiaryProps {
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   setCategory: (next: FormData['category']) => void;
+  isManualEntry: boolean;
 }
 
-export function StepBeneficiary({ form, set, setCategory }: StepBeneficiaryProps) {
+export function StepBeneficiary({ form, set, setCategory, isManualEntry }: StepBeneficiaryProps) {
+  const hasAiData = !isManualEntry && form.nomeBeneficiario && form.nomeBeneficiario !== '';
+
   return (
     <Box>
-      <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
-        Preenchido por IA — Revise os dados abaixo
-      </Alert>
+      {hasAiData ? (
+        <Alert severity="warning" icon={<WarningAmberIcon />} sx={{ mb: 3, fontSize: 12 }}>
+          Preenchido por IA — Revise os dados abaixo
+        </Alert>
+      ) : null}
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Dados do Beneficiário
       </Typography>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12 }}>
-          <FieldLabel>Tipo de Solicitação *</FieldLabel>
-          <FormControl fullWidth size="small">
-            <Select<FormData['category']>
-              value={form.category}
-              displayEmpty
-              onChange={(e) => {
-                setCategory(e.target.value as FormData['category']);
-              }}
-              renderValue={(selected) =>
-                selected === '' ? (
-                  <Box component="em" sx={{ color: 'text.disabled' }}>
-                    Selecione o tipo de solicitação...
-                  </Box>
-                ) : (
-                  selected
-                )
-              }
-            >
-              {CATEGORY_OPTIONS.map((cat) => (
-                <MenuItem key={cat} value={cat}>
-                  {cat}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel validated>Nome Completo</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.nomeBeneficiario}
-            onChange={set('nomeBeneficiario')}
-            sx={inputSx(true)}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel validated>Carteirinha</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.carteirinha}
-            onChange={set('carteirinha')}
-            sx={inputSx(true)}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel warning>Data de Nascimento</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            type="date"
-            value={form.dataNascimento}
-            onChange={set('dataNascimento')}
-            slotProps={{ inputLabel: { shrink: true } }}
-            sx={inputSx(false, true)}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>CPF</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="000.000.000-00"
-            value={form.cpf}
-            onChange={set('cpf')}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel validated>Operadora / Plano</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.operadora}
-            onChange={set('operadora')}
-            sx={inputSx(true)}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Validade da Carteirinha</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            type="date"
-            value={form.validadeCarteirinha}
-            onChange={set('validadeCarteirinha')}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Telefone de Contato</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="(11) 99999-9999"
-            value={form.telefoneContato}
-            onChange={set('telefoneContato')}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <FieldLabel>Data de Inclusão no Plano</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            type="date"
-            value={form.dataInclusaoPlano}
-            onChange={set('dataInclusaoPlano')}
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-        </Grid>
-      </Grid>
+      <BeneficiaryFields
+        form={form}
+        set={set}
+        setCategory={setCategory}
+        isManualEntry={isManualEntry}
+      />
     </Box>
   );
 }

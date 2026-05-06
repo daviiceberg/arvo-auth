@@ -13,7 +13,7 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip } from '@/shared/components';
+import { CategoryChip, OriginChip } from '@/shared/components';
 import { type Request } from '@/types/pedido';
 
 import { formatSlaDisplay } from '../utils/format-sla';
@@ -68,6 +68,7 @@ export default function PageHeader({
           <Typography variant="h5" fontWeight={800} sx={{ lineHeight: 1 }}>
             {request.id}
           </Typography>
+          <OriginChip origin={request.origin} />
           <CategoryChip category={request.category} />
           {/* Senha + Validade — removidos em M1; reintroduzir em M2 após decisão favorável */}
           {request.slaStatus === 'violated' && (

@@ -15,7 +15,8 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { type DocUpload } from '../types';
+import { categoryDocumentLabels } from '../constants/category-mocks';
+import { type DocUpload, type FormData } from '../types';
 
 function getDocIcon(filename: string): React.ReactNode {
   const ext = filename.toLowerCase().split('.').pop() ?? '';
@@ -29,6 +30,7 @@ function getDocIcon(filename: string): React.ReactNode {
 }
 
 interface StepDocumentsProps {
+  category: FormData['category'];
   etapaAutorizacao: string;
   docsAdicionais: DocUpload[];
   docDragOver: boolean;
@@ -39,6 +41,7 @@ interface StepDocumentsProps {
 }
 
 export function StepDocuments({
+  category,
   etapaAutorizacao,
   docsAdicionais,
   docDragOver,
@@ -48,6 +51,7 @@ export function StepDocuments({
   handleRemoveDocAdicional,
 }: StepDocumentsProps) {
   const isContinuidade = etapaAutorizacao === 'continuidade';
+  const documentLabel = category ? categoryDocumentLabels[category] : 'Documentos necessários:';
 
   const handleFileSelect = (file: File) => {
     addDocAdicionalFile(file);
@@ -73,7 +77,7 @@ export function StepDocuments({
         }}
       >
         <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13, mb: 1.5 }}>
-          Documentos necessários para autorização de Terapias Especiais:
+          {documentLabel}
         </Typography>
 
         {isContinuidade ? (

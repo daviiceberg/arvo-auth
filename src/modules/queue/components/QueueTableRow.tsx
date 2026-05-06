@@ -10,17 +10,12 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import {
-  CategoryChip,
-  IASuggestionChip,
-  OriginChip,
-  PrioDot,
-  RequestTypeChip,
-  SLAChip,
-} from '@/shared/components';
+import { CategoryChip, RequestTypeChip, SLAChip } from '@/shared/components';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { formatDurationFromHours } from '@/shared/utils/formatDuration';
 import { type Request } from '@/types/pedido';
+
+import { getRequestStage } from '../utils/request-stage';
 
 // ── Row style helper ─────────────────────────────────────────────────
 function getRowSx(request: Request, lastViewedId: string | null): SxProps<Theme> {
@@ -155,9 +150,6 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
       aria-label={`Pedido ${request.id}`}
       sx={getRowSx(request, lastViewedId)}
     >
-      <TableCell align="center" sx={{ px: 1.5 }}>
-        <PrioDot prioridade={request.priority} />
-      </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
           {request.id}
@@ -169,9 +161,6 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
         >
           {`${request.protocolDate.slice(0, 5)} · ${request.protocolDate.split(' ')[1] ?? ''}`}
         </Typography>
-      </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
-        <OriginChip origin={request.origin} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
@@ -210,14 +199,9 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
         <SLAChip status={request.slaStatus} label={request.slaText} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <Tooltip
-          title="Ponto de vista da análise da IA — a decisão final é do analista"
-          placement="top"
-        >
-          <span>
-            <IASuggestionChip suggestion={request.iaSuggestion} />
-          </span>
-        </Tooltip>
+        <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 500 }}>
+          {getRequestStage(request)}
+        </Typography>
       </TableCell>
       <TableCell
         sx={{ px: 1.5 }}

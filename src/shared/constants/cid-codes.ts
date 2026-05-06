@@ -78,6 +78,13 @@ export const CID_GROUP_LABELS: Record<string, string> = {
   outro: 'Outros diagnósticos',
 };
 
+export const CID_GROUPS_BY_CATEGORY: Record<string, CidEntry['group'][]> = {
+  'Terapias Especiais': ['tea', 'comorbidade'],
+  SADT: ['tea', 'comorbidade', 'outro'],
+  'Exames Alta Complexidade': ['tea', 'comorbidade', 'outro'],
+  'Home Care': ['tea', 'comorbidade', 'outro'],
+};
+
 export function searchCids(query: string): CidEntry[] {
   const q = query.toLowerCase().trim();
   if (q.length < 2) return [];
