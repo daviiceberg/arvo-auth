@@ -33,7 +33,7 @@ export const pedidos: Request[] = [
     protocolDate: '30/03/2026 09:00',
     queueTimeHours: 48,
     slaStatus: 'ok',
-    slaText: '96h restantes',
+    slaText: '4d restantes',
     slaDeadlineHours: 240,
     beneficiary: {
       name: 'Arthur Lima Ferraz',
@@ -195,7 +195,7 @@ export const pedidos: Request[] = [
     protocolDate: '20/04/2026 09:00',
     queueTimeHours: 288,
     slaStatus: 'warning',
-    slaText: '36h restantes',
+    slaText: '1d 12h restantes',
     slaDeadlineHours: 240,
     beneficiary: {
       name: 'Sofia Almeida Lopes',
@@ -646,7 +646,7 @@ export const pedidos: Request[] = [
     protocolDate: '28/04/2026 11:00',
     queueTimeHours: 48,
     slaStatus: 'ok',
-    slaText: '120h restantes',
+    slaText: '5d restantes',
     slaDeadlineHours: 240,
     beneficiary: {
       name: 'Daniel Rocha Fernandes',
