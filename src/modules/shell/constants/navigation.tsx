@@ -1,6 +1,6 @@
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
-import HistoryIcon from '@mui/icons-material/History';
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import FormatListBulletedOutlinedIcon from '@mui/icons-material/FormatListBulletedOutlined';
+import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 
 export interface NavItem {
@@ -16,9 +16,13 @@ export interface ExternalLink {
 }
 
 export const NAV_ITEMS: Omit<NavItem, 'badge'>[] = [
-  { label: 'Dashboard', icon: <DashboardIcon fontSize="small" />, path: '/dashboard' },
-  { label: 'Fila Operacional', icon: <FormatListBulletedIcon fontSize="small" />, path: '/fila' },
-  { label: 'Histórico', icon: <HistoryIcon fontSize="small" />, path: '/historico' },
+  { label: 'Dashboard', icon: <DashboardOutlinedIcon fontSize="small" />, path: '/dashboard' },
+  {
+    label: 'Fila Operacional',
+    icon: <FormatListBulletedOutlinedIcon fontSize="small" />,
+    path: '/fila',
+  },
+  { label: 'Histórico', icon: <HistoryOutlinedIcon fontSize="small" />, path: '/historico' },
 ];
 
 export const ADMIN_ITEMS: NavItem[] = [

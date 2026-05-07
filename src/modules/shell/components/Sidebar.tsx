@@ -8,10 +8,15 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
@@ -60,7 +65,8 @@ export default function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const currentWidth = collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH;
-  const [categoriesOpen, setCategoriesOpen] = useState(true);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [externalLinksOpen, setExternalLinksOpen] = useState(false);
 
   const renderNavItem = (item: NavItem) => {
     const isActive = pathname === item.path || pathname.startsWith(`${item.path}/`);
@@ -197,76 +203,46 @@ export default function Sidebar({
           </Tooltip>
         </Box>
 
-        {/* Main nav */}
+        {/* Main nav (Dashboard + Fila Operacional) */}
         <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {navItems.map(renderNavItem)}
+            {navItems.slice(0, 2).map(renderNavItem)}
           </List>
         </Box>
 
-        {/* Admin nav */}
-        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
-          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {ADMIN_ITEMS.map(renderNavItem)}
-          </List>
-        </Box>
-
+        {/* Categories Menu Item */}
         {!collapsed && (
-          <>
-            {/* Categorias */}
-            <Box
-              sx={{
-                px: 1.5,
-                pt: 1.5,
-                mt: 1,
-                borderTop: '1px solid rgba(0,0,0,0.07)',
-                flexShrink: 0,
-              }}
-            >
-              <Box
-                role="button"
-                tabIndex={0}
+          <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+            <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              <ListItemButton
                 onClick={() => {
                   setCategoriesOpen((v) => !v);
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setCategoriesOpen((v) => !v);
-                  }
-                }}
-                aria-expanded={categoriesOpen}
                 sx={{
+                  minHeight: 44,
+                  borderRadius: '6px !important',
                   px: 1.5,
-                  py: 0.75,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  cursor: 'pointer',
-                  borderRadius: 1,
-                  '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
+                  justifyContent: 'flex-start',
+                  '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
                 }}
               >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'text.secondary',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: 0.6,
-                    fontSize: 12,
-                  }}
-                >
-                  Categorias
-                </Typography>
+                <ListItemIcon sx={{ minWidth: 32, color: 'text.secondary' }}>
+                  <FolderOutlinedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Categorias"
+                  slotProps={{ primary: { sx: { fontSize: 13, fontWeight: 500 } } }}
+                />
                 {categoriesOpen ? (
-                  <ExpandLessIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                  <ExpandLessIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                 ) : (
-                  <ExpandMoreIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                  <ExpandMoreIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                 )}
-              </Box>
+              </ListItemButton>
+
+              {/* Subcategories */}
               {categoriesOpen ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, mt: 0.5 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, pl: 2 }}>
                   {CATEGORIES.map((category) => {
                     const colors = categoryColorMap[category];
                     const count = categoryActiveCount(category);
@@ -300,9 +276,9 @@ export default function Sidebar({
                       >
                         <Box
                           sx={{
-                            width: 14,
-                            height: 14,
-                            borderRadius: 1,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 0.5,
                             backgroundColor: colors.color,
                             flexShrink: 0,
                           }}
@@ -330,63 +306,28 @@ export default function Sidebar({
                   })}
                 </Box>
               ) : null}
-            </Box>
-
-            {/* Spacer pushes external links to the bottom */}
-            <Box sx={{ flex: 1 }} />
-
-            {/* External links */}
-            <Box sx={{ px: 1.5, pt: 1, pb: 2, flexShrink: 0 }}>
-              <Typography
-                variant="caption"
-                sx={{
-                  px: 1.5,
-                  py: 0.75,
-                  display: 'block',
-                  color: 'text.secondary',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.6,
-                  fontSize: 12,
-                }}
-              >
-                Links Úteis
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                {EXTERNAL_LINKS.map((link) => (
-                  <Box
-                    key={link.label}
-                    component="a"
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      px: 1.5,
-                      py: 0.6,
-                      borderRadius: 1,
-                      cursor: 'pointer',
-                      minHeight: 32,
-                      textDecoration: 'none',
-                      color: 'text.secondary',
-                      '&:hover': { backgroundColor: 'rgba(144,43,41,0.05)', color: 'primary.main' },
-                      transition: 'background-color 150ms ease, color 150ms ease',
-                    }}
-                  >
-                    <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 500 }}>
-                      {link.label}
-                    </Typography>
-                    <OpenInNewIcon sx={{ fontSize: 12, flexShrink: 0, opacity: 0.6 }} />
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </>
+            </List>
+          </Box>
         )}
 
-        {/* Help button */}
+        {/* Remaining main nav (Histórico) */}
+        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {navItems.slice(2).map(renderNavItem)}
+          </List>
+        </Box>
+
+        {/* Admin nav */}
+        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {ADMIN_ITEMS.map(renderNavItem)}
+          </List>
+        </Box>
+
+        {/* Spacer pushes footer to bottom */}
+        <Box sx={{ flex: 1 }} />
+
+        {/* Footer: Links Úteis + Help */}
         <Box
           sx={{
             px: 1,
@@ -394,8 +335,32 @@ export default function Sidebar({
             borderTop: '1px solid rgba(0,0,0,0.07)',
             flexShrink: 0,
             mt: collapsed ? 'auto' : 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0.5,
           }}
         >
+          {!collapsed && (
+            <ListItemButton
+              onClick={() => {
+                setExternalLinksOpen(true);
+              }}
+              sx={{
+                minHeight: 44,
+                borderRadius: '6px !important',
+                px: 1.5,
+                '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 32, color: 'text.secondary' }}>
+                <OpenInNewIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText
+                primary="Links Úteis"
+                slotProps={{ primary: { sx: { fontSize: 13, fontWeight: 500 } } }}
+              />
+            </ListItemButton>
+          )}
           {collapsed ? (
             <Tooltip title="Ajuda" placement="right">
               <IconButton
@@ -431,6 +396,50 @@ export default function Sidebar({
           )}
         </Box>
       </Box>
+
+      {/* External Links Modal */}
+      <Dialog
+        open={externalLinksOpen}
+        onClose={() => {
+          setExternalLinksOpen(false);
+        }}
+        maxWidth="sm"
+        fullWidth
+        slotProps={{
+          paper: {
+            sx: { borderRadius: '8px' },
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: 700, fontSize: 18 }}>Links Úteis</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 1, pt: 2 }}>
+          {EXTERNAL_LINKS.map((link) => (
+            <Button
+              key={link.label}
+              component="a"
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outlined"
+              endIcon={<OpenInNewIcon />}
+              sx={{
+                justifyContent: 'flex-start',
+                textTransform: 'none',
+                fontSize: 14,
+                fontWeight: 500,
+                color: 'text.primary',
+                borderColor: 'rgba(0,0,0,0.12)',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  backgroundColor: 'rgba(144,43,41,0.05)',
+                },
+              }}
+            >
+              {link.label}
+            </Button>
+          ))}
+        </DialogContent>
+      </Dialog>
     </Drawer>
   );
 }
