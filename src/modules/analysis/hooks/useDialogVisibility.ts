@@ -10,6 +10,7 @@ export function useDialogVisibility() {
   const [showDivergenceDialog, setShowDivergenceDialog] = useState(false);
   const [showPartialDialog, setShowPartialDialog] = useState(false);
   const [showAdjustApprovalConfirm, setShowAdjustApprovalConfirm] = useState(false);
+  const [showInjunctionAckDialog, setShowInjunctionAckDialog] = useState(false);
 
   const isAnyDialogOpen =
     showApprovalDialog ||
@@ -18,7 +19,8 @@ export function useDialogVisibility() {
     showMedicalBoardDialog ||
     showDivergenceDialog ||
     showPartialDialog ||
-    showAdjustApprovalConfirm;
+    showAdjustApprovalConfirm ||
+    showInjunctionAckDialog;
 
   const closeAllDialogs = useCallback(() => {
     setShowApprovalDialog(false);
@@ -28,6 +30,7 @@ export function useDialogVisibility() {
     setShowDivergenceDialog(false);
     setShowPartialDialog(false);
     setShowAdjustApprovalConfirm(false);
+    setShowInjunctionAckDialog(false);
   }, []);
 
   return {
@@ -45,6 +48,8 @@ export function useDialogVisibility() {
     setShowPartialDialog,
     showAdjustApprovalConfirm,
     setShowAdjustApprovalConfirm,
+    showInjunctionAckDialog,
+    setShowInjunctionAckDialog,
     isAnyDialogOpen,
     closeAllDialogs,
   };

@@ -4,7 +4,7 @@ import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
-import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -34,7 +34,7 @@ const originLabelMap: Record<string, string> = {
 };
 
 const originIconMap: Record<string, React.ReactNode> = {
-  app: <SmartphoneIcon sx={{ fontSize: 14 }} />,
+  app: <SmartphoneOutlinedIcon sx={{ fontSize: 14 }} />,
   whatsapp: <WhatsAppIcon sx={{ fontSize: 14 }} />,
   email: <EmailOutlinedIcon sx={{ fontSize: 14 }} />,
   prestador: <MedicalServicesOutlinedIcon sx={{ fontSize: 14 }} />,

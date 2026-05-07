@@ -17,12 +17,17 @@ export type NotificationType =
   | 'processamento_erro'
   | 'sla_risco'
   | 'sla_violado'
+  | 'sla_critico_1h'
+  | 'sla_critico_30min'
   | 'novo_pedido_fila'
   | 'documento_processado'
   | 'devolutiva_recebida'
   | 'junta_parecer_recebido'
   | 'junta_agendada'
-  | 'pendencia_prazo_vencido';
+  | 'pendencia_prazo_vencido'
+  | 'nip_aberta'
+  | 'nip_prazo_proximo'
+  | 'liminar_recebida';
 
 export interface Notification {
   id: string;

@@ -4,6 +4,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
 import { type SxProps, type Theme } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -11,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { CategoryChip, RequestTypeChip, SLAChip } from '@/shared/components';
+import { CHIP_BASE_SX } from '@/shared/components/chips/chip-styles';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { formatDurationFromHours } from '@/shared/utils/formatDuration';
 import { type Request } from '@/types/pedido';
@@ -151,6 +153,42 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
       sx={getRowSx(request, lastViewedId)}
     >
       <TableCell sx={{ px: 1.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mb: 0.5 }}>
+          {request.injunction ? (
+            <Tooltip
+              title={`Liminar Judicial · ${request.injunction.processNumber}`}
+              placement="top"
+            >
+              <Chip
+                label="Liminar Judicial"
+                size="small"
+                sx={{
+                  ...CHIP_BASE_SX,
+                  backgroundColor: 'rgba(91,33,182,0.1)',
+                  color: '#5b21b6',
+                  alignSelf: 'flex-start',
+                }}
+              />
+            </Tooltip>
+          ) : null}
+          {request.nip?.status === 'aberta' ? (
+            <Tooltip
+              title={`NIP ${request.nip.nipNumber} · prazo ${request.nip.deadline}`}
+              placement="top"
+            >
+              <Chip
+                label="NIP Aberta"
+                size="small"
+                sx={{
+                  ...CHIP_BASE_SX,
+                  backgroundColor: 'rgba(194,65,12,0.1)',
+                  color: '#c2410c',
+                  alignSelf: 'flex-start',
+                }}
+              />
+            </Tooltip>
+          ) : null}
+        </Box>
         <Typography variant="body2" fontWeight={700} sx={{ color: 'primary.main', fontSize: 12 }}>
           {request.id}
         </Typography>

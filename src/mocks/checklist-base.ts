@@ -26,6 +26,8 @@ const ID_GROUP_MAP: Record<string, ChecklistGroup> = {
   BENEF_CARENCIA_ATIVA: 'identificacao',
   BENEF_INADIMPLENCIA: 'identificacao',
   BENEF_NIP_ATIVA: 'identificacao',
+  BENEF_NIP_NUMERO: 'regulatorio',
+  BENEF_LIMINAR_JUDICIAL: 'regulatorio',
   BENEF_PLANO_REGULAMENTADO: 'identificacao',
   // Diagnóstico
   CID_CONFIRMADO_LAUDO: 'diagnostico',
@@ -82,6 +84,9 @@ export interface BaseScenario {
   carencia?: boolean;
   inadimplencia?: boolean;
   nipAtiva?: boolean;
+  nipNumero?: string;
+  liminarAtiva?: boolean;
+  liminarProcesso?: string;
   planoNaoRegulamentado?: boolean;
   // Solicitante
   crmInvalid?: boolean;
@@ -138,6 +143,24 @@ export function pushBeneficiaryEligibility(items: ChecklistItem[], s: BaseScenar
       status: 'error',
       origin: 'dados',
       severity: 85,
+    });
+  if (s.nipNumero)
+    add(items, {
+      id: 'BENEF_NIP_NUMERO',
+      texto: `NIP nº ${s.nipNumero} aberta — RN 483/2022 · prazo ANS em curso`,
+      status: 'error',
+      origin: 'dados',
+      severity: 90,
+    });
+  if (s.liminarAtiva)
+    add(items, {
+      id: 'BENEF_LIMINAR_JUDICIAL',
+      texto: s.liminarProcesso
+        ? `Liminar judicial ativa — processo ${s.liminarProcesso}`
+        : 'Liminar judicial ativa para este pedido',
+      status: 'error',
+      origin: 'dados',
+      severity: 100,
     });
   add(items, {
     id: 'BENEF_PLANO_REGULAMENTADO',

@@ -1416,6 +1416,357 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
       ],
     },
   },
+
+  // ── M3: Urgência/Emergência — Júlia Ferreira (REQ-2026-UE-001) ─────────────
+  ue_julia: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Paciente adulta (38a, F) sem comorbidades conhecidas, conduzida ao pronto-socorro pelo SAMU às 10:30 de 07/05/2026 com quadro súbito de dor torácica intensa, dispneia, sudorese fria e irradiação para braço esquerdo. Classificação Manchester laranja — suspeita de Síndrome Coronariana Aguda. Atendimento imediato em PS conforme RN 566/2022 art. 3º — cobertura sem autorização prévia. Sem histórico assistencial relevante na operadora.',
+    consultasRecentes: {
+      count: 1,
+      periodo: 'últimos 12 meses',
+      especialidades: ['Clínica Médica'],
+    },
+    procedimentosRelacionados:
+      'Sem procedimentos recentes na operadora. Check-up empresarial em 11/2025 sem alterações.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [
+      {
+        id: 'sa-ue-julia-1',
+        mensagem: 'Atendimento imediato — sem autorização prévia (RN 566/2022 art. 3º)',
+        detalhes:
+          'Quadro de emergência com risco iminente. Análise pós-evento para fins de auditoria.',
+        severidade: 'high',
+      },
+    ],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 art. 3º — cobertura imediata e obrigatória para urgência/emergência. Carência reduzida a 24h conforme RN 195/2009 art. 11.',
+      dutRelevantes: [
+        'DUT 80 — Atendimento de Urgência/Emergência Ambulatorial',
+        'RN 566/2022 art. 3º — atendimento sem autorização prévia',
+      ],
+    },
+  },
+
+  // ── M3: Urgência/Emergência — Trauma de trânsito ───────────────────────────
+  ue_rafael: {
+    completeness: 'limited',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Paciente adulto (29a, M), motociclista, vítima de colisão em via expressa às 18:45. Trazido inconsciente pelo SAMU com TCE moderado, fratura exposta de fêmur direito e suspeita de hemorragia abdominal. Manchester vermelho. Encaminhado direto para sala de trauma — internação emergencial em UTI prevista. Sem histórico clínico cadastrado na operadora (carteirinha ativa há 8 meses).',
+    consultasRecentes: { count: 0, periodo: 'últimos 12 meses', especialidades: [] },
+    procedimentosRelacionados: 'Sem procedimentos prévios cadastrados.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [
+      {
+        id: 'sa-ue-rafael-1',
+        mensagem: 'Politrauma grave — risco iminente de morte',
+        detalhes:
+          'Cobertura obrigatória em até 24h para internação emergencial (RN 566/2022 art. 3º §1º). Acionamento de UTI imediato.',
+        severidade: 'high',
+      },
+      {
+        id: 'sa-ue-rafael-2',
+        mensagem: 'Acidente de trânsito — verificar indicação obrigatória',
+        detalhes:
+          'Beneficiário pode ter cobertura adicional via DPVAT. Verificar comunicação ao seguro.',
+        severidade: 'medium',
+      },
+    ],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 art. 3º §1º — cobertura imediata em risco iminente de morte ou lesão irreparável. Comunicação à operadora em até 24h.',
+      dutRelevantes: [
+        'DUT 81 — Internação de Urgência/Emergência',
+        'RN 566/2022 art. 3º §1º — risco iminente de morte',
+      ],
+    },
+  },
+
+  // ── M3: Urgência/Emergência — Crise asmática pediátrica recorrente ─────────
+  ue_pedrohenrique: {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Mar/2026', padrao: 'frequent' },
+    leituraAssistida:
+      'Paciente pediátrico (7a, M) com asma persistente moderada (J45.1), 3ª visita ao pronto-socorro nos últimos 6 meses por crise. Quadro atual: dispneia intensa, tiragem subcostal, SpO2 89% em ar ambiente. Histórico de uso de corticoide oral em 2 das visitas anteriores. Avaliar adesão ao tratamento de manutenção e encaminhamento para pneumologia pediátrica.',
+    consultasRecentes: {
+      count: 5,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Pediatria', 'Pronto-Atendimento'],
+    },
+    procedimentosRelacionados:
+      'Inalações com beta-agonista em PA (3 episódios em 6 meses), espirometria em 02/2026.',
+    internacoes: {
+      count: 1,
+      periodo: 'últimos 12 meses',
+      detalhes: 'Internação breve (24h) por crise asmática severa em 11/2025.',
+    },
+    cidRecorrente: { cid: 'J45.1', count: 3, descricao: 'Asma persistente moderada' },
+    autorizacoesAnteriores: [
+      {
+        id: 'HIS-2026-UE-103',
+        procedimento: 'Atendimento em pronto-socorro com nebulização',
+        codigo: '10101039',
+        cid: 'J45.1',
+        data: 'Mar/2026',
+        decisao: 'aprovado',
+        motivo: 'Atendimento de urgência — crise asmática',
+      },
+      {
+        id: 'HIS-2026-UE-067',
+        procedimento: 'Atendimento em pronto-socorro',
+        codigo: '10101039',
+        cid: 'J45.1',
+        data: 'Jan/2026',
+        decisao: 'aprovado',
+        motivo: 'Crise asmática moderada',
+      },
+      {
+        id: 'HIS-2025-UE-498',
+        procedimento: 'Internação curta — exacerbação asmática',
+        codigo: '30202010',
+        cid: 'J45.1',
+        data: 'Nov/2025',
+        decisao: 'aprovado',
+        motivo: 'Internação ≤24h em UTI pediátrica',
+      },
+    ],
+    sinaisAtencao: [
+      {
+        id: 'sa-ue-pedro-1',
+        mensagem: 'Padrão recorrente de crises — possível baixa adesão ao tratamento',
+        detalhes:
+          '3 visitas ao PS em 6 meses sugerem controle inadequado. Recomenda-se acompanhamento ambulatorial programado.',
+        severidade: 'medium',
+      },
+    ],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 art. 3º — cobertura imediata para crise asmática. Sem limite contratual em U/E.',
+      dutRelevantes: [
+        'DUT 80 — Atendimento de Urgência/Emergência Ambulatorial',
+        'RN 566/2022 art. 3º — atendimento sem autorização prévia',
+      ],
+    },
+  },
+
+  // ── M3: Oncologia — Antônio Souza, AC-T mama (REQ-2026-ONC-001) ────────────
+  onc_antonio: {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Abr/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Paciente adulto (63a, M) com câncer de mama masculina (C50.9), estadiamento IIB, em protocolo AC-T (Doxorrubicina + Ciclofosfamida seguidos por Paclitaxel). Iniciou tratamento em 02/2026, atualmente no ciclo 4 de 8. Resposta clínica satisfatória, toxicidade hematológica grau 1 controlada. Acompanhamento ambulatorial regular no Centro de Oncologia Premium. Estadiamento TNM completo no laudo (T2N1M0).',
+    consultasRecentes: {
+      count: 8,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Oncologia Clínica', 'Mastologia', 'Cardiologia'],
+    },
+    procedimentosRelacionados:
+      'Ciclos AC anteriores (1, 2, 3) executados em 02-04/2026. Ecocardiograma pré-doxorrubicina (FE 62%). Hemograma seriado.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: { cid: 'C50.9', count: 4, descricao: 'Neoplasia maligna da mama' },
+    autorizacoesAnteriores: [
+      {
+        id: 'HIS-2026-ONC-089',
+        procedimento: 'Quimioterapia AC ciclo 3/8',
+        codigo: '41101010',
+        cid: 'C50.9',
+        data: 'Abr/2026',
+        decisao: 'aprovado',
+        motivo: 'Continuidade de protocolo AC-T (SBOC) — resposta favorável',
+        destaque: true,
+      },
+      {
+        id: 'HIS-2026-ONC-061',
+        procedimento: 'Quimioterapia AC ciclo 2/8',
+        codigo: '41101010',
+        cid: 'C50.9',
+        data: 'Mar/2026',
+        decisao: 'aprovado',
+        motivo: 'Protocolo AC-T validado',
+      },
+      {
+        id: 'HIS-2026-ONC-032',
+        procedimento: 'Quimioterapia AC ciclo 1/8',
+        codigo: '41101010',
+        cid: 'C50.9',
+        data: 'Fev/2026',
+        decisao: 'aprovado',
+        motivo: 'Início de protocolo AC-T — estadiamento IIB',
+      },
+      {
+        id: 'HIS-2026-ONC-018',
+        procedimento: 'Ecocardiograma pré-quimioterapia',
+        codigo: '40901111',
+        cid: 'C50.9',
+        data: 'Fev/2026',
+        decisao: 'aprovado',
+        motivo: 'Avaliação cardiológica obrigatória pré-doxorrubicina',
+      },
+    ],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 — prazo máximo de realização: 10 dias úteis. Protocolo AC-T reconhecido (SBOC).',
+      dutRelevantes: [
+        'DUT 70 — Quimioterapia Antineoplásica Endovenosa',
+        'RN 566/2022 — cobertura obrigatória para tratamento oncológico',
+      ],
+    },
+  },
+
+  // ── M3: Oncologia — NSCLC 2ª linha com imunoterapia + PET-CT ───────────────
+  onc_helena: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Abr/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Paciente adulta (58a, F), câncer de pulmão de células não-pequenas (C34.9) estadio IV, progressão após 1ª linha de carboplatina + paclitaxel. Indicada 2ª linha com Pembrolizumabe (imunoterapia). PD-L1 ≥50% confirmado. Solicita PET-CT para reavaliação de resposta após 4 ciclos. Toxicidade tireoidiana em manejo (TSH elevado). Acompanhamento multidisciplinar.',
+    consultasRecentes: {
+      count: 12,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Oncologia Clínica', 'Pneumologia', 'Endocrinologia'],
+    },
+    procedimentosRelacionados:
+      'Pembrolizumabe ciclos 1-4 (Fev a Abr/2026). Carboplatina + Paclitaxel ciclos 1-6 (Set/2025 a Jan/2026 — 1ª linha). TC de tórax bimestral.',
+    internacoes: {
+      count: 1,
+      periodo: 'últimos 12 meses',
+      detalhes: 'Internação breve por pneumonite imunomediada grau 2 em 03/2026.',
+    },
+    cidRecorrente: { cid: 'C34.9', count: 18, descricao: 'Neoplasia maligna do pulmão' },
+    autorizacoesAnteriores: [
+      {
+        id: 'HIS-2026-ONC-145',
+        procedimento: 'Pembrolizumabe ciclo 4/sem limite definido',
+        codigo: '41101044',
+        cid: 'C34.9',
+        data: 'Abr/2026',
+        decisao: 'aprovado',
+        motivo: 'Imunoterapia 2ª linha — PD-L1 ≥50%',
+        destaque: true,
+      },
+      {
+        id: 'HIS-2026-ONC-123',
+        procedimento: 'PET-CT oncológico (estadiamento)',
+        codigo: '40808125',
+        cid: 'C34.9',
+        data: 'Fev/2026',
+        decisao: 'aprovado',
+        motivo: 'DUT 60 atendida — câncer pulmonar células não-pequenas',
+      },
+      {
+        id: 'HIS-2025-ONC-712',
+        procedimento: 'Carboplatina + Paclitaxel ciclo 6/6 (1ª linha)',
+        codigo: '41101010',
+        cid: 'C34.9',
+        data: 'Jan/2026',
+        decisao: 'aprovado',
+        motivo: 'Conclusão de 1ª linha — progressão documentada',
+      },
+    ],
+    sinaisAtencao: [
+      {
+        id: 'sa-onc-helena-1',
+        mensagem: 'Toxicidade imunomediada documentada (pneumonite, hipotireoidismo)',
+        detalhes:
+          'Manter monitoramento de função pulmonar e tireoidiana a cada ciclo. Hospitalização prévia por toxicidade.',
+        severidade: 'medium',
+      },
+    ],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 — prazo máximo de realização: 10 dias úteis. Pembrolizumabe coberto para NSCLC com PD-L1 ≥50% conforme bula.',
+      dutRelevantes: [
+        'DUT 60 — PET-CT Oncológico',
+        'DUT 70 — Quimioterapia Antineoplásica Endovenosa',
+        'RN 566/2022 — cobertura obrigatória para tratamento oncológico',
+      ],
+    },
+  },
+
+  // ── M3: Oncologia — Radioterapia próstata com Liminar Judicial ─────────────
+  onc_geraldo: {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Mar/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Paciente adulto (71a, M) com adenocarcinoma de próstata (C61) Gleason 7 (4+3), estadio T2cN0M0, em radioterapia conformacional 3D pós-prostatectomia radical. Plano de 39 frações (78 Gy). Liminar judicial concedida pela 3ª Vara da Fazenda Pública obrigando cobertura de IMRT com modulação avançada por critério clínico. Análise atual: fração 18/39, sem efeitos adversos significativos.',
+    consultasRecentes: {
+      count: 6,
+      periodo: 'últimos 3 meses',
+      especialidades: ['Oncologia Radioterápica', 'Urologia', 'Oncologia Clínica'],
+    },
+    procedimentosRelacionados:
+      'Prostatectomia radical em 11/2025. Planejamento dosimétrico 3D em 03/2026. PSA pós-cirúrgico bimestral.',
+    internacoes: {
+      count: 1,
+      periodo: 'últimos 12 meses',
+      detalhes: 'Prostatectomia radical em 11/2025.',
+    },
+    cidRecorrente: { cid: 'C61', count: 6, descricao: 'Neoplasia maligna da próstata' },
+    autorizacoesAnteriores: [
+      {
+        id: 'HIS-2026-ONC-178',
+        procedimento: 'Radioterapia conformacional 3D — frações 1-17',
+        codigo: '41201019',
+        cid: 'C61',
+        data: 'Mar/2026',
+        decisao: 'aprovado',
+        motivo: 'Cumprimento de Liminar Judicial — Processo 4567890-12.2026.8.26.0100',
+        destaque: true,
+      },
+      {
+        id: 'HIS-2025-ONC-845',
+        procedimento: 'Prostatectomia radical',
+        codigo: '31303170',
+        cid: 'C61',
+        data: 'Nov/2025',
+        decisao: 'aprovado',
+        motivo: 'Tratamento curativo — adenocarcinoma localizado',
+      },
+    ],
+    sinaisAtencao: [
+      {
+        id: 'sa-onc-geraldo-1',
+        mensagem: 'Liminar Judicial ativa — negativa requer reconhecimento explícito',
+        detalhes:
+          'Decisão judicial obriga cobertura. Botão Negar bloqueado por padrão. Audit log registra explicitamente.',
+        severidade: 'high',
+      },
+      {
+        id: 'sa-onc-geraldo-2',
+        mensagem: 'Reavaliação dosimétrica recomendada após 50% das frações',
+        detalhes:
+          'Protocolo radioterápico exige checagem de planejamento na metade do tratamento (fração 19/39).',
+        severidade: 'medium',
+      },
+    ],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'Liminar Judicial sobrepõe critérios contratuais. RN 566/2022 — prazo de realização para RT: 10 dias úteis.',
+      dutRelevantes: [
+        'DUT 71 — Radioterapia Conformacional 3D / IMRT',
+        'RN 566/2022 — cobertura obrigatória para tratamento oncológico',
+      ],
+    },
+  },
 };
 
 /** Maps a request ID to the corresponding history mock data key. */
@@ -1445,6 +1796,14 @@ export function getHistoryKey(requestId: string): string {
     'REQ-2026-HC-005': 'hc_alfredo',
     'REQ-2026-HC-006': 'hc_lucinda',
     'REQ-2026-HC-008': 'hc_gertrudes',
+    // Urgência/Emergência (M3)
+    'REQ-2026-UE-001': 'ue_julia',
+    'REQ-2026-UE-002': 'ue_rafael',
+    'REQ-2026-UE-003': 'ue_pedrohenrique',
+    // Oncologia (M3)
+    'REQ-2026-ONC-001': 'onc_antonio',
+    'REQ-2026-ONC-002': 'onc_helena',
+    'REQ-2026-ONC-003': 'onc_geraldo',
     // Legacy TEA mocks
     'REQ-2026-04797': 'high_use',
     'REQ-2026-04818': 'high_use',

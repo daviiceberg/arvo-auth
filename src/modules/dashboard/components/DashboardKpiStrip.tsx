@@ -3,11 +3,13 @@
 import { useRouter } from 'next/navigation';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
+import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -21,6 +23,8 @@ interface KpiMetrics {
   aprovadosMes: number;
   negadosMes: number;
   devolutivasAtivas?: number;
+  liminaresAtivas?: number;
+  nipsAbertas?: number;
 }
 
 interface DashboardKpiStripProps {
@@ -148,7 +152,7 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
     },
     {
       label: 'SLA em Risco',
-      icon: <WarningAmberIcon sx={{ fontSize: 18, color: 'warning.main' }} />,
+      icon: <WarningAmberOutlinedIcon sx={{ fontSize: 18, color: 'warning.main' }} />,
       bg: 'rgba(245,158,11,0.12)',
       color: 'warning.main',
       href: '/fila?sla=Atenção',
@@ -162,11 +166,29 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
   // se necessário (não excluído conforme decisão de produto).
   kpis.push({
     label: 'Devolutivas',
-    icon: <AssignmentReturnIcon sx={{ fontSize: 18, color: '#d97706' }} />,
+    icon: <AssignmentReturnOutlinedIcon sx={{ fontSize: 18, color: '#d97706' }} />,
     bg: 'rgba(245,158,11,0.18)',
     color: '#d97706',
     href: '/fila?tab=devolutivas',
     value: metrics.devolutivasAtivas ?? 0,
+  });
+
+  kpis.push({
+    label: 'Liminares Judiciais',
+    icon: <GavelOutlinedIcon sx={{ fontSize: 18, color: '#5b21b6' }} />,
+    bg: 'rgba(91,33,182,0.1)',
+    color: '#5b21b6',
+    href: '/fila',
+    value: metrics.liminaresAtivas ?? 0,
+  });
+
+  kpis.push({
+    label: 'NIPs Abertas',
+    icon: <ReportProblemOutlinedIcon sx={{ fontSize: 18, color: '#c2410c' }} />,
+    bg: 'rgba(194,65,12,0.1)',
+    color: '#c2410c',
+    href: '/fila',
+    value: metrics.nipsAbertas ?? 0,
   });
 
   return (

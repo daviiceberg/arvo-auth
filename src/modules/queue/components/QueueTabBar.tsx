@@ -11,6 +11,8 @@ interface QueueTabBarProps {
   warningCount: number;
   violatedCount: number;
   devolutivasCount?: number;
+  liminaresCount?: number;
+  nipsCount?: number;
   onTabChange: (value: number) => void;
 }
 
@@ -20,6 +22,8 @@ export default function QueueTabBar({
   warningCount,
   violatedCount,
   devolutivasCount = 0,
+  liminaresCount = 0,
+  nipsCount = 0,
   onTabChange,
 }: QueueTabBarProps) {
   return (
@@ -106,6 +110,44 @@ export default function QueueTabBar({
             </Box>
           }
           aria-label="Devolutivas (Pendência e Junta Médica)"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Liminares Judiciais
+              <Chip
+                label={liminaresCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(91,33,182,0.12)',
+                  color: '#5b21b6',
+                }}
+              />
+            </Box>
+          }
+          aria-label="Liminares Judiciais ativas"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              NIPs Abertas
+              <Chip
+                label={nipsCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(194,65,12,0.12)',
+                  color: '#c2410c',
+                }}
+              />
+            </Box>
+          }
+          aria-label="NIPs Abertas — RN 483/2022"
         />
       </Tabs>
     </Box>

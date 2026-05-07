@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -9,16 +9,27 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
+import Pagination from '@mui/material/Pagination';
 import Typography from '@mui/material/Typography';
 
 import { NOTIFICACOES } from '@/data/notificacoes';
 import { type Notification } from '@/types/notificacao';
 
+const PAGE_SIZE = 10;
+
 export default function NotificacoesPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState(NOTIFICACOES);
+  const [page, setPage] = useState(1);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const totalPages = Math.max(1, Math.ceil(notifications.length / PAGE_SIZE));
+
+  const pagedNotifications = useMemo(
+    () => notifications.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [notifications, page],
+  );
 
   const markAllRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
@@ -71,7 +82,7 @@ export default function NotificacoesPage() {
             </Typography>
           </Box>
         ) : (
-          notifications.map((n, i) => {
+          pagedNotifications.map((n, i) => {
             return (
               <Box key={n.id}>
                 {i > 0 && <Divider />}
@@ -146,6 +157,21 @@ export default function NotificacoesPage() {
           })
         )}
       </Card>
+
+      {notifications.length > PAGE_SIZE ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2.5 }}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_e, value) => {
+              setPage(value);
+            }}
+            color="primary"
+            shape="rounded"
+            size="small"
+          />
+        </Box>
+      ) : null}
     </Box>
   );
 }

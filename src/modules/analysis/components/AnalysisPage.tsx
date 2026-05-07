@@ -23,26 +23,24 @@ import { useM1RequestState } from '../hooks/useM1RequestState';
 
 import AdjustmentDrawer from './AdjustmentDrawer';
 import AlertsBanner from './AlertsBanner';
+import AnalysisSecondarySections from './AnalysisSecondarySections';
 import AnalysisSkeleton from './AnalysisSkeleton';
 import AssistantSidebar from './AssistantSidebar';
-import AuditLogSection from './AuditLogSection';
 import BeneficiarySection from './BeneficiarySection';
-import ConsolidatedHistorySection from './ConsolidatedHistorySection';
 import AdjustmentApprovalDialog from './dialogs/AdjustmentApprovalDialog';
 import ApprovalDialog from './dialogs/ApprovalDialog';
 import DenialDialog from './dialogs/DenialDialog';
 import DivergenceDialog from './dialogs/DivergenceDialog';
+import InjunctionAcknowledgmentDialog from './dialogs/InjunctionAcknowledgmentDialog';
 import JuntaMedicaDialog from './dialogs/JuntaMedicaDialog';
 import PartialApprovalDialog from './dialogs/PartialApprovalDialog';
 import PendencyDialog from './dialogs/PendencyDialog';
-import DocumentsSection from './DocumentsSection';
-import InternalNotesSection from './InternalNotesSection';
 import M1Banners from './M1Banners';
-import ObservationsSection from './ObservationsSection';
+import OncologyDataSection from './OncologyDataSection';
 import PageHeader from './PageHeader';
-import PrestadorTimelineSection from './PrestadorTimelineSection';
 import ProceduresSection from './ProceduresSection';
 import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection';
+import RegulatoryBanners from './RegulatoryBanners';
 import ReprocessPromptModal from './ReprocessPromptModal';
 
 const REPROCESS_DURATION_MS = 6000;
@@ -171,6 +169,7 @@ function AnalysisInner() {
         {/* Left content -- scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <RegulatoryBanners request={request} />
             <M1Banners
               request={request}
               m1={m1}
@@ -259,6 +258,7 @@ function AnalysisInner() {
             ) : null}
             <AlertsBanner request={request} />
             <BeneficiarySection request={request} />
+            {request.category === 'Oncologia' ? <OncologyDataSection request={request} /> : null}
             <ProceduresSection
               key={`procedures-${request.id}`}
               request={request}
@@ -266,25 +266,16 @@ function AnalysisInner() {
               onAdjustClick={adjustment.handleAdjustClick}
             />
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
-            <ObservationsSection request={request} />
-            <InternalNotesSection
-              key={`notes-${request.id}`}
-              value={internalNotes}
-              onChange={setInternalNotes}
-            />
-            <AuditLogSection entries={request.auditLog ?? []} />
-            <ConsolidatedHistorySection request={request} />
-            <DocumentsSection
+            <AnalysisSecondarySections
               request={request}
+              internalNotes={internalNotes}
+              onInternalNotesChange={setInternalNotes}
               pendingReprocess={pendingReprocess}
               isReprocessing={isReprocessing}
               onRequestReprocess={requestReprocess}
               onStructuralChange={markStructuralChange}
               attachHandlerRef={openAddFromModalRef}
             />
-            {request.prestadorMessages && request.prestadorMessages.length > 0 ? (
-              <PrestadorTimelineSection messages={request.prestadorMessages} />
-            ) : null}
           </Box>
         </Box>
 
@@ -392,6 +383,20 @@ function AnalysisInner() {
           decision.setShowDivergenceDialog(false);
         }}
       />
+
+      {/* Injunction Acknowledgment Dialog */}
+      {request.injunction ? (
+        <InjunctionAcknowledgmentDialog
+          open={decision.showInjunctionAckDialog}
+          injunction={request.injunction}
+          acknowledgment={decision.injunctionAcknowledgment}
+          onAcknowledgmentChange={decision.setInjunctionAcknowledgment}
+          onContinue={decision.handleInjunctionAckContinue}
+          onClose={() => {
+            decision.setShowInjunctionAckDialog(false);
+          }}
+        />
+      ) : null}
 
       {/* Partial Approval Dialog */}
       <PartialApprovalDialog

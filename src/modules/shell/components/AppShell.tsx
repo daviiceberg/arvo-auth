@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 
 import { NOTIFICACOES } from '@/data/notificacoes';
 import { pedidos } from '@/data/pedidos';
+import { useSlaAlerts } from '@/shared/hooks/useSlaAlerts';
 import { useDynamicNotifications } from '@/shared/notifications/notification-store';
 
 import { cleanupLegacyM1State } from '@/modules/analysis/hooks/useM1RequestState';
@@ -26,6 +27,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     cleanupLegacyM1State();
   }, []);
+
+  // M3: dispara notificações escalonadas para pedidos com SLA crítico (1h, 30min, violado).
+  useSlaAlerts(pedidos);
 
   return (
     <Box

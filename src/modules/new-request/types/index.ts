@@ -73,6 +73,34 @@ export interface HomeCareItem {
   enderecoAtendimento: string;
 }
 
+export type UrgencyTipo = 'urgencia' | 'emergencia' | '';
+
+export type ManchesterClassification = 'vermelho' | 'laranja' | 'amarelo' | 'verde' | 'azul' | '';
+
+export interface UrgencyProcedimento {
+  id: string;
+  tipo: UrgencyTipo;
+  classificacaoRisco: ManchesterClassification;
+  codigoTUSS: string;
+  descricaoTUSS: string;
+  justificativaClinica: string;
+  quantidade: string;
+}
+
+export type OncologyTipoTratamento =
+  | 'Quimioterapia'
+  | 'Radioterapia'
+  | 'Hormonioterapia'
+  | 'Imunoterapia'
+  | '';
+
+export interface OncologyProcedimento {
+  id: string;
+  codigoTUSS: string;
+  descricaoTUSS: string;
+  quantidade: string;
+}
+
 export interface FormData {
   // Step 1 — Beneficiário
   category: Category | '';
@@ -107,10 +135,18 @@ export interface FormData {
   terapiaDataSolicitacao: string;
   terapiaDataValidadeSenha: string;
   frequenciaSemanal: string;
+  // Oncologia (M3) — dados gerais do tratamento
+  estadiamentoTNM: string;
+  numeroCiclo: string;
+  protocoloQuimio: string;
+  tipoTratamento: OncologyTipoTratamento;
+  totalCiclos: string;
   // Step dynamic — arrays de procedimentos por categoria. Apenas o campo
   // correspondente à categoria ativa é preenchido durante o cadastro;
   // os outros permanecem com arrays vazios.
   sadtProcedimentos: SadtProcedimento[];
   examsProcedimentos: ExamsProcedimento[];
   homeCareProcedimentos: HomeCareItem[];
+  urgencyProcedimentos: UrgencyProcedimento[];
+  oncologyProcedimentos: OncologyProcedimento[];
 }

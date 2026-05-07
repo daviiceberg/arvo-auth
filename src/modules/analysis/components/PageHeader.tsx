@@ -6,7 +6,6 @@ import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -14,9 +13,21 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import { CategoryChip, OriginChip } from '@/shared/components';
-import { type Request } from '@/types/pedido';
+import { CHIP_BASE_SX } from '@/shared/components/chips/chip-styles';
+import { type ManchesterClassificationFinal, type Request } from '@/types/pedido';
 
 import { formatSlaDisplay } from '../utils/format-sla';
+
+const MANCHESTER_CONFIG: Record<
+  ManchesterClassificationFinal,
+  { label: string; bg: string; color: string }
+> = {
+  vermelho: { label: 'Emergência', bg: 'rgba(220,38,38,0.12)', color: '#dc2626' },
+  laranja: { label: 'Muito Urgente', bg: 'rgba(249,115,22,0.12)', color: '#ea580c' },
+  amarelo: { label: 'Urgente', bg: 'rgba(234,179,8,0.18)', color: '#a16207' },
+  verde: { label: 'Pouco Urgente', bg: 'rgba(22,163,74,0.12)', color: '#16a34a' },
+  azul: { label: 'Não Urgente', bg: 'rgba(37,99,235,0.12)', color: '#2563eb' },
+};
 
 interface PageHeaderProps {
   request: Request;
@@ -73,30 +84,60 @@ export default function PageHeader({
           {/* Senha + Validade — removidos em M1; reintroduzir em M2 após decisão favorável */}
           {request.slaStatus === 'violated' && (
             <Chip
-              icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA Violado"
               size="small"
               sx={{
+                ...CHIP_BASE_SX,
                 backgroundColor: 'rgba(212,24,61,0.1)',
                 color: 'error.main',
-                fontWeight: 700,
-                height: 22,
               }}
             />
           )}
           {request.slaStatus === 'warning' && (
             <Chip
-              icon={<WarningAmberIcon sx={{ fontSize: 12, ml: '4px !important' }} />}
               label="SLA em Risco"
               size="small"
               sx={{
+                ...CHIP_BASE_SX,
                 backgroundColor: 'rgba(245,158,11,0.12)',
                 color: 'warning.main',
-                fontWeight: 700,
-                height: 22,
               }}
             />
           )}
+          {request.injunction ? (
+            <Chip
+              label="Liminar Judicial"
+              size="small"
+              sx={{
+                ...CHIP_BASE_SX,
+                backgroundColor: 'rgba(91,33,182,0.1)',
+                color: '#5b21b6',
+              }}
+            />
+          ) : null}
+          {request.nip?.status === 'aberta' ? (
+            <Chip
+              label="NIP Aberta"
+              size="small"
+              sx={{
+                ...CHIP_BASE_SX,
+                backgroundColor: 'rgba(194,65,12,0.1)',
+                color: '#c2410c',
+              }}
+            />
+          ) : null}
+          {request.manchesterClassification
+            ? (() => {
+                const m = MANCHESTER_CONFIG[request.manchesterClassification];
+                return (
+                  <Chip
+                    label={m.label}
+                    size="small"
+                    sx={{ ...CHIP_BASE_SX, backgroundColor: m.bg, color: m.color }}
+                  />
+                );
+              })()
+            : null}
         </Box>
 
         {/* Navigator */}

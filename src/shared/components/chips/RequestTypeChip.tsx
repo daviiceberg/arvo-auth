@@ -2,6 +2,8 @@
 
 import Chip from '@mui/material/Chip';
 
+import { CHIP_BASE_SX } from './chip-styles';
+
 type RequestType = 'continuidade' | 'primeira';
 
 const requestTypeConfig: Record<RequestType, { label: string; bg: string; color: string }> = {
@@ -22,11 +24,9 @@ export default function RequestTypeChip({ type, size = 'small' }: RequestTypeChi
       label={config.label}
       size={size}
       sx={{
+        ...CHIP_BASE_SX,
         backgroundColor: config.bg,
         color: config.color,
-        fontWeight: 600,
-        fontSize: 10,
-        height: 18,
       }}
     />
   );

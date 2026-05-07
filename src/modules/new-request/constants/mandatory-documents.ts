@@ -151,6 +151,58 @@ export const DOCS_BY_CATEGORY: Record<Category, CategoryDocs> = {
       },
     ],
   },
+  'Urgência/Emergência': {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada e justificativa clínica do quadro de urgência',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Triagem / Manchester',
+        descricao: 'Classificação de risco do pronto-atendimento',
+        obrigatorio: false,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico',
+        obrigatorio: true,
+      },
+    ],
+  },
+  Oncologia: {
+    primeira: [
+      {
+        nome: 'Laudo Oncológico com Estadiamento TNM',
+        descricao: 'Laudo do oncologista com diagnóstico e estadiamento',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Protocolo de Tratamento',
+        descricao: 'Protocolo proposto (SBOC/NCCN) com linha e ciclos previstos',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo oncologista',
+        obrigatorio: true,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Relatório de Evolução Oncológica',
+        descricao: 'Resposta ao tratamento, toxicidades, ciclos prévios',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação do próximo ciclo',
+        obrigatorio: true,
+      },
+    ],
+  },
 };
 
 export const TIPOS_DOC_UPLOAD = [

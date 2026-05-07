@@ -39,6 +39,8 @@ import {
 } from '../constants/navigation';
 
 const CATEGORIES: Category[] = [
+  'Urgência/Emergência',
+  'Oncologia',
   'Terapias Especiais',
   'SADT',
   'Exames Alta Complexidade',

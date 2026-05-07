@@ -102,6 +102,12 @@ function NewRequestInner() {
     handleAddHomeCareProcedimento,
     handleRemoveHomeCareProcedimento,
     handleUpdateHomeCareProcedimento,
+    handleAddUrgencyProcedimento,
+    handleRemoveUrgencyProcedimento,
+    handleUpdateUrgencyProcedimento,
+    handleAddOncologyProcedimento,
+    handleRemoveOncologyProcedimento,
+    handleUpdateOncologyProcedimento,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
@@ -204,9 +210,16 @@ function NewRequestInner() {
       terapiaDataSolicitacao: '',
       terapiaDataValidadeSenha: '',
       frequenciaSemanal: '',
+      estadiamentoTNM: '',
+      numeroCiclo: '',
+      protocoloQuimio: '',
+      tipoTratamento: '',
+      totalCiclos: '',
       sadtProcedimentos: [],
       examsProcedimentos: [],
       homeCareProcedimentos: [],
+      urgencyProcedimentos: [],
+      oncologyProcedimentos: [],
     };
     setForm(emptyForm);
     setIsManualEntry(true);
@@ -259,6 +272,7 @@ function NewRequestInner() {
     3: (
       <StepDynamic
         form={form}
+        set={set}
         setSelect={setSelect}
         terapiaProcedimentos={terapiaProcedimentos}
         handleAddTerapiaProc={handleAddTerapiaProc}
@@ -273,6 +287,12 @@ function NewRequestInner() {
         handleAddHomeCareProcedimento={handleAddHomeCareProcedimento}
         handleRemoveHomeCareProcedimento={handleRemoveHomeCareProcedimento}
         handleUpdateHomeCareProcedimento={handleUpdateHomeCareProcedimento}
+        handleAddUrgencyProcedimento={handleAddUrgencyProcedimento}
+        handleRemoveUrgencyProcedimento={handleRemoveUrgencyProcedimento}
+        handleUpdateUrgencyProcedimento={handleUpdateUrgencyProcedimento}
+        handleAddOncologyProcedimento={handleAddOncologyProcedimento}
+        handleRemoveOncologyProcedimento={handleRemoveOncologyProcedimento}
+        handleUpdateOncologyProcedimento={handleUpdateOncologyProcedimento}
       />
     ),
     4: (

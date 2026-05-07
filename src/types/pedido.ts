@@ -39,6 +39,24 @@ export interface PendencyContext {
   responseReceivedAt?: string;
 }
 
+export interface InjunctionContext {
+  processNumber: string;
+  scope: string;
+  validUntil?: string;
+  court?: string;
+  notes?: string;
+}
+
+export type NipStatus = 'aberta' | 'respondida' | 'arquivada';
+
+export interface NipContext {
+  nipNumber: string;
+  openedAt: string;
+  deadline: string;
+  status: NipStatus;
+  reason?: string;
+}
+
 export type JuntaMedicaSubStatus =
   | 'aguardando'
   | 'parecer_recebido'
@@ -74,7 +92,23 @@ export interface PrestadorMessage {
   triggerEvent: 'pendencia' | 'junta_encaminhada' | 'devolutiva_recebida';
 }
 
-export type GuideType = 'Eleitiva';
+export type GuideType = 'Eleitiva' | 'Urgência' | 'Emergência';
+
+export type UrgencyType = 'ambulatorial' | 'emergencia' | 'trauma';
+
+export type OncologyTreatmentType = 'QT' | 'RT' | 'hormonio' | 'imuno' | 'outro';
+export type OncologyTreatmentLine = '1a' | '2a' | 'paliativa';
+
+export interface OncologyProtocol {
+  type: OncologyTreatmentType;
+  protocol: string;
+  line: OncologyTreatmentLine;
+  cycle: string;
+  staging?: string;
+  totalCycles?: string;
+}
+
+export type ManchesterClassificationFinal = 'vermelho' | 'laranja' | 'amarelo' | 'verde' | 'azul';
 
 export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
@@ -107,7 +141,13 @@ export type IASuggestion = 'Aprovar' | 'Negar' | 'Junta Médica' | 'Pendenciar';
  */
 export type AISuggestionFinal = 'Aprovar' | 'Negar' | 'Aprovar Parcial';
 
-export type Category = 'Terapias Especiais' | 'SADT' | 'Exames Alta Complexidade' | 'Home Care';
+export type Category =
+  | 'Urgência/Emergência'
+  | 'Oncologia'
+  | 'Terapias Especiais'
+  | 'SADT'
+  | 'Exames Alta Complexidade'
+  | 'Home Care';
 
 export type AccidentIndication = 'NAO_ACIDENTE' | 'TRABALHO' | 'TRANSITO' | 'OUTROS';
 
@@ -172,7 +212,9 @@ export interface Procedure {
   tableNumber?: number;
   codeType?: CodeType;
   packageId?: string;
+  packageCode?: string;
   tussCodesIncluded?: TussCode[];
+  dutNumber?: number;
   auditNotes?: string;
   procedureNotes?: string;
 }
@@ -279,6 +321,13 @@ export interface Request {
   slaSuspension?: SLASuspension;
   pendencyContext?: PendencyContext;
   juntaMedicaContext?: JuntaMedicaContext;
+  injunction?: InjunctionContext;
+  nip?: NipContext;
+  slaCritical?: boolean;
+  urgencyType?: UrgencyType;
+  urgencyReason?: string;
+  manchesterClassification?: ManchesterClassificationFinal;
+  oncologyProtocol?: OncologyProtocol;
   prestadorMessages?: PrestadorMessage[];
   secondaryCids?: string[];
   guidePassword?: string;
@@ -378,6 +427,10 @@ export interface HistoryEntry {
   passedThroughPendency?: boolean;
   passedThroughJunta?: boolean;
   pendencyTimeout?: boolean;
+  hadInjunction?: boolean;
+  injunctionProcessNumber?: string;
+  hadNip?: boolean;
+  nipNumber?: string;
   juntaParecer?: {
     text: string;
     suggestedDecision: 'aprovado' | 'negado' | 'aprovado_parcial';

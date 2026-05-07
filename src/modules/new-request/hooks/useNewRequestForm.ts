@@ -10,6 +10,8 @@ import {
   type SadtProcedimento,
   type ExamsProcedimento,
   type HomeCareItem,
+  type UrgencyProcedimento,
+  type OncologyProcedimento,
 } from '../types';
 
 const newSadtProcedimento = (base?: Partial<SadtProcedimento>): SadtProcedimento => ({
@@ -40,6 +42,25 @@ const newHomeCareItem = (base?: Partial<HomeCareItem>): HomeCareItem => ({
   escalaCuidadores: '',
   equipamentos: '',
   enderecoAtendimento: '',
+  ...base,
+});
+
+const newUrgencyProcedimento = (base?: Partial<UrgencyProcedimento>): UrgencyProcedimento => ({
+  id: crypto.randomUUID(),
+  tipo: '',
+  classificacaoRisco: '',
+  codigoTUSS: '10101039',
+  descricaoTUSS: 'Consulta em pronto socorro',
+  justificativaClinica: '',
+  quantidade: '1',
+  ...base,
+});
+
+const newOncologyProcedimento = (base?: Partial<OncologyProcedimento>): OncologyProcedimento => ({
+  id: crypto.randomUUID(),
+  codigoTUSS: '',
+  descricaoTUSS: '',
+  quantidade: '1',
   ...base,
 });
 
@@ -84,9 +105,16 @@ export const initialForm: FormData = {
   terapiaDataSolicitacao: '',
   terapiaDataValidadeSenha: '',
   frequenciaSemanal: '3x por semana',
+  estadiamentoTNM: '',
+  numeroCiclo: '',
+  protocoloQuimio: '',
+  tipoTratamento: '',
+  totalCiclos: '',
   sadtProcedimentos: [newSadtProcedimento()],
   examsProcedimentos: [newExamsProcedimento()],
   homeCareProcedimentos: [newHomeCareItem()],
+  urgencyProcedimentos: [newUrgencyProcedimento()],
+  oncologyProcedimentos: [newOncologyProcedimento()],
 };
 
 export function useNewRequestForm(categoryParam: string) {
@@ -254,6 +282,64 @@ export function useNewRequestForm(categoryParam: string) {
     }));
   };
 
+  const handleAddUrgencyProcedimento = () => {
+    if (form.urgencyProcedimentos.length >= 3) return;
+    setForm((f) => ({
+      ...f,
+      urgencyProcedimentos: [...f.urgencyProcedimentos, newUrgencyProcedimento()],
+    }));
+  };
+
+  const handleRemoveUrgencyProcedimento = (id: string) => {
+    if (form.urgencyProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      urgencyProcedimentos: f.urgencyProcedimentos.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleUpdateUrgencyProcedimento = (
+    id: string,
+    field: keyof Omit<UrgencyProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      urgencyProcedimentos: f.urgencyProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
+  };
+
+  const handleAddOncologyProcedimento = () => {
+    if (form.oncologyProcedimentos.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      oncologyProcedimentos: [...f.oncologyProcedimentos, newOncologyProcedimento()],
+    }));
+  };
+
+  const handleRemoveOncologyProcedimento = (id: string) => {
+    if (form.oncologyProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      oncologyProcedimentos: f.oncologyProcedimentos.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleUpdateOncologyProcedimento = (
+    id: string,
+    field: keyof Omit<OncologyProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      oncologyProcedimentos: f.oncologyProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
+  };
+
   return {
     form,
     setForm,
@@ -273,6 +359,12 @@ export function useNewRequestForm(categoryParam: string) {
     handleAddHomeCareProcedimento,
     handleRemoveHomeCareProcedimento,
     handleUpdateHomeCareProcedimento,
+    handleAddUrgencyProcedimento,
+    handleRemoveUrgencyProcedimento,
+    handleUpdateUrgencyProcedimento,
+    handleAddOncologyProcedimento,
+    handleRemoveOncologyProcedimento,
+    handleUpdateOncologyProcedimento,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,

@@ -10,12 +10,14 @@ import Chip from '@mui/material/Chip';
 import { decisionActionConfigMap } from '@/shared/constants/decision-action-colors';
 import { type DecisionAction } from '@/types/pedido';
 
+import { CHIP_BASE_SX, CHIP_ICON_FONT_SIZE } from './chip-styles';
+
 const decisionIconMap: Record<DecisionAction, React.ReactNode> = {
-  Aprovado: <CheckCircleIcon sx={{ fontSize: 13 }} />,
-  Negado: <CancelIcon sx={{ fontSize: 13 }} />,
-  'Aprovado Parcial': <CallSplitIcon sx={{ fontSize: 13 }} />,
-  Devolutiva: <ReplayIcon sx={{ fontSize: 13 }} />,
-  'Junta Médica': <GroupsIcon sx={{ fontSize: 13 }} />,
+  Aprovado: <CheckCircleIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  Negado: <CancelIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  'Aprovado Parcial': <CallSplitIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  Devolutiva: <ReplayIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  'Junta Médica': <GroupsIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
 };
 
 interface DecisionActionChipProps {
@@ -33,11 +35,9 @@ export default function DecisionActionChip({ action, size = 'small' }: DecisionA
       label={config.label}
       size={size}
       sx={{
+        ...CHIP_BASE_SX,
         backgroundColor: config.bg,
         color: config.color,
-        fontWeight: 700,
-        fontSize: 12,
-        height: 22,
         '& .MuiChip-icon': { color: config.color },
       }}
     />

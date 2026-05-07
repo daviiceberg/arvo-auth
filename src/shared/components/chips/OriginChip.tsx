@@ -9,12 +9,14 @@ import Chip from '@mui/material/Chip';
 import { originConfigMap } from '@/shared/constants';
 import { type RequestOrigin } from '@/types/pedido';
 
+import { CHIP_BASE_SX, CHIP_ICON_FONT_SIZE } from './chip-styles';
+
 const originIconMap: Record<RequestOrigin, React.ReactNode> = {
-  app: <PhoneAndroidIcon sx={{ fontSize: 11 }} />,
-  whatsapp: <WhatsAppIcon sx={{ fontSize: 11 }} />,
-  email: <EmailOutlinedIcon sx={{ fontSize: 11 }} />,
-  prestador: <LocalHospitalOutlinedIcon sx={{ fontSize: 11 }} />,
-  call_center: <PhoneAndroidIcon sx={{ fontSize: 11 }} />,
+  app: <PhoneAndroidIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  whatsapp: <WhatsAppIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  email: <EmailOutlinedIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  prestador: <LocalHospitalOutlinedIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
+  call_center: <PhoneAndroidIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE }} />,
 };
 
 interface OriginChipProps {
@@ -32,11 +34,9 @@ export default function OriginChip({ origin, size = 'small' }: OriginChipProps) 
       label={config.label}
       size={size}
       sx={{
+        ...CHIP_BASE_SX,
         backgroundColor: config.bg,
         color: config.color,
-        fontWeight: 600,
-        fontSize: 11,
-        height: 22,
         '& .MuiChip-icon': { color: config.color },
       }}
     />

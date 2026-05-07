@@ -31,6 +31,14 @@ function isInDevolutivasQueue(request: Request): boolean {
   );
 }
 
+function hasInjunction(request: Request): boolean {
+  return request.injunction !== undefined;
+}
+
+function hasOpenNip(request: Request): boolean {
+  return request.nip?.status === 'aberta';
+}
+
 function matchesSearch(request: Request, search: string): boolean {
   const q = search.toLowerCase().trim();
   if (q === '') return true;
@@ -72,6 +80,17 @@ function matchesCategory(request: Request, categoryFilter: string): boolean {
   return categoryFilter === 'Todas' || request.category === categoryFilter;
 }
 
+/**
+ * Critical-first sort: pedidos com SLA crítico (U/E flag ou categoria
+ * Urgência/Emergência) sobem ao topo. Mantém estabilidade relativa entre
+ * críticos e não-críticos.
+ */
+function sortCriticalFirst(a: Request, b: Request): number {
+  const aCritical = a.slaCritical === true ? 1 : 0;
+  const bCritical = b.slaCritical === true ? 1 : 0;
+  return bCritical - aCritical;
+}
+
 export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const [loading, setLoading] = useState(true);
 
@@ -102,6 +121,14 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
       // Devolutivas tab — independent set, includes pendência + junta médica
       return pedidos.filter(isInDevolutivasQueue);
     }
+    if (tabValue === 4) {
+      // Liminares Judiciais — pedidos com injunction registrada
+      return pedidos.filter(hasInjunction);
+    }
+    if (tabValue === 5) {
+      // NIPs Abertas — pedidos com NIP em status aberto
+      return pedidos.filter(hasOpenNip);
+    }
     return pedidos.filter(isInOperationalQueue).filter((p) => {
       if (tabValue === 1) return p.slaStatus === 'warning';
       if (tabValue === 2) return p.slaStatus === 'violated';
@@ -111,16 +138,18 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const filtered = useMemo(
     () =>
-      filteredByTab.filter(
-        (p) =>
-          matchesSearch(p, search) &&
-          matchesSla(p, slaFilter) &&
-          matchesProvider(p, providerFilter) &&
-          matchesStage(p, stageFilter) &&
-          matchesAlert(p, alertFilter) &&
-          matchesStatus(p, statusFilter) &&
-          matchesCategory(p, categoryFilter),
-      ),
+      filteredByTab
+        .filter(
+          (p) =>
+            matchesSearch(p, search) &&
+            matchesSla(p, slaFilter) &&
+            matchesProvider(p, providerFilter) &&
+            matchesStage(p, stageFilter) &&
+            matchesAlert(p, alertFilter) &&
+            matchesStatus(p, statusFilter) &&
+            matchesCategory(p, categoryFilter),
+        )
+        .sort(sortCriticalFirst),
     [
       filteredByTab,
       search,
@@ -150,6 +179,10 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
 
   const devolutivasCount = useMemo(() => pedidos.filter(isInDevolutivasQueue).length, [pedidos]);
 
+  const liminaresCount = useMemo(() => pedidos.filter(hasInjunction).length, [pedidos]);
+
+  const nipsCount = useMemo(() => pedidos.filter(hasOpenNip).length, [pedidos]);
+
   return {
     loading,
     filteredByTab,
@@ -158,5 +191,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     warningCount,
     violatedCount,
     devolutivasCount,
+    liminaresCount,
+    nipsCount,
   };
 }

@@ -18,6 +18,8 @@ const SECTION_TITLE_BY_CATEGORY: Record<Category, string> = {
   SADT: 'Procedimento SADT',
   'Exames Alta Complexidade': 'Exame de Alta Complexidade',
   'Home Care': 'Plano de Home Care',
+  'Urgência/Emergência': 'Atendimento de Urgência',
+  Oncologia: 'Protocolo Oncológico',
 };
 
 function etapaLabel(etapa: string): string {
@@ -129,6 +131,45 @@ function getDynamicSectionContent(
             <ReviewRow label="Escala de cuidadores" value={proc.escalaCuidadores} />
             <ReviewRow label="Equipamentos / materiais" value={proc.equipamentos} />
             <ReviewRow label="Endereço" value={proc.enderecoAtendimento} />
+          </Box>
+        ))}
+      </>
+    );
+  }
+  if (form.category === 'Urgência/Emergência') {
+    return (
+      <>
+        {form.urgencyProcedimentos.map((proc, index) => (
+          <Box key={proc.id} sx={{ mb: 2 }}>
+            <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+              Atendimento {index + 1}
+            </Typography>
+            <ReviewRow label="Classificação de Risco" value={proc.classificacaoRisco} />
+            <ReviewRow label="Tipo de Atendimento" value={proc.tipo} />
+            <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+            <ReviewRow label="Quantidade" value={proc.quantidade} />
+            <ReviewRow label="Justificativa clínica" value={proc.justificativaClinica} />
+          </Box>
+        ))}
+      </>
+    );
+  }
+  if (form.category === 'Oncologia') {
+    return (
+      <>
+        <ReviewRow label="Estadiamento (TNM)" value={form.estadiamentoTNM} />
+        <ReviewRow label="Nº do Ciclo" value={form.numeroCiclo} />
+        <ReviewRow label="Protocolo Quimioterápico" value={form.protocoloQuimio} />
+        <ReviewRow label="Tipo de Tratamento" value={form.tipoTratamento} />
+        <ReviewRow label="Número de Ciclos Totais" value={form.totalCiclos} />
+        {form.oncologyProcedimentos.map((proc, index) => (
+          <Box key={proc.id} sx={{ mt: 2 }}>
+            <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+              Procedimento {index + 1}
+            </Typography>
+            <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+            <ReviewRow label="Descrição" value={proc.descricaoTUSS} />
+            <ReviewRow label="Quantidade" value={proc.quantidade} />
           </Box>
         ))}
       </>

@@ -24,11 +24,19 @@ export default function QueuePage() {
   const searchParams = useSearchParams();
 
   const filters = useQueueFilters({ searchParams });
-  const { loading, filtered, pagedItems, warningCount, violatedCount, devolutivasCount } =
-    useQueueData({
-      filters,
-      pedidos,
-    });
+  const {
+    loading,
+    filtered,
+    pagedItems,
+    warningCount,
+    violatedCount,
+    devolutivasCount,
+    liminaresCount,
+    nipsCount,
+  } = useQueueData({
+    filters,
+    pedidos,
+  });
   const { scrollContainerRef, lastViewedId, saveScrollPosition } = useScrollRestoration();
 
   const handleRowClick = (requestId: string) => {
@@ -97,6 +105,8 @@ export default function QueuePage() {
           warningCount={warningCount}
           violatedCount={violatedCount}
           devolutivasCount={devolutivasCount}
+          liminaresCount={liminaresCount}
+          nipsCount={nipsCount}
           onTabChange={handleTabChange}
         />
 

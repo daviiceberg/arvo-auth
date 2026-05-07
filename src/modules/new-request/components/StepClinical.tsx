@@ -45,6 +45,55 @@ function createCidFilter(category: string) {
   };
 }
 
+// ── Inline CID feedback per category ──────────────────────────────────
+const HINT_SX = (color: string) => ({
+  fontSize: 12,
+  color,
+  mt: 0.5,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 0.5,
+});
+
+function CidPrincipalHint({ category, cid }: { category: string; cid: string }) {
+  if (!cid) {
+    return (
+      <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.5 }}>
+        O CID determina regras de cobertura. Clique no campo para ver sugestões.
+      </Typography>
+    );
+  }
+  if (category === 'Terapias Especiais') {
+    return cid.startsWith('F84') ? (
+      <Typography sx={HINT_SX('#166534')}>✓ RN 539/2022 — sessões ilimitadas aplicáveis</Typography>
+    ) : (
+      <Typography sx={{ fontSize: 12, color: '#b45309', mt: 0.5 }}>
+        CID fora do espectro F84 — RN 539 (sessões ilimitadas) não se aplica automaticamente
+      </Typography>
+    );
+  }
+  if (category === 'Urgência/Emergência') {
+    return (
+      <Typography sx={HINT_SX('#dc2626')}>
+        ✓ RN 566/2022 art. 3º — atendimento imediato sem autorização prévia
+      </Typography>
+    );
+  }
+  if (category === 'Oncologia') {
+    const isOncoCid = cid.startsWith('C') || cid.startsWith('D');
+    return isOncoCid ? (
+      <Typography sx={HINT_SX('#9333ea')}>
+        ✓ RN 566/2022 — cobertura oncológica obrigatória · prazo 10 dias úteis
+      </Typography>
+    ) : (
+      <Typography sx={{ fontSize: 12, color: '#b45309', mt: 0.5 }}>
+        CID fora dos grupos C/D (neoplasias) — verificar adequação à categoria oncológica
+      </Typography>
+    );
+  }
+  return null;
+}
+
 // ── Field helpers ─────────────────────────────────────────────────────
 function FieldLabel({
   children,
@@ -203,33 +252,7 @@ export function StepClinical({
             noOptionsText="Nenhum CID encontrado"
             size="small"
           />
-          {/* Inline feedback (Terapias Especiais only) */}
-          {category === 'Terapias Especiais' && form.cidPrincipal.startsWith('F84') ? (
-            <Typography
-              sx={{
-                fontSize: 12,
-                color: '#166534',
-                mt: 0.5,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.5,
-              }}
-            >
-              ✓ RN 539/2022 — sessões ilimitadas aplicáveis
-            </Typography>
-          ) : null}
-          {category === 'Terapias Especiais' &&
-          form.cidPrincipal &&
-          !form.cidPrincipal.startsWith('F84') ? (
-            <Typography sx={{ fontSize: 12, color: '#b45309', mt: 0.5 }}>
-              CID fora do espectro F84 — RN 539 (sessões ilimitadas) não se aplica automaticamente
-            </Typography>
-          ) : null}
-          {!form.cidPrincipal ? (
-            <Typography sx={{ fontSize: 11, color: 'text.secondary', mt: 0.5 }}>
-              O CID determina regras de cobertura. Clique no campo para ver sugestões.
-            </Typography>
-          ) : null}
+          <CidPrincipalHint category={category} cid={form.cidPrincipal} />
         </Grid>
         <Grid size={{ xs: 12 }}>
           <FieldLabel>

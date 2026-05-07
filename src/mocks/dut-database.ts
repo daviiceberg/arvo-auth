@@ -182,6 +182,38 @@ export const dutDatabase: Record<number, DutEntry> = {
       'Cobertura obrigatória para pacientes com úlcera de pé diabético grau ≥3 pela classificação de Wagner.',
     source: 'Anexo II — RN 465/2021',
   },
+  70: {
+    number: 70,
+    title: 'Quimioterapia Antineoplásica Endovenosa',
+    criteria:
+      'Cobertura obrigatória para protocolos oncológicos com indicação clínica documentada (laudo oncológico, estadiamento TNM, linha de tratamento). Protocolo deve constar nas diretrizes da SBOC ou NCCN. Ciclos sequenciais autorizados conjuntamente quando há protocolo definido. Suspensão por toxicidade requer reavaliação.',
+    source: 'Anexo II — RN 465/2021',
+    sourceType: 'ANS',
+  },
+  71: {
+    number: 71,
+    title: 'Radioterapia Conformacional 3D / IMRT',
+    criteria:
+      'Cobertura obrigatória quando há indicação oncológica (laudo radioterápico, planejamento dosimétrico). Número de frações conforme prescrição (varia de 5 a 40). IMRT obrigatória para câncer de cabeça/pescoço, próstata e SNC; demais sítios: 3D conformacional como padrão. Reavaliação após 50% das frações.',
+    source: 'Anexo II — RN 465/2021',
+    sourceType: 'ANS',
+  },
+  80: {
+    number: 80,
+    title: 'Atendimento de Urgência/Emergência Ambulatorial',
+    criteria:
+      'Cobertura obrigatória conforme RN 566/2022 art. 3º — atendimento imediato (≤2h) sem necessidade de autorização prévia. CID obrigatório no laudo. Justificativa clínica do quadro de urgência/emergência exigida. Não admite negativa por carência (RN 195/2009 art. 11).',
+    source: 'RN 566/2022 art. 3º',
+    sourceType: 'ANS',
+  },
+  81: {
+    number: 81,
+    title: 'Internação de Urgência/Emergência',
+    criteria:
+      'Cobertura obrigatória sem autorização prévia para risco iminente de morte ou lesão irreparável (RN 566/2022 art. 3º §1º). Comunicação à operadora em até 24h. Carência reduzida a 24h conforme RN 195/2009 art. 11. Necessidade de UTI segue protocolo específico do nível de auditoria HOSPITALAR/UTI.',
+    source: 'RN 566/2022 art. 3º §1º',
+    sourceType: 'ANS',
+  },
 };
 
 export function getDutByNumber(num: number): DutEntry | undefined {

@@ -32,7 +32,15 @@ const theme = createTheme({
       },
     },
     MuiPaper: { styleOverrides: { rounded: { borderRadius: 16 } } },
-    MuiOutlinedInput: { styleOverrides: { root: { borderRadius: 6 } } },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: 6,
+          backgroundColor: '#ffffff',
+          '&.Mui-disabled': { backgroundColor: '#f5f5f5' },
+        },
+      },
+    },
     MuiChip: { styleOverrides: { root: { borderRadius: 4, fontWeight: 600 } } },
     MuiListItemButton: {
       styleOverrides: {

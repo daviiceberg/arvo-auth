@@ -1,7 +1,7 @@
 'use client';
 
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
-import GroupsIcon from '@mui/icons-material/Groups';
+import AssignmentReturnOutlinedIcon from '@mui/icons-material/AssignmentReturnOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -10,10 +10,62 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { CategoryChip, DecisionActionChip } from '@/shared/components';
+import { CHIP_BASE_SX, CHIP_ICON_FONT_SIZE } from '@/shared/components/chips/chip-styles';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { type HistoryEntry } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
+
+const FLAG_CHIP_SX = (bg: string, color: string) => ({
+  ...CHIP_BASE_SX,
+  backgroundColor: bg,
+  color,
+  alignSelf: 'flex-start',
+  '& .MuiChip-icon': { color },
+});
+
+function FlagChips({ entry }: { entry: HistoryEntry }) {
+  const has =
+    entry.passedThroughPendency === true ||
+    entry.passedThroughJunta === true ||
+    entry.hadInjunction === true ||
+    entry.hadNip === true;
+  if (!has) return null;
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mt: 0.5 }}>
+      {entry.passedThroughPendency ? (
+        <Chip
+          icon={
+            <AssignmentReturnOutlinedIcon
+              sx={{ fontSize: CHIP_ICON_FONT_SIZE, ml: '4px !important' }}
+            />
+          }
+          label="Passou por pendência"
+          size="small"
+          sx={FLAG_CHIP_SX('rgba(245,158,11,0.18)', '#d97706')}
+        />
+      ) : null}
+      {entry.passedThroughJunta ? (
+        <Chip
+          icon={<GroupsOutlinedIcon sx={{ fontSize: CHIP_ICON_FONT_SIZE, ml: '4px !important' }} />}
+          label="Passou por junta médica"
+          size="small"
+          sx={FLAG_CHIP_SX('rgba(124,58,237,0.12)', '#6d28d9')}
+        />
+      ) : null}
+      {entry.hadInjunction ? (
+        <Chip
+          label="Liminar Judicial"
+          size="small"
+          sx={FLAG_CHIP_SX('rgba(91,33,182,0.12)', '#5b21b6')}
+        />
+      ) : null}
+      {entry.hadNip ? (
+        <Chip label="NIP" size="small" sx={FLAG_CHIP_SX('rgba(194,65,12,0.12)', '#c2410c')} />
+      ) : null}
+    </Box>
+  );
+}
 
 interface HistoryListTableRowProps {
   entry: HistoryEntry;
@@ -90,42 +142,7 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
             {entry.analyst}
           </Typography>
         )}
-        {entry.passedThroughPendency || entry.passedThroughJunta ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mt: 0.5 }}>
-            {entry.passedThroughPendency ? (
-              <Chip
-                icon={<AssignmentReturnIcon sx={{ fontSize: 11, ml: '4px !important' }} />}
-                label="Passou por pendência"
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 10,
-                  fontWeight: 600,
-                  backgroundColor: 'rgba(245,158,11,0.18)',
-                  color: '#d97706',
-                  alignSelf: 'flex-start',
-                  '& .MuiChip-label': { px: 0.75 },
-                }}
-              />
-            ) : null}
-            {entry.passedThroughJunta ? (
-              <Chip
-                icon={<GroupsIcon sx={{ fontSize: 11, ml: '4px !important' }} />}
-                label="Passou por junta médica"
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 10,
-                  fontWeight: 600,
-                  backgroundColor: 'rgba(124,58,237,0.12)',
-                  color: '#6d28d9',
-                  alignSelf: 'flex-start',
-                  '& .MuiChip-label': { px: 0.75 },
-                }}
-              />
-            ) : null}
-          </Box>
-        ) : null}
+        <FlagChips entry={entry} />
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
         <Typography variant="body2" sx={{ fontSize: 12, whiteSpace: 'nowrap' }}>

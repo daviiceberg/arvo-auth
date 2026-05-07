@@ -79,6 +79,8 @@ export default function QueueFilterBar({
           }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
+          <MenuItem value="Urgência/Emergência">Urgência/Emergência</MenuItem>
+          <MenuItem value="Oncologia">Oncologia</MenuItem>
           <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
           <MenuItem value="SADT">SADT</MenuItem>
           <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>

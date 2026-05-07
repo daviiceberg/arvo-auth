@@ -444,7 +444,8 @@ function ProcedureRow({
   const codeType = proc.codeType ?? 'TUSS';
   const isPackage = codeType === 'PACKAGE';
   const hasTussCodes = isPackage && (proc.tussCodesIncluded?.length ?? 0) > 0;
-  const dutNumber = getDutNumberForTuss(proc.code);
+  const dutNumber =
+    proc.dutNumber ?? getDutNumberForTuss(proc.tuss) ?? getDutNumberForTuss(proc.code);
   const adjDutNumber = dutAdjustment
     ? parseInt(dutAdjustment.newValue.replace('DUT ', ''), 10)
     : null;

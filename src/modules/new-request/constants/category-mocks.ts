@@ -72,6 +72,43 @@ export const categoryMocks: Record<Category, Partial<FormData>> = {
     nomeContratadoExecutante: 'Lar+ SP',
     cnesExecutante: '9889977',
   },
+  'Urgência/Emergência': {
+    nomeBeneficiario: 'Júlia Ferreira Mota',
+    carteirinha: '1112223334445556',
+    dataNascimento: '1988-04-18',
+    cidPrincipal: 'R10.4 - Dor abdominal aguda',
+    indicacaoClinica:
+      'Paciente com dor abdominal aguda intensa há 4h, suspeita de abdome agudo cirúrgico. Atendimento imediato em pronto-socorro.',
+    profissionalSolicitante: 'Dr. Bruno Alencar',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '210345',
+    conselhoUF: 'SP',
+    cboCodigo: '225105',
+    nomeContratadoSolicitante: 'Pronto-Socorro Hospital São Paulo',
+    nomeContratadoExecutante: 'Hospital São Paulo',
+    cnesExecutante: '2077469',
+  },
+  Oncologia: {
+    nomeBeneficiario: 'Antônio Souza Lopes',
+    carteirinha: '7778889990001112',
+    dataNascimento: '1962-09-12',
+    cidPrincipal: 'C50.9 - Neoplasia maligna da mama',
+    indicacaoClinica:
+      'Paciente em tratamento oncológico para neoplasia mamária estadiamento IIB. Iniciar protocolo AC-T (4 ciclos AC seguidos por 4 ciclos paclitaxel).',
+    profissionalSolicitante: 'Dra. Marina Vidal',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '154321',
+    conselhoUF: 'SP',
+    cboCodigo: '225175',
+    nomeContratadoSolicitante: 'Instituto de Oncologia Avançada',
+    nomeContratadoExecutante: 'Centro de Oncologia Premium',
+    cnesExecutante: '4456789',
+    estadiamentoTNM: 'T2 N1 M0',
+    numeroCiclo: '4',
+    protocoloQuimio: 'AC-T',
+    tipoTratamento: 'Quimioterapia',
+    totalCiclos: '8',
+  },
 };
 
 export const categoryDocumentLabels: Record<Category, string> = {
@@ -79,4 +116,6 @@ export const categoryDocumentLabels: Record<Category, string> = {
   SADT: 'Documentos necessários para autorização de SADT:',
   'Exames Alta Complexidade': 'Documentos necessários para autorização de Exames:',
   'Home Care': 'Documentos necessários para autorização de Home Care:',
+  'Urgência/Emergência': 'Documentos necessários para Urgência/Emergência:',
+  Oncologia: 'Documentos necessários para protocolo oncológico:',
 };

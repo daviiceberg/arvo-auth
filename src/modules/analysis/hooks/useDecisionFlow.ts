@@ -53,6 +53,17 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
   const handleDenyClick = () => {
     fields.setDenialReasonIdx(-1);
     fields.setDenialJustification('');
+    if (request.injunction) {
+      fields.setInjunctionAcknowledgment('');
+      dialogs.setShowInjunctionAckDialog(true);
+      return;
+    }
+    dialogs.setShowDenialDialog(true);
+  };
+
+  const handleInjunctionAckContinue = () => {
+    if (fields.injunctionAcknowledgment.trim().length < 30) return;
+    dialogs.setShowInjunctionAckDialog(false);
     dialogs.setShowDenialDialog(true);
   };
 
@@ -152,6 +163,8 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
     setShowPartialDialog: dialogs.setShowPartialDialog,
     showAdjustApprovalConfirm: dialogs.showAdjustApprovalConfirm,
     setShowAdjustApprovalConfirm: dialogs.setShowAdjustApprovalConfirm,
+    showInjunctionAckDialog: dialogs.showInjunctionAckDialog,
+    setShowInjunctionAckDialog: dialogs.setShowInjunctionAckDialog,
 
     // Pending action
     pendingAction,
@@ -182,11 +195,14 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
     setMedicalBoardObs: fields.setMedicalBoardObs,
     divergenceReason: fields.divergenceReason,
     setDivergenceReason: fields.setDivergenceReason,
+    injunctionAcknowledgment: fields.injunctionAcknowledgment,
+    setInjunctionAcknowledgment: fields.setInjunctionAcknowledgment,
 
     // Handlers
     handleApproveClick,
     doApprove,
     handleDenyClick,
+    handleInjunctionAckContinue,
     confirmApproval,
     confirmDenial,
     confirmPendency,

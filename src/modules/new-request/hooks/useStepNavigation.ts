@@ -4,15 +4,19 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { logger } from '@/shared/utils/logger';
 import { type Category } from '@/types/pedido';
 
 import { type FormData, type TerapiaProcedimento } from '../types';
+import { formDataToRequest } from '../utils/form-to-request';
 
 const STEP_DYNAMIC_LABEL_BY_CATEGORY: Record<Category, string> = {
   'Terapias Especiais': 'Sessões de Terapia',
   SADT: 'Procedimento SADT',
   'Exames Alta Complexidade': 'Exame de Alta Complexidade',
   'Home Care': 'Plano de Home Care',
+  'Urgência/Emergência': 'Atendimento de Urgência',
+  Oncologia: 'Protocolo Oncológico',
 };
 
 function dynamicStepLabel(category: FormData['category']): string {
@@ -80,7 +84,37 @@ function validateHomeCare(form: FormData): string | null {
   return null;
 }
 
+function validateUrgency(form: FormData): string | null {
+  for (let i = 0; i < form.urgencyProcedimentos.length; i++) {
+    const p = form.urgencyProcedimentos[i];
+    if (!p) continue;
+    const n = form.urgencyProcedimentos.length > 1 ? ` no Atendimento ${String(i + 1)}` : '';
+    if (!p.classificacaoRisco) return `Selecione a Classificação de Risco (Manchester)${n}.`;
+    if (!p.tipo) return `Selecione o tipo de atendimento${n}.`;
+    if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
+    if (!p.justificativaClinica.trim() || p.justificativaClinica.trim().length < 20) {
+      return `Justificativa clínica obrigatória (mínimo 20 caracteres)${n}.`;
+    }
+  }
+  return null;
+}
+
+function validateOncology(form: FormData): string | null {
+  if (!form.estadiamentoTNM.trim()) return 'Informe o Estadiamento (TNM).';
+  if (!form.protocoloQuimio.trim()) return 'Informe o Protocolo Quimioterápico.';
+  if (!form.tipoTratamento) return 'Selecione o Tipo de Tratamento.';
+  for (let i = 0; i < form.oncologyProcedimentos.length; i++) {
+    const p = form.oncologyProcedimentos[i];
+    if (!p) continue;
+    const n = form.oncologyProcedimentos.length > 1 ? ` no Procedimento ${String(i + 1)}` : '';
+    if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
+  }
+  return null;
+}
+
 function validateDynamicStep(form: FormData, procedures: TerapiaProcedimento[]): string | null {
+  if (form.category === 'Urgência/Emergência') return validateUrgency(form);
+  if (form.category === 'Oncologia') return validateOncology(form);
   if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
   if (form.category === 'Terapias Especiais') return validateTherapyProcedures(procedures);
   if (form.category === 'SADT') return validateSadt(form);
@@ -152,6 +186,19 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
     setSubmitting(true);
     setTimeout(() => {
       const id = `REQ-2026-${String(50000 + Math.floor(Math.random() * 49999)).padStart(5, '0')}`;
+      // Mapeamento FormData → Request (preparação backend, M3 prototyping).
+      // Hoje só validamos shape via logger; quando endpoint existir, basta enviar
+      // o payload retornado para o serviço.
+      try {
+        const payload = formDataToRequest({
+          form,
+          terapiaProcedimentos,
+          generatedId: id,
+        });
+        logger.info('[new-request] payload preparado', { id, category: payload.category });
+      } catch (err) {
+        logger.error('[new-request] falha ao mapear FormData → Request', err);
+      }
       setNumeroProtocolo(id);
       setSubmitting(false);
       setModalAberto(true);

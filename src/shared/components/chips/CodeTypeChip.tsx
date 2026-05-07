@@ -5,6 +5,8 @@ import Chip from '@mui/material/Chip';
 import { codeTypeColorMap } from '@/shared/constants';
 import { type CodeType } from '@/types/procedure-codes';
 
+import { CHIP_BASE_SX } from './chip-styles';
+
 const LABEL_MAP: Record<CodeType, string> = {
   TUSS: 'TUSS',
   PACKAGE: 'Pacote',
@@ -25,11 +27,9 @@ export default function CodeTypeChip({ codeType, size = 'small', onClick }: Code
       size={size}
       onClick={onClick}
       sx={{
+        ...CHIP_BASE_SX,
         backgroundColor: colors.bg,
         color: colors.text,
-        fontWeight: 700,
-        fontSize: 11,
-        height: 20,
         cursor: onClick ? 'pointer' : 'default',
       }}
     />

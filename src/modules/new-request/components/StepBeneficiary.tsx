@@ -18,6 +18,8 @@ import { type Category } from '@/types/pedido';
 import { type FormData } from '../types';
 
 const CATEGORY_OPTIONS: Category[] = [
+  'Urgência/Emergência',
+  'Oncologia',
   'Terapias Especiais',
   'SADT',
   'Exames Alta Complexidade',

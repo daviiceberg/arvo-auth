@@ -35,6 +35,98 @@ export const TUSS_CODES: TussCode[] = [
     tableNumber: 22,
     chapter: 'Cap. 1',
   },
+  // ── Urgência/Emergência (M3) ──────────────────────────────────────
+  {
+    code: '10101047',
+    description: 'Atendimento de urgência/emergência',
+    tableNumber: 22,
+    chapter: 'Cap. 1',
+  },
+  {
+    code: '30202010',
+    description: 'Internação de urgência',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  {
+    code: '30202028',
+    description: 'Internação emergencial em UTI',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  {
+    code: '30911044',
+    description: 'Cateterismo cardíaco E/D',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  {
+    code: '30911052',
+    description: 'Angioplastia coronariana',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  {
+    code: '30911060',
+    description: 'Implante de stent coronariano',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  {
+    code: '31003036',
+    description: 'Colecistectomia videolaparoscópica',
+    tableNumber: 22,
+    chapter: 'Cap. 3',
+  },
+  // ── Oncologia (M3) ────────────────────────────────────────────────
+  {
+    code: '41101010',
+    description: 'Quimioterapia antineoplásica EV',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41101028',
+    description: 'Quimioterapia oral protocolar',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41101036',
+    description: 'Hormonioterapia antineoplásica',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41101044',
+    description: 'Imunoterapia antineoplásica (Pembrolizumabe, Nivolumabe)',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41201019',
+    description: 'Radioterapia conformacional 3D',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41201027',
+    description: 'IMRT (Radioterapia Modulada)',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '41201035',
+    description: 'Radioterapia estereotáxica',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
+  {
+    code: '40808125',
+    description: 'PET-CT Oncológico',
+    tableNumber: 22,
+    chapter: 'Cap. 4',
+  },
 ];
 
 // ── Operator packages ───────────────────────────────────────────────
@@ -113,6 +205,51 @@ export const OPERATOR_PACKAGES: OperatorPackage[] = [
     tussCodesIncluded: [
       { code: '50000370', description: 'Sessão de Fonoaudiologia', tableNumber: 22 },
       { code: '50000489', description: 'Sessão de Terapia Ocupacional', tableNumber: 22 },
+    ],
+    isActive: true,
+  },
+  // ── Pacote U/E: Cateterismo cardíaco ─────────────────────────────────
+  {
+    id: 'pkg-ue-001',
+    packageCode: '98911044',
+    packageName: 'PCT - Cateterismo coronariano',
+    packageValue: 8500.0,
+    tussCodesIncluded: [
+      { code: '30911044', description: 'Cateterismo cardíaco E/D', tableNumber: 22 },
+    ],
+    isActive: true,
+  },
+  // ── Pacote U/E: Reabilitação multidisciplinar ────────────────────────
+  {
+    id: 'pkg-ue-002',
+    packageCode: '98500047',
+    packageName: 'PCT - Reabilitação multidisciplinar (10 sessões)',
+    packageValue: 3500.0,
+    tussCodesIncluded: [
+      { code: '50000497', description: 'Sessão de Fisioterapia', tableNumber: 22 },
+      { code: '50000370', description: 'Sessão de Fonoaudiologia', tableNumber: 22 },
+    ],
+    isActive: true,
+  },
+  // ── Pacote Oncologia: AC-T mama ──────────────────────────────────────
+  {
+    id: 'pkg-onc-001',
+    packageCode: '98410010',
+    packageName: 'PCT - Quimioterapia AC-T (mama, 8 ciclos)',
+    packageValue: 12500.0,
+    tussCodesIncluded: [
+      { code: '41101010', description: 'Quimioterapia antineoplásica EV', tableNumber: 22 },
+    ],
+    isActive: true,
+  },
+  // ── Pacote Oncologia: Radioterapia conformacional ────────────────────
+  {
+    id: 'pkg-onc-002',
+    packageCode: '98412019',
+    packageName: 'PCT - Radioterapia conformacional 3D (39 frações)',
+    packageValue: 18000.0,
+    tussCodesIncluded: [
+      { code: '41201019', description: 'Radioterapia conformacional 3D', tableNumber: 22 },
     ],
     isActive: true,
   },

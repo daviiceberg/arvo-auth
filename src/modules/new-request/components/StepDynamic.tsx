@@ -12,15 +12,22 @@ import {
   type SadtProcedimento,
   type ExamsProcedimento,
   type HomeCareItem,
+  type UrgencyProcedimento,
+  type OncologyProcedimento,
 } from '../types';
 
 import { StepExams } from './steps/StepExams';
 import { StepHomeCare } from './steps/StepHomeCare';
+import { StepOncology } from './steps/StepOncology';
 import { StepSadt } from './steps/StepSadt';
 import { StepTherapies } from './steps/StepTherapies';
+import { StepUrgency } from './steps/StepUrgency';
 
 interface StepDynamicProps {
   form: FormData;
+  set: (
+    field: keyof FormData,
+  ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   setSelect: (field: keyof FormData) => (value: string) => void;
   terapiaProcedimentos: TerapiaProcedimento[];
   handleAddTerapiaProc: () => void;
@@ -49,6 +56,20 @@ interface StepDynamicProps {
   handleUpdateHomeCareProcedimento: (
     id: string,
     field: keyof Omit<HomeCareItem, 'id'>,
+    value: string,
+  ) => void;
+  handleAddUrgencyProcedimento: () => void;
+  handleRemoveUrgencyProcedimento: (id: string) => void;
+  handleUpdateUrgencyProcedimento: (
+    id: string,
+    field: keyof Omit<UrgencyProcedimento, 'id'>,
+    value: string,
+  ) => void;
+  handleAddOncologyProcedimento: () => void;
+  handleRemoveOncologyProcedimento: (id: string) => void;
+  handleUpdateOncologyProcedimento: (
+    id: string,
+    field: keyof Omit<OncologyProcedimento, 'id'>,
     value: string,
   ) => void;
 }
@@ -93,6 +114,24 @@ function buildStepByCategory(props: StepDynamicProps): Record<Category, ReactNod
         handleAddHomeCareProcedimento={props.handleAddHomeCareProcedimento}
         handleRemoveHomeCareProcedimento={props.handleRemoveHomeCareProcedimento}
         handleUpdateHomeCareProcedimento={props.handleUpdateHomeCareProcedimento}
+      />
+    ),
+    'Urgência/Emergência': (
+      <StepUrgency
+        form={props.form}
+        handleAddUrgencyProcedimento={props.handleAddUrgencyProcedimento}
+        handleRemoveUrgencyProcedimento={props.handleRemoveUrgencyProcedimento}
+        handleUpdateUrgencyProcedimento={props.handleUpdateUrgencyProcedimento}
+      />
+    ),
+    Oncologia: (
+      <StepOncology
+        form={props.form}
+        set={props.set}
+        setSelect={props.setSelect}
+        handleAddOncologyProcedimento={props.handleAddOncologyProcedimento}
+        handleRemoveOncologyProcedimento={props.handleRemoveOncologyProcedimento}
+        handleUpdateOncologyProcedimento={props.handleUpdateOncologyProcedimento}
       />
     ),
   };

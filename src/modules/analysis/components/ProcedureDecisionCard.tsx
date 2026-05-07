@@ -104,9 +104,24 @@ export default function ProcedureDecisionCard({
       {isPackage && procedure.tussCodesIncluded && procedure.tussCodesIncluded.length > 0 ? (
         <Typography
           variant="caption"
-          sx={{ color: 'text.secondary', fontSize: 11, display: 'block', mb: 0.75 }}
+          sx={{ color: 'text.secondary', fontSize: 11, display: 'block', mb: 0.25 }}
         >
           Inclui: {procedure.tussCodesIncluded.map((t) => t.code).join(', ')}
+        </Typography>
+      ) : null}
+      {isPackage ? (
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'primary.main',
+            fontSize: 10,
+            fontWeight: 600,
+            display: 'block',
+            mb: 0.75,
+            fontStyle: 'italic',
+          }}
+        >
+          Pacote = unidade atômica · decisão aplicada ao bundle inteiro
         </Typography>
       ) : null}
       <Box sx={{ display: 'flex', gap: 0.75 }}>

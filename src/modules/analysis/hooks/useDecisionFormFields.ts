@@ -26,6 +26,9 @@ export function useDecisionFormFields() {
   const [partialDenialReasonMap, setPartialDenialReasonMap] = useState<Record<string, number>>({});
   const [partialDenialJustMap, setPartialDenialJustMap] = useState<Record<string, string>>({});
 
+  // Injunction acknowledgment form field
+  const [injunctionAcknowledgment, setInjunctionAcknowledgment] = useState('');
+
   const resetApprovalFields = useCallback(() => {
     setApprovalReason('');
     setApprovalJustification('');
@@ -89,6 +92,10 @@ export function useDecisionFormFields() {
     setPartialDenialReasonMap,
     partialDenialJustMap,
     setPartialDenialJustMap,
+
+    // Injunction acknowledgment
+    injunctionAcknowledgment,
+    setInjunctionAcknowledgment,
 
     // Reset helpers
     resetApprovalFields,

@@ -1,19 +1,18 @@
 'use client';
 
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import SearchIcon from '@mui/icons-material/Search';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+
+import { TussCodeSearchField } from '@/shared/components/code-autocomplete';
 
 import { type FormData, type SadtProcedimento, type SadtTipo } from '@/modules/new-request/types';
 
@@ -112,44 +111,17 @@ export function StepSadt({
           </Box>
 
           <Grid container spacing={2}>
-            <Grid size={{ xs: 6 }}>
-              <FieldLabel>Código TUSS *</FieldLabel>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Ex: 40101010"
-                value={proc.codigoTUSS}
-                onChange={(e) => {
-                  handleUpdateSadtProcedimento(proc.id, 'codigoTUSS', e.target.value);
+            <Grid size={{ xs: 12 }}>
+              <FieldLabel>Código TUSS / Pacote *</FieldLabel>
+              <TussCodeSearchField
+                code={proc.codigoTUSS}
+                description={proc.descricaoTUSS}
+                onChange={(c, d) => {
+                  handleUpdateSadtProcedimento(proc.id, 'codigoTUSS', c);
+                  handleUpdateSadtProcedimento(proc.id, 'descricaoTUSS', d);
                 }}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Tooltip title="Clique para buscar código TUSS" placement="top">
-                          <SearchIcon
-                            sx={{ fontSize: 16, color: 'text.secondary', cursor: 'pointer' }}
-                            onClick={() => {
-                              window.open('https://arvoredecodigos.com.br/', '_blank');
-                            }}
-                          />
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </Grid>
-            <Grid size={{ xs: 6 }}>
-              <FieldLabel>Descrição TUSS</FieldLabel>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="Descrição do procedimento"
-                value={proc.descricaoTUSS}
-                onChange={(e) => {
-                  handleUpdateSadtProcedimento(proc.id, 'descricaoTUSS', e.target.value);
-                }}
+                label=""
+                placeholder="Buscar código TUSS ou pacote"
               />
             </Grid>
             <Grid size={{ xs: 6 }}>
