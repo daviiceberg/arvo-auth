@@ -72,7 +72,7 @@ export default function Sidebar({
         }}
         sx={{
           minHeight: 44,
-          borderRadius: '8px !important',
+          borderRadius: '6px !important',
           px: 1.5,
           justifyContent: collapsed ? 'center' : 'flex-start',
           ...(isActive && {
@@ -155,7 +155,7 @@ export default function Sidebar({
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
-          borderRight: '1px solid rgba(0,0,0,0.04)',
+          borderRight: 'none',
         }}
       >
         {/* Collapse toggle */}
@@ -197,7 +197,7 @@ export default function Sidebar({
         </Box>
 
         {/* Main nav (Dashboard + Fila Operacional) */}
-        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+        <Box sx={{ px: 1.5, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {navItems.slice(0, 2).map(renderNavItem)}
           </List>
@@ -205,7 +205,7 @@ export default function Sidebar({
 
         {/* Categories Menu Item */}
         {!collapsed && (
-          <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+          <Box sx={{ px: 1.5, pt: 0.5, flexShrink: 0 }}>
             <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               <ListItemButton
                 onClick={() => {
@@ -213,7 +213,7 @@ export default function Sidebar({
                 }}
                 sx={{
                   minHeight: 44,
-                  borderRadius: '8px !important',
+                  borderRadius: '6px !important',
                   px: 1.5,
                   justifyContent: 'flex-start',
                   '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
@@ -304,14 +304,14 @@ export default function Sidebar({
         )}
 
         {/* Remaining main nav (Histórico) */}
-        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+        <Box sx={{ px: 1.5, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {navItems.slice(2).map(renderNavItem)}
           </List>
         </Box>
 
         {/* Admin nav */}
-        <Box sx={{ px: 1, pt: 0.5, flexShrink: 0 }}>
+        <Box sx={{ px: 1.5, pt: 0.5, flexShrink: 0 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {ADMIN_ITEMS.map(renderNavItem)}
           </List>
@@ -323,9 +323,8 @@ export default function Sidebar({
         {/* Footer: Links Úteis + Help */}
         <Box
           sx={{
-            px: 1,
+            px: 1.5,
             py: 1.5,
-            borderTop: '1px solid rgba(0,0,0,0.04)',
             flexShrink: 0,
             mt: collapsed ? 'auto' : 0,
             display: 'flex',
@@ -340,7 +339,7 @@ export default function Sidebar({
               }}
               sx={{
                 minHeight: 44,
-                borderRadius: '8px !important',
+                borderRadius: '6px !important',
                 px: 1.5,
                 '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
               }}
@@ -373,7 +372,7 @@ export default function Sidebar({
               onClick={onOpenHelp}
               sx={{
                 minHeight: 44,
-                borderRadius: '8px !important',
+                borderRadius: '6px !important',
                 px: 1.5,
                 '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
               }}

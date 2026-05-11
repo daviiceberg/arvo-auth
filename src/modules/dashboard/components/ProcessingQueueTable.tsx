@@ -102,7 +102,7 @@ export default function ProcessingQueueTable() {
           </Tooltip>
         </Box>
 
-        <Box>
+        <Box sx={{ border: '1px solid rgba(0,0,0,0.1)', borderRadius: '16px', overflow: 'hidden' }}>
           <Table size="small">
             <TableHead>
               <TableRow>

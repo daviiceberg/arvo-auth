@@ -67,7 +67,14 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
           ))}
         </Box>
       ) : (
-        <Box sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
+        <Box
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+          }}
+        >
           <Table size="small" aria-label="Pedidos que requerem atenção" sx={{ minWidth: 820 }}>
             <TableHead>
               <TableRow>

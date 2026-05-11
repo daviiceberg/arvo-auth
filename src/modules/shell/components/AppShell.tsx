@@ -37,7 +37,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        backgroundColor: 'background.default',
+        backgroundColor: '#ffffff',
       }}
     >
       <Topbar
@@ -62,7 +62,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         <Box
           component="main"
-          sx={{ flex: 1, overflowY: 'auto', backgroundColor: 'background.default' }}
+          sx={{
+            flex: 1,
+            overflowY: 'auto',
+            backgroundColor: '#FAF6F2',
+            borderRadius: '24px',
+            mr: '22px',
+            mb: '22px',
+          }}
         >
           {children}
         </Box>

@@ -155,7 +155,7 @@ function AnalysisInner() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: 'background.default',
+        backgroundColor: 'transparent',
       }}
     >
       <PageHeader

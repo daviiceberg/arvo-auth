@@ -68,7 +68,7 @@ export default function HistoryDetailPage() {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: 'background.default',
+        backgroundColor: 'transparent',
       }}
     >
       {/* Header */}

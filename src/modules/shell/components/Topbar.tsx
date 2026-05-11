@@ -91,7 +91,7 @@ export default function Topbar({
       elevation={0}
       sx={{
         backgroundColor: 'transparent',
-        borderBottom: '1px solid rgba(0,0,0,0.04)',
+        borderBottom: 'none',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
