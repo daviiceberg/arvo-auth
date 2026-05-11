@@ -143,7 +143,7 @@ export default function PreOpCard({ surgery, preOp }: PreOpCardProps) {
             }}
           >
             <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#0891b2' }}>
-              OPME vinculado — validação ANVISA + cotações entra em milestone futuro (M5).
+              OPME vinculado — materiais detalhados na seção Materiais OPME desta análise.
             </Typography>
           </Box>
         ) : null}
@@ -158,7 +158,8 @@ export default function PreOpCard({ surgery, preOp }: PreOpCardProps) {
             }}
           >
             <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#9333ea' }}>
-              Cirurgia oncológica — vinculada ao protocolo M3.
+              Cirurgia oncológica — vinculada ao protocolo oncológico (estadiamento + linha +
+              ciclo).
             </Typography>
           </Box>
         ) : null}

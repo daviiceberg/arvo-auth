@@ -180,11 +180,11 @@ export const OPERATOR_PACKAGES: OperatorPackage[] = [
     ],
     isActive: true,
   },
-  // ── Pacote 4: Psicologia ABA individual (código proprietário Athena) ─
+  // ── Pacote 4: Psicologia ABA individual (código proprietário operadora) ─
   {
     id: 'pkg-tea-004',
     packageCode: '98170444',
-    packageName: 'PCT-TEA — Psicologia ABA Individual (código Athena)',
+    packageName: 'PCT-TEA — Psicologia ABA Individual (código operadora)',
     packageValue: 2400.0,
     tussCodesIncluded: [
       { code: '50000438', description: 'Sessão de Psicoterapia Individual', tableNumber: 22 },

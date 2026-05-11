@@ -48,7 +48,9 @@ export function useAdjustmentState({ request, showSnackbar }: UseAdjustmentState
             ? `CID alterado de ${adjustment.previousValue} para ${adjustment.newValue}`
             : adjustment.field === 'dut'
               ? `DUT definida: ${adjustment.newValue}`
-              : `Código alterado para ${adjustment.newValue}`;
+              : adjustment.field === 'valor'
+                ? `Valor ajustado de ${adjustment.previousValue} para ${adjustment.newValue}`
+                : `Código alterado para ${adjustment.newValue}`;
     showSnackbar(`✓ Ajuste registrado — ${fieldLabel}`, 'warning');
   };
 

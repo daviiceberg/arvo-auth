@@ -1,4 +1,6 @@
-export type AnvisaStatus = 'valid' | 'invalid' | 'not_found' | 'not_checked';
+import { type AnvisaStatus } from '@/types/pedido';
+
+export type { AnvisaStatus };
 
 export interface AnvisaStatusConfig {
   bg: string;

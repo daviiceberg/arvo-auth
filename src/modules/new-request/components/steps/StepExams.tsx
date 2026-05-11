@@ -73,8 +73,8 @@ export function StepExams({
         </Grid>
         <Grid size={{ xs: 12 }}>
           <Alert severity="info" sx={{ fontSize: 13 }}>
-            Exames de alta complexidade exigem justificativa técnica explícita. Critérios DUT entram
-            em milestone futuro — neste piloto a análise usa o checklist da IA.
+            Exames de alta complexidade exigem justificativa técnica explícita. A análise utiliza o
+            checklist da IA para validar os critérios.
           </Alert>
         </Grid>
       </Grid>

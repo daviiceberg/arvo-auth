@@ -16,3 +16,8 @@ export {
   anvisaStatusColorMap,
 } from './anvisa-status-colors';
 export { COUNCIL_TYPES, type CouncilType } from './council-types';
+export {
+  type OpmeValueReasonConfig,
+  opmeValueReasons,
+  OPME_VALUE_REASON_CODES,
+} from './opme-value-reasons';

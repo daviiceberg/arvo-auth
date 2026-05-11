@@ -22,6 +22,7 @@ const SECTION_TITLE_BY_CATEGORY: Record<Category, string> = {
   Oncologia: 'Protocolo Oncológico',
   Internação: 'Plano de Internação',
   'Cirurgias Eletivas': 'Plano Cirúrgico',
+  OPME: 'Materiais OPME',
 };
 
 function etapaLabel(etapa: string): string {

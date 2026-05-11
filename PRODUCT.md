@@ -4,7 +4,7 @@
 
 ## Identity
 
-Arvo Auth TEA is a **MVP focado em Terapias Especiais (CID F84)** para operadoras de saúde brasileiras. Instância simplificada do Arvo Auth com escopo reduzido a uma única categoria. Piloto: Athena Saúde.
+Arvo Auth TEA is a **MVP focado em Terapias Especiais (CID F84)** para operadoras de saúde brasileiras. Instância simplificada do Arvo Auth com escopo reduzido a uma única categoria. Produto **white-label** multi-operadora.
 
 **Core principle:** "A Arvo gera a análise (ponto de vista) — a operadora decide a consequência (decisão/automação)." The AI produces structured analysis; the operator configures what happens as a result.
 
@@ -33,7 +33,7 @@ Modalidades atendidas: Fonoaudiologia, Psicologia (ABA e demais abordagens), Ter
 
 Before any clinical evaluation, the system applies administrative checks. If configurable rules are met, the system can auto-deny without human review:
 
-- CID F84 ausente ou não confirmado no laudo ("Chave de Ouro" no piloto Athena)
+- CID F84 ausente ou não confirmado no laudo ("Chave de Ouro" — regra operadora-configurável)
 - Laudo neuropsicológico ausente, ilegível ou vencido (>12 meses)
 - Assinatura ou carimbo do médico ausente
 - Invalid CRM (physician registry)

@@ -1,5 +1,7 @@
 import { type Category } from '@/types/pedido';
 
+import { type OpmeFormMaterial } from './opme';
+
 export interface SnackbarState {
   open: boolean;
   msg: string;
@@ -219,4 +221,7 @@ export interface FormData {
   surgeryHasOncologyLink: boolean;
   surgeryNotes: string;
   preOpItens: PreOpFormItem[];
+  // M5 — OPME
+  opmeMateriais: OpmeFormMaterial[];
+  opmeRelatedSurgery: string;
 }

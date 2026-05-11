@@ -89,16 +89,15 @@ function pushCirurgiasIntegracoes(items: ChecklistItem[], s: CirurgiasChecklistS
   if (s.opmeIntegrado === true)
     add(items, {
       id: 'OPME_INTEGRADO',
-      texto: 'OPME vinculado — validação ANVISA + cotações entra em milestone futuro (M5)',
-      status: 'warning',
-      origin: 'engenharia',
-      severity: 50,
+      texto: 'OPME vinculado — materiais com registro ANVISA e cotações na seção Materiais OPME',
+      status: 'ok',
+      origin: 'dados',
       showWhenOk: true,
     });
   if (s.oncologiaVinculada === true)
     add(items, {
       id: 'ONCOLOGIA_VINCULADA',
-      texto: 'Cirurgia oncológica vinculada a protocolo M3 (estadiamento e ciclo)',
+      texto: 'Cirurgia oncológica vinculada a protocolo oncológico (estadiamento e ciclo)',
       status: 'ok',
       origin: 'dados',
       showWhenOk: true,

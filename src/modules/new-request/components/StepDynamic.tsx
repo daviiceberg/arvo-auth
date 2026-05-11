@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 
 import Alert from '@mui/material/Alert';
 
-import { type Category } from '@/types/pedido';
+import { type Category, type OpmeValueReasonCode } from '@/types/pedido';
 
 import {
   type FormData,
@@ -20,11 +20,17 @@ import {
   type SurgeryTipoChoice,
   type PreOpFormItem,
 } from '../types';
+import {
+  type AnvisaConsultResult,
+  type OpmeFormMaterial,
+  type OpmeFormQuotation,
+} from '../types/opme';
 
 import { StepExams } from './steps/StepExams';
 import { StepHomeCare } from './steps/StepHomeCare';
 import { StepHospitalization } from './steps/StepHospitalization';
 import { StepOncology } from './steps/StepOncology';
+import { StepOpme } from './steps/StepOpme';
 import { StepSadt } from './steps/StepSadt';
 import { StepSurgeries } from './steps/StepSurgeries';
 import { StepTherapies } from './steps/StepTherapies';
@@ -111,6 +117,28 @@ interface StepDynamicProps {
     field: keyof Omit<PreOpFormItem, 'id' | 'templateId'>,
     value: string | boolean,
   ) => void;
+  handleAddOpmeMaterial: () => void;
+  handleRemoveOpmeMaterial: (id: string) => void;
+  handleUpdateOpmeMaterial: (
+    id: string,
+    field: keyof Omit<OpmeFormMaterial, 'id' | 'quotations'>,
+    value: string,
+  ) => void;
+  handleAddOpmeQuotation: (materialId: string) => void;
+  handleRemoveOpmeQuotation: (materialId: string, quotationId: string) => void;
+  handleUpdateOpmeQuotation: (
+    materialId: string,
+    quotationId: string,
+    field: keyof Omit<OpmeFormQuotation, 'id'>,
+    value: string,
+  ) => void;
+  handleSelectOpmeQuotation: (materialId: string, quotationId: string) => void;
+  handleSetOpmeChosenReason: (
+    materialId: string,
+    code: OpmeValueReasonCode | '',
+    note: string,
+  ) => void;
+  handleConsultAnvisa: (materialId: string) => Promise<AnvisaConsultResult>;
 }
 
 // Mitigação obrigatória de R-M2-02: roteamento por categoria via Record<Category, ReactNode>.
@@ -207,6 +235,30 @@ function buildStepByCategory(props: StepDynamicProps): Record<Category, ReactNod
         handleAddPreOpItem={props.handleAddPreOpItem}
         handleRemovePreOpItem={props.handleRemovePreOpItem}
         handleUpdatePreOpItem={props.handleUpdatePreOpItem}
+        handleAddOpmeMaterial={props.handleAddOpmeMaterial}
+        handleRemoveOpmeMaterial={props.handleRemoveOpmeMaterial}
+        handleUpdateOpmeMaterial={props.handleUpdateOpmeMaterial}
+        handleAddOpmeQuotation={props.handleAddOpmeQuotation}
+        handleRemoveOpmeQuotation={props.handleRemoveOpmeQuotation}
+        handleUpdateOpmeQuotation={props.handleUpdateOpmeQuotation}
+        handleSelectOpmeQuotation={props.handleSelectOpmeQuotation}
+        handleSetOpmeChosenReason={props.handleSetOpmeChosenReason}
+        handleConsultAnvisa={props.handleConsultAnvisa}
+      />
+    ),
+    OPME: (
+      <StepOpme
+        form={props.form}
+        set={props.set}
+        handleAddOpmeMaterial={props.handleAddOpmeMaterial}
+        handleRemoveOpmeMaterial={props.handleRemoveOpmeMaterial}
+        handleUpdateOpmeMaterial={props.handleUpdateOpmeMaterial}
+        handleAddOpmeQuotation={props.handleAddOpmeQuotation}
+        handleRemoveOpmeQuotation={props.handleRemoveOpmeQuotation}
+        handleUpdateOpmeQuotation={props.handleUpdateOpmeQuotation}
+        handleSelectOpmeQuotation={props.handleSelectOpmeQuotation}
+        handleSetOpmeChosenReason={props.handleSetOpmeChosenReason}
+        handleConsultAnvisa={props.handleConsultAnvisa}
       />
     ),
   };

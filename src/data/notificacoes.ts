@@ -1,9 +1,13 @@
 import { type Notification } from '@/types/notificacao';
 
+/**
+ * Mock de notificações cobrindo todos os tipos definidos em
+ * `src/types/notificacao.ts`. Ordem aproximada: mais recente/urgente primeiro.
+ */
 export const NOTIFICACOES: Notification[] = [
-  // ── M3: Urgência/Emergência — politrauma SLA violado ────────────────
+  // ── Urgência/Emergência — SLA crítico 30min ─────────────────────────
   {
-    id: 'notif-ue-002-sla-violado',
+    id: 'notif-ue-002-sla-30min',
     type: 'sla_critico_30min',
     title: 'SLA crítico violado — politrauma',
     message:
@@ -12,7 +16,18 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-UE-002',
   },
-  // ── M3: Urgência/Emergência — emergência cardíaca ───────────────────
+  // ── M5: OPME alto valor — encaminhado para Junta Médica ─────────────
+  {
+    id: 'notif-opme-004-junta',
+    type: 'novo_pedido_fila',
+    title: 'OPME de alto valor — análise por Junta Médica',
+    message:
+      'REQ-2026-OPME-004 · Walter Bittencourt Neto · Endoprótese aórtica R$ 78.500 · divergência > 30% entre cotações',
+    time: '5min atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-OPME-004',
+  },
+  // ── Urgência — emergência cardíaca (SCA) ────────────────────────────
   {
     id: 'notif-ue-001-novo',
     type: 'novo_pedido_fila',
@@ -23,7 +38,29 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-UE-001',
   },
-  // ── M3: Liminar Judicial registrada ────────────────────────────────
+  // ── M5: OPME ANVISA expirado — alerta ────────────────────────────────
+  {
+    id: 'notif-opme-002-anvisa-expirado',
+    type: 'sla_risco',
+    title: 'OPME com ANVISA expirado — revisão necessária',
+    message:
+      'REQ-2026-OPME-002 · Eduardo Marques Tavares · Stent coronariano (registro vencido em 2023-12-31) · alerta para análise',
+    time: '12min atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-OPME-002',
+  },
+  // ── Documento extraído pela IA ──────────────────────────────────────
+  {
+    id: 'notif-cir-001-doc-processado',
+    type: 'documento_processado',
+    title: 'IA extraiu dados do laudo',
+    message:
+      'REQ-2026-CIR-001 · Beatriz Pinheiro Almeida · Laudo de RM lombar processado — campos pré-preenchidos disponíveis',
+    time: '20min atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-CIR-001',
+  },
+  // ── Liminar Judicial — Oncologia ────────────────────────────────────
   {
     id: 'notif-onc-003-liminar',
     type: 'liminar_recebida',
@@ -34,9 +71,9 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-ONC-003',
   },
-  // ── M3: NIP aberta ANS ──────────────────────────────────────────────
+  // ── NIP aberta ANS ──────────────────────────────────────────────────
   {
-    id: 'notif-sadt-004-nip',
+    id: 'notif-sadt-004-nip-aberta',
     type: 'nip_aberta',
     title: 'NIP aberta — RN 483/2022',
     message:
@@ -45,7 +82,18 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-SADT-004',
   },
-  // ── M3: Oncologia — protocolo AC-T continuidade ─────────────────────
+  // ── M5: Pacote OPME (TISS 19) — processamento concluído ─────────────
+  {
+    id: 'notif-opme-006-processamento-ok',
+    type: 'processamento_ok',
+    title: 'Pacote OPME processado e na fila',
+    message:
+      'REQ-2026-OPME-006 · Antônia Lopes Vasconcelos · Kit Artroplastia Joelho · 3 materiais validados na ANVISA — pronto para análise',
+    time: '55min atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-OPME-006',
+  },
+  // ── Oncologia — continuidade protocolo AC-T ─────────────────────────
   {
     id: 'notif-onc-001-novo',
     type: 'novo_pedido_fila',
@@ -56,27 +104,9 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-ONC-001',
   },
+  // ── Junta Médica — parecer recebido ─────────────────────────────────
   {
-    id: 'REQ-2026-04895',
-    type: 'liminar_recebida',
-    title: 'Liminar Judicial registrada — pacote TEA',
-    message:
-      'REQ-2026-04895 · Arthur Lima Ferraz · Processo 1023456-78.2025.8.26.0100 · cobertura integral protocolo multidisciplinar',
-    time: '5min atrás',
-    read: false,
-    href: '/analise?id=REQ-2026-04895',
-  },
-  {
-    id: 'REQ-2026-05004',
-    type: 'processamento_erro',
-    title: 'REQ-2026-05004 — Erro no processamento',
-    message: 'Não foi possível extrair dados do laudo anexado. Requer reanálise manual.',
-    time: '10min atrás',
-    read: false,
-    href: '/dashboard',
-  },
-  {
-    id: 'notif-m1-parecer',
+    id: 'notif-m1-junta-002-parecer',
     type: 'junta_parecer_recebido',
     title: 'Parecer da Junta Médica disponível',
     message:
@@ -85,8 +115,42 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-M1-JUNTA-002',
   },
+  // ── SLA crítico — 1h restante (cirurgia eletiva próxima do prazo) ───
   {
-    id: 'notif-m1-junta-agendada',
+    id: 'notif-cir-002-sla-1h',
+    type: 'sla_critico_1h',
+    title: 'SLA crítico — menos de 1h restante',
+    message:
+      'REQ-2026-CIR-002 · Marcelo Augusto Pereira · Colecistectomia · prazo regulatório expira em 58min',
+    time: '1h atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-CIR-002',
+  },
+  // ── Liminar — pacote TEA ────────────────────────────────────────────
+  {
+    id: 'notif-tea-04895-liminar',
+    type: 'liminar_recebida',
+    title: 'Liminar Judicial registrada — pacote TEA',
+    message:
+      'REQ-2026-04895 · Arthur Lima Ferraz · Processo 1023456-78.2025.8.26.0100 · cobertura integral protocolo multidisciplinar',
+    time: '2h atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-04895',
+  },
+  // ── M5: OPME devolutiva ao prestador ────────────────────────────────
+  {
+    id: 'notif-opme-005-devolutiva',
+    type: 'devolutiva_recebida',
+    title: 'Devolutiva OPME — prestador respondeu',
+    message:
+      'REQ-2026-OPME-005 · Sandra Aparecida Costa · Tela cirúrgica · registro ANVISA atualizado pelo prestador — pronto para reanálise',
+    time: '2h atrás',
+    read: false,
+    href: '/analise?id=REQ-2026-OPME-005',
+  },
+  // ── Junta Médica agendada ───────────────────────────────────────────
+  {
+    id: 'notif-m1-junta-001-agendada',
     type: 'junta_agendada',
     title: 'Junta Médica agendada',
     message:
@@ -95,6 +159,7 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/analise?id=REQ-2026-M1-JUNTA-001',
   },
+  // ── Devolutiva SADT recebida ────────────────────────────────────────
   {
     id: 'notif-sadt-006-devolutiva',
     type: 'devolutiva_recebida',
@@ -105,6 +170,7 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/analise?id=REQ-2026-SADT-006',
   },
+  // ── SLA violado — exame alta complexidade ───────────────────────────
   {
     id: 'notif-exam-004-sla-violado',
     type: 'sla_violado',
@@ -115,6 +181,28 @@ export const NOTIFICACOES: Notification[] = [
     read: false,
     href: '/analise?id=REQ-2026-EXAM-004',
   },
+  // ── NIP — prazo de resposta próximo do vencimento ───────────────────
+  {
+    id: 'notif-sadt-004-nip-prazo',
+    type: 'nip_prazo_proximo',
+    title: 'NIP — prazo de resposta próximo',
+    message:
+      'REQ-2026-SADT-004 · Marcos Pereira Couto · NIP-2026-784521 · 2 dias úteis para resposta ANS',
+    time: '6h atrás',
+    read: true,
+    href: '/analise?id=REQ-2026-SADT-004',
+  },
+  // ── Erro no processamento ───────────────────────────────────────────
+  {
+    id: 'notif-05004-erro-processamento',
+    type: 'processamento_erro',
+    title: 'REQ-2026-05004 — Erro no processamento',
+    message: 'Não foi possível extrair dados do laudo anexado. Requer reanálise manual.',
+    time: '8h atrás',
+    read: true,
+    href: '/dashboard',
+  },
+  // ── SLA em risco — Home Care ────────────────────────────────────────
   {
     id: 'notif-hc-008-sla-risco',
     type: 'sla_risco',
@@ -125,6 +213,7 @@ export const NOTIFICACOES: Notification[] = [
     read: true,
     href: '/analise?id=REQ-2026-HC-008',
   },
+  // ── Pendência prazo vencido ─────────────────────────────────────────
   {
     id: 'notif-exam-005-pendencia-vencida',
     type: 'pendencia_prazo_vencido',

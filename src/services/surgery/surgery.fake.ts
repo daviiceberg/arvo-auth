@@ -51,17 +51,16 @@ function buildChecklist(req: SurgeryAnalysisRequest): ChecklistItem[] {
   if (req.hasOpme) {
     items.push({
       id: 'OPME_INTEGRADO',
-      texto: 'OPME vinculado — validação ANVISA + cotações entra em M5',
-      status: 'warning',
-      origin: 'engenharia',
-      severity: 50,
+      texto: 'OPME vinculado — materiais com registro ANVISA e cotações na seção Materiais OPME',
+      status: 'ok',
+      origin: 'dados',
       showWhenOk: true,
     });
   }
   if (req.hasOncologyLink) {
     items.push({
       id: 'ONCOLOGIA_VINCULADA',
-      texto: 'Cirurgia oncológica vinculada a protocolo M3',
+      texto: 'Cirurgia oncológica vinculada a protocolo oncológico',
       status: 'ok',
       origin: 'dados',
       showWhenOk: true,

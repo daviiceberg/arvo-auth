@@ -33,6 +33,7 @@ export default function RegisteredAdjustmentsSection({
     codigo: 'Código do procedimento alterado',
     cid: 'CID do procedimento alterado',
     dut: 'DUT alterada',
+    valor: 'Valor unitário ajustado',
   };
 
   return (

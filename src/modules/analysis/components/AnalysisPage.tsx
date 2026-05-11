@@ -25,6 +25,7 @@ import AdjustmentDrawer from './AdjustmentDrawer';
 import AlertsBanner from './AlertsBanner';
 import AnalysisSecondarySections from './AnalysisSecondarySections';
 import AnalysisSkeleton from './AnalysisSkeleton';
+import AnvisaBanner from './AnvisaBanner';
 import AssistantSidebar from './AssistantSidebar';
 import BeneficiarySection from './BeneficiarySection';
 import AdjustmentApprovalDialog from './dialogs/AdjustmentApprovalDialog';
@@ -38,6 +39,7 @@ import PendencyDialog from './dialogs/PendencyDialog';
 import HospitalContextSection from './HospitalContextSection';
 import M1Banners from './M1Banners';
 import OncologyDataSection from './OncologyDataSection';
+import OpmeMaterialsSection from './OpmeMaterialsSection';
 import PageHeader from './PageHeader';
 import ProceduresSection from './ProceduresSection';
 import RegisteredAdjustmentsSection from './RegisteredAdjustmentsSection';
@@ -258,6 +260,7 @@ function AnalysisInner() {
               </Alert>
             ) : null}
             <AlertsBanner request={request} />
+            <AnvisaBanner materials={request.opmeMaterials ?? []} />
             <BeneficiarySection request={request} />
             <ProceduresSection
               key={`procedures-${request.id}`}
@@ -267,6 +270,11 @@ function AnalysisInner() {
             />
             <HospitalContextSection request={request} />
             {request.category === 'Oncologia' ? <OncologyDataSection request={request} /> : null}
+            <OpmeMaterialsSection
+              materials={request.opmeMaterials ?? []}
+              relatedSurgery={request.opmeRelatedSurgery}
+              onAdjustValue={adjustment.handleAdjustConfirm}
+            />
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
             <AnalysisSecondarySections
               request={request}

@@ -124,6 +124,15 @@ function NewRequestInner() {
     handleAddPreOpItem,
     handleRemovePreOpItem,
     handleUpdatePreOpItem,
+    handleAddOpmeMaterial,
+    handleRemoveOpmeMaterial,
+    handleUpdateOpmeMaterial,
+    handleAddOpmeQuotation,
+    handleRemoveOpmeQuotation,
+    handleUpdateOpmeQuotation,
+    handleSelectOpmeQuotation,
+    handleSetOpmeChosenReason,
+    handleConsultAnvisa,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
@@ -251,6 +260,8 @@ function NewRequestInner() {
       surgeryHasOncologyLink: false,
       surgeryNotes: '',
       preOpItens: [],
+      opmeMateriais: [],
+      opmeRelatedSurgery: '',
     };
     setForm(emptyForm);
     setIsManualEntry(true);
@@ -340,6 +351,15 @@ function NewRequestInner() {
         handleAddPreOpItem={handleAddPreOpItem}
         handleRemovePreOpItem={handleRemovePreOpItem}
         handleUpdatePreOpItem={handleUpdatePreOpItem}
+        handleAddOpmeMaterial={handleAddOpmeMaterial}
+        handleRemoveOpmeMaterial={handleRemoveOpmeMaterial}
+        handleUpdateOpmeMaterial={handleUpdateOpmeMaterial}
+        handleAddOpmeQuotation={handleAddOpmeQuotation}
+        handleRemoveOpmeQuotation={handleRemoveOpmeQuotation}
+        handleUpdateOpmeQuotation={handleUpdateOpmeQuotation}
+        handleSelectOpmeQuotation={handleSelectOpmeQuotation}
+        handleSetOpmeChosenReason={handleSetOpmeChosenReason}
+        handleConsultAnvisa={handleConsultAnvisa}
       />
     ),
     4: (

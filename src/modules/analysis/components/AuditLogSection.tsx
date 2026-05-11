@@ -50,7 +50,16 @@ export default function AuditLogSection({ entries }: AuditLogSectionProps) {
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TimelineIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-            <Typography variant="h6" fontWeight={700} sx={{ fontSize: 15 }}>
+            <Typography
+              variant="h6"
+              fontWeight={700}
+              sx={{
+                fontSize: 15,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                color: 'text.secondary',
+              }}
+            >
               Histórico de Ações
             </Typography>
             <Typography

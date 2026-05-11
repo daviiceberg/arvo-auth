@@ -4,10 +4,12 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { opmeValueReasons } from '@/shared/constants';
 import { logger } from '@/shared/utils/logger';
 import { type Category } from '@/types/pedido';
 
 import { type FormData, type TerapiaProcedimento } from '../types';
+import { cheapestQuotation, parseNumeric } from '../types/opme';
 import { formDataToRequest } from '../utils/form-to-request';
 
 const STEP_DYNAMIC_LABEL_BY_CATEGORY: Record<Category, string> = {
@@ -19,6 +21,7 @@ const STEP_DYNAMIC_LABEL_BY_CATEGORY: Record<Category, string> = {
   Oncologia: 'Protocolo Oncológico',
   Internação: 'Plano de Internação',
   'Cirurgias Eletivas': 'Plano Cirúrgico',
+  OPME: 'Materiais OPME',
 };
 
 function dynamicStepLabel(category: FormData['category']): string {
@@ -139,6 +142,64 @@ function validateInternacao(form: FormData): string | null {
   return null;
 }
 
+function validateOpmeBasicFields(
+  material: FormData['opmeMateriais'][number],
+  suffix: string,
+): string | null {
+  if (!material.materialDescription.trim()) return `Informe a descrição do material${suffix}.`;
+  if (!material.manufacturer.trim()) return `Informe o fabricante${suffix}.`;
+  if (Number(material.quantity) <= 0) return `Quantidade inválida${suffix}.`;
+  if (material.anvisaRegistration.trim() === '') {
+    return `Informe o registro ANVISA${suffix}.`;
+  }
+  if (material.anvisaStatus === 'not_checked') {
+    return `Consulte a ANVISA antes de enviar${suffix}.`;
+  }
+  if (material.anvisaStatus === 'not_found') {
+    return `Registro ANVISA não localizado${suffix} — corrija o número antes de enviar.`;
+  }
+  return null;
+}
+
+function validateOpmeQuotations(
+  material: FormData['opmeMateriais'][number],
+  suffix: string,
+): string | null {
+  const validQuotations = material.quotations.filter(
+    (q) => q.supplier.trim() !== '' && parseNumeric(q.unitValue) > 0,
+  );
+  if (validQuotations.length < 3) {
+    return `Mínimo de 3 cotações completas (fornecedor + valor)${suffix}.`;
+  }
+  if (material.chosenQuotationId === '') return `Selecione a cotação escolhida${suffix}.`;
+  const chosen = material.quotations.find((q) => q.id === material.chosenQuotationId);
+  if (!chosen) return `Cotação escolhida inválida${suffix}.`;
+  const cheapest = cheapestQuotation(material);
+  if (!cheapest || chosen.id === cheapest.id) return null;
+  if (material.chosenReasonCode === '') {
+    return `Justifique a escolha (motivo estruturado)${suffix}.`;
+  }
+  const config = opmeValueReasons[material.chosenReasonCode];
+  if (config.requiresFreeText && material.chosenReasonNote.trim().length < 10) {
+    return `Justificativa exige observação (mín. 10 caracteres)${suffix}.`;
+  }
+  return null;
+}
+
+function validateOpme(form: FormData): string | null {
+  if (form.opmeMateriais.length === 0) return 'Cadastre ao menos 1 material OPME.';
+  for (let i = 0; i < form.opmeMateriais.length; i++) {
+    const m = form.opmeMateriais[i];
+    if (!m) continue;
+    const suffix = form.opmeMateriais.length > 1 ? ` no Material ${String(i + 1)}` : '';
+    const basicError = validateOpmeBasicFields(m, suffix);
+    if (basicError) return basicError;
+    const quotationError = validateOpmeQuotations(m, suffix);
+    if (quotationError) return quotationError;
+  }
+  return null;
+}
+
 function validateCirurgias(form: FormData): string | null {
   // Reuso: bloco de hospitalização
   const hospitalError = validateInternacao(form);
@@ -160,6 +221,7 @@ function validateDynamicStep(form: FormData, procedures: TerapiaProcedimento[]):
   if (form.category === 'Oncologia') return validateOncology(form);
   if (form.category === 'Internação') return validateInternacao(form);
   if (form.category === 'Cirurgias Eletivas') return validateCirurgias(form);
+  if (form.category === 'OPME') return validateOpme(form);
   if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
   if (form.category === 'Terapias Especiais') return validateTherapyProcedures(procedures);
   if (form.category === 'SADT') return validateSadt(form);

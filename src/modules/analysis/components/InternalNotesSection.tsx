@@ -36,7 +36,16 @@ export default function InternalNotesSection({ value, onChange }: InternalNotesS
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <VisibilityOffIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-            <Typography variant="h6" fontWeight={700} sx={{ fontSize: 15 }}>
+            <Typography
+              variant="h6"
+              fontWeight={700}
+              sx={{
+                fontSize: 15,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                color: 'text.secondary',
+              }}
+            >
               Observações Internas
             </Typography>
             <Typography

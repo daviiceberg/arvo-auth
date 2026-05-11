@@ -301,6 +301,52 @@ export const DOCS_BY_CATEGORY: Record<Category, CategoryDocs> = {
       },
     ],
   },
+  OPME: {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo médico com indicação clínica do material',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Lista de Materiais com Especificação Técnica',
+        descricao: 'Materiais detalhados (nome, fabricante, modelo, unidade, quantidade)',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Cotações de Fornecedores (mínimo 3)',
+        descricao: 'Cotações distintas por material — valor unitário, marca e fornecedor',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Registros ANVISA dos Materiais',
+        descricao: 'Número de registro válido por material (consulta automática no sistema)',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Justificativa de Marca/Modelo',
+        descricao: 'Quando não escolhe a cotação mais barata — motivo estruturado',
+        obrigatorio: false,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Nova solicitação assinada pelo médico',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Histórico de Uso do Material',
+        descricao: 'Justificativa clínica de continuidade / reposição',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Cotações Atualizadas',
+        descricao: 'Cotações vigentes para o novo período',
+        obrigatorio: true,
+      },
+    ],
+  },
 };
 
 export const TIPOS_DOC_UPLOAD = [

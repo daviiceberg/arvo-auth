@@ -40,7 +40,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
 
   // Mesma hierarquia da fila operacional: Liminar > NIP > U/E > SLA Violado >
   // SLA Risco > Devolutivas > outros. Tiebreaker por SLA mais próximo.
-  const urgentFirst = [...pedidos].sort(sortByPriority).slice(0, 5);
+  const urgentFirst = [...pedidos].sort(sortByPriority).slice(0, 6);
 
   return (
     <>

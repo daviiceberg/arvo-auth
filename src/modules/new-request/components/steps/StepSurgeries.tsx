@@ -1,27 +1,30 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { TussCodeSearchField } from '@/shared/components/code-autocomplete';
+import { type OpmeValueReasonCode } from '@/types/pedido';
 
 import { PreOpSection } from '@/modules/new-request/components/PreOpSection';
 import { SectionHeader } from '@/modules/new-request/components/SectionHeader';
 import { StepHospitalization } from '@/modules/new-request/components/steps/StepHospitalization';
+import { StepOpme } from '@/modules/new-request/components/steps/StepOpme';
 import {
   type FormData,
   type HospitalTaxItem,
@@ -30,6 +33,11 @@ import {
   type SurgeryAcessorio,
   type SurgeryTipoChoice,
 } from '@/modules/new-request/types';
+import {
+  type AnvisaConsultResult,
+  type OpmeFormMaterial,
+  type OpmeFormQuotation,
+} from '@/modules/new-request/types/opme';
 
 interface StepSurgeriesProps {
   form: FormData;
@@ -71,6 +79,29 @@ interface StepSurgeriesProps {
     field: keyof Omit<PreOpFormItem, 'id' | 'templateId'>,
     value: string | boolean,
   ) => void;
+  // OPME embedded (M5)
+  handleAddOpmeMaterial: () => void;
+  handleRemoveOpmeMaterial: (id: string) => void;
+  handleUpdateOpmeMaterial: (
+    id: string,
+    field: keyof Omit<OpmeFormMaterial, 'id' | 'quotations'>,
+    value: string,
+  ) => void;
+  handleAddOpmeQuotation: (materialId: string) => void;
+  handleRemoveOpmeQuotation: (materialId: string, quotationId: string) => void;
+  handleUpdateOpmeQuotation: (
+    materialId: string,
+    quotationId: string,
+    field: keyof Omit<OpmeFormQuotation, 'id'>,
+    value: string,
+  ) => void;
+  handleSelectOpmeQuotation: (materialId: string, quotationId: string) => void;
+  handleSetOpmeChosenReason: (
+    materialId: string,
+    code: OpmeValueReasonCode | '',
+    note: string,
+  ) => void;
+  handleConsultAnvisa: (materialId: string) => Promise<AnvisaConsultResult>;
 }
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -227,100 +258,30 @@ function SurgeryAcessoriosList({
   );
 }
 
-function SurgeryToggles({
-  form,
-  handleSetSurgeryHasOpme,
-  handleSetSurgeryHasOncologyLink,
-}: Pick<
-  StepSurgeriesProps,
-  'form' | 'handleSetSurgeryHasOpme' | 'handleSetSurgeryHasOncologyLink'
->) {
-  return (
-    <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Tooltip
-        title="OPME (órteses, próteses e materiais especiais) entrará em milestone futuro (M5). Toggle desabilitado por enquanto."
-        arrow
-      >
-        <FormControlLabel
-          sx={{ width: 'fit-content' }}
-          control={
-            <Switch
-              checked={form.surgeryHasOpme}
-              disabled
-              onChange={(e) => {
-                handleSetSurgeryHasOpme(e.target.checked);
-              }}
-            />
-          }
-          label={
-            <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600 }}>
-              Esta cirurgia tem OPME? (disponível em M5)
-            </Typography>
-          }
-        />
-      </Tooltip>
-      <FormControlLabel
-        sx={{ width: 'fit-content' }}
-        control={
-          <Switch
-            checked={form.surgeryHasOncologyLink}
-            onChange={(e) => {
-              handleSetSurgeryHasOncologyLink(e.target.checked);
-            }}
-          />
-        }
-        label={
-          <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 600 }}>
-            Cirurgia oncológica? (vincula protocolo M3 — estadiamento + linha + ciclo)
-          </Typography>
-        }
-      />
-    </Box>
-  );
-}
-
-function SurgeryOncologyExtraFields({ form, set }: Pick<StepSurgeriesProps, 'form' | 'set'>) {
-  if (!form.surgeryHasOncologyLink) return null;
-  return (
-    <Box
-      sx={{
-        mt: 2,
-        border: '1px dashed rgba(147,51,234,0.4)',
-        borderRadius: '12px',
-        p: 2,
-        backgroundColor: 'rgba(147,51,234,0.04)',
-      }}
-    >
-      <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13, mb: 1.5 }}>
-        Vínculo Oncológico (M3)
-      </Typography>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 6 }}>
-          <FieldLabel>Estadiamento (TNM)</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.estadiamentoTNM}
-            onChange={set('estadiamentoTNM')}
-            placeholder="Ex: T2 N1 M0"
-          />
-        </Grid>
-        <Grid size={{ xs: 6 }}>
-          <FieldLabel>Protocolo Cirúrgico</FieldLabel>
-          <TextField
-            fullWidth
-            size="small"
-            value={form.protocoloQuimio}
-            onChange={set('protocoloQuimio')}
-            placeholder="Ex: Mastectomia + esvaziamento axilar"
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  );
-}
-
 export function StepSurgeries(props: StepSurgeriesProps) {
+  const opmeBlockRef = useRef<HTMLDivElement | null>(null);
+  const oncologyBlockRef = useRef<HTMLDivElement | null>(null);
+  const previousHasOpmeRef = useRef(props.form.surgeryHasOpme);
+  const previousHasOncologyRef = useRef(props.form.surgeryHasOncologyLink);
+
+  useEffect(() => {
+    if (props.form.surgeryHasOpme && !previousHasOpmeRef.current) {
+      requestAnimationFrame(() => {
+        opmeBlockRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    previousHasOpmeRef.current = props.form.surgeryHasOpme;
+  }, [props.form.surgeryHasOpme]);
+
+  useEffect(() => {
+    if (props.form.surgeryHasOncologyLink && !previousHasOncologyRef.current) {
+      requestAnimationFrame(() => {
+        oncologyBlockRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    previousHasOncologyRef.current = props.form.surgeryHasOncologyLink;
+  }, [props.form.surgeryHasOncologyLink]);
+
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 1.5, fontSize: 15 }}>
@@ -350,12 +311,145 @@ export function StepSurgeries(props: StepSurgeriesProps) {
           handleRemoveSurgeryAcessorio={props.handleRemoveSurgeryAcessorio}
           handleUpdateSurgeryAcessorio={props.handleUpdateSurgeryAcessorio}
         />
-        <SurgeryToggles
-          form={props.form}
-          handleSetSurgeryHasOpme={props.handleSetSurgeryHasOpme}
-          handleSetSurgeryHasOncologyLink={props.handleSetSurgeryHasOncologyLink}
-        />
-        <SurgeryOncologyExtraFields form={props.form} set={props.set} />
+      </Box>
+
+      <Divider sx={{ mb: 3 }} />
+
+      {/* Bloco Oncologia (toggle no header — expande inline) */}
+      <Box sx={{ mb: 1.5 }}>
+        <Box
+          ref={oncologyBlockRef}
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            backgroundColor: '#fff',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              px: 2.5,
+              py: 1.5,
+              backgroundColor: props.form.surgeryHasOncologyLink
+                ? 'rgba(147,51,234,0.06)'
+                : 'rgba(0,0,0,0.02)',
+              borderBottom: props.form.surgeryHasOncologyLink
+                ? '1px solid rgba(147,51,234,0.2)'
+                : '1px solid transparent',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+              transition: 'background-color 200ms ease, border-color 200ms ease',
+            }}
+          >
+            <Box>
+              <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13 }}>
+                Esta é uma cirurgia oncológica?
+              </Typography>
+              <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary' }}>
+                Vincula protocolo oncológico (estadiamento, linha e ciclo) à cirurgia.
+              </Typography>
+            </Box>
+            <Switch
+              checked={props.form.surgeryHasOncologyLink}
+              onChange={(e) => {
+                props.handleSetSurgeryHasOncologyLink(e.target.checked);
+              }}
+            />
+          </Box>
+          <Collapse in={props.form.surgeryHasOncologyLink} timeout={350} unmountOnExit>
+            <Box sx={{ p: 2.5 }}>
+              <Grid container spacing={2}>
+                <Grid size={{ xs: 6 }}>
+                  <FieldLabel>Estadiamento (TNM)</FieldLabel>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={props.form.estadiamentoTNM}
+                    onChange={props.set('estadiamentoTNM')}
+                    placeholder="Ex: T2 N1 M0"
+                  />
+                </Grid>
+                <Grid size={{ xs: 6 }}>
+                  <FieldLabel>Protocolo Cirúrgico</FieldLabel>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={props.form.protocoloQuimio}
+                    onChange={props.set('protocoloQuimio')}
+                    placeholder="Ex: Mastectomia + esvaziamento axilar"
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </Collapse>
+        </Box>
+      </Box>
+
+      {/* Bloco OPME (toggle no header — expande inline) */}
+      <Box sx={{ mb: 4 }}>
+        <Box
+          ref={opmeBlockRef}
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            borderRadius: '16px',
+            backgroundColor: '#fff',
+            overflow: 'hidden',
+          }}
+        >
+          <Box
+            sx={{
+              px: 2.5,
+              py: 1.5,
+              backgroundColor: props.form.surgeryHasOpme
+                ? 'rgba(217,119,6,0.06)'
+                : 'rgba(0,0,0,0.02)',
+              borderBottom: props.form.surgeryHasOpme
+                ? '1px solid rgba(217,119,6,0.2)'
+                : '1px solid transparent',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 2,
+              transition: 'background-color 200ms ease, border-color 200ms ease',
+            }}
+          >
+            <Box>
+              <Typography variant="body2" fontWeight={700} sx={{ fontSize: 13 }}>
+                Esta cirurgia inclui OPME?
+              </Typography>
+              <Typography variant="caption" sx={{ fontSize: 11, color: 'text.secondary' }}>
+                Materiais especiais (próteses, órteses, implantes) com registro ANVISA e cotações
+                (TISS 19).
+              </Typography>
+            </Box>
+            <Switch
+              checked={props.form.surgeryHasOpme}
+              onChange={(e) => {
+                props.handleSetSurgeryHasOpme(e.target.checked);
+              }}
+            />
+          </Box>
+          <Collapse in={props.form.surgeryHasOpme} timeout={350} unmountOnExit>
+            <Box sx={{ p: 2.5 }}>
+              <StepOpme
+                embedded
+                form={props.form}
+                set={props.set}
+                handleAddOpmeMaterial={props.handleAddOpmeMaterial}
+                handleRemoveOpmeMaterial={props.handleRemoveOpmeMaterial}
+                handleUpdateOpmeMaterial={props.handleUpdateOpmeMaterial}
+                handleAddOpmeQuotation={props.handleAddOpmeQuotation}
+                handleRemoveOpmeQuotation={props.handleRemoveOpmeQuotation}
+                handleUpdateOpmeQuotation={props.handleUpdateOpmeQuotation}
+                handleSelectOpmeQuotation={props.handleSelectOpmeQuotation}
+                handleSetOpmeChosenReason={props.handleSetOpmeChosenReason}
+                handleConsultAnvisa={props.handleConsultAnvisa}
+              />
+            </Box>
+          </Collapse>
+        </Box>
       </Box>
 
       <Divider sx={{ mb: 3 }} />

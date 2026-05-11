@@ -11,4 +11,5 @@ export const categoryColorMap: Record<Category, ChipColor> = {
   SADT: { bg: 'rgba(22,163,74,0.1)', color: '#16a34a' },
   'Exames Alta Complexidade': { bg: 'rgba(8,145,178,0.1)', color: '#0891b2' },
   'Home Care': { bg: 'rgba(13,148,136,0.1)', color: '#0d9488' },
+  OPME: { bg: 'rgba(217,119,6,0.1)', color: '#b45309' },
 };

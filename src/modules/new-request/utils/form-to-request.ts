@@ -23,6 +23,8 @@ import {
   type OncologyProtocol,
   type OncologyTreatmentLine,
   type OncologyTreatmentType,
+  type OpmeMaterial,
+  type OpmeQuotation,
   type PreOpItem,
   type PreOpItemStatus,
   type PreOpItemType,
@@ -40,6 +42,12 @@ import {
   type TerapiaProcedimento,
   type UrgencyTipo,
 } from '../types';
+import {
+  type OpmeFormMaterial,
+  type OpmeFormQuotation,
+  materialTotalValue,
+  parseNumeric,
+} from '../types/opme';
 
 const TREATMENT_TYPE_MAP: Record<Exclude<OncologyTipoTratamento, ''>, OncologyTreatmentType> = {
   Quimioterapia: 'QT',
@@ -327,6 +335,8 @@ export function formDataToRequest({
 
   const cid = extractCidCode(form.cidPrincipal);
 
+  const opmeMaterials = buildOpmeMaterials(form, cid);
+
   const procedures: Procedure[] = (() => {
     if (form.category === 'Urgência/Emergência') return buildUrgencyProcedures(form, cid);
     if (form.category === 'Oncologia') return buildOncologyProcedures(form, cid);
@@ -335,6 +345,7 @@ export function formDataToRequest({
     if (form.category === 'Home Care') return buildHomeCareProcedures(form, cid);
     if (form.category === 'Internação') return buildHospitalizationProcedures(form, cid);
     if (form.category === 'Cirurgias Eletivas') return buildSurgeryProcedures(form, cid);
+    if (form.category === 'OPME') return buildOpmePlaceholderProcedures(opmeMaterials, cid);
     return buildTherapyProcedures(terapiaProcedimentos, cid);
   })();
 
@@ -366,6 +377,11 @@ export function formDataToRequest({
 
   applyCategorySpecificFields(partial, form);
 
+  if (opmeMaterials.length > 0) partial.opmeMaterials = opmeMaterials;
+  if (form.opmeRelatedSurgery.trim() !== '') {
+    partial.opmeRelatedSurgery = form.opmeRelatedSurgery.trim();
+  }
+
   return partial;
 }
 
@@ -392,4 +408,64 @@ function applySurgeryFields(partial: Partial<Request>, form: FormData): void {
     const protocol = buildOncologyProtocol(form);
     if (protocol) partial.oncologyProtocol = protocol;
   }
+}
+
+function buildOpmeQuotation(quotation: OpmeFormQuotation): OpmeQuotation {
+  const unitValue = parseNumeric(quotation.unitValue);
+  return {
+    id: quotation.id,
+    supplier: quotation.supplier,
+    brand: quotation.brand,
+    unitValue,
+    totalValue: unitValue,
+  };
+}
+
+function buildOpmeMaterial(material: OpmeFormMaterial, cid: string): OpmeMaterial {
+  const quantity = Math.max(1, Math.round(parseNumeric(material.quantity) || 1));
+  const totalValue = materialTotalValue(material);
+  const validQuotations = material.quotations
+    .filter((q) => q.supplier.trim() !== '' || parseNumeric(q.unitValue) > 0)
+    .map(buildOpmeQuotation)
+    .map((q) => ({ ...q, totalValue: q.unitValue * quantity }));
+  return {
+    id: material.id,
+    materialCode: material.materialCode,
+    description: material.materialDescription,
+    manufacturer: material.manufacturer,
+    brand: material.brand,
+    unit: material.unit,
+    quantity,
+    unitValue: parseNumeric(material.unitValue),
+    totalValue,
+    anvisaRegistration: material.anvisaRegistration,
+    anvisaStatus: material.anvisaStatus,
+    ...(material.anvisaProductName !== '' && { anvisaProductName: material.anvisaProductName }),
+    ...(material.anvisaValidUntil !== '' && { anvisaValidUntil: material.anvisaValidUntil }),
+    quotations: validQuotations,
+    ...(material.chosenQuotationId !== '' && { chosenQuotationId: material.chosenQuotationId }),
+    ...(material.chosenReasonCode !== '' && {
+      chosenReasonCode: material.chosenReasonCode,
+    }),
+    ...(material.chosenReasonNote.trim() !== '' && { chosenReasonNote: material.chosenReasonNote }),
+    tableNumber: 19,
+    cid,
+  };
+}
+
+function buildOpmeMaterials(form: FormData, cid: string): OpmeMaterial[] {
+  return form.opmeMateriais
+    .filter((m) => m.materialDescription.trim() !== '' || m.anvisaRegistration.trim() !== '')
+    .map((m) => buildOpmeMaterial(m, cid));
+}
+
+function buildOpmePlaceholderProcedures(materials: OpmeMaterial[], cid: string): Procedure[] {
+  return materials.map((m) =>
+    buildProcedure({
+      codigoTUSS: m.materialCode || '70770070',
+      descricaoTUSS: m.description || 'Material OPME',
+      qty: m.quantity,
+      cid,
+    }),
+  );
 }

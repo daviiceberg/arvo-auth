@@ -90,7 +90,7 @@ export default function Topbar({
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: 'transparent',
+        backgroundColor: '#ffffff',
         borderBottom: 'none',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}

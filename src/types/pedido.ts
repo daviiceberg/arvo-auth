@@ -201,7 +201,8 @@ export type Category =
   | 'Terapias Especiais'
   | 'SADT'
   | 'Exames Alta Complexidade'
-  | 'Home Care';
+  | 'Home Care'
+  | 'OPME';
 
 export type AccidentIndication = 'NAO_ACIDENTE' | 'TRABALHO' | 'TRANSITO' | 'OUTROS';
 
@@ -273,6 +274,49 @@ export interface Procedure {
   procedureNotes?: string;
 }
 
+export type AnvisaStatus = 'valid' | 'invalid' | 'not_found' | 'not_checked';
+
+export interface OpmeQuotation {
+  id: string;
+  supplier: string;
+  brand: string;
+  unitValue: number;
+  totalValue: number;
+  quotedAt?: string;
+  observation?: string;
+}
+
+export type OpmeValueReasonCode =
+  | 'VALOR_ACIMA_TABELA'
+  | 'DIVERGENCIA_COTACOES'
+  | 'MATERIAL_SUBSTITUTO_ACEITO'
+  | 'QUALIDADE_SUPERIOR'
+  | 'DISPONIBILIDADE'
+  | 'OUTRO';
+
+export interface OpmeMaterial {
+  id: string;
+  materialCode: string;
+  description: string;
+  manufacturer: string;
+  brand: string;
+  unit: string;
+  quantity: number;
+  unitValue: number;
+  totalValue: number;
+  anvisaRegistration: string;
+  anvisaStatus: AnvisaStatus;
+  anvisaProductName?: string;
+  anvisaValidUntil?: string;
+  quotations: OpmeQuotation[];
+  chosenQuotationId?: string;
+  chosenReasonCode?: OpmeValueReasonCode;
+  chosenReasonNote?: string;
+  tableNumber?: number;
+  cid?: string;
+  auditNotes?: string;
+}
+
 export interface RequestingProvider {
   name: string;
   operatorCode?: string;
@@ -293,7 +337,7 @@ export interface Adjustment {
   id: string;
   procedureCode: string;
   procedureDescription: string;
-  field: 'quantidade' | 'prestador' | 'codigo' | 'cid' | 'dut';
+  field: 'quantidade' | 'prestador' | 'codigo' | 'cid' | 'dut' | 'valor';
   previousValue: string;
   newValue: string;
   reason: string;
@@ -385,6 +429,8 @@ export interface Request {
   hospitalization?: HospitalizationContext;
   surgery?: SurgeryContext;
   preOp?: PreOpItem[];
+  opmeMaterials?: OpmeMaterial[];
+  opmeRelatedSurgery?: string;
   prestadorMessages?: PrestadorMessage[];
   secondaryCids?: string[];
   guidePassword?: string;
@@ -492,6 +538,8 @@ export interface HistoryEntry {
   hospitalizationType?: HospitalizationType;
   surgeryType?: SurgeryType;
   hadPreOp?: boolean;
+  opmeMaterials?: OpmeMaterial[];
+  opmeRelatedSurgery?: string;
   expandedAuditLevel?: AuditLevel;
   juntaParecer?: {
     text: string;

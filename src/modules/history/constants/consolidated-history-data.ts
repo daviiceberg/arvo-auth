@@ -1437,6 +1437,30 @@ const DEFAULT_BY_CATEGORY: Record<Category, HistoricoConsolidado> = {
       dutRelevantes: ['RN 566/2022'],
     },
   },
+  OPME: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Beneficiário com indicação cirúrgica que demanda materiais OPME. Lista de materiais com registros ANVISA apresentada. Cotações de fornecedores credenciados anexadas. Análise contempla validação regulatória, comparativo de cotações e adequação clínica.',
+    consultasRecentes: {
+      count: 3,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Especialista cirúrgico'],
+    },
+    procedimentosRelacionados:
+      'Exames pré-operatórios e avaliações especializadas compatíveis com a indicação cirúrgica que motivou o pedido de OPME.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'Cobertura OPME conforme tabela TISS 19. Exige registro ANVISA válido e cotações comparativas (mínimo 3 fornecedores).',
+      dutRelevantes: ['RN 566/2022', 'TISS 19 — Materiais'],
+    },
+  },
 };
 
 export interface ConsolidatedHistoryRef {

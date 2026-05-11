@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 
+import { anvisaService } from '@/services/anvisa/anvisa.service';
+import { logger } from '@/shared/utils/logger';
+import { type AnvisaStatus, type OpmeValueReasonCode } from '@/types/pedido';
+
 import { categoryMocks } from '../constants/category-mocks';
 import { buildPreOpFromTemplate } from '../constants/pre-op-required';
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
@@ -19,6 +23,12 @@ import {
   type SurgeryTipoChoice,
   type PreOpFormItem,
 } from '../types';
+import {
+  type OpmeFormMaterial,
+  type OpmeFormQuotation,
+  createEmptyOpmeMaterial,
+  createEmptyOpmeQuotation,
+} from '../types/opme';
 
 const newSadtProcedimento = (base?: Partial<SadtProcedimento>): SadtProcedimento => ({
   id: crypto.randomUUID(),
@@ -173,6 +183,8 @@ export const initialForm: FormData = {
   surgeryHasOncologyLink: false,
   surgeryNotes: '',
   preOpItens: [],
+  opmeMateriais: [createEmptyOpmeMaterial()],
+  opmeRelatedSurgery: '',
 };
 
 export function useNewRequestForm(categoryParam: string) {
@@ -549,6 +561,142 @@ export function useNewRequestForm(categoryParam: string) {
     }));
   };
 
+  // ── M5 — OPME ──────────────────────────────────────────────────────────
+  const handleAddOpmeMaterial = () => {
+    if (form.opmeMateriais.length >= 10) return;
+    setForm((f) => ({ ...f, opmeMateriais: [...f.opmeMateriais, createEmptyOpmeMaterial()] }));
+  };
+
+  const handleRemoveOpmeMaterial = (id: string) => {
+    if (form.opmeMateriais.length <= 1) return;
+    setForm((f) => ({ ...f, opmeMateriais: f.opmeMateriais.filter((m) => m.id !== id) }));
+  };
+
+  const handleUpdateOpmeMaterial = (
+    id: string,
+    field: keyof Omit<OpmeFormMaterial, 'id' | 'quotations'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
+    }));
+  };
+
+  const handleAddOpmeQuotation = (materialId: string) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) => {
+        if (m.id !== materialId) return m;
+        if (m.quotations.length >= 5) return m;
+        return { ...m, quotations: [...m.quotations, createEmptyOpmeQuotation()] };
+      }),
+    }));
+  };
+
+  const handleRemoveOpmeQuotation = (materialId: string, quotationId: string) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) => {
+        if (m.id !== materialId) return m;
+        if (m.quotations.length <= 3) return m;
+        return {
+          ...m,
+          quotations: m.quotations.filter((q) => q.id !== quotationId),
+          chosenQuotationId: m.chosenQuotationId === quotationId ? '' : m.chosenQuotationId,
+        };
+      }),
+    }));
+  };
+
+  const handleUpdateOpmeQuotation = (
+    materialId: string,
+    quotationId: string,
+    field: keyof Omit<OpmeFormQuotation, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) =>
+        m.id === materialId
+          ? {
+              ...m,
+              quotations: m.quotations.map((q) =>
+                q.id === quotationId ? { ...q, [field]: value } : q,
+              ),
+            }
+          : m,
+      ),
+    }));
+  };
+
+  const handleSelectOpmeQuotation = (materialId: string, quotationId: string) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) => {
+        if (m.id !== materialId) return m;
+        const valid = m.quotations.filter((q) => Number(q.unitValue) > 0);
+        if (valid.length === 0) return { ...m, chosenQuotationId: quotationId };
+        const cheapest = valid.reduce((min, q) =>
+          Number(q.unitValue) < Number(min.unitValue) ? q : min,
+        );
+        const isCheapestChosen = cheapest.id === quotationId;
+        return {
+          ...m,
+          chosenQuotationId: quotationId,
+          ...(isCheapestChosen ? { chosenReasonCode: '' as const, chosenReasonNote: '' } : {}),
+        };
+      }),
+    }));
+  };
+
+  const handleSetOpmeChosenReason = (
+    materialId: string,
+    code: OpmeValueReasonCode | '',
+    note: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      opmeMateriais: f.opmeMateriais.map((m) =>
+        m.id === materialId ? { ...m, chosenReasonCode: code, chosenReasonNote: note } : m,
+      ),
+    }));
+  };
+
+  const handleConsultAnvisa = async (
+    materialId: string,
+  ): Promise<{ status: AnvisaStatus | 'error'; productName?: string }> => {
+    const material = form.opmeMateriais.find((m) => m.id === materialId);
+    if (!material) return { status: 'error' };
+    const registration = material.anvisaRegistration.trim();
+    if (!registration) return { status: 'not_checked' };
+    try {
+      const response = await anvisaService.check({ registration });
+      setForm((f) => ({
+        ...f,
+        opmeMateriais: f.opmeMateriais.map((m) =>
+          m.id === materialId
+            ? {
+                ...m,
+                anvisaStatus: response.status,
+                anvisaProductName: response.productName ?? '',
+                anvisaValidUntil: response.validUntil ?? '',
+                anvisaConsultedAt: response.checkedAt,
+                manufacturer:
+                  m.manufacturer.trim() === '' && response.manufacturer
+                    ? response.manufacturer
+                    : m.manufacturer,
+              }
+            : m,
+        ),
+      }));
+      return { status: response.status, productName: response.productName };
+    } catch (err) {
+      logger.error('[new-request] anvisa check failed', err);
+      return { status: 'error' };
+    }
+  };
+
   return {
     form,
     setForm,
@@ -590,6 +738,15 @@ export function useNewRequestForm(categoryParam: string) {
     handleAddPreOpItem,
     handleRemovePreOpItem,
     handleUpdatePreOpItem,
+    handleAddOpmeMaterial,
+    handleRemoveOpmeMaterial,
+    handleUpdateOpmeMaterial,
+    handleAddOpmeQuotation,
+    handleRemoveOpmeQuotation,
+    handleUpdateOpmeQuotation,
+    handleSelectOpmeQuotation,
+    handleSetOpmeChosenReason,
+    handleConsultAnvisa,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,

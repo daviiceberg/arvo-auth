@@ -36,7 +36,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
         backgroundColor: '#ffffff',
       }}
     >

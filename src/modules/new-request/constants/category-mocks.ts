@@ -141,6 +141,22 @@ export const categoryMocks: Record<Category, Partial<FormData>> = {
     nomeContratadoExecutante: 'Hospital Ortopédico SP',
     cnesExecutante: '6789012',
   },
+  OPME: {
+    nomeBeneficiario: 'Heloísa Cardoso Lima',
+    carteirinha: '8881117772223335',
+    dataNascimento: '1957-05-12',
+    cidPrincipal: 'M17.0 - Gonartrose primária bilateral',
+    indicacaoClinica:
+      'Solicitação de materiais OPME (prótese total de joelho direito) para artroplastia eletiva. Inclui lista de componentes, registros ANVISA e cotações de fornecedores credenciados.',
+    profissionalSolicitante: 'Dr. Rafael Tavares',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '198432',
+    conselhoUF: 'SP',
+    cboCodigo: '225125',
+    nomeContratadoSolicitante: 'Centro Ortopédico Avançado',
+    nomeContratadoExecutante: 'Hospital Ortopédico SP',
+    cnesExecutante: '6789012',
+  },
 };
 
 export const categoryDocumentLabels: Record<Category, string> = {
@@ -152,4 +168,5 @@ export const categoryDocumentLabels: Record<Category, string> = {
   Oncologia: 'Documentos necessários para protocolo oncológico:',
   Internação: 'Documentos necessários para autorização de Internação:',
   'Cirurgias Eletivas': 'Documentos necessários para Cirurgia Eletiva:',
+  OPME: 'Documentos necessários para autorização de Materiais OPME:',
 };

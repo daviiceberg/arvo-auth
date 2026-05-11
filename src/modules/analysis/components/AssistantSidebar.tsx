@@ -250,7 +250,15 @@ function AnalystDecisionSection({
           backgroundColor: 'rgba(0,0,0,0.02)',
         }}
       >
-        <Typography variant="body2" fontWeight={700} color="text.primary">
+        <Typography
+          variant="body2"
+          fontWeight={700}
+          sx={{
+            color: 'text.primary',
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+          }}
+        >
           Decisão do analista
         </Typography>
       </Box>
@@ -490,7 +498,15 @@ export default function AssistantSidebar({
           }}
         >
           <SmartToyIcon sx={{ color: 'primary.main', fontSize: 20 }} />
-          <Typography variant="body2" fontWeight={700} color="primary.main">
+          <Typography
+            variant="body2"
+            fontWeight={700}
+            sx={{
+              color: 'primary.main',
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+            }}
+          >
             Análise da IA
           </Typography>
         </Box>

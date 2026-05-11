@@ -19,8 +19,10 @@ import Typography from '@mui/material/Typography';
 import { DecisionActionChip } from '@/shared/components';
 import { aiSuggestionFinalColorMap, alertOutlines } from '@/shared/constants';
 
+import AnvisaBanner from '@/modules/analysis/components/AnvisaBanner';
 import AuditLogSection from '@/modules/analysis/components/AuditLogSection';
 import InternalNotesSection from '@/modules/analysis/components/InternalNotesSection';
+import OpmeMaterialsSection from '@/modules/analysis/components/OpmeMaterialsSection';
 
 import useHistoryDetail from '../hooks/useHistoryDetail';
 
@@ -60,6 +62,7 @@ export default function HistoryDetailPage() {
   }
 
   const entry = vm.entry;
+  const opmeMaterials = entry.opmeMaterials ?? [];
 
   return (
     <Box
@@ -117,10 +120,15 @@ export default function HistoryDetailPage() {
               </Alert>
             ) : null}
             <HistoryAlertsBanner entry={entry} />
+            <AnvisaBanner materials={opmeMaterials} />
             <BeneficiarySection entry={entry} />
             <ProceduresSection entry={entry} />
             <HospitalSummaryCard entry={entry} />
             {entry.juntaParecer ? <JuntaParecerCard entry={entry} /> : null}
+            <OpmeMaterialsSection
+              materials={opmeMaterials}
+              relatedSurgery={entry.opmeRelatedSurgery}
+            />
             <ObservationsSection entry={entry} />
             {entry.internalNotes ? (
               <InternalNotesSection value={entry.internalNotes} onChange={() => undefined} />

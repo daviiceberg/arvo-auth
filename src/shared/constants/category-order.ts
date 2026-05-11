@@ -9,4 +9,5 @@ export const CATEGORIES_ORDER: Category[] = [
   'SADT',
   'Exames Alta Complexidade',
   'Home Care',
+  'OPME',
 ];
