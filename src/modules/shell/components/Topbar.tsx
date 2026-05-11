@@ -90,8 +90,8 @@ export default function Topbar({
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        backgroundColor: 'transparent',
+        borderBottom: '1px solid rgba(0,0,0,0.04)',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
@@ -127,7 +127,8 @@ export default function Topbar({
                   mt: 0.5,
                   width: 360,
                   borderRadius: 2,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.14)',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  boxShadow: 'none',
                   overflow: 'hidden',
                 },
               },
@@ -137,7 +138,7 @@ export default function Topbar({
               sx={{
                 px: 2,
                 py: 1.5,
-                borderBottom: '1px solid rgba(0,0,0,0.07)',
+                borderBottom: '1px solid rgba(0,0,0,0.04)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -227,7 +228,7 @@ export default function Topbar({
               </Box>
             ))}
             <Box
-              sx={{ borderTop: '1px solid rgba(0,0,0,0.07)', px: 2, py: 1.25, textAlign: 'center' }}
+              sx={{ borderTop: '1px solid rgba(0,0,0,0.04)', px: 2, py: 1.25, textAlign: 'center' }}
             >
               <Button
                 variant="text"
@@ -305,7 +306,8 @@ export default function Topbar({
                 mt: 0.5,
                 minWidth: 200,
                 borderRadius: 2,
-                boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+                border: '1px solid rgba(0,0,0,0.08)',
+                boxShadow: 'none',
               },
             },
           }}

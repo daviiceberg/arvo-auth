@@ -78,7 +78,7 @@ export default function AuthorizationsSection({
                   alignItems: 'center',
                   gap: 1.5,
                   p: 1.25,
-                  border: '1px solid rgba(0,0,0,0.08)',
+                  border: '1px solid rgba(0,0,0,0.04)',
                   borderRadius: 1.5,
                   backgroundColor: auth.destaque ? 'rgba(245,158,11,0.04)' : 'transparent',
                 }}

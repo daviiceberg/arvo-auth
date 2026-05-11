@@ -82,7 +82,7 @@ export default function AnalystDecisionSection({ entry }: AnalystDecisionSection
       <Box
         sx={{
           backgroundColor: '#f9fafb',
-          border: '1px solid rgba(0,0,0,0.08)',
+          border: '1px solid rgba(0,0,0,0.04)',
           borderRadius: 2,
           p: 2,
         }}

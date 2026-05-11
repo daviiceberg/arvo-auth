@@ -13,18 +13,11 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { type Category } from '@/types/pedido';
+import { CATEGORIES_ORDER } from '@/shared/constants';
 
 import { type FormData } from '../types';
 
-const CATEGORY_OPTIONS: Category[] = [
-  'Urgência/Emergência',
-  'Oncologia',
-  'Terapias Especiais',
-  'SADT',
-  'Exames Alta Complexidade',
-  'Home Care',
-];
+const CATEGORY_OPTIONS = CATEGORIES_ORDER;
 
 function inputSx(validated = false) {
   return validated

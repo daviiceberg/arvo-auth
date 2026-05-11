@@ -48,10 +48,12 @@ export interface QueueFiltersActions {
 }
 
 const TAB_BY_NAME: Record<string, number> = {
-  devolutivas: 3,
-  violado: 2,
-  risco: 1,
   geral: 0,
+  liminares: 1,
+  nips: 2,
+  violado: 3,
+  risco: 4,
+  devolutivas: 5,
 };
 
 function parseTabParam(raw: string | null): number {

@@ -93,7 +93,7 @@ export default function PrestadorTimelineSection({ messages }: PrestadorTimeline
               <Box
                 key={m.id}
                 sx={{
-                  border: '1px solid rgba(0,0,0,0.07)',
+                  border: '1px solid rgba(0,0,0,0.04)',
                   borderRadius: 1.5,
                   p: 1.5,
                   backgroundColor: 'rgba(0,0,0,0.015)',

@@ -160,7 +160,7 @@ export default function AjudaPage() {
               elevation={0}
               sx={{
                 border: 'none',
-                borderTop: i > 0 ? '1px solid rgba(0,0,0,0.07)' : 'none',
+                borderTop: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                 '&:before': { display: 'none' },
                 backgroundColor: 'transparent',
               }}

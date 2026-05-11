@@ -17,6 +17,8 @@ const STEP_DYNAMIC_LABEL_BY_CATEGORY: Record<Category, string> = {
   'Home Care': 'Plano de Home Care',
   'Urgência/Emergência': 'Atendimento de Urgência',
   Oncologia: 'Protocolo Oncológico',
+  Internação: 'Plano de Internação',
+  'Cirurgias Eletivas': 'Plano Cirúrgico',
 };
 
 function dynamicStepLabel(category: FormData['category']): string {
@@ -112,9 +114,52 @@ function validateOncology(form: FormData): string | null {
   return null;
 }
 
+const UTI_MIN_JUSTIFICATION_CHARS = 50;
+
+function validateInternacao(form: FormData): string | null {
+  if (!form.hospitalizationTipo) return 'Selecione o Tipo de Internação.';
+  if (!form.hospitalizationDataPrevista) return 'Informe a Data Prevista de Internação.';
+  if (!form.hospitalizationDuracao.trim() || Number(form.hospitalizationDuracao) <= 0) {
+    return 'Informe a Duração estimada (diárias).';
+  }
+  if (!form.hospitalizationAuditLevel) return 'Selecione o Nível de Auditoria.';
+  if (
+    form.hospitalizationAuditLevel === 'UTI' &&
+    form.hospitalizationUtiJustificativa.trim().length < UTI_MIN_JUSTIFICATION_CHARS
+  ) {
+    return `Justificativa de UTI exige mínimo ${String(UTI_MIN_JUSTIFICATION_CHARS)} caracteres.`;
+  }
+  for (let i = 0; i < form.hospitalizationProcedimentos.length; i++) {
+    const p = form.hospitalizationProcedimentos[i];
+    if (!p) continue;
+    const n =
+      form.hospitalizationProcedimentos.length > 1 ? ` no Procedimento ${String(i + 1)}` : '';
+    if (!p.codigoTUSS.trim()) return `Informe o código TUSS${n}.`;
+  }
+  return null;
+}
+
+function validateCirurgias(form: FormData): string | null {
+  // Reuso: bloco de hospitalização
+  const hospitalError = validateInternacao(form);
+  if (hospitalError !== null) return hospitalError;
+  if (!form.surgeryTipo) return 'Selecione o Tipo de Cirurgia.';
+  if (!form.surgeryMainProcedureCode.trim())
+    return 'Informe o Procedimento Principal (TUSS / Pacote).';
+  // Pré-op: pelo menos os obrigatórios devem estar `realizado` ou `agendado` para avançar.
+  const requiredItems = form.preOpItens.filter((i) => i.required);
+  const blockingPreOp = requiredItems.filter((i) => i.status === 'pendente');
+  if (blockingPreOp.length > 0) {
+    return `Pré-operatório: ${String(blockingPreOp.length)} item(ns) obrigatório(s) ainda pendente(s) (mínimo agendado para avançar).`;
+  }
+  return null;
+}
+
 function validateDynamicStep(form: FormData, procedures: TerapiaProcedimento[]): string | null {
   if (form.category === 'Urgência/Emergência') return validateUrgency(form);
   if (form.category === 'Oncologia') return validateOncology(form);
+  if (form.category === 'Internação') return validateInternacao(form);
+  if (form.category === 'Cirurgias Eletivas') return validateCirurgias(form);
   if (!form.etapaAutorizacao) return 'Selecione a etapa da autorização.';
   if (form.category === 'Terapias Especiais') return validateTherapyProcedures(procedures);
   if (form.category === 'SADT') return validateSadt(form);

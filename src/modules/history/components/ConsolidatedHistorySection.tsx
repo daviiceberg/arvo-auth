@@ -10,11 +10,7 @@ import Typography from '@mui/material/Typography';
 
 import { type HistoryEntry } from '@/types/pedido';
 
-import {
-  DEFAULT_HISTORY,
-  mockHistorico,
-  getHistoryKey,
-} from '../constants/consolidated-history-data';
+import { resolveConsolidatedHistory } from '../constants/consolidated-history-data';
 import { type HistoricoConsolidado } from '../types';
 
 import AttentionSignalsSection from './AttentionSignalsSection';
@@ -54,8 +50,7 @@ interface ConsolidatedHistorySectionProps {
 }
 
 export default function ConsolidatedHistorySection({ entry }: ConsolidatedHistorySectionProps) {
-  const key = getHistoryKey(entry.id);
-  const h = mockHistorico[key] ?? DEFAULT_HISTORY;
+  const h = resolveConsolidatedHistory({ id: entry.id, category: entry.category });
   const cp = completenessLabel(h.completeness);
 
   return (

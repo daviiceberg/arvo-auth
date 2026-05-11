@@ -34,7 +34,12 @@ export default function HistoryDetailHeader({
 }: HistoryDetailHeaderProps) {
   return (
     <Box
-      sx={{ px: 3, py: 1.75, backgroundColor: '#fff', borderBottom: '1px solid rgba(0,0,0,0.07)' }}
+      sx={{
+        px: 3,
+        py: 1.75,
+        backgroundColor: 'transparent',
+        borderBottom: '1px solid rgba(0,0,0,0.04)',
+      }}
     >
       <Button
         startIcon={<ArrowBackIcon sx={{ fontSize: 13 }} />}

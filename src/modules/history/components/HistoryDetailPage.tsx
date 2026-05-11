@@ -32,6 +32,7 @@ import DecisionOriginChip from './DecisionOriginChip';
 import DocumentsSection from './DocumentsSection';
 import HistoryAlertsBanner from './HistoryAlertsBanner';
 import HistoryDetailHeader from './HistoryDetailHeader';
+import HospitalSummaryCard from './HospitalSummaryCard';
 import IAChecklistSection from './IAChecklistSection';
 import IADecisionSection from './IADecisionSection';
 import JuntaParecerCard from './JuntaParecerCard';
@@ -118,6 +119,7 @@ export default function HistoryDetailPage() {
             <HistoryAlertsBanner entry={entry} />
             <BeneficiarySection entry={entry} />
             <ProceduresSection entry={entry} />
+            <HospitalSummaryCard entry={entry} />
             {entry.juntaParecer ? <JuntaParecerCard entry={entry} /> : null}
             <ObservationsSection entry={entry} />
             {entry.internalNotes ? (

@@ -126,7 +126,7 @@ export function StepDocuments({
                 alignItems: 'center',
                 gap: 2,
                 p: 2,
-                border: '1px solid rgba(0,0,0,0.08)',
+                border: '1px solid rgba(0,0,0,0.04)',
                 borderRadius: 2,
                 backgroundColor: '#ffffff',
                 transition: 'all 0.15s ease',

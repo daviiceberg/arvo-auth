@@ -23,29 +23,29 @@ const theme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        root: { borderRadius: 6, boxShadow: 'none', '&:hover': { boxShadow: 'none' } },
+        root: { borderRadius: 10, boxShadow: 'none', '&:hover': { boxShadow: 'none' } },
       },
     },
     MuiCard: {
       styleOverrides: {
-        root: { borderRadius: 16, boxShadow: 'none', border: '1px solid rgba(0,0,0,0.07)' },
+        root: { borderRadius: 16, boxShadow: 'none', border: '1px solid rgba(0,0,0,0.04)' },
       },
     },
     MuiPaper: { styleOverrides: { rounded: { borderRadius: 16 } } },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
           backgroundColor: '#ffffff',
           '&.Mui-disabled': { backgroundColor: '#f5f5f5' },
         },
       },
     },
-    MuiChip: { styleOverrides: { root: { borderRadius: 4, fontWeight: 600 } } },
+    MuiChip: { styleOverrides: { root: { borderRadius: 6, fontWeight: 600 } } },
     MuiListItemButton: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 8,
           '&.Mui-selected': {
             backgroundColor: '#902B29',
             color: '#ffffff',

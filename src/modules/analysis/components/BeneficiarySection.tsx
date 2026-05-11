@@ -168,35 +168,26 @@ export default function BeneficiarySection({ request }: BeneficiarySectionProps)
               {b.waitingPeriod ? 'Em carência' : 'Sem carência'}
             </Typography>
           </Box>
-        </Box>
-
-        {/* Row 3: badges + notes */}
-        <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap', alignItems: 'center' }}>
           {b.planScope ? (
-            <Chip
-              label={`Abrangência: ${b.planScope}`}
-              size="small"
-              sx={{
-                fontSize: 11,
-                fontWeight: 600,
-                height: 22,
-                backgroundColor: 'rgba(37,99,235,0.08)',
-                color: 'info.main',
-              }}
-            />
-          ) : null}
-          {b.isRegulatedPlan ? (
-            <Chip
-              label="Plano Regulamentado"
-              size="small"
-              sx={{
-                fontSize: 11,
-                fontWeight: 600,
-                height: 22,
-                backgroundColor: 'rgba(22,163,74,0.08)',
-                color: 'success.main',
-              }}
-            />
+            <Box>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{
+                  display: 'block',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  letterSpacing: 0.5,
+                  textTransform: 'uppercase',
+                  mb: 0.5,
+                }}
+              >
+                Abrangência
+              </Typography>
+              <Typography variant="body2" fontWeight={600} sx={{ fontSize: 13 }}>
+                {b.planScope}
+              </Typography>
+            </Box>
           ) : null}
         </Box>
 

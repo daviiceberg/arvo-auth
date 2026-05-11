@@ -14,12 +14,19 @@ import {
   type HomeCareItem,
   type UrgencyProcedimento,
   type OncologyProcedimento,
+  type HospitalTaxItem,
+  type HospitalizationProcedimento,
+  type SurgeryAcessorio,
+  type SurgeryTipoChoice,
+  type PreOpFormItem,
 } from '../types';
 
 import { StepExams } from './steps/StepExams';
 import { StepHomeCare } from './steps/StepHomeCare';
+import { StepHospitalization } from './steps/StepHospitalization';
 import { StepOncology } from './steps/StepOncology';
 import { StepSadt } from './steps/StepSadt';
+import { StepSurgeries } from './steps/StepSurgeries';
 import { StepTherapies } from './steps/StepTherapies';
 import { StepUrgency } from './steps/StepUrgency';
 
@@ -71,6 +78,38 @@ interface StepDynamicProps {
     id: string,
     field: keyof Omit<OncologyProcedimento, 'id'>,
     value: string,
+  ) => void;
+  handleAddHospitalizationProcedimento: () => void;
+  handleRemoveHospitalizationProcedimento: (id: string) => void;
+  handleUpdateHospitalizationProcedimento: (
+    id: string,
+    field: keyof Omit<HospitalizationProcedimento, 'id'>,
+    value: string,
+  ) => void;
+  handleAddHospitalizationTaxa: () => void;
+  handleRemoveHospitalizationTaxa: (id: string) => void;
+  handleUpdateHospitalizationTaxa: (
+    id: string,
+    field: keyof Omit<HospitalTaxItem, 'id'>,
+    value: string,
+  ) => void;
+  handleSetSurgeryTipo: (next: SurgeryTipoChoice) => void;
+  handleSetSurgeryMainProcedure: (code: string, description: string) => void;
+  handleAddSurgeryAcessorio: () => void;
+  handleRemoveSurgeryAcessorio: (id: string) => void;
+  handleUpdateSurgeryAcessorio: (
+    id: string,
+    field: keyof Omit<SurgeryAcessorio, 'id'>,
+    value: string,
+  ) => void;
+  handleSetSurgeryHasOpme: (value: boolean) => void;
+  handleSetSurgeryHasOncologyLink: (value: boolean) => void;
+  handleAddPreOpItem: () => void;
+  handleRemovePreOpItem: (id: string) => void;
+  handleUpdatePreOpItem: (
+    id: string,
+    field: keyof Omit<PreOpFormItem, 'id' | 'templateId'>,
+    value: string | boolean,
   ) => void;
 }
 
@@ -132,6 +171,42 @@ function buildStepByCategory(props: StepDynamicProps): Record<Category, ReactNod
         handleAddOncologyProcedimento={props.handleAddOncologyProcedimento}
         handleRemoveOncologyProcedimento={props.handleRemoveOncologyProcedimento}
         handleUpdateOncologyProcedimento={props.handleUpdateOncologyProcedimento}
+      />
+    ),
+    Internação: (
+      <StepHospitalization
+        form={props.form}
+        set={props.set}
+        setSelect={props.setSelect}
+        handleAddHospitalizationProcedimento={props.handleAddHospitalizationProcedimento}
+        handleRemoveHospitalizationProcedimento={props.handleRemoveHospitalizationProcedimento}
+        handleUpdateHospitalizationProcedimento={props.handleUpdateHospitalizationProcedimento}
+        handleAddHospitalizationTaxa={props.handleAddHospitalizationTaxa}
+        handleRemoveHospitalizationTaxa={props.handleRemoveHospitalizationTaxa}
+        handleUpdateHospitalizationTaxa={props.handleUpdateHospitalizationTaxa}
+      />
+    ),
+    'Cirurgias Eletivas': (
+      <StepSurgeries
+        form={props.form}
+        set={props.set}
+        setSelect={props.setSelect}
+        handleAddHospitalizationProcedimento={props.handleAddHospitalizationProcedimento}
+        handleRemoveHospitalizationProcedimento={props.handleRemoveHospitalizationProcedimento}
+        handleUpdateHospitalizationProcedimento={props.handleUpdateHospitalizationProcedimento}
+        handleAddHospitalizationTaxa={props.handleAddHospitalizationTaxa}
+        handleRemoveHospitalizationTaxa={props.handleRemoveHospitalizationTaxa}
+        handleUpdateHospitalizationTaxa={props.handleUpdateHospitalizationTaxa}
+        handleSetSurgeryTipo={props.handleSetSurgeryTipo}
+        handleSetSurgeryMainProcedure={props.handleSetSurgeryMainProcedure}
+        handleAddSurgeryAcessorio={props.handleAddSurgeryAcessorio}
+        handleRemoveSurgeryAcessorio={props.handleRemoveSurgeryAcessorio}
+        handleUpdateSurgeryAcessorio={props.handleUpdateSurgeryAcessorio}
+        handleSetSurgeryHasOpme={props.handleSetSurgeryHasOpme}
+        handleSetSurgeryHasOncologyLink={props.handleSetSurgeryHasOncologyLink}
+        handleAddPreOpItem={props.handleAddPreOpItem}
+        handleRemovePreOpItem={props.handleRemovePreOpItem}
+        handleUpdatePreOpItem={props.handleUpdatePreOpItem}
       />
     ),
   };

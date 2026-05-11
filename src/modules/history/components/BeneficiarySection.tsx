@@ -157,46 +157,6 @@ function buildDataFields(entry: HistoryEntry) {
   return fields;
 }
 
-function BadgesRow({
-  planScope,
-  isRegulatedPlan,
-}: {
-  planScope: HistoryEntry['planScope'];
-  isRegulatedPlan: HistoryEntry['isRegulatedPlan'];
-}) {
-  if (!planScope && !isRegulatedPlan) return null;
-  return (
-    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-      {planScope ? (
-        <Chip
-          label={`Abrangência: ${planScope}`}
-          size="small"
-          sx={{
-            fontSize: 11,
-            fontWeight: 600,
-            height: 22,
-            backgroundColor: 'rgba(37,99,235,0.08)',
-            color: 'info.main',
-          }}
-        />
-      ) : null}
-      {isRegulatedPlan ? (
-        <Chip
-          label="Plano Regulamentado"
-          size="small"
-          sx={{
-            fontSize: 11,
-            fontWeight: 600,
-            height: 22,
-            backgroundColor: 'rgba(22,163,74,0.08)',
-            color: 'success.main',
-          }}
-        />
-      ) : null}
-    </Box>
-  );
-}
-
 export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
   const router = useRouter();
   const sex = entry.sex ?? 'M';
@@ -244,9 +204,8 @@ export default function BeneficiarySection({ entry }: BeneficiarySectionProps) {
             <DataField key={f.label} label={f.label} value={f.value} />
           ))}
           <CarenciaField carencia={carencia} />
+          {entry.planScope ? <DataField label="Abrangência" value={entry.planScope} /> : null}
         </Box>
-
-        <BadgesRow planScope={entry.planScope} isRegulatedPlan={entry.isRegulatedPlan} />
 
         {entry.beneficiaryNotes ? (
           <Alert

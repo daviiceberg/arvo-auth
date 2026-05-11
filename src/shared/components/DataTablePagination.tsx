@@ -27,7 +27,7 @@ export default function DataTablePagination({
     <Box
       sx={{
         px: 2,
-        borderTop: '1px solid rgba(0,0,0,0.07)',
+        borderTop: '1px solid rgba(0,0,0,0.04)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',

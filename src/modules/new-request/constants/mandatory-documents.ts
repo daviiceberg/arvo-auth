@@ -203,6 +203,104 @@ export const DOCS_BY_CATEGORY: Record<Category, CategoryDocs> = {
       },
     ],
   },
+  Internação: {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada com indicação clínica de internação',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano de Cuidados Hospitalares',
+        descricao: 'Plano elaborado pelo médico assistente — equipe, condutas e cuidados previstos',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Estimativa de Diárias e Nível de Auditoria',
+        descricao:
+          'Tempo previsto de internação e nível proposto (Ambulatorial / Hospitalar / UTI)',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Exames Pré-Internação',
+        descricao: 'Hemograma, ECG, RX de tórax e exames complementares pertinentes',
+        obrigatorio: false,
+      },
+      {
+        nome: 'Histórico Clínico',
+        descricao: 'Estado clínico atual, comorbidades e medicação em uso',
+        obrigatorio: true,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação de prorrogação assinada pelo médico assistente',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório de Evolução Hospitalar',
+        descricao: 'Estado clínico atual e justificativa da prorrogação',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano de Cuidados Atualizado',
+        descricao: 'Condutas para o próximo período de internação',
+        obrigatorio: true,
+      },
+    ],
+  },
+  'Cirurgias Eletivas': {
+    primeira: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Solicitação assinada pelo cirurgião com indicação clínica',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Parecer do Especialista',
+        descricao: 'Avaliação pré-cirúrgica do especialista responsável',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Plano Cirúrgico',
+        descricao: 'Procedimento principal, acessórios, vias de acesso e tempo estimado',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Avaliação Pré-Anestésica',
+        descricao: 'Consulta com anestesista — risco e técnica anestésica',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Exames Pré-Operatórios',
+        descricao: 'Hemograma, coagulograma, bioquímica, ECG, RX de tórax e demais por tipo',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Estadiamento Oncológico',
+        descricao: 'Para cirurgias oncológicas — laudo com TNM e evolução',
+        obrigatorio: false,
+      },
+    ],
+    continuidade: [
+      {
+        nome: 'Pedido Médico com CID',
+        descricao: 'Nova solicitação assinada pelo cirurgião',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Relatório do Procedimento Anterior',
+        descricao: 'Descrição da cirurgia prévia relacionada e evolução pós-operatória',
+        obrigatorio: true,
+      },
+      {
+        nome: 'Justificativa Técnica',
+        descricao: 'Razão clínica da reabordagem ou complementação cirúrgica',
+        obrigatorio: true,
+      },
+    ],
+  },
 };
 
 export const TIPOS_DOC_UPLOAD = [

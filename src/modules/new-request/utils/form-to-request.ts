@@ -14,14 +14,22 @@
  */
 
 import {
+  type AuditLevel,
   type GuideStatus,
   type GuideType,
+  type HospitalizationContext,
+  type HospitalizationType,
   type ManchesterClassificationFinal,
   type OncologyProtocol,
   type OncologyTreatmentLine,
   type OncologyTreatmentType,
+  type PreOpItem,
+  type PreOpItemStatus,
+  type PreOpItemType,
   type Procedure,
   type Request,
+  type SurgeryContext,
+  type SurgeryType,
   type UrgencyType,
 } from '@/types/pedido';
 
@@ -153,6 +161,105 @@ function buildTherapyProcedures(procedures: TerapiaProcedimento[], cid: string):
     );
 }
 
+function buildHospitalizationProcedures(form: FormData, cid: string): Procedure[] {
+  return form.hospitalizationProcedimentos
+    .filter((p) => p.codigoTUSS.trim() !== '')
+    .map((p) => ({
+      ...buildProcedure({
+        codigoTUSS: p.codigoTUSS,
+        descricaoTUSS: p.descricaoTUSS,
+        qty: Number(p.qtd) || 1,
+        cid: p.cid.trim() === '' ? cid : extractCidCode(p.cid),
+      }),
+      auditLevel: pickAuditLevel(form),
+    }));
+}
+
+function buildSurgeryProcedures(form: FormData, cid: string): Procedure[] {
+  const procedures: Procedure[] = [];
+  if (form.surgeryMainProcedureCode.trim() !== '') {
+    procedures.push({
+      ...buildProcedure({
+        codigoTUSS: form.surgeryMainProcedureCode,
+        descricaoTUSS: form.surgeryMainProcedureDescription,
+        qty: 1,
+        cid,
+      }),
+      auditLevel: pickAuditLevel(form),
+    });
+  }
+  for (const acc of form.surgeryAcessorios) {
+    if (acc.codigoTUSS.trim() === '') continue;
+    procedures.push({
+      ...buildProcedure({
+        codigoTUSS: acc.codigoTUSS,
+        descricaoTUSS: acc.descricaoTUSS,
+        qty: 1,
+        cid,
+      }),
+      auditLevel: pickAuditLevel(form),
+    });
+  }
+  return procedures;
+}
+
+function pickAuditLevel(form: FormData): AuditLevel {
+  if (form.hospitalizationAuditLevel === '') return 'AMBULATORIAL';
+  return form.hospitalizationAuditLevel;
+}
+
+function buildHospitalizationContext(form: FormData): HospitalizationContext | undefined {
+  if (form.hospitalizationTipo === '') return undefined;
+  const tipo: HospitalizationType = form.hospitalizationTipo;
+  return {
+    type: tipo,
+    plannedDate: form.hospitalizationDataPrevista,
+    expectedDays: Number(form.hospitalizationDuracao) || 0,
+    taxes: form.hospitalizationTaxas
+      .filter((t) => t.code.trim() !== '')
+      .map((t) => ({
+        code: t.code,
+        description: t.description,
+        quantity: Number(t.quantity) || 1,
+        estimatedValue: Number(t.estimatedValue) || 0,
+      })),
+    ...(form.hospitalizationUtiJustificativa.trim() !== '' && {
+      utiJustification: form.hospitalizationUtiJustificativa,
+    }),
+  };
+}
+
+function buildSurgeryContext(form: FormData): SurgeryContext | undefined {
+  if (form.surgeryTipo === '') return undefined;
+  const tipo: SurgeryType = form.surgeryTipo;
+  return {
+    type: tipo,
+    mainProcedureCode: form.surgeryMainProcedureCode,
+    accessoryProcedureCodes: form.surgeryAcessorios
+      .map((a) => a.codigoTUSS)
+      .filter((c) => c.trim() !== ''),
+    hasOpme: form.surgeryHasOpme,
+    hasOncologyLink: form.surgeryHasOncologyLink,
+    ...(form.surgeryNotes.trim() !== '' && { notes: form.surgeryNotes }),
+  };
+}
+
+function buildPreOpItems(form: FormData): PreOpItem[] | undefined {
+  if (form.preOpItens.length === 0) return undefined;
+  return form.preOpItens.map((item) => {
+    const type: PreOpItemType = item.type;
+    const status: PreOpItemStatus = item.status;
+    return {
+      id: item.templateId ?? item.id,
+      type,
+      description: item.description,
+      required: item.required,
+      status,
+      ...(item.date.trim() !== '' && { date: item.date }),
+    };
+  });
+}
+
 function buildOncologyProtocol(form: FormData): OncologyProtocol | undefined {
   if (form.tipoTratamento === '') return undefined;
   const cycleDisplay =
@@ -226,6 +333,8 @@ export function formDataToRequest({
     if (form.category === 'SADT') return buildSadtProcedures(form, cid);
     if (form.category === 'Exames Alta Complexidade') return buildExamsProcedures(form, cid);
     if (form.category === 'Home Care') return buildHomeCareProcedures(form, cid);
+    if (form.category === 'Internação') return buildHospitalizationProcedures(form, cid);
+    if (form.category === 'Cirurgias Eletivas') return buildSurgeryProcedures(form, cid);
     return buildTherapyProcedures(terapiaProcedimentos, cid);
   })();
 
@@ -236,7 +345,7 @@ export function formDataToRequest({
     status,
     guideType: pickGuideType(form),
     category: form.category,
-    auditLevel: 'AMBULATORIAL',
+    auditLevel: pickAuditLevel(form),
     procedures,
     secondaryCids: form.cidsSecundarios.map(extractCidCode).filter((c) => c !== ''),
     observations: form.indicacaoClinica,
@@ -255,10 +364,32 @@ export function formDataToRequest({
     partial.urgencyReason = urgencyReason;
   }
 
+  applyCategorySpecificFields(partial, form);
+
+  return partial;
+}
+
+function applyCategorySpecificFields(partial: Partial<Request>, form: FormData): void {
   if (form.category === 'Oncologia') {
     const protocol = buildOncologyProtocol(form);
     if (protocol) partial.oncologyProtocol = protocol;
   }
+  if (form.category === 'Internação' || form.category === 'Cirurgias Eletivas') {
+    const hospitalization = buildHospitalizationContext(form);
+    if (hospitalization) partial.hospitalization = hospitalization;
+  }
+  if (form.category === 'Cirurgias Eletivas') {
+    applySurgeryFields(partial, form);
+  }
+}
 
-  return partial;
+function applySurgeryFields(partial: Partial<Request>, form: FormData): void {
+  const surgery = buildSurgeryContext(form);
+  if (surgery) partial.surgery = surgery;
+  const preOp = buildPreOpItems(form);
+  if (preOp) partial.preOp = preOp;
+  if (form.surgeryHasOncologyLink) {
+    const protocol = buildOncologyProtocol(form);
+    if (protocol) partial.oncologyProtocol = protocol;
+  }
 }

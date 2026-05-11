@@ -110,6 +110,58 @@ export interface OncologyProtocol {
 
 export type ManchesterClassificationFinal = 'vermelho' | 'laranja' | 'amarelo' | 'verde' | 'azul';
 
+export type HospitalizationType =
+  | 'clinica_eletiva'
+  | 'semi_eletiva'
+  | 'domiciliar_alta_complexidade';
+
+export interface HospitalTax {
+  code: string;
+  description: string;
+  quantity: number;
+  estimatedValue: number;
+}
+
+export interface HospitalizationContext {
+  type: HospitalizationType;
+  plannedDate: string;
+  expectedDays: number;
+  dailyRate?: number;
+  taxes: HospitalTax[];
+  utiJustification?: string;
+  notes?: string;
+}
+
+export type SurgeryType =
+  | 'geral_eletiva'
+  | 'ortopedica_programada'
+  | 'oftalmologica'
+  | 'plastica_reparadora'
+  | 'oncologica_eletiva';
+
+export type PreOpItemType = 'exame' | 'consulta' | 'avaliacao';
+export type PreOpItemStatus = 'realizado' | 'agendado' | 'pendente';
+
+export interface PreOpItem {
+  id: string;
+  type: PreOpItemType;
+  description: string;
+  required: boolean;
+  status: PreOpItemStatus;
+  date?: string;
+  provider?: string;
+  resultRef?: string;
+}
+
+export interface SurgeryContext {
+  type: SurgeryType;
+  mainProcedureCode: string;
+  accessoryProcedureCodes?: string[];
+  hasOpme: boolean;
+  hasOncologyLink: boolean;
+  notes?: string;
+}
+
 export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
 export type RoutingOutcome = 'queued_for_human_review' | 'auto_decision';
@@ -144,6 +196,8 @@ export type AISuggestionFinal = 'Aprovar' | 'Negar' | 'Aprovar Parcial';
 export type Category =
   | 'Urgência/Emergência'
   | 'Oncologia'
+  | 'Internação'
+  | 'Cirurgias Eletivas'
   | 'Terapias Especiais'
   | 'SADT'
   | 'Exames Alta Complexidade'
@@ -328,6 +382,9 @@ export interface Request {
   urgencyReason?: string;
   manchesterClassification?: ManchesterClassificationFinal;
   oncologyProtocol?: OncologyProtocol;
+  hospitalization?: HospitalizationContext;
+  surgery?: SurgeryContext;
+  preOp?: PreOpItem[];
   prestadorMessages?: PrestadorMessage[];
   secondaryCids?: string[];
   guidePassword?: string;
@@ -431,6 +488,11 @@ export interface HistoryEntry {
   injunctionProcessNumber?: string;
   hadNip?: boolean;
   nipNumber?: string;
+  hospitalizationDays?: number;
+  hospitalizationType?: HospitalizationType;
+  surgeryType?: SurgeryType;
+  hadPreOp?: boolean;
+  expandedAuditLevel?: AuditLevel;
   juntaParecer?: {
     text: string;
     suggestedDecision: 'aprovado' | 'negado' | 'aprovado_parcial';

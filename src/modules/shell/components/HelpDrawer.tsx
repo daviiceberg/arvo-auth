@@ -48,7 +48,7 @@ export default function HelpDrawer({ open, onClose }: HelpDrawerProps) {
           px: 3,
           pt: 2.5,
           pb: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.08)',
+          borderBottom: '1px solid rgba(0,0,0,0.04)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',

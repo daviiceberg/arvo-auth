@@ -35,6 +35,7 @@ import InjunctionAcknowledgmentDialog from './dialogs/InjunctionAcknowledgmentDi
 import JuntaMedicaDialog from './dialogs/JuntaMedicaDialog';
 import PartialApprovalDialog from './dialogs/PartialApprovalDialog';
 import PendencyDialog from './dialogs/PendencyDialog';
+import HospitalContextSection from './HospitalContextSection';
 import M1Banners from './M1Banners';
 import OncologyDataSection from './OncologyDataSection';
 import PageHeader from './PageHeader';
@@ -258,13 +259,14 @@ function AnalysisInner() {
             ) : null}
             <AlertsBanner request={request} />
             <BeneficiarySection request={request} />
-            {request.category === 'Oncologia' ? <OncologyDataSection request={request} /> : null}
             <ProceduresSection
               key={`procedures-${request.id}`}
               request={request}
               allAdjustments={adjustment.allAdjustments}
               onAdjustClick={adjustment.handleAdjustClick}
             />
+            <HospitalContextSection request={request} />
+            {request.category === 'Oncologia' ? <OncologyDataSection request={request} /> : null}
             <RegisteredAdjustmentsSection adjustments={adjustment.allAdjustments} />
             <AnalysisSecondarySections
               request={request}

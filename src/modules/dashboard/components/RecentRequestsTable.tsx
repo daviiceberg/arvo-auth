@@ -14,6 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import { StatusChip, SLAChip } from '@/shared/components';
+import { sortByPriority } from '@/shared/utils/priority-tier';
 import { type Request } from '@/types/pedido';
 
 interface RecentRequestsTableProps {
@@ -34,28 +35,12 @@ const thSx = {
 
 const tdSx = { py: '8px', px: '12px' };
 
-const CRITICAL_ALERTS = ['NIP Ativa'];
-
-function urgencyScore(p: Request): number {
-  const hasCritical = p.alerts.some((a) => CRITICAL_ALERTS.includes(a));
-  const hasAnyAlert = p.alerts.length > 0;
-  if (p.slaStatus === 'violated' && hasCritical) return 0;
-  if (p.slaStatus === 'violated') return 1;
-  if (p.slaStatus === 'warning' && hasAnyAlert) return 2;
-  if (p.slaStatus === 'warning') return 3;
-  return 4;
-}
-
 export default function RecentRequestsTable({ pedidos, loading }: RecentRequestsTableProps) {
   const router = useRouter();
 
-  const urgentFirst = [...pedidos]
-    .sort((a, b) => {
-      const diff = urgencyScore(a) - urgencyScore(b);
-      if (diff !== 0) return diff;
-      return a.protocolDate.localeCompare(b.protocolDate);
-    })
-    .slice(0, 5);
+  // Mesma hierarquia da fila operacional: Liminar > NIP > U/E > SLA Violado >
+  // SLA Risco > Devolutivas > outros. Tiebreaker por SLA mais próximo.
+  const urgentFirst = [...pedidos].sort(sortByPriority).slice(0, 5);
 
   return (
     <>
@@ -82,14 +67,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
           ))}
         </Box>
       ) : (
-        <Box
-          sx={{
-            border: '1px solid rgba(0,0,0,0.1)',
-            borderRadius: '16px',
-            overflowX: 'auto',
-            overflowY: 'hidden',
-          }}
-        >
+        <Box sx={{ overflowX: 'auto', overflowY: 'hidden' }}>
           <Table size="small" aria-label="Pedidos que requerem atenção" sx={{ minWidth: 820 }}>
             <TableHead>
               <TableRow>

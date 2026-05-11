@@ -20,6 +20,8 @@ const SECTION_TITLE_BY_CATEGORY: Record<Category, string> = {
   'Home Care': 'Plano de Home Care',
   'Urgência/Emergência': 'Atendimento de Urgência',
   Oncologia: 'Protocolo Oncológico',
+  Internação: 'Plano de Internação',
+  'Cirurgias Eletivas': 'Plano Cirúrgico',
 };
 
 function etapaLabel(etapa: string): string {
@@ -175,7 +177,129 @@ function getDynamicSectionContent(
       </>
     );
   }
+  if (form.category === 'Internação') return getInternacaoContent(form);
+  if (form.category === 'Cirurgias Eletivas') return getCirurgiasContent(form);
   return null;
+}
+
+const HOSPITALIZATION_TIPO_LABEL: Record<string, string> = {
+  clinica_eletiva: 'Clínica Eletiva',
+  semi_eletiva: 'Semi-Eletiva',
+  domiciliar_alta_complexidade: 'Domiciliar Alta Complexidade',
+};
+
+const SURGERY_TIPO_LABEL: Record<string, string> = {
+  geral_eletiva: 'Geral Eletiva',
+  ortopedica_programada: 'Ortopédica Programada',
+  oftalmologica: 'Oftalmológica',
+  plastica_reparadora: 'Plástica Reparadora',
+  oncologica_eletiva: 'Oncológica Eletiva',
+};
+
+const AUDIT_LEVEL_LABEL: Record<string, string> = {
+  AMBULATORIAL: 'Ambulatorial',
+  HOSPITALAR: 'Hospitalar',
+  UTI: 'UTI',
+};
+
+function getInternacaoContent(form: FormData): React.ReactNode {
+  return (
+    <>
+      <ReviewRow
+        label="Tipo de Internação"
+        value={HOSPITALIZATION_TIPO_LABEL[form.hospitalizationTipo] ?? ''}
+      />
+      <ReviewRow
+        label="Nível de Auditoria"
+        value={AUDIT_LEVEL_LABEL[form.hospitalizationAuditLevel] ?? ''}
+      />
+      <ReviewRow label="Data Prevista" value={form.hospitalizationDataPrevista} />
+      <ReviewRow
+        label="Duração estimada"
+        value={form.hospitalizationDuracao ? `${form.hospitalizationDuracao} diária(s)` : ''}
+      />
+      {form.hospitalizationAuditLevel === 'UTI' ? (
+        <ReviewRow label="Justificativa UTI" value={form.hospitalizationUtiJustificativa} />
+      ) : null}
+      {form.hospitalizationProcedimentos.map((proc, idx) => (
+        <Box key={proc.id} sx={{ mt: 2 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+            Procedimento {idx + 1}
+          </Typography>
+          <ReviewRow label="Código TUSS" value={proc.codigoTUSS} />
+          <ReviewRow label="Descrição" value={proc.descricaoTUSS} />
+          <ReviewRow label="CID" value={proc.cid} />
+          <ReviewRow label="Quantidade" value={proc.qtd} />
+        </Box>
+      ))}
+      {form.hospitalizationTaxas.length > 0 ? (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1, fontSize: 12 }}>
+            Taxas hospitalares ({form.hospitalizationTaxas.length})
+          </Typography>
+          {form.hospitalizationTaxas.map((t, idx) => (
+            <ReviewRow
+              key={t.id}
+              label={`${String(idx + 1)}. ${t.code || '(sem código)'}`}
+              value={`${t.description} × ${t.quantity} (R$ ${t.estimatedValue})`}
+            />
+          ))}
+        </Box>
+      ) : null}
+    </>
+  );
+}
+
+function getCirurgiasContent(form: FormData): React.ReactNode {
+  return (
+    <>
+      <ReviewRow label="Tipo de Cirurgia" value={SURGERY_TIPO_LABEL[form.surgeryTipo] ?? ''} />
+      <ReviewRow label="Procedimento Principal (TUSS)" value={form.surgeryMainProcedureCode} />
+      <ReviewRow label="Descrição" value={form.surgeryMainProcedureDescription} />
+      {form.surgeryAcessorios.length > 0 ? (
+        <Box sx={{ mt: 1 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5, fontSize: 12 }}>
+            Acessórios ({form.surgeryAcessorios.length})
+          </Typography>
+          {form.surgeryAcessorios.map((a, idx) => (
+            <ReviewRow
+              key={a.id}
+              label={`Acessório ${String(idx + 1)}`}
+              value={`${a.codigoTUSS} — ${a.descricaoTUSS}`}
+            />
+          ))}
+        </Box>
+      ) : null}
+      <ReviewRow label="OPME?" value={form.surgeryHasOpme ? 'Sim (M5)' : 'Não'} />
+      <ReviewRow
+        label="Cirurgia Oncológica?"
+        value={form.surgeryHasOncologyLink ? 'Sim (vínculo M3)' : 'Não'}
+      />
+      {form.surgeryHasOncologyLink ? (
+        <>
+          <ReviewRow label="Estadiamento (TNM)" value={form.estadiamentoTNM} />
+          <ReviewRow label="Protocolo Cirúrgico" value={form.protocoloQuimio} />
+        </>
+      ) : null}
+      <ReviewRow label="Notas" value={form.surgeryNotes} />
+      {/* Reuso bloco internação para hospitalização pós-cirurgia */}
+      {getInternacaoContent(form)}
+      {form.preOpItens.length > 0 ? (
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5, fontSize: 12 }}>
+            Pré-Operatório ({form.preOpItens.length})
+          </Typography>
+          {form.preOpItens.map((item) => (
+            <ReviewRow
+              key={item.id}
+              label={`${item.required ? '★ ' : ''}${item.description}`}
+              value={`${item.status}${item.date ? ` em ${item.date}` : ''}`}
+            />
+          ))}
+        </Box>
+      ) : null}
+    </>
+  );
 }
 
 // ── Documents review section ─────────────────────────────────────────

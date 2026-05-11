@@ -21,8 +21,8 @@ export default function HistoryDetailSkeleton() {
         sx={{
           px: 3,
           py: 1.75,
-          backgroundColor: '#fff',
-          borderBottom: '1px solid rgba(0,0,0,0.07)',
+          backgroundColor: 'transparent',
+          borderBottom: '1px solid rgba(0,0,0,0.04)',
         }}
       >
         <Skeleton variant="text" width={80} height={18} sx={{ mb: 0.75 }} />

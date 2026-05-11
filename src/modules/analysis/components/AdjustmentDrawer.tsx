@@ -147,7 +147,7 @@ function AdjustmentFormBody({ proc, form, fieldComponents }: AdjustmentFormBodyP
       <Box
         sx={{
           backgroundColor: '#f9fafb',
-          border: '1px solid rgba(0,0,0,0.08)',
+          border: '1px solid rgba(0,0,0,0.04)',
           borderRadius: 1.5,
           p: 2,
         }}

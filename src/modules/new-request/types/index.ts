@@ -101,6 +101,59 @@ export interface OncologyProcedimento {
   quantidade: string;
 }
 
+// ── Internação (M4) ─────────────────────────────────────────────────────
+export type HospitalizationTipo =
+  | 'clinica_eletiva'
+  | 'semi_eletiva'
+  | 'domiciliar_alta_complexidade'
+  | '';
+
+export type HospitalizationAuditChoice = 'AMBULATORIAL' | 'HOSPITALAR' | 'UTI' | '';
+
+export interface HospitalTaxItem {
+  id: string;
+  code: string;
+  description: string;
+  quantity: string;
+  estimatedValue: string;
+}
+
+export interface HospitalizationProcedimento {
+  id: string;
+  codigoTUSS: string;
+  descricaoTUSS: string;
+  cid: string;
+  qtd: string;
+}
+
+// ── Cirurgias Eletivas (M4) ─────────────────────────────────────────────
+export type SurgeryTipoChoice =
+  | 'geral_eletiva'
+  | 'ortopedica_programada'
+  | 'oftalmologica'
+  | 'plastica_reparadora'
+  | 'oncologica_eletiva'
+  | '';
+
+export type PreOpItemTypeChoice = 'exame' | 'consulta' | 'avaliacao';
+export type PreOpItemStatusChoice = 'realizado' | 'agendado' | 'pendente';
+
+export interface SurgeryAcessorio {
+  id: string;
+  codigoTUSS: string;
+  descricaoTUSS: string;
+}
+
+export interface PreOpFormItem {
+  id: string;
+  templateId?: string;
+  type: PreOpItemTypeChoice;
+  description: string;
+  required: boolean;
+  status: PreOpItemStatusChoice;
+  date: string;
+}
+
 export interface FormData {
   // Step 1 — Beneficiário
   category: Category | '';
@@ -149,4 +202,21 @@ export interface FormData {
   homeCareProcedimentos: HomeCareItem[];
   urgencyProcedimentos: UrgencyProcedimento[];
   oncologyProcedimentos: OncologyProcedimento[];
+  // M4 — Internação
+  hospitalizationTipo: HospitalizationTipo;
+  hospitalizationDataPrevista: string;
+  hospitalizationDuracao: string;
+  hospitalizationAuditLevel: HospitalizationAuditChoice;
+  hospitalizationUtiJustificativa: string;
+  hospitalizationTaxas: HospitalTaxItem[];
+  hospitalizationProcedimentos: HospitalizationProcedimento[];
+  // M4 — Cirurgias Eletivas
+  surgeryTipo: SurgeryTipoChoice;
+  surgeryMainProcedureCode: string;
+  surgeryMainProcedureDescription: string;
+  surgeryAcessorios: SurgeryAcessorio[];
+  surgeryHasOpme: boolean;
+  surgeryHasOncologyLink: boolean;
+  surgeryNotes: string;
+  preOpItens: PreOpFormItem[];
 }

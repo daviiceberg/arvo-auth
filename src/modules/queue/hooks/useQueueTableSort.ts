@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { type Request } from '@/types/pedido';
 
-type SortColumn = 'id' | 'sla' | null;
+type SortColumn = 'sla' | null;
 type SortDirection = 'asc' | 'desc';
 
 interface SortState {
@@ -27,20 +27,9 @@ export function useQueueTableSort() {
     if (!sort.column) return items;
 
     return [...items].sort((a, b) => {
-      let compareA: string | number;
-      let compareB: string | number;
-
-      if (sort.column === 'id') {
-        // Sort by protocolDate
-        compareA = a.protocolDate;
-        compareB = b.protocolDate;
-      } else if (sort.column === 'sla') {
-        // Sort by slaStatus (treat as string for alphabetical ordering)
-        compareA = a.slaStatus;
-        compareB = b.slaStatus;
-      } else {
-        return 0;
-      }
+      // Sort by slaStatus (treat as string for alphabetical ordering)
+      const compareA = a.slaStatus;
+      const compareB = b.slaStatus;
 
       if (compareA < compareB) return sort.direction === 'asc' ? -1 : 1;
       if (compareA > compareB) return sort.direction === 'asc' ? 1 : -1;

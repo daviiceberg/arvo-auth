@@ -7,11 +7,7 @@ import CardContent from '@mui/material/CardContent';
 
 import { type Request } from '@/types/pedido';
 
-import {
-  DEFAULT_HISTORY,
-  mockHistorico,
-  getHistoryKey,
-} from '../constants/consolidated-history-data';
+import { resolveConsolidatedHistory } from '../constants/consolidated-history-data';
 
 import HistoryAuthorizations from './HistoryAuthorizations';
 import HistoryCompleteness from './HistoryCompleteness';
@@ -26,8 +22,7 @@ interface ConsolidatedHistorySectionProps {
 }
 
 export default function ConsolidatedHistorySection({ request }: ConsolidatedHistorySectionProps) {
-  const key = getHistoryKey(request.id);
-  const h = mockHistorico[key] ?? DEFAULT_HISTORY;
+  const h = resolveConsolidatedHistory({ id: request.id, category: request.category });
 
   return (
     <Card>

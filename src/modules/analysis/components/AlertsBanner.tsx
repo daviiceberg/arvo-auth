@@ -12,12 +12,27 @@ interface AlertsBannerProps {
   request: Request;
 }
 
+/**
+ * Alertas que possuem banner detalhado próprio (InjunctionBanner, NipBanner,
+ * PendencyBanner, SLAChip etc) são suprimidos aqui para evitar duplicação.
+ * Match feito por substring case-insensitive contra o texto do alerta.
+ */
+function isRedundantAlert(alert: string, request: Request): boolean {
+  const a = alert.toLowerCase().trim();
+  if (request.injunction && (a.includes('liminar') || a.includes('judicial'))) return true;
+  if (request.nip && a.includes('nip')) return true;
+  if (request.pendencyContext && a.includes('pendência')) return true;
+  if (request.slaStatus === 'violated' && a.includes('sla violado')) return true;
+  return false;
+}
+
 export default function AlertsBanner({ request }: AlertsBannerProps) {
-  if (request.alerts.length === 0) return null;
+  const filtered = request.alerts.filter((a) => !isRedundantAlert(a, request));
+  if (filtered.length === 0) return null;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      {request.alerts.map((alert) => (
+      {filtered.map((alert) => (
         <Alert
           key={alert}
           severity="error"

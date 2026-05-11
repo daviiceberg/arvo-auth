@@ -118,15 +118,7 @@ export default function QueueTable({
               },
             }}
           >
-            <SortableHeader
-              label="ID"
-              isSorted={sort.column === 'id'}
-              isAsc={sort.direction === 'asc'}
-              onClick={() => {
-                toggleSort('id');
-              }}
-              minWidth={130}
-            />
+            <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
             <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
             <TableCell sx={{ minWidth: 145 }}>Categoria</TableCell>
             <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>

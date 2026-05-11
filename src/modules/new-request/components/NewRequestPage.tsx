@@ -108,6 +108,22 @@ function NewRequestInner() {
     handleAddOncologyProcedimento,
     handleRemoveOncologyProcedimento,
     handleUpdateOncologyProcedimento,
+    handleAddHospitalizationProcedimento,
+    handleRemoveHospitalizationProcedimento,
+    handleUpdateHospitalizationProcedimento,
+    handleAddHospitalizationTaxa,
+    handleRemoveHospitalizationTaxa,
+    handleUpdateHospitalizationTaxa,
+    handleSetSurgeryTipo,
+    handleAddSurgeryAcessorio,
+    handleRemoveSurgeryAcessorio,
+    handleUpdateSurgeryAcessorio,
+    handleSetSurgeryMainProcedure,
+    handleSetSurgeryHasOpme,
+    handleSetSurgeryHasOncologyLink,
+    handleAddPreOpItem,
+    handleRemovePreOpItem,
+    handleUpdatePreOpItem,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,
@@ -220,6 +236,21 @@ function NewRequestInner() {
       homeCareProcedimentos: [],
       urgencyProcedimentos: [],
       oncologyProcedimentos: [],
+      hospitalizationTipo: '',
+      hospitalizationDataPrevista: '',
+      hospitalizationDuracao: '',
+      hospitalizationAuditLevel: '',
+      hospitalizationUtiJustificativa: '',
+      hospitalizationTaxas: [],
+      hospitalizationProcedimentos: [],
+      surgeryTipo: '',
+      surgeryMainProcedureCode: '',
+      surgeryMainProcedureDescription: '',
+      surgeryAcessorios: [],
+      surgeryHasOpme: false,
+      surgeryHasOncologyLink: false,
+      surgeryNotes: '',
+      preOpItens: [],
     };
     setForm(emptyForm);
     setIsManualEntry(true);
@@ -293,6 +324,22 @@ function NewRequestInner() {
         handleAddOncologyProcedimento={handleAddOncologyProcedimento}
         handleRemoveOncologyProcedimento={handleRemoveOncologyProcedimento}
         handleUpdateOncologyProcedimento={handleUpdateOncologyProcedimento}
+        handleAddHospitalizationProcedimento={handleAddHospitalizationProcedimento}
+        handleRemoveHospitalizationProcedimento={handleRemoveHospitalizationProcedimento}
+        handleUpdateHospitalizationProcedimento={handleUpdateHospitalizationProcedimento}
+        handleAddHospitalizationTaxa={handleAddHospitalizationTaxa}
+        handleRemoveHospitalizationTaxa={handleRemoveHospitalizationTaxa}
+        handleUpdateHospitalizationTaxa={handleUpdateHospitalizationTaxa}
+        handleSetSurgeryTipo={handleSetSurgeryTipo}
+        handleSetSurgeryMainProcedure={handleSetSurgeryMainProcedure}
+        handleAddSurgeryAcessorio={handleAddSurgeryAcessorio}
+        handleRemoveSurgeryAcessorio={handleRemoveSurgeryAcessorio}
+        handleUpdateSurgeryAcessorio={handleUpdateSurgeryAcessorio}
+        handleSetSurgeryHasOpme={handleSetSurgeryHasOpme}
+        handleSetSurgeryHasOncologyLink={handleSetSurgeryHasOncologyLink}
+        handleAddPreOpItem={handleAddPreOpItem}
+        handleRemovePreOpItem={handleRemovePreOpItem}
+        handleUpdatePreOpItem={handleUpdatePreOpItem}
       />
     ),
     4: (

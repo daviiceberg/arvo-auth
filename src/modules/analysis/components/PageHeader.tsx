@@ -51,8 +51,8 @@ export default function PageHeader({
       sx={{
         px: 3,
         py: 1.75,
-        backgroundColor: '#fff',
-        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        backgroundColor: 'transparent',
+        borderBottom: '1px solid rgba(0,0,0,0.04)',
         flexShrink: 0,
       }}
     >

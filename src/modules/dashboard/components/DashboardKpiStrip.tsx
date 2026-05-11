@@ -178,7 +178,7 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
     icon: <GavelOutlinedIcon sx={{ fontSize: 18, color: '#5b21b6' }} />,
     bg: 'rgba(91,33,182,0.1)',
     color: '#5b21b6',
-    href: '/fila',
+    href: '/fila?tab=liminares',
     value: metrics.liminaresAtivas ?? 0,
   });
 
@@ -187,7 +187,7 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
     icon: <ReportProblemOutlinedIcon sx={{ fontSize: 18, color: '#c2410c' }} />,
     bg: 'rgba(194,65,12,0.1)',
     color: '#c2410c',
-    href: '/fila',
+    href: '/fila?tab=nips',
     value: metrics.nipsAbertas ?? 0,
   });
 

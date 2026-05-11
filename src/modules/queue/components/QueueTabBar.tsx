@@ -57,63 +57,6 @@ export default function QueueTabBar({
         <Tab
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              SLA em Risco
-              <Chip
-                label={warningCount}
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  backgroundColor: 'rgba(245,158,11,0.12)',
-                  color: 'warning.main',
-                }}
-              />
-            </Box>
-          }
-          aria-label="SLA em Risco"
-        />
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              SLA Violado
-              <Chip
-                label={violatedCount}
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  backgroundColor: 'rgba(212,24,61,0.1)',
-                  color: '#d4183d',
-                }}
-              />
-            </Box>
-          }
-          aria-label="SLA Violado"
-        />
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              Devolutivas
-              <Chip
-                label={devolutivasCount}
-                size="small"
-                sx={{
-                  height: 18,
-                  fontSize: 12,
-                  fontWeight: 700,
-                  backgroundColor: 'rgba(124,58,237,0.12)',
-                  color: '#6d28d9',
-                }}
-              />
-            </Box>
-          }
-          aria-label="Devolutivas (Pendência e Junta Médica)"
-        />
-        <Tab
-          label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               Liminares Judiciais
               <Chip
                 label={liminaresCount}
@@ -148,6 +91,63 @@ export default function QueueTabBar({
             </Box>
           }
           aria-label="NIPs Abertas — RN 483/2022"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              SLA Violado
+              <Chip
+                label={violatedCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(212,24,61,0.1)',
+                  color: '#d4183d',
+                }}
+              />
+            </Box>
+          }
+          aria-label="SLA Violado"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              SLA em Risco
+              <Chip
+                label={warningCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(245,158,11,0.12)',
+                  color: 'warning.main',
+                }}
+              />
+            </Box>
+          }
+          aria-label="SLA em Risco"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Devolutivas
+              <Chip
+                label={devolutivasCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(124,58,237,0.12)',
+                  color: '#6d28d9',
+                }}
+              />
+            </Box>
+          }
+          aria-label="Devolutivas (Pendência e Junta Médica)"
         />
       </Tabs>
     </Box>

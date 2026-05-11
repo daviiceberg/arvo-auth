@@ -13,6 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
+import { CATEGORIES_ORDER } from '@/shared/constants';
+
 import {
   type OriginFilter,
   type ActionFilter,
@@ -89,10 +91,11 @@ export default function HistoryListFilterBar({
               }}
             >
               <MenuItem value="Todas">Todas</MenuItem>
-              <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
-              <MenuItem value="SADT">SADT</MenuItem>
-              <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
-              <MenuItem value="Home Care">Home Care</MenuItem>
+              {CATEGORIES_ORDER.map((c) => (
+                <MenuItem key={c} value={c}>
+                  {c}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <FormControl size="small" sx={{ minWidth: 150 }}>

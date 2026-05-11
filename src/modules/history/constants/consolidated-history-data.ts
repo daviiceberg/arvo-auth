@@ -1,3 +1,5 @@
+import { type Category } from '@/types/pedido';
+
 import { type HistoricoConsolidado } from '../types';
 
 // ---- Default / fallback ----
@@ -58,8 +60,6 @@ export const DEFAULT_HISTORY: HistoricoConsolidado = {
 };
 
 export const mockHistorico: Record<string, HistoricoConsolidado> = {
-  default: DEFAULT_HISTORY,
-
   // ── TEA: Lucas — 5a M, F84.0, ABA, aprovado, recorrente (HIS-2026-5001) ──
   tea_lucas: {
     completeness: 'complete',
@@ -1265,6 +1265,196 @@ export const mockHistorico: Record<string, HistoricoConsolidado> = {
     },
   },
 };
+
+// ---- Defaults por categoria (coerentes com perfil esperado) ----
+const DEFAULT_BY_CATEGORY: Record<Category, HistoricoConsolidado> = {
+  'Terapias Especiais': DEFAULT_HISTORY,
+  SADT: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Fev/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Beneficiário adulto em acompanhamento ambulatorial. Histórico de procedimentos diagnóstico-terapêuticos pontuais. Sem internações nos últimos 12 meses. Carteirinha ativa, sem inadimplência.',
+    consultasRecentes: {
+      count: 4,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Clínica Geral', 'Ortopedia'],
+    },
+    procedimentosRelacionados:
+      'Coletas laboratoriais regulares, fisioterapia ambulatorial e exames de rotina nos últimos meses.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais: 'Sem restrições contratuais aplicáveis para procedimentos SADT.',
+      dutRelevantes: [],
+    },
+  },
+  'Exames Alta Complexidade': {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Beneficiário em investigação diagnóstica. Histórico de exames anteriores compatíveis com hipótese diagnóstica em curso. Sem repetição recente do mesmo exame solicitado.',
+    consultasRecentes: {
+      count: 3,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Clínica Geral', 'Especialista'],
+    },
+    procedimentosRelacionados:
+      'Exames laboratoriais e de imagem prévios consistentes com a investigação clínica em curso.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'Procedimentos de alta complexidade exigem justificativa técnica explícita.',
+      dutRelevantes: [],
+    },
+  },
+  'Home Care': {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Jan/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Beneficiário idoso ou em condição clínica que requer suporte domiciliar contínuo. Histórico recente de internações com alta para programa de Home Care. Suporte familiar documentado.',
+    consultasRecentes: {
+      count: 8,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Clínica Geral', 'Geriatria', 'Enfermagem domiciliar'],
+    },
+    procedimentosRelacionados:
+      'Programa Home Care anterior, fisioterapia domiciliar regular e acompanhamento de enfermagem.',
+    internacoes: { count: 1, periodo: 'últimos 12 meses', detalhes: 'Internação clínica recente' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais: 'Cobertura Home Care conforme contrato; renovação periódica obrigatória.',
+      dutRelevantes: [],
+    },
+  },
+  'Urgência/Emergência': {
+    completeness: 'limited',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Atendimento de urgência/emergência. Histórico assistencial limitado para o quadro agudo apresentado. Beneficiário com elegibilidade ativa — RN 566/2022 garante atendimento imediato sem autorização prévia.',
+    consultasRecentes: {
+      count: 2,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Clínica Geral'],
+    },
+    procedimentosRelacionados:
+      'Sem procedimentos relacionados diretamente ao quadro agudo nos últimos meses.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'RN 566/2022 art. 3º — atendimento imediato para urgência/emergência. Carência reduzida a 24h conforme RN 195/2009.',
+      dutRelevantes: ['RN 566/2022 — Urgência/Emergência'],
+    },
+  },
+  Oncologia: {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Fev/2026', padrao: 'recurrent' },
+    leituraAssistida:
+      'Beneficiário em tratamento oncológico ativo. Histórico de ciclos prévios documentados. Estadiamento clínico atualizado. Protocolo terapêutico reconhecido pela SBOC. Sem intercorrências graves no último ciclo.',
+    consultasRecentes: {
+      count: 6,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Oncologia clínica', 'Radioterapia'],
+    },
+    procedimentosRelacionados:
+      'Ciclos quimioterápicos anteriores, exames de estadiamento e acompanhamento oncológico regular.',
+    internacoes: { count: 1, periodo: 'últimos 12 meses', detalhes: 'Hospital-dia para ciclo QT' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais: 'Cobertura oncológica integral. Protocolos SBOC/NCCN como referência.',
+      dutRelevantes: ['DUT 70 — Quimioterapia antineoplásica', 'RN 566/2022'],
+    },
+  },
+  Internação: {
+    completeness: 'partial',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: 'Out/2025', padrao: 'recurrent' },
+    leituraAssistida:
+      'Beneficiário com histórico de internações eletivas prévias. Comorbidades documentadas. Plano de cuidados hospitalares apresentado, nível de auditoria coerente com indicação clínica.',
+    consultasRecentes: {
+      count: 5,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Clínica Geral', 'Especialista'],
+    },
+    procedimentosRelacionados:
+      'Internações eletivas anteriores, exames pré-internação e acompanhamento ambulatorial regular.',
+    internacoes: {
+      count: 2,
+      periodo: 'últimos 12 meses',
+      detalhes: 'Internações clínicas eletivas',
+    },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais: 'Cobertura hospitalar conforme contrato. Tabela TISS 18 aplicável.',
+      dutRelevantes: ['RN 566/2022'],
+    },
+  },
+  'Cirurgias Eletivas': {
+    completeness: 'complete',
+    linhaDoTempo: { ultimaSolicitacaoSimilar: null, padrao: 'first_time' },
+    leituraAssistida:
+      'Beneficiário com indicação cirúrgica eletiva. Pré-operatório em montagem ou completo. Avaliação pré-anestésica realizada. Plano cirúrgico detalhado com procedimento principal e acessórios. Sem cirurgias prévias relacionadas no histórico recente.',
+    consultasRecentes: {
+      count: 4,
+      periodo: 'últimos 6 meses',
+      especialidades: ['Especialista cirúrgico', 'Anestesiologia'],
+    },
+    procedimentosRelacionados:
+      'Exames pré-operatórios completos (hemograma, coagulograma, ECG, RX) e avaliação anestésica recentes.',
+    internacoes: { count: 0, periodo: 'últimos 12 meses' },
+    cidRecorrente: null,
+    autorizacoesAnteriores: [],
+    sinaisAtencao: [],
+    elegibilidade: {
+      status: 'ativo',
+      carencias: false,
+      limitesContratuais:
+        'Cobertura cirúrgica eletiva conforme contrato. SLA regulatório RN 566/2022 — 21 dias úteis.',
+      dutRelevantes: ['RN 566/2022'],
+    },
+  },
+};
+
+export interface ConsolidatedHistoryRef {
+  id: string;
+  category: Category;
+}
+
+/**
+ * Resolve histórico consolidado para qualquer entidade que carregue id + category
+ * (HistoryEntry ou Request). Prioridade: mock específico por ID > default por
+ * categoria > DEFAULT_HISTORY (TEA fallback).
+ */
+export function resolveConsolidatedHistory(ref: ConsolidatedHistoryRef): HistoricoConsolidado {
+  const key = getHistoryKey(ref.id);
+  const specific = mockHistorico[key];
+  if (specific) return specific;
+  return DEFAULT_BY_CATEGORY[ref.category];
+}
 
 /** Maps a HIS entry ID to the corresponding history mock data key. */
 export function getHistoryKey(entryId: string): string {

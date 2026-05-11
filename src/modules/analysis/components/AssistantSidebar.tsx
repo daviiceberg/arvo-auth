@@ -243,7 +243,7 @@ function AnalystDecisionSection({
         sx={{
           px: 2.5,
           py: 2,
-          borderBottom: '1px solid rgba(0,0,0,0.07)',
+          borderBottom: '1px solid rgba(0,0,0,0.04)',
           display: 'flex',
           alignItems: 'center',
           gap: 1,
@@ -482,7 +482,7 @@ export default function AssistantSidebar({
           sx={{
             px: 2.5,
             py: 2,
-            borderBottom: '1px solid rgba(0,0,0,0.07)',
+            borderBottom: '1px solid rgba(0,0,0,0.04)',
             display: 'flex',
             alignItems: 'center',
             gap: 1,

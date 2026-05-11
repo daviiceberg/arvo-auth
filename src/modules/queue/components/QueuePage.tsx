@@ -136,7 +136,7 @@ export default function QueuePage() {
           onRowClick={handleRowClick}
           onClearFilters={filters.clearFilters}
           subGroups={
-            filters.tabValue === 3
+            filters.tabValue === 5
               ? [
                   {
                     label: 'Aguardando retorno do prestador',

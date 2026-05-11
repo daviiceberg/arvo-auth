@@ -10,6 +10,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 
+import { CATEGORIES_ORDER } from '@/shared/constants';
+
 interface QueueFilterBarProps {
   search: string;
   slaFilter: string;
@@ -79,12 +81,11 @@ export default function QueueFilterBar({
           }}
         >
           <MenuItem value="Todas">Todas</MenuItem>
-          <MenuItem value="Urgência/Emergência">Urgência/Emergência</MenuItem>
-          <MenuItem value="Oncologia">Oncologia</MenuItem>
-          <MenuItem value="Terapias Especiais">Terapias Especiais</MenuItem>
-          <MenuItem value="SADT">SADT</MenuItem>
-          <MenuItem value="Exames Alta Complexidade">Exames Alta Complexidade</MenuItem>
-          <MenuItem value="Home Care">Home Care</MenuItem>
+          {CATEGORIES_ORDER.map((c) => (
+            <MenuItem key={c} value={c}>
+              {c}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <FormControl size="small" fullWidth>

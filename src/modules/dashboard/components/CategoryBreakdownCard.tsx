@@ -34,7 +34,7 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
             Nenhuma guia ativa nas categorias mapeadas.
           </Typography>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
             {entries.map((e) => {
               const widthPct = maxTotal > 0 ? (e.total / maxTotal) * 100 : 0;
               return (
@@ -57,7 +57,7 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
                     alignItems: 'center',
                     gap: 1.25,
                     px: 1,
-                    py: 0.75,
+                    py: 0.25,
                     borderRadius: 1,
                     cursor: 'pointer',
                     transition: 'background-color 150ms ease',

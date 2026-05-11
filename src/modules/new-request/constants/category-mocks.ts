@@ -109,6 +109,38 @@ export const categoryMocks: Record<Category, Partial<FormData>> = {
     tipoTratamento: 'Quimioterapia',
     totalCiclos: '8',
   },
+  Internação: {
+    nomeBeneficiario: 'Eduardo Marques Tavares',
+    carteirinha: '4445556667778889',
+    dataNascimento: '1958-02-14',
+    cidPrincipal: 'I50.0 - Insuficiência cardíaca congestiva',
+    indicacaoClinica:
+      'Paciente com descompensação cardíaca recorrente. Indicada internação eletiva clínica para compensação medicamentosa e investigação complementar.',
+    profissionalSolicitante: 'Dr. Renato Câmara',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '321987',
+    conselhoUF: 'SP',
+    cboCodigo: '225135',
+    nomeContratadoSolicitante: 'Hospital Cardio SP',
+    nomeContratadoExecutante: 'Hospital Cardio SP',
+    cnesExecutante: '5678901',
+  },
+  'Cirurgias Eletivas': {
+    nomeBeneficiario: 'Beatriz Pinheiro Almeida',
+    carteirinha: '6663339990001112',
+    dataNascimento: '1970-08-30',
+    cidPrincipal: 'M17.1 - Gonartrose primária bilateral',
+    indicacaoClinica:
+      'Paciente com gonartrose avançada bilateral, dor incapacitante. Indicada artroplastia total de joelho direito eletiva, com pré-operatório completo.',
+    profissionalSolicitante: 'Dr. Cláudio Bittencourt',
+    conselhoTipo: 'CRM',
+    conselhoNumero: '456789',
+    conselhoUF: 'SP',
+    cboCodigo: '225125',
+    nomeContratadoSolicitante: 'Clínica Ortopédica Avançada',
+    nomeContratadoExecutante: 'Hospital Ortopédico SP',
+    cnesExecutante: '6789012',
+  },
 };
 
 export const categoryDocumentLabels: Record<Category, string> = {
@@ -118,4 +150,6 @@ export const categoryDocumentLabels: Record<Category, string> = {
   'Home Care': 'Documentos necessários para autorização de Home Care:',
   'Urgência/Emergência': 'Documentos necessários para Urgência/Emergência:',
   Oncologia: 'Documentos necessários para protocolo oncológico:',
+  Internação: 'Documentos necessários para autorização de Internação:',
+  'Cirurgias Eletivas': 'Documentos necessários para Cirurgia Eletiva:',
 };

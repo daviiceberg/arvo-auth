@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { categoryMocks } from '../constants/category-mocks';
+import { buildPreOpFromTemplate } from '../constants/pre-op-required';
 import { TUSS_POR_TERAPIA } from '../constants/tuss-therapy-codes';
 import {
   type FormData,
@@ -12,6 +13,11 @@ import {
   type HomeCareItem,
   type UrgencyProcedimento,
   type OncologyProcedimento,
+  type HospitalTaxItem,
+  type HospitalizationProcedimento,
+  type SurgeryAcessorio,
+  type SurgeryTipoChoice,
+  type PreOpFormItem,
 } from '../types';
 
 const newSadtProcedimento = (base?: Partial<SadtProcedimento>): SadtProcedimento => ({
@@ -61,6 +67,43 @@ const newOncologyProcedimento = (base?: Partial<OncologyProcedimento>): Oncology
   codigoTUSS: '',
   descricaoTUSS: '',
   quantidade: '1',
+  ...base,
+});
+
+const newHospitalTaxItem = (base?: Partial<HospitalTaxItem>): HospitalTaxItem => ({
+  id: crypto.randomUUID(),
+  code: '',
+  description: '',
+  quantity: '1',
+  estimatedValue: '',
+  ...base,
+});
+
+const newHospitalizationProcedimento = (
+  base?: Partial<HospitalizationProcedimento>,
+): HospitalizationProcedimento => ({
+  id: crypto.randomUUID(),
+  codigoTUSS: '',
+  descricaoTUSS: '',
+  cid: '',
+  qtd: '1',
+  ...base,
+});
+
+const newSurgeryAcessorio = (base?: Partial<SurgeryAcessorio>): SurgeryAcessorio => ({
+  id: crypto.randomUUID(),
+  codigoTUSS: '',
+  descricaoTUSS: '',
+  ...base,
+});
+
+const newPreOpItem = (base?: Partial<PreOpFormItem>): PreOpFormItem => ({
+  id: crypto.randomUUID(),
+  type: 'exame',
+  description: '',
+  required: true,
+  status: 'pendente',
+  date: '',
   ...base,
 });
 
@@ -115,6 +158,21 @@ export const initialForm: FormData = {
   homeCareProcedimentos: [newHomeCareItem()],
   urgencyProcedimentos: [newUrgencyProcedimento()],
   oncologyProcedimentos: [newOncologyProcedimento()],
+  hospitalizationTipo: '',
+  hospitalizationDataPrevista: '',
+  hospitalizationDuracao: '',
+  hospitalizationAuditLevel: '',
+  hospitalizationUtiJustificativa: '',
+  hospitalizationTaxas: [],
+  hospitalizationProcedimentos: [newHospitalizationProcedimento()],
+  surgeryTipo: '',
+  surgeryMainProcedureCode: '',
+  surgeryMainProcedureDescription: '',
+  surgeryAcessorios: [],
+  surgeryHasOpme: false,
+  surgeryHasOncologyLink: false,
+  surgeryNotes: '',
+  preOpItens: [],
 };
 
 export function useNewRequestForm(categoryParam: string) {
@@ -340,6 +398,157 @@ export function useNewRequestForm(categoryParam: string) {
     }));
   };
 
+  const handleAddHospitalizationProcedimento = () => {
+    if (form.hospitalizationProcedimentos.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      hospitalizationProcedimentos: [
+        ...f.hospitalizationProcedimentos,
+        newHospitalizationProcedimento(),
+      ],
+    }));
+  };
+
+  const handleRemoveHospitalizationProcedimento = (id: string) => {
+    if (form.hospitalizationProcedimentos.length <= 1) return;
+    setForm((f) => ({
+      ...f,
+      hospitalizationProcedimentos: f.hospitalizationProcedimentos.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleUpdateHospitalizationProcedimento = (
+    id: string,
+    field: keyof Omit<HospitalizationProcedimento, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      hospitalizationProcedimentos: f.hospitalizationProcedimentos.map((p) =>
+        p.id === id ? { ...p, [field]: value } : p,
+      ),
+    }));
+  };
+
+  const handleAddHospitalizationTaxa = () => {
+    if (form.hospitalizationTaxas.length >= 10) return;
+    setForm((f) => ({
+      ...f,
+      hospitalizationTaxas: [...f.hospitalizationTaxas, newHospitalTaxItem()],
+    }));
+  };
+
+  const handleRemoveHospitalizationTaxa = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      hospitalizationTaxas: f.hospitalizationTaxas.filter((t) => t.id !== id),
+    }));
+  };
+
+  const handleUpdateHospitalizationTaxa = (
+    id: string,
+    field: keyof Omit<HospitalTaxItem, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      hospitalizationTaxas: f.hospitalizationTaxas.map((t) =>
+        t.id === id ? { ...t, [field]: value } : t,
+      ),
+    }));
+  };
+
+  const handleSetSurgeryTipo = (next: SurgeryTipoChoice) => {
+    setForm((f) => {
+      const populatedPreOp = next
+        ? buildPreOpFromTemplate(next, (tpl) =>
+            newPreOpItem({
+              templateId: tpl.id,
+              type: tpl.type,
+              description: tpl.description,
+              required: tpl.required,
+              status: 'pendente',
+            }),
+          )
+        : [];
+      return {
+        ...f,
+        surgeryTipo: next,
+        preOpItens: populatedPreOp,
+      };
+    });
+  };
+
+  const handleAddSurgeryAcessorio = () => {
+    if (form.surgeryAcessorios.length >= 5) return;
+    setForm((f) => ({
+      ...f,
+      surgeryAcessorios: [...f.surgeryAcessorios, newSurgeryAcessorio()],
+    }));
+  };
+
+  const handleRemoveSurgeryAcessorio = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      surgeryAcessorios: f.surgeryAcessorios.filter((a) => a.id !== id),
+    }));
+  };
+
+  const handleUpdateSurgeryAcessorio = (
+    id: string,
+    field: keyof Omit<SurgeryAcessorio, 'id'>,
+    value: string,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      surgeryAcessorios: f.surgeryAcessorios.map((a) =>
+        a.id === id ? { ...a, [field]: value } : a,
+      ),
+    }));
+  };
+
+  const handleSetSurgeryMainProcedure = (code: string, description: string) => {
+    setForm((f) => ({
+      ...f,
+      surgeryMainProcedureCode: code,
+      surgeryMainProcedureDescription: description,
+    }));
+  };
+
+  const handleSetSurgeryHasOpme = (value: boolean) => {
+    setForm((f) => ({ ...f, surgeryHasOpme: value }));
+  };
+
+  const handleSetSurgeryHasOncologyLink = (value: boolean) => {
+    setForm((f) => ({ ...f, surgeryHasOncologyLink: value }));
+  };
+
+  const handleAddPreOpItem = () => {
+    if (form.preOpItens.length >= 15) return;
+    setForm((f) => ({
+      ...f,
+      preOpItens: [...f.preOpItens, newPreOpItem({ required: false })],
+    }));
+  };
+
+  const handleRemovePreOpItem = (id: string) => {
+    setForm((f) => ({
+      ...f,
+      preOpItens: f.preOpItens.filter((i) => i.id !== id),
+    }));
+  };
+
+  const handleUpdatePreOpItem = (
+    id: string,
+    field: keyof Omit<PreOpFormItem, 'id' | 'templateId'>,
+    value: string | boolean,
+  ) => {
+    setForm((f) => ({
+      ...f,
+      preOpItens: f.preOpItens.map((i) => (i.id === id ? { ...i, [field]: value } : i)),
+    }));
+  };
+
   return {
     form,
     setForm,
@@ -365,6 +574,22 @@ export function useNewRequestForm(categoryParam: string) {
     handleAddOncologyProcedimento,
     handleRemoveOncologyProcedimento,
     handleUpdateOncologyProcedimento,
+    handleAddHospitalizationProcedimento,
+    handleRemoveHospitalizationProcedimento,
+    handleUpdateHospitalizationProcedimento,
+    handleAddHospitalizationTaxa,
+    handleRemoveHospitalizationTaxa,
+    handleUpdateHospitalizationTaxa,
+    handleSetSurgeryTipo,
+    handleAddSurgeryAcessorio,
+    handleRemoveSurgeryAcessorio,
+    handleUpdateSurgeryAcessorio,
+    handleSetSurgeryMainProcedure,
+    handleSetSurgeryHasOpme,
+    handleSetSurgeryHasOncologyLink,
+    handleAddPreOpItem,
+    handleRemovePreOpItem,
+    handleUpdatePreOpItem,
     cidSecundarioInput,
     setCidSecundarioInput,
     addCidSecundario,

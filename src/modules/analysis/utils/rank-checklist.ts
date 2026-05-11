@@ -1,6 +1,12 @@
 import { type ChecklistItem } from '@/types/pedido';
 
-export const CHECKLIST_VISIBLE_LIMIT = 6;
+/**
+ * Quantidade fixa de itens exibidos na lista visível do checklist.
+ * Regra de UX (não-violar): SEMPRE 5 análises visíveis. Se houver menos
+ * itens prioritários (errors/warnings/okRelevant), completar com okHidden
+ * para garantir o mínimo. Excedentes vão para o modal "Ver todas".
+ */
+export const CHECKLIST_VISIBLE_LIMIT = 5;
 
 export interface RankedChecklist {
   visible: ChecklistItem[];
@@ -21,12 +27,18 @@ export function rankChecklistItems(items: ChecklistItem[]): RankedChecklist {
   const okHidden = items.filter((i) => i.status === 'ok' && i.showWhenOk !== true);
 
   const prioritized = [...errors, ...warnings, ...okRelevant];
-  const visible = prioritized.slice(0, CHECKLIST_VISIBLE_LIMIT);
-  const overflow = prioritized.slice(CHECKLIST_VISIBLE_LIMIT);
+  // Garantir SEMPRE 5 itens visíveis: completar com okHidden quando faltar
+  const filled =
+    prioritized.length >= CHECKLIST_VISIBLE_LIMIT
+      ? prioritized
+      : [...prioritized, ...okHidden.slice(0, CHECKLIST_VISIBLE_LIMIT - prioritized.length)];
+  const visible = filled.slice(0, CHECKLIST_VISIBLE_LIMIT);
+  const visibleSet = new Set(visible);
+  const hidden = items.filter((i) => !visibleSet.has(i));
 
   return {
     visible,
-    hidden: [...overflow, ...okHidden],
+    hidden,
     totalCount: items.length,
     negativeCount: errors.length,
     warningCount: warnings.length,

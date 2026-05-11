@@ -131,7 +131,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
               flexDirection: 'column',
               overflow: 'hidden',
               m: 0,
-              border: '1px solid rgba(0,0,0,0.08)',
+              border: '1px solid rgba(0,0,0,0.04)',
             },
           },
         }}

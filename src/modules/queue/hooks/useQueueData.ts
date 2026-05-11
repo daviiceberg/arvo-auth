@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
+import { sortByPriority } from '@/shared/utils/priority-tier';
 import { type Request } from '@/types/pedido';
 
 import { getRequestStage } from '../utils/request-stage';
@@ -80,16 +81,8 @@ function matchesCategory(request: Request, categoryFilter: string): boolean {
   return categoryFilter === 'Todas' || request.category === categoryFilter;
 }
 
-/**
- * Critical-first sort: pedidos com SLA crítico (U/E flag ou categoria
- * Urgência/Emergência) sobem ao topo. Mantém estabilidade relativa entre
- * críticos e não-críticos.
- */
-function sortCriticalFirst(a: Request, b: Request): number {
-  const aCritical = a.slaCritical === true ? 1 : 0;
-  const bCritical = b.slaCritical === true ? 1 : 0;
-  return bCritical - aCritical;
-}
+// Hierarquia de prioridade extraída para `@/shared/utils/priority-tier` —
+// reutilizada no Dashboard (RecentRequestsTable).
 
 export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   const [loading, setLoading] = useState(true);
@@ -117,21 +110,25 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
   } = filters;
 
   const filteredByTab = useMemo(() => {
-    if (tabValue === 3) {
-      // Devolutivas tab — independent set, includes pendência + junta médica
-      return pedidos.filter(isInDevolutivasQueue);
-    }
-    if (tabValue === 4) {
-      // Liminares Judiciais — pedidos com injunction registrada
+    // Tabs alinhadas à hierarquia de prioridade da fila operacional:
+    //   0 — Fila Geral
+    //   1 — Liminares Judiciais
+    //   2 — NIPs Abertas
+    //   3 — SLA Violado
+    //   4 — SLA em Risco
+    //   5 — Devolutivas (Pendência + Junta Médica)
+    if (tabValue === 1) {
       return pedidos.filter(hasInjunction);
     }
-    if (tabValue === 5) {
-      // NIPs Abertas — pedidos com NIP em status aberto
+    if (tabValue === 2) {
       return pedidos.filter(hasOpenNip);
     }
+    if (tabValue === 5) {
+      return pedidos.filter(isInDevolutivasQueue);
+    }
     return pedidos.filter(isInOperationalQueue).filter((p) => {
-      if (tabValue === 1) return p.slaStatus === 'warning';
-      if (tabValue === 2) return p.slaStatus === 'violated';
+      if (tabValue === 3) return p.slaStatus === 'violated';
+      if (tabValue === 4) return p.slaStatus === 'warning';
       return true;
     });
   }, [pedidos, tabValue]);
@@ -149,7 +146,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
             matchesStatus(p, statusFilter) &&
             matchesCategory(p, categoryFilter),
         )
-        .sort(sortCriticalFirst),
+        .sort(sortByPriority),
     [
       filteredByTab,
       search,

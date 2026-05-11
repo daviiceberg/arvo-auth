@@ -27,7 +27,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { pedidos } from '@/data/pedidos';
-import { categoryColorMap } from '@/shared/constants';
+import { CATEGORIES_ORDER, categoryColorMap } from '@/shared/constants';
 import { type Category } from '@/types/pedido';
 
 import { type NavItem } from '../constants/navigation';
@@ -37,15 +37,6 @@ import {
   SIDEBAR_COLLAPSED_WIDTH,
   SIDEBAR_WIDTH,
 } from '../constants/navigation';
-
-const CATEGORIES: Category[] = [
-  'Urgência/Emergência',
-  'Oncologia',
-  'Terapias Especiais',
-  'SADT',
-  'Exames Alta Complexidade',
-  'Home Care',
-];
 
 function categoryActiveCount(category: Category): number {
   return pedidos.filter((p) => p.category === category).length;
@@ -81,7 +72,7 @@ export default function Sidebar({
         }}
         sx={{
           minHeight: 44,
-          borderRadius: '6px !important',
+          borderRadius: '8px !important',
           px: 1.5,
           justifyContent: collapsed ? 'center' : 'flex-start',
           ...(isActive && {
@@ -147,7 +138,7 @@ export default function Sidebar({
         '& .MuiDrawer-paper': {
           width: currentWidth,
           boxSizing: 'border-box',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           border: 'none',
           display: 'flex',
           flexDirection: 'column',
@@ -164,7 +155,7 @@ export default function Sidebar({
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
-          borderRight: '1px solid rgba(0,0,0,0.07)',
+          borderRight: '1px solid rgba(0,0,0,0.04)',
         }}
       >
         {/* Collapse toggle */}
@@ -180,7 +171,7 @@ export default function Sidebar({
             pb: 1,
             flexShrink: 0,
             cursor: 'pointer',
-            borderBottom: '1px solid rgba(0,0,0,0.07)',
+            borderBottom: '1px solid rgba(0,0,0,0.04)',
             opacity: 0.5,
             '&:hover': { opacity: 1 },
             transition: 'opacity 150ms ease',
@@ -222,7 +213,7 @@ export default function Sidebar({
                 }}
                 sx={{
                   minHeight: 44,
-                  borderRadius: '6px !important',
+                  borderRadius: '8px !important',
                   px: 1.5,
                   justifyContent: 'flex-start',
                   '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
@@ -245,7 +236,7 @@ export default function Sidebar({
               {/* Subcategories */}
               {categoriesOpen ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, pl: 2 }}>
-                  {CATEGORIES.map((category) => {
+                  {CATEGORIES_ORDER.map((category) => {
                     const colors = categoryColorMap[category];
                     const count = categoryActiveCount(category);
                     return (
@@ -334,7 +325,7 @@ export default function Sidebar({
           sx={{
             px: 1,
             py: 1.5,
-            borderTop: '1px solid rgba(0,0,0,0.07)',
+            borderTop: '1px solid rgba(0,0,0,0.04)',
             flexShrink: 0,
             mt: collapsed ? 'auto' : 0,
             display: 'flex',
@@ -349,7 +340,7 @@ export default function Sidebar({
               }}
               sx={{
                 minHeight: 44,
-                borderRadius: '6px !important',
+                borderRadius: '8px !important',
                 px: 1.5,
                 '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
               }}
@@ -382,7 +373,7 @@ export default function Sidebar({
               onClick={onOpenHelp}
               sx={{
                 minHeight: 44,
-                borderRadius: '6px !important',
+                borderRadius: '8px !important',
                 px: 1.5,
                 '&:hover': { backgroundColor: 'rgba(144,43,41,0.06)' },
               }}

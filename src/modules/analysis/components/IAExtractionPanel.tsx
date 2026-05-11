@@ -47,7 +47,7 @@ export default function IAExtractionPanel({
           gap: 0.75,
           px: 2,
           py: 0.75,
-          borderTop: '1px solid rgba(0,0,0,0.07)',
+          borderTop: '1px solid rgba(0,0,0,0.04)',
           backgroundColor: isOpen ? 'rgba(37,99,235,0.03)' : 'transparent',
           cursor: 'pointer',
           '&:hover': { backgroundColor: 'rgba(37,99,235,0.05)' },
