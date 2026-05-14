@@ -35,7 +35,7 @@ import { useDocumentUpload } from '../hooks/useDocumentUpload';
 import { useNewRequestForm } from '../hooks/useNewRequestForm';
 import { useStepNavigation } from '../hooks/useStepNavigation';
 import { useUploadStep } from '../hooks/useUploadStep';
-import { type FormData, type SnackbarState } from '../types';
+import { type SnackbarState } from '../types';
 
 import { StepBeneficiary } from './StepBeneficiary';
 import { StepClinical } from './StepClinical';
@@ -85,7 +85,6 @@ function NewRequestInner() {
 
   const {
     form,
-    setForm,
     set,
     setSelect,
     setCategory,
@@ -206,65 +205,9 @@ function NewRequestInner() {
   );
 
   const handleSkipUpload = () => {
-    const emptyForm: FormData = {
-      category: form.category,
-      nomeBeneficiario: '',
-      carteirinha: '',
-      dataNascimento: '',
-      cpf: '',
-      operadora: '',
-      validadeCarteirinha: '',
-      telefoneContato: '',
-      dataInclusaoPlano: '',
-      cidPrincipal: '',
-      cidsSecundarios: [],
-      indicacaoClinica: '',
-      procedimentoJaRealizado: '',
-      profissionalSolicitante: '',
-      conselhoTipo: '',
-      conselhoNumero: '',
-      conselhoUF: '',
-      cboCodigo: '',
-      nomeContratadoSolicitante: '',
-      nomeContratadoExecutante: '',
-      cnesExecutante: '',
-      etapaAutorizacao: '',
-      tipoTerapia: '',
-      codigoTuss: '',
-      numSessoes: '',
-      terapiaDataSolicitacao: '',
-      terapiaDataValidadeSenha: '',
-      frequenciaSemanal: '',
-      estadiamentoTNM: '',
-      numeroCiclo: '',
-      protocoloQuimio: '',
-      tipoTratamento: '',
-      totalCiclos: '',
-      linhaOncologia: '',
-      sadtProcedimentos: [],
-      examsProcedimentos: [],
-      homeCareProcedimentos: [],
-      urgencyProcedimentos: [],
-      oncologyProcedimentos: [],
-      hospitalizationTipo: '',
-      hospitalizationDataPrevista: '',
-      hospitalizationDuracao: '',
-      hospitalizationAuditLevel: '',
-      hospitalizationUtiJustificativa: '',
-      hospitalizationTaxas: [],
-      hospitalizationProcedimentos: [],
-      surgeryTipo: '',
-      surgeryMainProcedureCode: '',
-      surgeryMainProcedureDescription: '',
-      surgeryAcessorios: [],
-      surgeryHasOpme: false,
-      surgeryHasOncologyLink: false,
-      surgeryNotes: '',
-      preOpItens: [],
-      opmeMateriais: [],
-      opmeRelatedSurgery: '',
-    };
-    setForm(emptyForm);
+    // `setCategory` (acionado em StepUpload) já preenche o form com os mocks
+    // específicos da categoria — preserva-se como ponto de partida quando o
+    // usuário opta por preencher manualmente.
     setIsManualEntry(true);
     setCurrentStep(1);
   };
