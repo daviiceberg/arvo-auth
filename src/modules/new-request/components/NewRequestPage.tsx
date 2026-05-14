@@ -289,16 +289,11 @@ function NewRequestInner() {
         fileInputRef={fileInputRef}
         onFileSelected={handleFileFromStepUpload}
         onSkip={handleSkipUpload}
-      />
-    ),
-    1: (
-      <StepBeneficiary
-        form={form}
-        set={set}
+        category={form.category}
         setCategory={setCategory}
-        isManualEntry={isManualEntry}
       />
     ),
+    1: <StepBeneficiary form={form} set={set} isManualEntry={isManualEntry} />,
     2: (
       <StepClinical
         form={form}

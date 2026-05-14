@@ -234,8 +234,9 @@ function validateStepTransition(
   form: FormData,
   terapiaProcedimentos: TerapiaProcedimento[],
 ): string | null {
-  // Step 1 = Beneficiário — categoria obrigatória para avançar
-  if (currentStep === 1 && !form.category) {
+  // Step 0 = Upload — categoria obrigatória ANTES do upload/preenchimento manual
+  // para que os agentes específicos sejam disparados no processamento do pedido.
+  if (currentStep === 0 && !form.category) {
     return 'Selecione o tipo de solicitação para continuar.';
   }
   // Step 2 = Clínico

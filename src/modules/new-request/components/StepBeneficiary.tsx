@@ -6,18 +6,11 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { CATEGORIES_ORDER } from '@/shared/constants';
-
 import { type FormData } from '../types';
-
-const CATEGORY_OPTIONS = CATEGORIES_ORDER;
 
 function inputSx(validated = false) {
   return validated
@@ -51,41 +44,13 @@ interface BeneficiaryFieldsProps {
   set: (
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  setCategory: (next: FormData['category']) => void;
   isManualEntry: boolean;
 }
 
 // eslint-disable-next-line complexity
-function BeneficiaryFields({ form, set, setCategory, isManualEntry }: BeneficiaryFieldsProps) {
+function BeneficiaryFields({ form, set, isManualEntry }: BeneficiaryFieldsProps) {
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12 }}>
-        <FieldLabel>Tipo de Solicitação *</FieldLabel>
-        <FormControl fullWidth size="small">
-          <Select<FormData['category']>
-            value={form.category}
-            displayEmpty
-            onChange={(e) => {
-              setCategory(e.target.value as FormData['category']);
-            }}
-            renderValue={(selected) =>
-              selected === '' ? (
-                <Box component="em" sx={{ color: 'text.disabled' }}>
-                  Selecione o tipo de solicitação...
-                </Box>
-              ) : (
-                selected
-              )
-            }
-          >
-            {CATEGORY_OPTIONS.map((cat) => (
-              <MenuItem key={cat} value={cat}>
-                {cat}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <FieldLabel validated={!isManualEntry && !!form.nomeBeneficiario}>
           Nome Completo *
@@ -193,11 +158,10 @@ interface StepBeneficiaryProps {
   set: (
     field: keyof FormData,
   ) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  setCategory: (next: FormData['category']) => void;
   isManualEntry: boolean;
 }
 
-export function StepBeneficiary({ form, set, setCategory, isManualEntry }: StepBeneficiaryProps) {
+export function StepBeneficiary({ form, set, isManualEntry }: StepBeneficiaryProps) {
   const hasAiData = !isManualEntry && form.nomeBeneficiario && form.nomeBeneficiario !== '';
 
   return (
@@ -210,12 +174,7 @@ export function StepBeneficiary({ form, set, setCategory, isManualEntry }: StepB
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Dados do Beneficiário
       </Typography>
-      <BeneficiaryFields
-        form={form}
-        set={set}
-        setCategory={setCategory}
-        isManualEntry={isManualEntry}
-      />
+      <BeneficiaryFields form={form} set={set} isManualEntry={isManualEntry} />
     </Box>
   );
 }
