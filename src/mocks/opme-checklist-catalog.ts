@@ -46,10 +46,10 @@ function pushAnvisaItems(items: ChecklistItem[], s: OpmeChecklistScenario): void
     add(items, {
       id: 'OPME_ANVISA_EXPIRED',
       texto: `${String(expired)} material(is) com registro ANVISA expirado`,
-      sub: 'Alerta — analista decide se aceita prosseguir (RN 566/2022)',
-      status: 'warning',
+      sub: 'Bloqueio regulatório — OPME com ANVISA vencida não pode ser autorizado',
+      status: 'error',
       origin: 'dados',
-      severity: 70,
+      severity: 95,
       showWhenOk: true,
     });
   }

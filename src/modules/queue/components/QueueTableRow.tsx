@@ -11,10 +11,11 @@ import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip, RequestTypeChip, SLAChip } from '@/shared/components';
+import { CategoryChip, OpmeBadge, RequestTypeChip, SLAChip } from '@/shared/components';
 import { CHIP_BASE_SX } from '@/shared/components/chips/chip-styles';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
 import { formatDurationFromHours } from '@/shared/utils/formatDuration';
+import { hasOpmeContext } from '@/shared/utils/opme-context';
 import { type Request } from '@/types/pedido';
 
 import { getRequestStage } from '../utils/request-stage';
@@ -152,7 +153,7 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
       aria-label={`Pedido ${request.id}`}
       sx={getRowSx(request, lastViewedId)}
     >
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mb: 0.5 }}>
           {request.injunction ? (
             <Tooltip
@@ -200,7 +201,7 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
           {`${request.protocolDate.slice(0, 5)} · ${request.protocolDate.split(' ')[1] ?? ''}`}
         </Typography>
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <Typography variant="body2" fontWeight={600} sx={{ fontSize: 12 }}>
           {request.beneficiary.name}
         </Typography>
@@ -211,10 +212,13 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
           <RequestTypeChip type={requestType} />
         </Box>
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
-        <CategoryChip category={request.category} />
+      <TableCell sx={{ px: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+          <CategoryChip category={request.category} />
+          {request.category !== 'OPME' && hasOpmeContext(request) ? <OpmeBadge /> : null}
+        </Box>
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <Typography variant="body2" sx={{ fontSize: 12 }}>
           {request.executingProvider.name}
         </Typography>
@@ -222,10 +226,10 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
           {request.requestingProvider.professional}
         </Typography>
       </TableCell>
-      <TableCell sx={{ maxWidth: 160, px: 1.5 }}>
+      <TableCell sx={{ maxWidth: 160, px: 1 }}>
         <ProceduresCell procedures={request.procedures} />
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <AccessTimeIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 12 }}>
@@ -233,16 +237,16 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
           </Typography>
         </Box>
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <SLAChip status={request.slaStatus} label={request.slaText} />
       </TableCell>
-      <TableCell sx={{ px: 1.5 }}>
+      <TableCell sx={{ px: 1 }}>
         <Typography variant="caption" sx={{ fontSize: 12, fontWeight: 500 }}>
           {getRequestStage(request)}
         </Typography>
       </TableCell>
       <TableCell
-        sx={{ px: 1.5 }}
+        sx={{ px: 1 }}
         onClick={(e) => {
           e.stopPropagation();
         }}

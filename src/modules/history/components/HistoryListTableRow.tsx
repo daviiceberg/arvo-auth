@@ -9,9 +9,10 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip, DecisionActionChip } from '@/shared/components';
+import { CategoryChip, DecisionActionChip, OpmeBadge } from '@/shared/components';
 import { CHIP_BASE_SX, CHIP_ICON_FONT_SIZE } from '@/shared/components/chips/chip-styles';
 import CodeTypeChip from '@/shared/components/chips/CodeTypeChip';
+import { hasOpmeContextInHistory } from '@/shared/utils/opme-context';
 import { type HistoryEntry } from '@/types/pedido';
 
 import DecisionOriginChip from './DecisionOriginChip';
@@ -104,7 +105,10 @@ export default function HistoryListTableRow({ entry, onNavigate }: HistoryListTa
         </Typography>
       </TableCell>
       <TableCell sx={{ px: 1.5 }}>
-        <CategoryChip category={entry.category} />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+          <CategoryChip category={entry.category} />
+          {entry.category !== 'OPME' && hasOpmeContextInHistory(entry) ? <OpmeBadge /> : null}
+        </Box>
       </TableCell>
       <TableCell sx={{ maxWidth: 280, px: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.25 }}>

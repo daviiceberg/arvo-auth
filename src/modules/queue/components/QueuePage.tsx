@@ -33,6 +33,7 @@ export default function QueuePage() {
     devolutivasCount,
     liminaresCount,
     nipsCount,
+    opmeCount,
   } = useQueueData({
     filters,
     pedidos,
@@ -107,6 +108,7 @@ export default function QueuePage() {
           devolutivasCount={devolutivasCount}
           liminaresCount={liminaresCount}
           nipsCount={nipsCount}
+          opmeCount={opmeCount}
           onTabChange={handleTabChange}
         />
 

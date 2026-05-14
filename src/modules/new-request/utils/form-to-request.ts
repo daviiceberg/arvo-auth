@@ -146,14 +146,21 @@ function buildExamsProcedures(form: FormData, cid: string): Procedure[] {
 }
 
 function buildHomeCareProcedures(form: FormData, cid: string): Procedure[] {
-  return form.homeCareProcedimentos.map((p, idx) =>
-    buildProcedure({
+  return form.homeCareProcedimentos.map((p, idx) => {
+    const tipoLabel = p.tipo === '' ? 'Atendimento' : p.tipo;
+    const details: string[] = [];
+    if (p.frequencia.trim() !== '') details.push(`freq. ${p.frequencia}`);
+    if (p.duracaoDias.trim() !== '') details.push(`${p.duracaoDias} dias`);
+    if (p.escalaCuidadores.trim() !== '') details.push(`escala ${p.escalaCuidadores}`);
+    if (p.equipamentos.trim() !== '') details.push(`equipamentos: ${p.equipamentos}`);
+    const suffix = details.length > 0 ? ` — ${details.join(' · ')}` : '';
+    return buildProcedure({
       codigoTUSS: '50000497',
-      descricaoTUSS: `Plano Home Care ${String(idx + 1)} — ${p.tipo}`,
+      descricaoTUSS: `Plano Home Care ${String(idx + 1)} — ${tipoLabel}${suffix}`,
       qty: Number(p.duracaoDias) || 30,
       cid,
-    }),
-  );
+    });
+  });
 }
 
 function buildTherapyProcedures(procedures: TerapiaProcedimento[], cid: string): Procedure[] {
@@ -274,8 +281,7 @@ function buildOncologyProtocol(form: FormData): OncologyProtocol | undefined {
     form.numeroCiclo && form.totalCiclos
       ? `${form.numeroCiclo}/${form.totalCiclos}`
       : form.numeroCiclo || '';
-  // Linha não é capturada hoje no wizard — default '1a' como ponto de partida.
-  const line: OncologyTreatmentLine = '1a';
+  const line: OncologyTreatmentLine = form.linhaOncologia === '' ? '1a' : form.linhaOncologia;
   const protocol: OncologyProtocol = {
     type: TREATMENT_TYPE_MAP[form.tipoTratamento],
     protocol: form.protocoloQuimio,
@@ -295,12 +301,52 @@ function buildUrgencyReason(form: FormData): string | undefined {
   return justifications.join(' · ');
 }
 
+const MANCHESTER_PRIORITY: Record<ManchesterClassificationFinal, number> = {
+  vermelho: 5,
+  laranja: 4,
+  amarelo: 3,
+  verde: 2,
+  azul: 1,
+};
+
 function pickManchester(form: FormData): ManchesterClassificationFinal | undefined {
+  // Pega a MAIOR gravidade entre os procedimentos (regra clínica: a triagem do
+  // pedido inteiro segue o pior caso).
+  let highest: ManchesterClassificationFinal | undefined;
   for (const p of form.urgencyProcedimentos) {
     const m = mapManchester(p.classificacaoRisco);
-    if (m) return m;
+    if (!m) continue;
+    if (!highest || MANCHESTER_PRIORITY[m] > MANCHESTER_PRIORITY[highest]) {
+      highest = m;
+    }
   }
-  return undefined;
+  return highest;
+}
+
+/**
+ * Auto-aprovação de Urgência/Emergência (Manchester vermelho/laranja).
+ *
+ * Base regulatória:
+ * - Lei 9.656/98 art. 35-C — cobertura obrigatória em risco-vida
+ * - RN 566/2022 — prazo de realização "imediato"
+ * - RN 623/2024 art. 12 §1º — prazo de resposta ≤ prazo de realização
+ *
+ * Não substitui auditoria pós-fato: registro fica no histórico para
+ * verificação de adequação clínica e glosa retroativa, se aplicável.
+ */
+function applyUrgencyAutoApproval(
+  partial: Partial<Request>,
+  manchester: ManchesterClassificationFinal | undefined,
+  category: FormData['category'],
+): void {
+  if (category !== 'Urgência/Emergência') return;
+  if (manchester !== 'vermelho' && manchester !== 'laranja') return;
+  partial.status = 'Aprovado';
+  partial.routing = {
+    outcome: 'auto_decision',
+    ruleSource: 'rf005_urgencia_emergencia_auto_aprovacao',
+    routedAt: new Date().toLocaleString('pt-BR'),
+  };
 }
 
 function pickGuideType(form: FormData): GuideType {
@@ -364,8 +410,11 @@ export function formDataToRequest({
       form.etapaAutorizacao === 'continuidade' ? 'continuidade' : 'primeira_solicitacao',
   };
 
+  if (form.procedimentoJaRealizado === 'sim') partial.procedureAlreadyPerformed = true;
+
   const manchester = pickManchester(form);
   if (manchester) partial.manchesterClassification = manchester;
+  applyUrgencyAutoApproval(partial, manchester, form.category);
 
   const urgencyType = pickUrgencyType(form);
   if (urgencyType) partial.urgencyType = urgencyType;

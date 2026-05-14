@@ -8,8 +8,6 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
@@ -20,6 +18,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
+import { CollapsibleCard } from '@/shared/components';
 import { type Request } from '@/types/pedido';
 
 import { useDocumentViewer } from '../hooks/useDocumentViewer';
@@ -207,30 +206,10 @@ export default function DocumentsSection({
   };
 
   return (
-    <Card aria-busy={isReprocessing}>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <Box>
-            <Typography
-              variant="h6"
-              fontWeight={700}
-              sx={{
-                fontSize: 15,
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-                color: 'text.secondary',
-              }}
-            >
-              Documentos ({doc.allDocs.length})
-            </Typography>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ fontSize: 11, display: 'block', mt: 0.25, mb: 1.5 }}
-            >
-              Documentos anexados são analisados automaticamente pela IA
-            </Typography>
-          </Box>
+    <>
+      <CollapsibleCard
+        title={`Documentos (${String(doc.allDocs.length)})`}
+        headerRight={
           <HeaderActions
             isReprocessing={isReprocessing}
             pendingReprocess={pendingReprocess}
@@ -239,7 +218,15 @@ export default function DocumentsSection({
               openAddModal();
             }}
           />
-        </Box>
+        }
+      >
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ fontSize: 11, display: 'block', mb: 1.5 }}
+        >
+          Documentos anexados são analisados automaticamente pela IA
+        </Typography>
 
         {mandatory.missing ? (
           <MandatoryDocAlert
@@ -269,7 +256,7 @@ export default function DocumentsSection({
             setPendingRemoval({ id, name });
           }}
         />
-      </CardContent>
+      </CollapsibleCard>
 
       <DocumentUploadModal
         open={doc.showAddModal}
@@ -343,6 +330,6 @@ export default function DocumentsSection({
           doc.setZoom(100);
         }}
       />
-    </Card>
+    </>
   );
 }

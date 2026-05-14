@@ -29,11 +29,11 @@ const thSx = {
   letterSpacing: '0.5px',
   color: 'text.secondary',
   py: '6px',
-  px: 2,
+  px: 1,
   borderBottom: '1px solid rgba(0,0,0,0.08)',
 };
 
-const tdSx = { py: '8px', px: '12px' };
+const tdSx = { py: '8px', px: '8px' };
 
 export default function RecentRequestsTable({ pedidos, loading }: RecentRequestsTableProps) {
   const router = useRouter();
@@ -75,15 +75,15 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
             overflowY: 'hidden',
           }}
         >
-          <Table size="small" aria-label="Pedidos que requerem atenção" sx={{ minWidth: 820 }}>
+          <Table size="small" aria-label="Pedidos que requerem atenção" sx={{ minWidth: 680 }}>
             <TableHead>
               <TableRow>
-                <TableCell sx={{ ...thSx, width: 150, minWidth: 150 }}>ID</TableCell>
-                <TableCell sx={{ ...thSx, width: 130 }}>Status</TableCell>
+                <TableCell sx={{ ...thSx, width: 130, minWidth: 130 }}>ID</TableCell>
+                <TableCell sx={{ ...thSx, width: 110 }}>Status</TableCell>
                 <TableCell sx={thSx}>Beneficiário</TableCell>
-                <TableCell sx={{ ...thSx, width: 160 }}>SLA</TableCell>
-                <TableCell sx={{ ...thSx, width: 110, whiteSpace: 'nowrap' }}>Data</TableCell>
-                <TableCell sx={{ ...thSx, width: 32 }} />
+                <TableCell sx={{ ...thSx, width: 140 }}>SLA</TableCell>
+                <TableCell sx={{ ...thSx, width: 95, whiteSpace: 'nowrap' }}>Data</TableCell>
+                <TableCell sx={{ ...thSx, width: 28 }} />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -108,7 +108,7 @@ export default function RecentRequestsTable({ pedidos, loading }: RecentRequests
                     '&:last-child td': { borderBottom: 0 },
                   }}
                 >
-                  <TableCell sx={{ ...tdSx, width: 150, minWidth: 150 }}>
+                  <TableCell sx={{ ...tdSx, width: 130, minWidth: 130 }}>
                     <Typography
                       variant="caption"
                       color="primary"

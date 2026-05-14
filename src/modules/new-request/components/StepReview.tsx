@@ -133,7 +133,6 @@ function getDynamicSectionContent(
             <ReviewRow label="Duração (dias)" value={proc.duracaoDias} />
             <ReviewRow label="Escala de cuidadores" value={proc.escalaCuidadores} />
             <ReviewRow label="Equipamentos / materiais" value={proc.equipamentos} />
-            <ReviewRow label="Endereço" value={proc.enderecoAtendimento} />
           </Box>
         ))}
       </>
@@ -324,12 +323,17 @@ function DocumentsReviewSection({
         Documentos Anexados
         {total > 0 ? ` (${String(totalEnv)} de ${String(total)} obrigatórios)` : ''}
       </Typography>
-      {pendentes.length > 0 && (
-        <Alert severity="warning" sx={{ mb: 1.5, fontSize: 12 }}>
-          {String(pendentes.length)} documento(s) obrigatório(s) pendente(s):{' '}
-          <strong>{pendentes.map((d) => d.nome).join(', ')}</strong>
-        </Alert>
-      )}
+      <Alert severity="info" sx={{ mb: 1.5, fontSize: 12 }}>
+        Os documentos anexados serão analisados pela IA após o envio para leitura. Documentos que
+        não foram enviados ficarão em pendência
+        {pendentes.length > 0 ? (
+          <>
+            : <strong>{pendentes.map((d) => d.nome).join(', ')}</strong>
+          </>
+        ) : (
+          '.'
+        )}
+      </Alert>
       <Box sx={{ mb: 3 }}>
         {docsObrigatorios.map((d) => (
           <Box

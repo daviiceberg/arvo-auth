@@ -4,12 +4,11 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 
+import { CollapsibleCard } from '@/shared/components';
 import { type PreOpItem, type PreOpItemStatus, type SurgeryContext } from '@/types/pedido';
 
 interface PreOpCardProps {
@@ -53,181 +52,160 @@ export default function PreOpCard({ surgery, preOp }: PreOpCardProps) {
   const blocked = pending.length > 0;
 
   return (
-    <Card>
-      <CardContent sx={{ p: 3 }}>
+    <CollapsibleCard
+      title="Pré-Operatório"
+      headerRight={
+        <Chip
+          label={SURGERY_TYPE_LABEL[surgery.type]}
+          size="small"
+          sx={{
+            fontSize: 11,
+            height: 22,
+            fontWeight: 600,
+            backgroundColor: 'rgba(234,88,12,0.08)',
+            color: '#ea580c',
+          }}
+        />
+      }
+    >
+      <Box sx={{ mb: 2 }}>
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 2,
-            gap: 1,
+            alignItems: 'baseline',
+            mb: 0.75,
           }}
         >
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            sx={{
-              fontSize: 15,
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              color: 'text.secondary',
-            }}
-          >
-            Pré-Operatório
+          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
+            Completude obrigatórios
           </Typography>
-          <Chip
-            label={SURGERY_TYPE_LABEL[surgery.type]}
-            size="small"
-            sx={{
-              fontSize: 11,
-              height: 22,
-              fontWeight: 600,
-              backgroundColor: 'rgba(234,88,12,0.08)',
-              color: '#ea580c',
-            }}
-          />
+          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
+            {`${String(completed.length)}/${String(totalRequired)}`}
+          </Typography>
         </Box>
-        <Box sx={{ mb: 2 }}>
-          <Box
+        <LinearProgress
+          variant="determinate"
+          value={progress}
+          sx={{
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: 'rgba(0,0,0,0.06)',
+            '& .MuiLinearProgress-bar': {
+              backgroundColor: blocked ? '#b45309' : '#16a34a',
+            },
+          }}
+        />
+      </Box>
+      {blocked ? (
+        <Box
+          sx={{
+            mb: 1.5,
+            p: 1.5,
+            borderRadius: 1,
+            backgroundColor: 'rgba(245,158,11,0.08)',
+            border: '1px solid rgba(245,158,11,0.3)',
+          }}
+        >
+          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>
+            {`Aprovação total bloqueada — ${String(pending.length)} item(ns) obrigatório(s) pendente(s).`}
+          </Typography>
+        </Box>
+      ) : null}
+      {surgery.hasOpme ? (
+        <Box
+          sx={{
+            mb: 1.5,
+            p: 1.5,
+            borderRadius: 1,
+            backgroundColor: 'rgba(8,145,178,0.06)',
+            border: '1px dashed rgba(8,145,178,0.3)',
+          }}
+        >
+          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#0891b2' }}>
+            OPME vinculado — materiais detalhados na seção Materiais OPME desta análise.
+          </Typography>
+        </Box>
+      ) : null}
+      {surgery.hasOncologyLink ? (
+        <Box
+          sx={{
+            mb: 1.5,
+            p: 1.5,
+            borderRadius: 1,
+            backgroundColor: 'rgba(147,51,234,0.06)',
+            border: '1px dashed rgba(147,51,234,0.3)',
+          }}
+        >
+          <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#9333ea' }}>
+            Cirurgia oncológica — vinculada ao protocolo oncológico (estadiamento + linha + ciclo).
+          </Typography>
+        </Box>
+      ) : null}
+      {surgery.notes ? (
+        <Box sx={{ mb: 1.5 }}>
+          <Typography
+            variant="caption"
             sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
+              fontSize: 12,
+              fontWeight: 700,
+              color: 'text.secondary',
+              letterSpacing: 0.5,
+              textTransform: 'uppercase',
+              display: 'block',
               mb: 0.75,
             }}
           >
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
-              Completude obrigatórios
-            </Typography>
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 700 }}>
-              {`${String(completed.length)}/${String(totalRequired)}`}
-            </Typography>
-          </Box>
-          <LinearProgress
-            variant="determinate"
-            value={progress}
-            sx={{
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: 'rgba(0,0,0,0.06)',
-              '& .MuiLinearProgress-bar': {
-                backgroundColor: blocked ? '#b45309' : '#16a34a',
-              },
-            }}
-          />
+            Notas adicionais
+          </Typography>
+          <Typography variant="body2" sx={{ fontSize: 13 }}>
+            {surgery.notes}
+          </Typography>
         </Box>
-        {blocked ? (
+      ) : null}
+      <Box sx={{ mt: 2 }}>
+        {preOp.map((item) => (
           <Box
+            key={item.id}
             sx={{
-              mb: 1.5,
-              p: 1.5,
-              borderRadius: 1,
-              backgroundColor: 'rgba(245,158,11,0.08)',
-              border: '1px solid rgba(245,158,11,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              py: 0.6,
+              borderBottom: '1px dashed rgba(0,0,0,0.06)',
             }}
           >
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#b45309' }}>
-              {`Aprovação total bloqueada — ${String(pending.length)} item(ns) obrigatório(s) pendente(s).`}
+            <StatusIcon status={item.status} />
+            <Typography variant="body2" sx={{ fontSize: 13, flex: 1 }}>
+              {item.description}
             </Typography>
-          </Box>
-        ) : null}
-        {surgery.hasOpme ? (
-          <Box
-            sx={{
-              mb: 1.5,
-              p: 1.5,
-              borderRadius: 1,
-              backgroundColor: 'rgba(8,145,178,0.06)',
-              border: '1px dashed rgba(8,145,178,0.3)',
-            }}
-          >
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#0891b2' }}>
-              OPME vinculado — materiais detalhados na seção Materiais OPME desta análise.
-            </Typography>
-          </Box>
-        ) : null}
-        {surgery.hasOncologyLink ? (
-          <Box
-            sx={{
-              mb: 1.5,
-              p: 1.5,
-              borderRadius: 1,
-              backgroundColor: 'rgba(147,51,234,0.06)',
-              border: '1px dashed rgba(147,51,234,0.3)',
-            }}
-          >
-            <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600, color: '#9333ea' }}>
-              Cirurgia oncológica — vinculada ao protocolo oncológico (estadiamento + linha +
-              ciclo).
-            </Typography>
-          </Box>
-        ) : null}
-        {surgery.notes ? (
-          <Box sx={{ mb: 1.5 }}>
-            <Typography
-              variant="caption"
-              sx={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: 'text.secondary',
-                letterSpacing: 0.5,
-                textTransform: 'uppercase',
-                display: 'block',
-                mb: 0.75,
-              }}
-            >
-              Notas adicionais
-            </Typography>
-            <Typography variant="body2" sx={{ fontSize: 13 }}>
-              {surgery.notes}
-            </Typography>
-          </Box>
-        ) : null}
-        <Box sx={{ mt: 2 }}>
-          {preOp.map((item) => (
-            <Box
-              key={item.id}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                py: 0.6,
-                borderBottom: '1px dashed rgba(0,0,0,0.06)',
-              }}
-            >
-              <StatusIcon status={item.status} />
-              <Typography variant="body2" sx={{ fontSize: 13, flex: 1 }}>
-                {item.description}
-              </Typography>
-              {item.required ? (
-                <Chip
-                  label="Obrigatório"
-                  size="small"
-                  sx={{
-                    fontSize: 10,
-                    height: 18,
-                    fontWeight: 700,
-                    backgroundColor: 'rgba(220,38,38,0.06)',
-                    color: '#dc2626',
-                  }}
-                />
-              ) : null}
+            {item.required ? (
               <Chip
-                label={STATUS_LABEL[item.status]}
+                label="Obrigatório"
                 size="small"
                 sx={{
                   fontSize: 10,
                   height: 18,
                   fontWeight: 700,
-                  backgroundColor: STATUS_COLOR[item.status].bg,
-                  color: STATUS_COLOR[item.status].color,
+                  backgroundColor: 'rgba(220,38,38,0.06)',
+                  color: '#dc2626',
                 }}
               />
-            </Box>
-          ))}
-        </Box>
-      </CardContent>
-    </Card>
+            ) : null}
+            <Chip
+              label={STATUS_LABEL[item.status]}
+              size="small"
+              sx={{
+                fontSize: 10,
+                height: 18,
+                fontWeight: 700,
+                backgroundColor: STATUS_COLOR[item.status].bg,
+                color: STATUS_COLOR[item.status].color,
+              }}
+            />
+          </Box>
+        ))}
+      </Box>
+    </CollapsibleCard>
   );
 }

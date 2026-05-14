@@ -19,7 +19,7 @@ import RecentRequestsTable from './RecentRequestsTable';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { loading, metrics, pedidos, categoryBreakdown } = useDashboardData();
+  const { loading, metrics, pedidos, categoryBreakdown, hasOpmeTotal } = useDashboardData();
 
   return (
     <Box sx={{ p: 3 }}>
@@ -84,7 +84,7 @@ export default function DashboardPage() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-          <CategoryBreakdownCard entries={categoryBreakdown} />
+          <CategoryBreakdownCard entries={categoryBreakdown} hasOpmeTotal={hasOpmeTotal} />
         </Grid>
       </Grid>
     </Box>

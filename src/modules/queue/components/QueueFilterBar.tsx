@@ -47,7 +47,7 @@ export default function QueueFilterBar({
         px: 2,
         py: 1.75,
         display: 'grid',
-        gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto',
+        gridTemplateColumns: hasFilters ? '2fr 1fr 1fr 1fr 1fr auto' : '2fr 1fr 1fr 1fr 1fr',
         gap: 1.5,
         alignItems: 'center',
         borderBottom: '1px solid rgba(0,0,0,0.06)',
@@ -136,15 +136,16 @@ export default function QueueFilterBar({
           <MenuItem value="Aguardando reanálise">Aguardando reanálise</MenuItem>
         </Select>
       </FormControl>
-      <Button
-        variant="text"
-        size="small"
-        disabled={!hasFilters}
-        onClick={onClearFilters}
-        sx={{ minHeight: 36, fontSize: 12, color: 'text.secondary' }}
-      >
-        Limpar
-      </Button>
+      {hasFilters ? (
+        <Button
+          variant="text"
+          size="small"
+          onClick={onClearFilters}
+          sx={{ minHeight: 36, fontSize: 12, color: 'text.secondary' }}
+        >
+          Limpar
+        </Button>
+      ) : null}
     </Box>
   );
 }

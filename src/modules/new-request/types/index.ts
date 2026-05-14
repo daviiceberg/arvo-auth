@@ -1,4 +1,4 @@
-import { type Category } from '@/types/pedido';
+import { type Category, type OncologyTreatmentLine } from '@/types/pedido';
 
 import { type OpmeFormMaterial } from './opme';
 
@@ -72,7 +72,6 @@ export interface HomeCareItem {
   duracaoDias: string;
   escalaCuidadores: string;
   equipamentos: string;
-  enderecoAtendimento: string;
 }
 
 export type UrgencyTipo = 'urgencia' | 'emergencia' | '';
@@ -196,6 +195,8 @@ export interface FormData {
   protocoloQuimio: string;
   tipoTratamento: OncologyTipoTratamento;
   totalCiclos: string;
+  /** Linha de tratamento oncológico (afeta protocolo e custo). */
+  linhaOncologia: OncologyTreatmentLine | '';
   // Step dynamic — arrays de procedimentos por categoria. Apenas o campo
   // correspondente à categoria ativa é preenchido durante o cadastro;
   // os outros permanecem com arrays vazios.

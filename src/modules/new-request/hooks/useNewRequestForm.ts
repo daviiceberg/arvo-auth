@@ -57,7 +57,6 @@ const newHomeCareItem = (base?: Partial<HomeCareItem>): HomeCareItem => ({
   duracaoDias: '',
   escalaCuidadores: '',
   equipamentos: '',
-  enderecoAtendimento: '',
   ...base,
 });
 
@@ -163,6 +162,7 @@ export const initialForm: FormData = {
   protocoloQuimio: '',
   tipoTratamento: '',
   totalCiclos: '',
+  linhaOncologia: '',
   sadtProcedimentos: [newSadtProcedimento()],
   examsProcedimentos: [newExamsProcedimento()],
   homeCareProcedimentos: [newHomeCareItem()],

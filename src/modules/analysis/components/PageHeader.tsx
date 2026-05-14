@@ -12,8 +12,9 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip, OriginChip } from '@/shared/components';
+import { CategoryChip, OpmeBadge, OriginChip } from '@/shared/components';
 import { CHIP_BASE_SX } from '@/shared/components/chips/chip-styles';
+import { hasOpmeContext } from '@/shared/utils/opme-context';
 import { type ManchesterClassificationFinal, type Request } from '@/types/pedido';
 
 import { formatSlaDisplay } from '../utils/format-sla';
@@ -50,10 +51,15 @@ export default function PageHeader({
     <Box
       sx={{
         px: 3,
-        py: 1.75,
-        backgroundColor: 'transparent',
+        pt: 3,
+        pb: 1.75,
+        backgroundColor: '#FAF6F2',
         borderBottom: '1px solid rgba(0,0,0,0.04)',
+        borderTopLeftRadius: '24px',
+        borderTopRightRadius: '24px',
         flexShrink: 0,
+        position: 'relative',
+        zIndex: 1,
       }}
     >
       {/* Back link */}
@@ -81,6 +87,7 @@ export default function PageHeader({
           </Typography>
           <OriginChip origin={request.origin} />
           <CategoryChip category={request.category} />
+          {request.category !== 'OPME' && hasOpmeContext(request) ? <OpmeBadge /> : null}
           {/* Senha + Validade — removidos em M1; reintroduzir em M2 após decisão favorável */}
           {request.slaStatus === 'violated' && (
             <Chip

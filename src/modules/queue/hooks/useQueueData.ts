@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 
+import { hasOpmeContext } from '@/shared/utils/opme-context';
 import { sortByPriority } from '@/shared/utils/priority-tier';
 import { type Request } from '@/types/pedido';
 
@@ -81,6 +82,10 @@ function matchesCategory(request: Request, categoryFilter: string): boolean {
   return categoryFilter === 'Todas' || request.category === categoryFilter;
 }
 
+function hasOpmeAttribute(request: Request): boolean {
+  return request.category === 'OPME' || hasOpmeContext(request);
+}
+
 // Hierarquia de prioridade extraída para `@/shared/utils/priority-tier` —
 // reutilizada no Dashboard (RecentRequestsTable).
 
@@ -117,6 +122,7 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     //   3 — SLA Violado
     //   4 — SLA em Risco
     //   5 — Devolutivas (Pendência + Junta Médica)
+    //   6 — OPME (standalone + embutido em cirurgia/oncologia)
     if (tabValue === 1) {
       return pedidos.filter(hasInjunction);
     }
@@ -125,6 +131,9 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     }
     if (tabValue === 5) {
       return pedidos.filter(isInDevolutivasQueue);
+    }
+    if (tabValue === 6) {
+      return pedidos.filter(isInOperationalQueue).filter(hasOpmeAttribute);
     }
     return pedidos.filter(isInOperationalQueue).filter((p) => {
       if (tabValue === 3) return p.slaStatus === 'violated';
@@ -164,21 +173,59 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     [filtered, page, rowsPerPage],
   );
 
+  // Base dos badges das tabs: pedidos que satisfazem TODOS os filtros do
+  // dropdown (busca, SLA, prestador, etapa, alerta, status, categoria),
+  // ignorando apenas o filtro da própria tab. Assim os números das tabs
+  // refletem exatamente o que estará na listagem ao trocar de tab.
+  const pedidosScoped = useMemo(
+    () =>
+      pedidos.filter(
+        (p) =>
+          matchesSearch(p, search) &&
+          matchesSla(p, slaFilter) &&
+          matchesProvider(p, providerFilter) &&
+          matchesStage(p, stageFilter) &&
+          matchesAlert(p, alertFilter) &&
+          matchesStatus(p, statusFilter) &&
+          matchesCategory(p, categoryFilter),
+      ),
+    [
+      pedidos,
+      search,
+      slaFilter,
+      providerFilter,
+      stageFilter,
+      alertFilter,
+      statusFilter,
+      categoryFilter,
+    ],
+  );
+
   const warningCount = useMemo(
-    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'warning').length,
-    [pedidos],
+    () =>
+      pedidosScoped.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'warning').length,
+    [pedidosScoped],
   );
 
   const violatedCount = useMemo(
-    () => pedidos.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'violated').length,
-    [pedidos],
+    () =>
+      pedidosScoped.filter(isInOperationalQueue).filter((p) => p.slaStatus === 'violated').length,
+    [pedidosScoped],
   );
 
-  const devolutivasCount = useMemo(() => pedidos.filter(isInDevolutivasQueue).length, [pedidos]);
+  const devolutivasCount = useMemo(
+    () => pedidosScoped.filter(isInDevolutivasQueue).length,
+    [pedidosScoped],
+  );
 
-  const liminaresCount = useMemo(() => pedidos.filter(hasInjunction).length, [pedidos]);
+  const liminaresCount = useMemo(() => pedidosScoped.filter(hasInjunction).length, [pedidosScoped]);
 
-  const nipsCount = useMemo(() => pedidos.filter(hasOpenNip).length, [pedidos]);
+  const nipsCount = useMemo(() => pedidosScoped.filter(hasOpenNip).length, [pedidosScoped]);
+
+  const opmeCount = useMemo(
+    () => pedidosScoped.filter(isInOperationalQueue).filter(hasOpmeAttribute).length,
+    [pedidosScoped],
+  );
 
   return {
     loading,
@@ -190,5 +237,6 @@ export function useQueueData({ filters, pedidos }: UseQueueDataParams) {
     devolutivasCount,
     liminaresCount,
     nipsCount,
+    opmeCount,
   };
 }

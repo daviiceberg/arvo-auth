@@ -180,17 +180,6 @@ export function StepHomeCare({
                 }}
               />
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <FieldLabel>Endereço de atendimento *</FieldLabel>
-              <TextField
-                fullWidth
-                size="small"
-                value={proc.enderecoAtendimento}
-                onChange={(e) => {
-                  handleUpdateHomeCareProcedimento(proc.id, 'enderecoAtendimento', e.target.value);
-                }}
-              />
-            </Grid>
           </Grid>
         </Box>
       ))}

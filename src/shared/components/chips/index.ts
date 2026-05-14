@@ -7,3 +7,4 @@ export { default as PrioDot } from './PrioDot';
 export { default as RequestTypeChip } from './RequestTypeChip';
 export { default as DecisionActionChip } from './DecisionActionChip';
 export { default as CategoryChip } from './CategoryChip';
+export { default as OpmeBadge } from './OpmeBadge';

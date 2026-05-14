@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react';
 
 import { dashboardMetrics, pedidos, pedidosEmProcessamento } from '@/data/pedidos';
 import { CATEGORIES_ORDER, categoryColorMap } from '@/shared/constants';
+import { hasOpmeContext } from '@/shared/utils/opme-context';
 import { type Category } from '@/types/pedido';
 
 export interface CategoryBreakdownEntry {
@@ -45,11 +46,20 @@ export default function useDashboardData() {
     });
   }, []);
 
+  // Atributo transversal "Tem OPME" — soma pedidos com OPME standalone
+  // (category === 'OPME') + embutidos (surgery.hasOpme ou opmeMaterials > 0).
+  // Cada pedido conta uma única vez.
+  const hasOpmeTotal = useMemo(
+    () => pedidos.filter((p) => p.category === 'OPME' || hasOpmeContext(p)).length,
+    [],
+  );
+
   return {
     loading,
     metrics: dashboardMetrics,
     pedidos,
     pedidosEmProcessamento,
     categoryBreakdown,
+    hasOpmeTotal,
   } as const;
 }

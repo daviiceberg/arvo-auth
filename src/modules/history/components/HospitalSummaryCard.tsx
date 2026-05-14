@@ -1,12 +1,10 @@
 'use client';
 
-import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
+import { CollapsibleCard } from '@/shared/components';
 import { auditLevelColorMap, auditLevelLabel } from '@/shared/constants';
 import { type HistoryEntry } from '@/types/pedido';
 
@@ -97,44 +95,29 @@ export default function HospitalSummaryCard({ entry }: HospitalSummaryCardProps)
   const blocks = buildBlocks(entry);
 
   return (
-    <Card>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <LocalHospitalOutlinedIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
-          <Typography
-            variant="h6"
-            fontWeight={700}
+    <CollapsibleCard
+      title="Contexto Hospitalar"
+      headerRight={
+        entry.expandedAuditLevel && auditColors ? (
+          <Chip
+            label={`Nível: ${auditLevelLabel[entry.expandedAuditLevel]}`}
+            size="small"
             sx={{
-              fontSize: 15,
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              color: 'text.secondary',
+              height: 22,
+              fontSize: 11,
+              fontWeight: 600,
+              backgroundColor: auditColors.bg,
+              color: auditColors.color,
             }}
-          >
-            Contexto Hospitalar
-          </Typography>
-          <Box sx={{ flex: 1 }} />
-          {entry.expandedAuditLevel && auditColors ? (
-            <Chip
-              label={`Nível: ${auditLevelLabel[entry.expandedAuditLevel]}`}
-              size="small"
-              sx={{
-                fontSize: 11,
-                fontWeight: 700,
-                height: 22,
-                backgroundColor: auditColors.bg,
-                color: auditColors.color,
-                border: `1px solid ${auditColors.color}33`,
-              }}
-            />
-          ) : null}
-        </Box>
-        <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          {blocks.map((b) => (
-            <InfoBlock key={b.label} label={b.label} value={b.value} />
-          ))}
-        </Box>
-      </CardContent>
-    </Card>
+          />
+        ) : null
+      }
+    >
+      <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+        {blocks.map((b) => (
+          <InfoBlock key={b.label} label={b.label} value={b.value} />
+        ))}
+      </Box>
+    </CollapsibleCard>
   );
 }

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import SearchIcon from '@mui/icons-material/Search';
 import Avatar from '@mui/material/Avatar';
@@ -544,7 +543,6 @@ export default function UsuariosPage() {
             {hasFilters ? (
               <Button
                 size="small"
-                startIcon={<FilterListOffIcon />}
                 color="inherit"
                 sx={{ fontSize: 12 }}
                 onClick={() => {
@@ -553,7 +551,7 @@ export default function UsuariosPage() {
                   setStatusFilter('Todos');
                 }}
               >
-                Limpar filtros
+                Limpar
               </Button>
             ) : null}
           </Box>

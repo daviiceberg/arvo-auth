@@ -15,14 +15,13 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import { CollapsibleCard } from '@/shared/components';
 import { type HistoryEntry } from '@/types/pedido';
 
 function docIcon(tipo: string) {
@@ -54,21 +53,8 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
   const [zoom, setZoom] = useState(100);
 
   return (
-    <Card>
-      <CardContent sx={{ p: 3 }}>
-        <Typography
-          variant="h6"
-          fontWeight={700}
-          sx={{
-            mb: 2,
-            fontSize: 14,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            color: 'text.secondary',
-          }}
-        >
-          Documentos ({docs.length})
-        </Typography>
+    <>
+      <CollapsibleCard title={`Documentos (${String(docs.length)})`}>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
           {docs.map((doc) => (
             <Box
@@ -107,7 +93,7 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
             </Box>
           ))}
         </Box>
-      </CardContent>
+      </CollapsibleCard>
 
       {/* Document Lightbox */}
       <Dialog
@@ -297,6 +283,6 @@ export default function DocumentsSection({ entry }: DocumentsSectionProps) {
           </Box>
         </Box>
       </Dialog>
-    </Card>
+    </>
   );
 }

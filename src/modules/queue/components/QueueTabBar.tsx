@@ -13,6 +13,7 @@ interface QueueTabBarProps {
   devolutivasCount?: number;
   liminaresCount?: number;
   nipsCount?: number;
+  opmeCount?: number;
   onTabChange: (value: number) => void;
 }
 
@@ -24,6 +25,7 @@ export default function QueueTabBar({
   devolutivasCount = 0,
   liminaresCount = 0,
   nipsCount = 0,
+  opmeCount = 0,
   onTabChange,
 }: QueueTabBarProps) {
   return (
@@ -148,6 +150,25 @@ export default function QueueTabBar({
             </Box>
           }
           aria-label="Devolutivas (Pendência e Junta Médica)"
+        />
+        <Tab
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Tem OPME
+              <Chip
+                label={opmeCount}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  backgroundColor: 'rgba(217,119,6,0.12)',
+                  color: '#b45309',
+                }}
+              />
+            </Box>
+          }
+          aria-label="Pedidos com OPME (standalone + embutido em cirurgia/oncologia)"
         />
       </Tabs>
     </Box>

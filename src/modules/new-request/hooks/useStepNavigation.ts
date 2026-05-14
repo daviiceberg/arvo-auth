@@ -84,7 +84,6 @@ function validateHomeCare(form: FormData): string | null {
     if (!p.duracaoDias.trim() || Number(p.duracaoDias) <= 0) {
       return `Informe a duração prevista (em dias)${n}.`;
     }
-    if (!p.enderecoAtendimento.trim()) return `Informe o endereço de atendimento${n}.`;
   }
   return null;
 }

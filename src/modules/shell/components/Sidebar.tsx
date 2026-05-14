@@ -171,7 +171,6 @@ export default function Sidebar({
             pb: 1,
             flexShrink: 0,
             cursor: 'pointer',
-            borderBottom: '1px solid rgba(0,0,0,0.04)',
             opacity: 0.5,
             '&:hover': { opacity: 1 },
             transition: 'opacity 150ms ease',

@@ -136,6 +136,25 @@ export function StepOncology({
             onChange={set('totalCiclos')}
           />
         </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <FieldLabel validated={form.linhaOncologia !== ''}>Linha de Tratamento *</FieldLabel>
+          <FormControl fullWidth size="small">
+            <Select
+              value={form.linhaOncologia}
+              onChange={(e) => {
+                setSelect('linhaOncologia')(e.target.value);
+              }}
+              displayEmpty
+            >
+              <MenuItem value="" disabled>
+                <em>Selecione a linha</em>
+              </MenuItem>
+              <MenuItem value="1a">1ª linha</MenuItem>
+              <MenuItem value="2a">2ª linha ou subsequente</MenuItem>
+              <MenuItem value="paliativa">Paliativa</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
       </Grid>
 
       <Typography variant="h6" fontWeight={700} sx={{ mt: 4, mb: 0.5, fontSize: 15 }}>

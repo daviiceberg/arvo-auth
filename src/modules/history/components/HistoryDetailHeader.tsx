@@ -12,7 +12,8 @@ import Chip from '@mui/material/Chip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { CategoryChip, DecisionActionChip } from '@/shared/components';
+import { CategoryChip, DecisionActionChip, OpmeBadge } from '@/shared/components';
+import { hasOpmeContextInHistory } from '@/shared/utils/opme-context';
 import { type HistoryEntry } from '@/types/pedido';
 
 interface HistoryDetailHeaderProps {
@@ -36,9 +37,15 @@ export default function HistoryDetailHeader({
     <Box
       sx={{
         px: 3,
-        py: 1.75,
-        backgroundColor: 'transparent',
+        pt: 3,
+        pb: 1.75,
+        backgroundColor: '#FAF6F2',
         borderBottom: '1px solid rgba(0,0,0,0.04)',
+        borderTopLeftRadius: '24px',
+        borderTopRightRadius: '24px',
+        flexShrink: 0,
+        position: 'relative',
+        zIndex: 1,
       }}
     >
       <Button
@@ -64,6 +71,7 @@ export default function HistoryDetailHeader({
             {entry.id}
           </Typography>
           <CategoryChip category={entry.category} />
+          {entry.category !== 'OPME' && hasOpmeContextInHistory(entry) ? <OpmeBadge /> : null}
           <DecisionActionChip action={entry.action} />
           {entry.alerts && entry.alerts.length > 0
             ? entry.alerts.map((alerta) => (

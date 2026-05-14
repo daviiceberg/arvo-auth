@@ -54,6 +54,7 @@ const TAB_BY_NAME: Record<string, number> = {
   violado: 3,
   risco: 4,
   devolutivas: 5,
+  opme: 6,
 };
 
 function parseTabParam(raw: string | null): number {

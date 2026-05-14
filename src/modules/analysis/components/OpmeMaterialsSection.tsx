@@ -6,8 +6,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Table from '@mui/material/Table';
@@ -17,6 +15,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
+import { CollapsibleCard } from '@/shared/components';
 import { anvisaStatusColorMap, opmeValueReasons } from '@/shared/constants';
 import { type Adjustment, type OpmeMaterial, type OpmeQuotation } from '@/types/pedido';
 
@@ -244,27 +243,18 @@ export default function OpmeMaterialsSection({
   const total = materials.reduce((sum, m) => sum + m.totalValue, 0);
 
   return (
-    <Card sx={{ overflow: 'visible' }}>
-      <CardContent sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography
-            variant="h6"
-            fontWeight={700}
-            sx={{
-              fontSize: 15,
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              color: 'text.secondary',
-            }}
-          >
-            Materiais OPME — TISS 19
-          </Typography>
+    <>
+      <CollapsibleCard
+        title="Materiais OPME — TISS 19"
+        cardSx={{ overflow: 'visible' }}
+        headerRight={
           <Chip
             label={`${String(materials.length)} item${materials.length === 1 ? '' : 'ns'}`}
             size="small"
             sx={{ fontSize: 11, fontWeight: 600, height: 22 }}
           />
-        </Box>
+        }
+      >
         {relatedSurgery ? (
           <Box
             sx={{
@@ -312,7 +302,7 @@ export default function OpmeMaterialsSection({
             {formatCurrency(total)}
           </Typography>
         </Box>
-      </CardContent>
+      </CollapsibleCard>
       <OpmeAdjustmentDialog
         open={adjustTarget !== null}
         material={adjustTarget}
@@ -324,6 +314,6 @@ export default function OpmeMaterialsSection({
           setAdjustTarget(null);
         }}
       />
-    </Card>
+    </>
   );
 }

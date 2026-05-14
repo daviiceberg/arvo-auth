@@ -48,7 +48,7 @@ function SortableHeader({ label, isSorted, isAsc, onClick, minWidth = 130 }: Sor
         display: 'flex',
         alignItems: 'center',
         gap: 0.5,
-        px: 1.5,
+        px: 1,
         minWidth,
         '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
       }}
@@ -114,16 +114,16 @@ export default function QueueTable({
                 textTransform: 'uppercase',
                 letterSpacing: 0.4,
                 color: 'text.secondary',
-                px: 1.5,
+                px: 1,
               },
             }}
           >
-            <TableCell sx={{ minWidth: 130 }}>ID</TableCell>
-            <TableCell sx={{ minWidth: 195 }}>Beneficiário</TableCell>
-            <TableCell sx={{ minWidth: 145 }}>Categoria</TableCell>
-            <TableCell sx={{ minWidth: 175 }}>Prestador</TableCell>
-            <TableCell sx={{ minWidth: 220, maxWidth: 220 }}>Procedimento(s)</TableCell>
-            <TableCell sx={{ minWidth: 85, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
+            <TableCell sx={{ minWidth: 115 }}>ID</TableCell>
+            <TableCell sx={{ minWidth: 170 }}>Beneficiário</TableCell>
+            <TableCell sx={{ minWidth: 105 }}>Categoria</TableCell>
+            <TableCell sx={{ minWidth: 155 }}>Prestador</TableCell>
+            <TableCell sx={{ minWidth: 200, maxWidth: 200 }}>Procedimento(s)</TableCell>
+            <TableCell sx={{ minWidth: 75, whiteSpace: 'nowrap' }}>Em Fila</TableCell>
             <SortableHeader
               label="SLA"
               isSorted={sort.column === 'sla'}
@@ -131,10 +131,10 @@ export default function QueueTable({
               onClick={() => {
                 toggleSort('sla');
               }}
-              minWidth={120}
+              minWidth={105}
             />
-            <TableCell sx={{ minWidth: 140 }}>Etapa</TableCell>
-            <TableCell sx={{ minWidth: 115 }}>Ações</TableCell>
+            <TableCell sx={{ minWidth: 125 }}>Etapa</TableCell>
+            <TableCell sx={{ minWidth: 100 }}>Ações</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -178,7 +178,7 @@ export default function QueueTable({
                       }}
                       onClick={onClearFilters}
                     >
-                      Limpar filtros
+                      Limpar
                     </Button>
                   ) : null}
                 </Box>
@@ -227,7 +227,7 @@ function SubGroupRows({ group, lastViewedId, onRowClick, sortItems }: SubGroupRo
           sx={{
             backgroundColor: 'rgba(0,0,0,0.04)',
             py: 1,
-            px: 1.5,
+            px: 1,
             borderBottom: '1px solid rgba(0,0,0,0.08)',
             fontSize: 12,
             fontWeight: 700,

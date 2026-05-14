@@ -1,6 +1,5 @@
 'use client';
 
-import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import SearchIcon from '@mui/icons-material/Search';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -163,14 +162,8 @@ export default function HistoryListFilterBar({
             </Select>
           </FormControl>
           {hasFilters ? (
-            <Button
-              size="small"
-              startIcon={<FilterListOffIcon />}
-              onClick={onClearFilters}
-              color="inherit"
-              sx={{ fontSize: 12 }}
-            >
-              Limpar filtros
+            <Button size="small" onClick={onClearFilters} color="inherit" sx={{ fontSize: 12 }}>
+              Limpar
             </Button>
           ) : null}
         </Box>

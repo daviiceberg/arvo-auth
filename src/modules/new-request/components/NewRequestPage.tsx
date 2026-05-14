@@ -240,6 +240,7 @@ function NewRequestInner() {
       protocoloQuimio: '',
       tipoTratamento: '',
       totalCiclos: '',
+      linhaOncologia: '',
       sadtProcedimentos: [],
       examsProcedimentos: [],
       homeCareProcedimentos: [],

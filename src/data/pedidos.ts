@@ -922,7 +922,7 @@ export const pedidos: Request[] = [
     alerts: ['SLA Violado', 'Carência ativa'],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Beneficiário em carência, mas NIP aberta (NIP-2026-784521 — RN 483/2022) eleva risco regulatório. Recomendação: aprovar para evitar agravamento de prazo ANS e prejuízo à operadora. Carência deve ser revisada caso a caso fora do contexto NIP.',
+      'SLA violado há 24h — analista deve priorizar este pedido. Beneficiário em carência, mas NIP aberta (NIP-2026-784521 — RN 483/2022) eleva risco regulatório. Recomendação: aprovar para evitar agravamento de prazo ANS e prejuízo à operadora. Carência deve ser revisada caso a caso fora do contexto NIP.',
     iaChecklist: [
       ...buildSadtChecklist({
         cid: 'M54.4',
@@ -2539,17 +2539,21 @@ export const pedidos: Request[] = [
   // ── M3: Urgência/Emergência — SLA crítico em minutos ─────────────────
   {
     id: 'REQ-2026-UE-001',
-    status: 'Em Análise',
+    status: 'Aprovado',
     guideType: 'Urgência',
     category: 'Urgência/Emergência',
     auditLevel: 'AMBULATORIAL',
     priority: 'alta',
     origin: 'prestador',
-    routing: { outcome: 'queued_for_human_review', queueType: 'operational' },
+    routing: {
+      outcome: 'auto_decision',
+      ruleSource: 'rf005_urgencia_emergencia_auto_aprovacao',
+      routedAt: '07/05/2026 10:30',
+    },
     protocolDate: '07/05/2026 10:30',
-    queueTimeHours: 0.5,
-    slaStatus: 'warning',
-    slaText: '45min restantes',
+    queueTimeHours: 0,
+    slaStatus: 'ok',
+    slaText: 'Auto-aprovado',
     slaDeadlineHours: 0.75,
     slaCritical: true,
     urgencyType: 'emergencia',
@@ -2610,6 +2614,13 @@ export const pedidos: Request[] = [
         actor: 'Sistema',
         timestamp: '07/05/2026 10:30',
         details: 'Triagem pronto-socorro — emergência',
+      },
+      {
+        action: 'Auto-aprovação registrada',
+        actor: 'Arvo IA',
+        timestamp: '07/05/2026 10:30',
+        details:
+          'Manchester laranja — atendimento não pode ser interrompido (Lei 9656/98 art. 35-C; RN 566/2022). Decisão automática; auditoria de adequação clínica pós-fato.',
       },
     ],
   },
@@ -2700,17 +2711,21 @@ export const pedidos: Request[] = [
   // ── M3: Urgência/Emergência — Politrauma motociclístico, Manchester vermelho ─
   {
     id: 'REQ-2026-UE-002',
-    status: 'Em Análise',
+    status: 'Aprovado',
     guideType: 'Emergência',
     category: 'Urgência/Emergência',
     auditLevel: 'UTI',
     priority: 'alta',
     origin: 'prestador',
-    routing: { outcome: 'queued_for_human_review', queueType: 'operational' },
+    routing: {
+      outcome: 'auto_decision',
+      ruleSource: 'rf005_urgencia_emergencia_auto_aprovacao',
+      routedAt: '06/05/2026 19:10',
+    },
     protocolDate: '06/05/2026 19:10',
-    queueTimeHours: 0.25,
-    slaStatus: 'violated',
-    slaText: '15min restantes',
+    queueTimeHours: 0,
+    slaStatus: 'ok',
+    slaText: 'Auto-aprovado',
     slaDeadlineHours: 0.25,
     slaCritical: true,
     urgencyType: 'trauma',
@@ -2773,6 +2788,13 @@ export const pedidos: Request[] = [
         actor: 'Sistema',
         timestamp: '06/05/2026 19:10',
         details: 'SAMU — politrauma, sala vermelha',
+      },
+      {
+        action: 'Auto-aprovação registrada',
+        actor: 'Arvo IA',
+        timestamp: '06/05/2026 19:10',
+        details:
+          'Manchester vermelho — risco iminente de morte (Lei 9656/98 art. 35-C; RN 566/2022). Decisão automática; auditoria pós-fato + cruzamento DPVAT.',
       },
     ],
   },
@@ -3365,9 +3387,18 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Pendenciar',
     iaJustification:
       'Internação domiciliar AC oncológica. Plano de cuidados domiciliares enviado sem detalhamento de escala de cuidadores. Pendência ativa.',
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Plano de cuidados detalhado recebido (escala 24h com 3 cuidadores + supervisão de enfermeira coordenadora) e avaliação social complementar anexada. Critérios para internação domiciliar AC atendidos — paciente em fase paliativa com suporte familiar documentado.',
     iaChecklist: buildInternacaoChecklist({
       cid: 'C61',
       planoCuidadosAusente: true,
+      estimativaDiariasAusente: false,
+      internacaoDomiciliarApto: true,
+    }),
+    iaChecklistAfterReprocess: buildInternacaoChecklist({
+      cid: 'C61',
+      planoCuidadosAusente: false,
       estimativaDiariasAusente: false,
       internacaoDomiciliarApto: true,
     }),
@@ -3391,14 +3422,27 @@ export const pedidos: Request[] = [
         obrigatorio: true,
         status: 'enviado',
       },
+    ],
+    documentsAddedOnDevolutiva: [
       {
-        id: 'DOC-INT-003-3',
-        nome: 'Avaliacao-social.pdf',
-        tipo: 'Outro',
-        tamanho: '0 KB',
-        enviadoEm: undefined,
+        id: 'DOC-INT-003-DEV-A',
+        nome: 'Plano-cuidados-domiciliar-detalhado.pdf',
+        tipo: 'Laudo Médico',
+        tamanho: '780 KB',
+        enviadoEm: '09/05/2026',
         obrigatorio: true,
-        status: 'pendente',
+        status: 'enviado',
+        origem: 'devolutiva_prestador',
+      },
+      {
+        id: 'DOC-INT-003-DEV-B',
+        nome: 'Avaliacao-social-complementar.pdf',
+        tipo: 'Outro',
+        tamanho: '310 KB',
+        enviadoEm: '09/05/2026',
+        obrigatorio: true,
+        status: 'enviado',
+        origem: 'devolutiva_prestador',
       },
     ],
     secondaryCids: [],
@@ -4095,9 +4139,11 @@ export const pedidos: Request[] = [
     surgery: {
       type: 'oncologica_eletiva',
       mainProcedureCode: '31302057',
-      accessoryProcedureCodes: ['41001129'],
+      accessoryProcedureCodes: ['31302065'],
       hasOpme: false,
       hasOncologyLink: true,
+      notes:
+        'Mastectomia radical modificada com esvaziamento axilar + biópsia de linfonodo sentinela.',
     },
     hospitalization: {
       type: 'clinica_eletiva',
@@ -4212,11 +4258,22 @@ export const pedidos: Request[] = [
         tableNumber: 22,
         codeType: 'TUSS',
       },
+      {
+        code: '31302065',
+        tuss: '31302065',
+        description: 'Biópsia de linfonodo sentinela (procedimento acessório)',
+        qty: 1,
+        requestDate: '06/05/2026',
+        cid: 'C50.9',
+        auditLevel: 'HOSPITALAR',
+        tableNumber: 22,
+        codeType: 'TUSS',
+      },
     ],
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Cirurgia oncológica eletiva (mastectomia). Vinculada a protocolo oncológico (estadiamento T2 N1 M0). Pré-operatório completo (7/7).',
+      'Cirurgia oncológica eletiva (mastectomia) com biópsia de linfonodo sentinela acessória. Vinculada a protocolo oncológico (estadiamento T2 N1 M0). Pré-operatório completo (7/7).',
     iaChecklist: buildCirurgiasChecklist({
       cid: 'C50.9',
       preOpCompleto: true,
@@ -4632,17 +4689,18 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Hospital Ortopédico SP', cnesCode: '6789012' },
     procedures: [
       {
-        code: '70770070',
-        tuss: '70770070',
-        description: 'Prótese Total de Joelho Cimentada — PFC Sigma',
+        code: '40805085',
+        tuss: '40805085',
+        description: 'Artroplastia total de joelho (procedimento de referência — guia OPME)',
         qty: 1,
         requestDate: '08/05/2026',
         cid: 'M17.0',
         auditLevel: 'HOSPITALAR',
-        tableNumber: 19,
+        tableNumber: 22,
         codeType: 'TUSS',
       },
     ],
+    opmeRelatedSurgery: 'Artroplastia total de joelho direito — programada 22/05/2026',
     opmeMaterials: [
       {
         id: 'OPME-001-M1',
@@ -4783,17 +4841,19 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Hospital Cardio SP', cnesCode: '5678901' },
     procedures: [
       {
-        code: '70710140',
-        tuss: '70710140',
-        description: 'Stent coronariano farmacológico',
-        qty: 2,
+        code: '40802001',
+        tuss: '40802001',
+        description:
+          'Angioplastia transluminal coronariana com implante de stent (procedimento de referência — guia OPME)',
+        qty: 1,
         requestDate: '07/05/2026',
         cid: 'I25.1',
         auditLevel: 'HOSPITALAR',
-        tableNumber: 19,
+        tableNumber: 22,
         codeType: 'TUSS',
       },
     ],
+    opmeRelatedSurgery: 'Angioplastia coronariana com 2 stents farmacológicos',
     opmeMaterials: [
       {
         id: 'OPME-002-M1',
@@ -4837,10 +4897,10 @@ export const pedidos: Request[] = [
         cid: 'I25.1',
       },
     ],
-    alerts: ['ANVISA: registro com vigência expirada'],
-    iaSuggestion: 'Pendenciar',
+    alerts: ['ANVISA: registro com vigência expirada — bloqueio regulatório'],
+    iaSuggestion: 'Negar',
     iaJustification:
-      'Material com registro ANVISA vencido em 2023-12-31. Não bloqueia automaticamente — analista decide se aceita prosseguir ou exige material atualizado.',
+      'Material com registro ANVISA vencido em 2023-12-31 (há mais de 2 anos). Regulatoriamente impeditivo: OPME com ANVISA expirada não pode ser autorizado. Sugestão: negar e exigir do prestador material com registro vigente ou alternativa equivalente registrada.',
     iaChecklist: buildOpmeChecklist({
       cid: 'I25.1',
       anvisaExpiredCount: 1,
@@ -4924,17 +4984,19 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Hospital de Olhos Premium', cnesCode: '7790123' },
     procedures: [
       {
-        code: '70890011',
-        tuss: '70890011',
-        description: 'Lente Intraocular Acrílica Hidrofóbica',
+        code: '30401177',
+        tuss: '30401177',
+        description:
+          'Facectomia com implante de lente intraocular (procedimento de referência — guia OPME)',
         qty: 1,
         requestDate: '08/05/2026',
         cid: 'H25.1',
         auditLevel: 'HOSPITALAR',
-        tableNumber: 19,
+        tableNumber: 22,
         codeType: 'TUSS',
       },
     ],
+    opmeRelatedSurgery: 'Facectomia c/ implante de LIO tórica — bilateral programada',
     opmeMaterials: [
       {
         id: 'OPME-003-M1',
@@ -5072,17 +5134,20 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Hospital Vascular SP', cnesCode: '8801234' },
     procedures: [
       {
-        code: '70901001',
-        tuss: '70901001',
-        description: 'Endoprótese Aórtica Abdominal',
+        code: '32101072',
+        tuss: '32101072',
+        description:
+          'Tratamento endovascular de aneurisma de aorta abdominal infrarrenal (procedimento de referência — guia OPME)',
         qty: 1,
         requestDate: '06/05/2026',
         cid: 'I71.4',
         auditLevel: 'UTI',
-        tableNumber: 19,
+        tableNumber: 22,
         codeType: 'TUSS',
       },
     ],
+    opmeRelatedSurgery:
+      'Tratamento endovascular de aneurisma aorta abdominal infrarrenal — pendente confirmação da data',
     opmeMaterials: [
       {
         id: 'OPME-004-M1',
@@ -5228,17 +5293,18 @@ export const pedidos: Request[] = [
     executingProvider: { name: 'Hospital Cirúrgico Geral', cnesCode: '4456710' },
     procedures: [
       {
-        code: '70520123',
-        tuss: '70520123',
-        description: 'Tela Cirúrgica para Hernioplastia',
+        code: '31002088',
+        tuss: '31002088',
+        description: 'Hernioplastia inguinal unilateral (procedimento de referência — guia OPME)',
         qty: 1,
         requestDate: '05/05/2026',
         cid: 'K40.9',
         auditLevel: 'AMBULATORIAL',
-        tableNumber: 19,
+        tableNumber: 22,
         codeType: 'TUSS',
       },
     ],
+    opmeRelatedSurgery: 'Hernioplastia inguinal eletiva — pendente confirmação da data',
     opmeMaterials: [
       {
         id: 'OPME-005-M1',
@@ -5278,11 +5344,21 @@ export const pedidos: Request[] = [
     iaSuggestion: 'Pendenciar',
     iaJustification:
       'Registro ANVISA 99999999000 não localizado na base. Apenas 2 cotações apresentadas — exigência regulatória mínima de 3. Devolutiva ao prestador para regularização.',
+    iaSuggestionAfterReprocess: 'Aprovar',
+    iaJustificationAfterReprocess:
+      'Prestador atualizou registro ANVISA (10145430011 — tela Marlex/Bard, vigência até 2030-01-31) e anexou 3ª cotação de fornecedor distinto. ANVISA válido e cotações regulares (mínimo 3 atendido). Pendências documentais e regulatórias resolvidas.',
     iaChecklist: buildOpmeChecklist({
       cid: 'K40.9',
       anvisaNotFoundCount: 1,
       quotationsMissing: 1,
       manufacturerRecognized: false,
+    }),
+    iaChecklistAfterReprocess: buildOpmeChecklist({
+      cid: 'K40.9',
+      anvisaAllValid: true,
+      quotationsComplete: true,
+      cheapestQuotationChosen: true,
+      manufacturerRecognized: true,
     }),
     observations: 'Hernioplastia eletiva. Material com pendências documentais e regulatórias.',
     documents: [
@@ -5294,6 +5370,28 @@ export const pedidos: Request[] = [
         enviadoEm: '05/05/2026',
         obrigatorio: true,
         status: 'enviado',
+      },
+    ],
+    documentsAddedOnDevolutiva: [
+      {
+        id: 'DOC-OPME-005-DEV-A',
+        nome: 'Registro-ANVISA-atualizado.pdf',
+        tipo: 'Outro',
+        tamanho: '95 KB',
+        enviadoEm: '07/05/2026',
+        obrigatorio: true,
+        status: 'enviado',
+        origem: 'devolutiva_prestador',
+      },
+      {
+        id: 'DOC-OPME-005-DEV-B',
+        nome: 'Cotacao-fornecedor-3.pdf',
+        tipo: 'Outro',
+        tamanho: '120 KB',
+        enviadoEm: '07/05/2026',
+        obrigatorio: true,
+        status: 'enviado',
+        origem: 'devolutiva_prestador',
       },
     ],
     secondaryCids: [],
@@ -5936,7 +6034,8 @@ export const pedidos: Request[] = [
       accessoryProcedureCodes: [],
       hasOpme: true,
       hasOncologyLink: false,
-      notes: 'Implante combinado — stent + marca-passo dupla câmara.',
+      notes:
+        'Implante de marca-passo definitivo dupla câmara — gerador + eletrodos atrial e ventricular.',
     },
     hospitalization: {
       type: 'clinica_eletiva',
@@ -6059,16 +6158,16 @@ export const pedidos: Request[] = [
       {
         id: 'CIR-OPME-002-M2',
         materialCode: '70710140',
-        description: 'Eletrodo de marca-passo bipolar atrial',
+        description: 'Eletrodo Endocárdico Bipolar Atrial Tendril MRI',
         manufacturer: 'Abbott / St. Jude Medical',
         brand: 'Tendril MRI',
         unit: 'unidade',
-        quantity: 2,
+        quantity: 1,
         unitValue: 3200,
-        totalValue: 6400,
+        totalValue: 3200,
         anvisaRegistration: '80146170099',
         anvisaStatus: 'valid',
-        anvisaProductName: 'Eletrodo Endocárdico Bipolar Tendril MRI',
+        anvisaProductName: 'Eletrodo Endocárdico Bipolar Atrial Tendril MRI',
         anvisaValidUntil: '2029-11-30',
         quotations: [
           {
@@ -6076,24 +6175,65 @@ export const pedidos: Request[] = [
             supplier: 'CardioMed',
             brand: 'Tendril MRI',
             unitValue: 3200,
-            totalValue: 6400,
+            totalValue: 3200,
           },
           {
             id: 'Q-CIR-002-5',
             supplier: 'Implantes Cardiovasculares',
             brand: 'Tendril MRI',
             unitValue: 3450,
-            totalValue: 6900,
+            totalValue: 3450,
           },
           {
             id: 'Q-CIR-002-6',
             supplier: 'Hospitalar Cardio',
             brand: 'Tendril MRI',
             unitValue: 3350,
-            totalValue: 6700,
+            totalValue: 3350,
           },
         ],
         chosenQuotationId: 'Q-CIR-002-4',
+        tableNumber: 19,
+        cid: 'I44.2',
+      },
+      {
+        id: 'CIR-OPME-002-M3',
+        materialCode: '70710141',
+        description: 'Eletrodo Endocárdico Bipolar Ventricular Tendril MRI',
+        manufacturer: 'Abbott / St. Jude Medical',
+        brand: 'Tendril MRI',
+        unit: 'unidade',
+        quantity: 1,
+        unitValue: 3350,
+        totalValue: 3350,
+        anvisaRegistration: '80146170100',
+        anvisaStatus: 'valid',
+        anvisaProductName: 'Eletrodo Endocárdico Bipolar Ventricular Tendril MRI',
+        anvisaValidUntil: '2029-11-30',
+        quotations: [
+          {
+            id: 'Q-CIR-002-7',
+            supplier: 'CardioMed',
+            brand: 'Tendril MRI',
+            unitValue: 3350,
+            totalValue: 3350,
+          },
+          {
+            id: 'Q-CIR-002-8',
+            supplier: 'Implantes Cardiovasculares',
+            brand: 'Tendril MRI',
+            unitValue: 3600,
+            totalValue: 3600,
+          },
+          {
+            id: 'Q-CIR-002-9',
+            supplier: 'Hospitalar Cardio',
+            brand: 'Tendril MRI',
+            unitValue: 3500,
+            totalValue: 3500,
+          },
+        ],
+        chosenQuotationId: 'Q-CIR-002-7',
         tableNumber: 19,
         cid: 'I44.2',
       },
@@ -6101,7 +6241,7 @@ export const pedidos: Request[] = [
     alerts: ['UTI obrigatória — paciente >75 anos'],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Implante de marca-passo dupla câmara + eletrodos. ANVISA válido em ambos OPMEs. 3 cotações distintas por item, escolha mais econômica. Pré-op completo.',
+      'Implante de marca-passo dupla câmara — gerador + eletrodos atrial e ventricular. ANVISA válido em todos os OPMEs. 3 cotações distintas por item, escolha mais econômica em cada. Pré-op completo.',
     iaChecklist: buildOpmeChecklist({
       cid: 'I44.2',
       anvisaAllValid: true,
@@ -6170,10 +6310,11 @@ export const pedidos: Request[] = [
     surgery: {
       type: 'ortopedica_programada',
       mainProcedureCode: '40805042',
-      accessoryProcedureCodes: [],
+      accessoryProcedureCodes: ['31302023'],
       hasOpme: true,
       hasOncologyLink: false,
-      notes: 'Artrodese L4-L5 + parafusos pediculares + cage intersomático.',
+      notes:
+        'Artrodese L4-L5 com descompressão (laminectomia) + parafusos pediculares + cage intersomático.',
     },
     hospitalization: {
       type: 'clinica_eletiva',
@@ -6242,6 +6383,17 @@ export const pedidos: Request[] = [
         tableNumber: 22,
         codeType: 'TUSS',
       },
+      {
+        code: '31302023',
+        tuss: '31302023',
+        description: 'Laminectomia descompressiva (procedimento acessório)',
+        qty: 1,
+        requestDate: '06/05/2026',
+        cid: 'M51.1',
+        auditLevel: 'HOSPITALAR',
+        tableNumber: 22,
+        codeType: 'TUSS',
+      },
     ],
     opmeMaterials: [
       {
@@ -6256,7 +6408,7 @@ export const pedidos: Request[] = [
         totalValue: 7400,
         anvisaRegistration: '10381440089',
         anvisaStatus: 'valid',
-        anvisaProductName: 'Placa Bloqueada de Titânio LCP — Sistema 3.5mm',
+        anvisaProductName: 'Parafuso Pedicular Poliaxial Titânio 6.5x45mm — Sistema Synapse',
         anvisaValidUntil: '2028-11-30',
         quotations: [
           {
@@ -6297,7 +6449,7 @@ export const pedidos: Request[] = [
         totalValue: 5800,
         anvisaRegistration: '10381440090',
         anvisaStatus: 'valid',
-        anvisaProductName: 'Parafuso Cortical Titânio 3.5mm (sortimento)',
+        anvisaProductName: 'Cage Intersomático PEEK Lombar — Sistema Lordotic',
         anvisaValidUntil: '2028-11-30',
         quotations: [
           {
@@ -6330,7 +6482,7 @@ export const pedidos: Request[] = [
     alerts: [],
     iaSuggestion: 'Aprovar',
     iaJustification:
-      'Artrodese L4-L5 com OPME composto (parafusos pediculares + cage). ANVISA válido em todos. Pré-op completo (RM lombar documenta indicação). Cotações regulares.',
+      'Artrodese L4-L5 com laminectomia descompressiva acessória e OPME composto (parafusos pediculares + cage). ANVISA válido em todos. Pré-op completo (RM lombar documenta indicação). Cotações regulares.',
     iaChecklist: buildOpmeChecklist({
       cid: 'M51.1',
       anvisaAllValid: true,
@@ -6402,7 +6554,8 @@ export const pedidos: Request[] = [
       accessoryProcedureCodes: [],
       hasOpme: true,
       hasOncologyLink: false,
-      notes: 'Reconstrução mamária pós-mastectomia — exige expansor + prótese.',
+      notes:
+        'Reconstrução mamária tardia esquerda pós-mastectomia (2024) — prótese definitiva em tempo único.',
     },
     hospitalization: {
       type: 'clinica_eletiva',
@@ -6471,13 +6624,13 @@ export const pedidos: Request[] = [
         description: 'Prótese Mamária de Silicone Texturizada Anatômica',
         manufacturer: 'Mentor (Johnson & Johnson)',
         brand: 'CPG Gel',
-        unit: 'par',
+        unit: 'unidade',
         quantity: 1,
         unitValue: 8900,
         totalValue: 8900,
         anvisaRegistration: '80820100022',
         anvisaStatus: 'valid',
-        anvisaProductName: 'Lente Intraocular Acrílica Hidrofóbica Acrysof IQ',
+        anvisaProductName: 'Prótese Mamária de Silicone Texturizada Anatômica CPG Gel',
         anvisaValidUntil: '2029-09-30',
         quotations: [
           {
@@ -6681,6 +6834,33 @@ export const historicoEntries: HistoryEntry[] = [
     isRegulatedPlan: true,
     beneficiaryNotes: 'Responsável legal: mãe — contato via WhatsApp preferencial',
     procedureAlreadyPerformed: true,
+    iaChecklist: [
+      {
+        id: 'PROCEDIMENTO_JA_REALIZADO',
+        texto: 'Procedimento já realizado antes da decisão',
+        sub: 'Autorização retroativa — analista validou execução posterior à emissão da decisão.',
+        status: 'warning',
+        origin: 'dados',
+        severity: 80,
+        showWhenOk: true,
+      },
+      {
+        id: 'MUSICOTERAPIA_FORA_ROL',
+        texto: 'Musicoterapia fora do Rol da ANS',
+        sub: 'TUSS 50000XX1 não consta no Rol vigente — bloqueio administrativo.',
+        status: 'error',
+        origin: 'dados',
+        severity: 90,
+        showWhenOk: true,
+      },
+      {
+        id: 'ABA_PROTOCOLO_ADEQUADO',
+        texto: 'ABA com 16 sessões alinhada ao protocolo individualizado',
+        status: 'ok',
+        origin: 'ia',
+        showWhenOk: true,
+      },
+    ],
     detailedProcedures: [
       {
         code: '50000470',

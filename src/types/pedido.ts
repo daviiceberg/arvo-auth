@@ -165,7 +165,10 @@ export interface SurgeryContext {
 export type RequestOrigin = 'app' | 'whatsapp' | 'email' | 'prestador' | 'call_center';
 
 export type RoutingOutcome = 'queued_for_human_review' | 'auto_decision';
-export type RoutingRuleSource = 'rf004_event_type_tea_queue_only' | 'tenant_routing_rules';
+export type RoutingRuleSource =
+  | 'rf004_event_type_tea_queue_only'
+  | 'rf005_urgencia_emergencia_auto_aprovacao'
+  | 'tenant_routing_rules';
 
 export interface RoutingMetadata {
   outcome: RoutingOutcome;

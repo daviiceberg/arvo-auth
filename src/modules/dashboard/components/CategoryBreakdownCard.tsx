@@ -12,9 +12,13 @@ import { type CategoryBreakdownEntry } from '../hooks/useDashboardData';
 
 interface CategoryBreakdownCardProps {
   entries: CategoryBreakdownEntry[];
+  hasOpmeTotal: number;
 }
 
-export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCardProps) {
+export default function CategoryBreakdownCard({
+  entries,
+  hasOpmeTotal,
+}: CategoryBreakdownCardProps) {
   const router = useRouter();
   const total = entries.reduce((s, e) => s + e.total, 0);
   const maxTotal = entries.reduce((m, e) => Math.max(m, e.total), 0);
@@ -34,7 +38,7 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
             Nenhuma guia ativa nas categorias mapeadas.
           </Typography>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             {entries.map((e) => {
               const widthPct = maxTotal > 0 ? (e.total / maxTotal) * 100 : 0;
               return (
@@ -78,7 +82,7 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
                   <Box
                     sx={{
                       flex: 1,
-                      height: 12,
+                      height: 8,
                       backgroundColor: 'rgba(0,0,0,0.04)',
                       borderRadius: 1,
                       overflow: 'hidden',
@@ -112,6 +116,41 @@ export default function CategoryBreakdownCard({ entries }: CategoryBreakdownCard
             })}
           </Box>
         )}
+        <Box sx={{ mt: 2, pt: 1.5, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+          <Box
+            role="button"
+            tabIndex={0}
+            onClick={() => {
+              router.push('/fila?tab=opme');
+            }}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                router.push('/fila?tab=opme');
+              }
+            }}
+            aria-label={`Filtrar fila por pedidos com OPME — ${String(hasOpmeTotal)} guias`}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.25,
+              px: 1,
+              py: 0.5,
+              borderRadius: 1,
+              cursor: 'pointer',
+              transition: 'background-color 150ms ease',
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
+            }}
+          >
+            <Typography sx={{ fontSize: 12, fontWeight: 500, color: 'text.secondary', flex: 1 }}>
+              Pedidos com OPME (total)
+            </Typography>
+            <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#6B5544' }}>
+              {hasOpmeTotal}
+            </Typography>
+            <ChevronRightIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );
