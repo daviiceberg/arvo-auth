@@ -209,7 +209,7 @@ export default function QueueTableRow({ request, lastViewedId, onRowClick }: Que
           {request.beneficiary.plan}
         </Typography>
         <Box sx={{ mt: 0.5, display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-          <RequestTypeChip type={requestType} />
+          <RequestTypeChip type={requestType} parentRequestId={request.parentRequestId} />
         </Box>
       </TableCell>
       <TableCell sx={{ px: 1 }}>

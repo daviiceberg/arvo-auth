@@ -21,6 +21,7 @@ import { aiSuggestionFinalColorMap, alertOutlines } from '@/shared/constants';
 
 import AnvisaBanner from '@/modules/analysis/components/AnvisaBanner';
 import AuditLogSection from '@/modules/analysis/components/AuditLogSection';
+import ComplementaryBanner from '@/modules/analysis/components/ComplementaryBanner';
 import InternalNotesSection from '@/modules/analysis/components/InternalNotesSection';
 import OpmeMaterialsSection from '@/modules/analysis/components/OpmeMaterialsSection';
 
@@ -41,6 +42,7 @@ import JuntaParecerCard from './JuntaParecerCard';
 import ObservationsSection from './ObservationsSection';
 import ProceduresSection from './ProceduresSection';
 
+// eslint-disable-next-line complexity
 export default function HistoryDetailPage() {
   const vm = useHistoryDetail();
 
@@ -91,6 +93,9 @@ export default function HistoryDetailPage() {
         {/* Left column — scrolls independently */}
         <Box sx={{ flex: 1, minWidth: 0, overflowY: 'auto', pb: 4 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            {entry.parentRequestId ? (
+              <ComplementaryBanner parentRequestId={entry.parentRequestId} />
+            ) : null}
             {entry.procedureAlreadyPerformed ? (
               <Alert
                 severity="error"

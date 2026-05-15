@@ -30,7 +30,8 @@ function FlagChips({ entry }: { entry: HistoryEntry }) {
     entry.passedThroughPendency === true ||
     entry.passedThroughJunta === true ||
     entry.hadInjunction === true ||
-    entry.hadNip === true;
+    entry.hadNip === true ||
+    entry.parentRequestId !== undefined;
   if (!has) return null;
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mt: 0.5 }}>
@@ -63,6 +64,13 @@ function FlagChips({ entry }: { entry: HistoryEntry }) {
       ) : null}
       {entry.hadNip ? (
         <Chip label="NIP" size="small" sx={FLAG_CHIP_SX('rgba(194,65,12,0.12)', '#c2410c')} />
+      ) : null}
+      {entry.parentRequestId !== undefined ? (
+        <Chip
+          label="Complementar"
+          size="small"
+          sx={FLAG_CHIP_SX('rgba(13,148,136,0.12)', '#0d9488')}
+        />
       ) : null}
     </Box>
   );

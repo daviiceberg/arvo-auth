@@ -75,7 +75,7 @@ export const DEFAULT_HISTORY: ConsolidatedHistory = {
   ],
   autorizacoesAnteriores: [
     {
-      id: 'HIS-2026-00412',
+      id: 'HIS-2026-5013',
       procedimento: 'Sessão de Fonoaudiologia (continuidade)',
       codigo: '50000370',
       cid: 'F84.0',
@@ -85,7 +85,7 @@ export const DEFAULT_HISTORY: ConsolidatedHistory = {
       destaque: true,
     },
     {
-      id: 'HIS-2026-00298',
+      id: 'HIS-2026-5020',
       procedimento: 'Sessão de Terapia Ocupacional',
       codigo: '50000450',
       cid: 'F84.0',
@@ -94,7 +94,7 @@ export const DEFAULT_HISTORY: ConsolidatedHistory = {
       motivo: 'Plano terapêutico em vigência',
     },
     {
-      id: 'HIS-2026-00154',
+      id: 'HIS-2026-5001',
       procedimento: 'Reavaliação Neuropsicológica',
       codigo: '50000387',
       cid: 'F84.0',
@@ -157,7 +157,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     ],
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00587',
+        id: 'HIS-2026-5001',
         procedimento: 'Sessão ABA (80 sessões)',
         codigo: '50000470',
         cid: 'F84.0',
@@ -167,7 +167,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00423',
+        id: 'HIS-2026-5013',
         procedimento: 'Sessão de Fonoaudiologia',
         codigo: '50000370',
         cid: 'F84.0',
@@ -176,7 +176,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Continuidade do plano terapêutico',
       },
       {
-        id: 'HIS-2026-00310',
+        id: 'HIS-2026-5020',
         procedimento: 'Sessão ABA (82 sessões)',
         codigo: '50000470',
         cid: 'F84.0',
@@ -185,7 +185,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Quantidade ajustada para 80 conforme parecer da Junta',
       },
       {
-        id: 'HIS-2025-02189',
+        id: 'HIS-2026-5015',
         procedimento: 'Reavaliação Neuropsicológica',
         codigo: '50000387',
         cid: 'F84.0',
@@ -320,7 +320,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     ],
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00502',
+        id: 'HIS-2026-5001',
         procedimento: 'Sessão ABA — renovação mensal',
         codigo: '50000470',
         cid: 'F84.0',
@@ -330,7 +330,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01934',
+        id: 'HIS-2026-5015',
         procedimento: 'Sessão ABA — renovação mensal',
         codigo: '50000470',
         cid: 'F84.0',
@@ -339,7 +339,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Plano terapêutico em vigência',
       },
       {
-        id: 'HIS-2025-01655',
+        id: 'HIS-2026-5020',
         procedimento: 'Reavaliação Neuropsicológica',
         codigo: '50000387',
         cid: 'F84.0',
@@ -407,7 +407,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     ],
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00601',
+        id: 'HIS-2026-5001',
         procedimento: 'Sessão ABA (88 sessões) — EIBI',
         codigo: '50000470',
         cid: 'F84.0',
@@ -417,7 +417,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00441',
+        id: 'HIS-2026-5015',
         procedimento: 'Sessão ABA (90 sessões)',
         codigo: '50000470',
         cid: 'F84.0',
@@ -426,7 +426,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Quantidade ajustada para 88 conforme Junta',
       },
       {
-        id: 'HIS-2025-02301',
+        id: 'HIS-2026-5013',
         procedimento: 'Reavaliação Neuropsicológica',
         codigo: '50000387',
         cid: 'F84.0',
@@ -483,7 +483,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     ],
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00519',
+        id: 'HIS-2026-5020',
         procedimento: 'Sessão de Terapia Ocupacional (renovação)',
         codigo: '50000450',
         cid: 'F84.0',
@@ -493,7 +493,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01872',
+        id: 'HIS-2026-5020',
         procedimento: 'Sessão de Terapia Ocupacional',
         codigo: '50000450',
         cid: 'F84.0',
@@ -502,7 +502,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Plano terapêutico em vigência',
       },
       {
-        id: 'HIS-2025-01501',
+        id: 'HIS-2026-5020',
         procedimento: 'Avaliação Sensorial Ocupacional',
         codigo: '50000461',
         cid: 'F84.0',
@@ -541,7 +541,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'M54.5', count: 5, descricao: 'Dor lombar' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00388',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Fisioterapia Motora — 10 sessões (ciclo 2)',
         codigo: '20100110',
         cid: 'M54.5',
@@ -551,7 +551,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01820',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Fisioterapia Motora — 10 sessões (ciclo 1)',
         codigo: '20100110',
         cid: 'M54.5',
@@ -560,7 +560,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Primeiro ciclo — indicação ortopédica',
       },
       {
-        id: 'HIS-2025-01234',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Consulta Ortopédica',
         codigo: '40302056',
         cid: 'M54.5',
@@ -636,7 +636,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'M25.5', count: 3, descricao: 'Dor articular — ombro' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2025-01641',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Fisioterapia Motora — 8 sessões (ciclo 1)',
         codigo: '20100110',
         cid: 'M25.5',
@@ -646,7 +646,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01290',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Ultrassonografia de Ombro',
         codigo: '40901346',
         cid: 'M25.5',
@@ -693,7 +693,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'I10', count: 8, descricao: 'Hipertensão arterial essencial' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2025-01788',
+        id: 'HIS-2026-SADT-002',
         procedimento: 'Bateria Laboratorial — Rotina Cardiovascular (2025)',
         codigo: '40302041',
         cid: 'I10',
@@ -703,7 +703,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2024-01102',
+        id: 'HIS-2026-SADT-002',
         procedimento: 'Bateria Laboratorial — Rotina Cardiovascular (2024)',
         codigo: '40302041',
         cid: 'I10',
@@ -712,7 +712,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Acompanhamento anual regular',
       },
       {
-        id: 'HIS-2025-01620',
+        id: 'HIS-2026-SADT-002',
         procedimento: 'Eletrocardiograma de Repouso',
         codigo: '40304361',
         cid: 'I10',
@@ -751,7 +751,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'M54.5', count: 6, descricao: 'Dor lombar — crônica' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00465',
+        id: 'HIS-2026-SADT-003',
         procedimento: 'RPG — 8 sessões (ciclo padrão)',
         codigo: '20100129',
         cid: 'M54.5',
@@ -761,7 +761,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00312',
+        id: 'HIS-2026-SADT-003',
         procedimento: 'RPG — 10 sessões (com ajuste)',
         codigo: '20100129',
         cid: 'M54.5',
@@ -770,7 +770,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Quantidade ajustada de 12 para 10 — acima do protocolo padrão',
       },
       {
-        id: 'HIS-2025-02014',
+        id: 'HIS-2026-SADT-003',
         procedimento: 'RPG — 8 sessões',
         codigo: '20100129',
         cid: 'M54.5',
@@ -817,7 +817,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'G44.0', count: 6, descricao: 'Cefaleia em salvas' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2025-01755',
+        id: 'HIS-2026-EXAM-001',
         procedimento: 'RM Crânio com Contraste',
         codigo: '40911250',
         cid: 'G44.0',
@@ -827,7 +827,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2024-01088',
+        id: 'HIS-2026-EXAM-001',
         procedimento: 'RM Crânio com Contraste',
         codigo: '40911250',
         cid: 'G44.0',
@@ -836,7 +836,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Seguimento neurológico anual',
       },
       {
-        id: 'HIS-2025-01544',
+        id: 'HIS-2026-EXAM-001',
         procedimento: 'Consulta Neurológica',
         codigo: '40301230',
         cid: 'G44.0',
@@ -879,7 +879,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'I25.9', count: 9, descricao: 'Doença isquêmica crônica do coração' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2025-01932',
+        id: 'HIS-2026-EXAM-004',
         procedimento: 'Cintilografia Miocárdica de Perfusão',
         codigo: '40901167',
         cid: 'I25.9',
@@ -889,7 +889,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01521',
+        id: 'HIS-2026-EXAM-004',
         procedimento: 'Cateterismo Cardíaco Diagnóstico',
         codigo: '40501077',
         cid: 'I25.9',
@@ -898,7 +898,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Avaliação hemodinâmica indicada pelo cardiologista',
       },
       {
-        id: 'HIS-2025-01200',
+        id: 'HIS-2026-EXAM-004',
         procedimento: 'Ecocardiograma Doppler',
         codigo: '40303667',
         cid: 'I25.9',
@@ -946,7 +946,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'M50.0', count: 3, descricao: 'Lesão do disco cervical com mielopatia' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2024-01311',
+        id: 'HIS-2026-EXAM-003',
         procedimento: 'RM Coluna Cervical com Contraste',
         codigo: '40911284',
         cid: 'M50.0',
@@ -956,7 +956,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2024-01589',
+        id: 'HIS-2026-SADT-001',
         procedimento: 'Fisioterapia Motora — 8 sessões (ciclo 1)',
         codigo: '20100110',
         cid: 'M50.0',
@@ -1011,7 +1011,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00201',
+        id: 'HIS-2026-EXAM-002',
         procedimento: 'PET-CT Oncológico — estadiamento inicial',
         codigo: '40901450',
         cid: 'C18.9',
@@ -1021,7 +1021,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00089',
+        id: 'HIS-2026-ONC-001',
         procedimento: 'Quimioterapia Adjuvante (ciclo)',
         codigo: '50000185',
         cid: 'C18.9',
@@ -1030,7 +1030,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Protocolo QT adjuvante pós-cirúrgico',
       },
       {
-        id: 'HIS-2025-02201',
+        id: 'HIS-2026-SADT-002',
         procedimento: 'Colonoscopia com Biópsia',
         codigo: '40601110',
         cid: 'C18.9',
@@ -1082,7 +1082,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'C34.9', count: 7, descricao: 'Carcinoma brônquico, não especificado' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2025-02098',
+        id: 'HIS-2026-EXAM-002',
         procedimento: 'TC Tórax de Alta Resolução',
         codigo: '40910211',
         cid: 'C34.9',
@@ -1092,7 +1092,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-01780',
+        id: 'HIS-2026-EXAM-002',
         procedimento: 'TC Tórax de Alta Resolução',
         codigo: '40910211',
         cid: 'C34.9',
@@ -1101,7 +1101,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Monitoramento trimestral de resposta ao tratamento',
       },
       {
-        id: 'HIS-2025-01001',
+        id: 'HIS-2026-EXAM-002',
         procedimento: 'Broncoscopia com Biópsia',
         codigo: '40601128',
         cid: 'C34.9',
@@ -1152,7 +1152,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'I63.9', count: 3, descricao: 'AVC isquêmico, não especificado' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00380',
+        id: 'HIS-2026-HC-001',
         procedimento: 'Home Care 12h Enfermagem — período 1',
         codigo: '50000619',
         cid: 'I63.9',
@@ -1162,7 +1162,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00121',
+        id: 'HIS-2026-HC-004',
         procedimento: 'Fisioterapia Neurológica Domiciliar',
         codigo: '20100152',
         cid: 'I63.9',
@@ -1201,7 +1201,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'F03', count: 6, descricao: 'Demência não especificada' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00421',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 6h Enfermagem — renovação',
         codigo: '50000600',
         cid: 'F03',
@@ -1211,7 +1211,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00258',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 6h Enfermagem',
         codigo: '50000600',
         cid: 'F03',
@@ -1220,7 +1220,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Cuidado domiciliar contínuo — demência',
       },
       {
-        id: 'HIS-2025-02144',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 6h Enfermagem',
         codigo: '50000600',
         cid: 'F03',
@@ -1308,7 +1308,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'F03', count: 5, descricao: 'Demência avançada — alta dependência' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00489',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 24h Enfermagem — renovação',
         codigo: '50000627',
         cid: 'F03',
@@ -1318,7 +1318,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00311',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 24h Enfermagem',
         codigo: '50000627',
         cid: 'F03',
@@ -1327,7 +1327,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Cuidado contínuo 24h — demência em estágio avançado',
       },
       {
-        id: 'HIS-2025-02289',
+        id: 'HIS-2026-HC-003',
         procedimento: 'Home Care 24h Enfermagem',
         codigo: '50000627',
         cid: 'F03',
@@ -1374,7 +1374,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-00558',
+        id: 'HIS-2026-HC-002',
         procedimento: 'Home Care 12h Enfermagem — cuidados paliativos',
         codigo: '50000619',
         cid: 'C61',
@@ -1384,7 +1384,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-00399',
+        id: 'HIS-2026-HC-002',
         procedimento: 'Home Care 12h Enfermagem',
         codigo: '50000619',
         cid: 'C61',
@@ -1512,7 +1512,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'J45.1', count: 3, descricao: 'Asma persistente moderada' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-UE-103',
+        id: 'HIS-2026-UE-003',
         procedimento: 'Atendimento em pronto-socorro com nebulização',
         codigo: '10101039',
         cid: 'J45.1',
@@ -1521,7 +1521,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Atendimento de urgência — crise asmática',
       },
       {
-        id: 'HIS-2026-UE-067',
+        id: 'HIS-2026-UE-003',
         procedimento: 'Atendimento em pronto-socorro',
         codigo: '10101039',
         cid: 'J45.1',
@@ -1530,7 +1530,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Crise asmática moderada',
       },
       {
-        id: 'HIS-2025-UE-498',
+        id: 'HIS-2026-UE-003',
         procedimento: 'Internação curta — exacerbação asmática',
         codigo: '30202010',
         cid: 'J45.1',
@@ -1577,7 +1577,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'C50.9', count: 4, descricao: 'Neoplasia maligna da mama' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-ONC-089',
+        id: 'HIS-2026-ONC-001',
         procedimento: 'Quimioterapia AC ciclo 3/8',
         codigo: '41101010',
         cid: 'C50.9',
@@ -1587,7 +1587,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-ONC-061',
+        id: 'HIS-2026-ONC-001',
         procedimento: 'Quimioterapia AC ciclo 2/8',
         codigo: '41101010',
         cid: 'C50.9',
@@ -1596,7 +1596,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Protocolo AC-T validado',
       },
       {
-        id: 'HIS-2026-ONC-032',
+        id: 'HIS-2026-ONC-001',
         procedimento: 'Quimioterapia AC ciclo 1/8',
         codigo: '41101010',
         cid: 'C50.9',
@@ -1605,7 +1605,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'Início de protocolo AC-T — estadiamento IIB',
       },
       {
-        id: 'HIS-2026-ONC-018',
+        id: 'HIS-2026-ONC-001',
         procedimento: 'Ecocardiograma pré-quimioterapia',
         codigo: '40901111',
         cid: 'C50.9',
@@ -1648,7 +1648,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'C34.9', count: 18, descricao: 'Neoplasia maligna do pulmão' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-ONC-145',
+        id: 'HIS-2026-ONC-002',
         procedimento: 'Pembrolizumabe ciclo 4/sem limite definido',
         codigo: '41101044',
         cid: 'C34.9',
@@ -1658,7 +1658,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2026-ONC-123',
+        id: 'HIS-2026-EXAM-002',
         procedimento: 'PET-CT oncológico (estadiamento)',
         codigo: '40808125',
         cid: 'C34.9',
@@ -1667,7 +1667,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         motivo: 'DUT 60 atendida — câncer pulmonar células não-pequenas',
       },
       {
-        id: 'HIS-2025-ONC-712',
+        id: 'HIS-2026-ONC-002',
         procedimento: 'Carboplatina + Paclitaxel ciclo 6/6 (1ª linha)',
         codigo: '41101010',
         cid: 'C34.9',
@@ -1719,7 +1719,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
     cidRecorrente: { cid: 'C61', count: 6, descricao: 'Neoplasia maligna da próstata' },
     autorizacoesAnteriores: [
       {
-        id: 'HIS-2026-ONC-178',
+        id: 'HIS-2026-ONC-003',
         procedimento: 'Radioterapia conformacional 3D — frações 1-17',
         codigo: '41201019',
         cid: 'C61',
@@ -1729,7 +1729,7 @@ export const mockHistorico: Record<string, ConsolidatedHistory> = {
         destaque: true,
       },
       {
-        id: 'HIS-2025-ONC-845',
+        id: 'HIS-2026-ONC-003',
         procedimento: 'Prostatectomia radical',
         codigo: '31303170',
         cid: 'C61',

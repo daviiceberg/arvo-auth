@@ -416,6 +416,7 @@ export interface Request {
   observations: string;
   documents: Document[];
   authorizationStage?: 'primeira_solicitacao' | 'continuidade';
+  parentRequestId?: string;
   adjustments?: Adjustment[];
   operatorLock?: OperatorLock;
   subStatus?: SubStatus;
@@ -474,6 +475,7 @@ export interface HistoryEntry {
   id: string;
   beneficiary: string;
   cardNumber: string;
+  parentRequestId?: string;
   plan: string;
   category: Category;
   procedure: string;

@@ -129,6 +129,7 @@ const newTerapiaProc = (base?: Partial<TerapiaProcedimento>): TerapiaProcediment
 
 export const initialForm: FormData = {
   category: '',
+  parentRequestId: null,
   nomeBeneficiario: 'Lucas Martins de Almeida',
   carteirinha: '9876543210987654',
   dataNascimento: '2018-07-22',
@@ -204,6 +205,14 @@ export function useNewRequestForm(categoryParam: string) {
 
   const setSelect = (field: keyof FormData) => (value: string) => {
     setForm((f) => ({ ...f, [field]: value }));
+  };
+
+  const handleSetParentRequest = (parentId: string, prefilledFields: Partial<FormData>) => {
+    setForm((f) => ({ ...f, parentRequestId: parentId, ...prefilledFields }));
+  };
+
+  const handleClearParentRequest = () => {
+    setForm((f) => ({ ...f, parentRequestId: null }));
   };
 
   const handleAddTerapiaProc = () => {
@@ -703,6 +712,8 @@ export function useNewRequestForm(categoryParam: string) {
     set,
     setSelect,
     setCategory,
+    handleSetParentRequest,
+    handleClearParentRequest,
     terapiaProcedimentos,
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,

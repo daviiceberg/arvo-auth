@@ -10,16 +10,20 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { useUserPermissions } from '@/shared/hooks/useUserPermissions';
+
 import useDashboardData from '../hooks/useDashboardData';
 
 import CategoryBreakdownCard from './CategoryBreakdownCard';
 import DashboardKpiStrip from './DashboardKpiStrip';
 import ProcessingQueueTable from './ProcessingQueueTable';
 import RecentRequestsTable from './RecentRequestsTable';
+import SlaPredictiveCard from './SlaPredictiveCard';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { loading, metrics, pedidos, categoryBreakdown, hasOpmeTotal } = useDashboardData();
+  const permissions = useUserPermissions();
 
   return (
     <Box sx={{ p: 3 }}>
@@ -61,6 +65,9 @@ export default function DashboardPage() {
 
       {/* KPI strip */}
       <DashboardKpiStrip metrics={metrics} />
+
+      {/* SLA predictive — manager-only */}
+      {permissions.profile === 'gestor' ? <SlaPredictiveCard /> : null}
 
       {/* Processing Queue */}
       {!loading && <ProcessingQueueTable />}

@@ -3,7 +3,6 @@
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -45,7 +44,7 @@ export default function HistoryListTable({
     ? `Nenhuma decisão de ${activeCategory} no histórico`
     : 'Nenhuma decisão encontrada para os filtros selecionados.';
   return (
-    <Card>
+    <>
       <Box sx={{ overflowX: 'auto' }}>
         <Table size="small" sx={{ minWidth: 1100 }}>
           <TableHead>
@@ -105,6 +104,6 @@ export default function HistoryListTable({
         itemLabel="decisões"
         onPageChange={onPageChange}
       />
-    </Card>
+    </>
   );
 }

@@ -489,9 +489,15 @@ export default function UsuariosPage() {
         ))}
       </Box>
 
-      {/* Filters */}
-      <Card sx={{ mb: 2 }}>
-        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+      {/* Filters + Table — unified card (Fila Operacional pattern) */}
+      <Card>
+        <Box
+          sx={{
+            px: 2,
+            py: 1.75,
+            borderBottom: '1px solid rgba(0,0,0,0.06)',
+          }}
+        >
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <TextField
               size="small"
@@ -555,120 +561,122 @@ export default function UsuariosPage() {
               </Button>
             ) : null}
           </Box>
-        </CardContent>
-      </Card>
-
-      {/* Table */}
-      <Card>
-        <Table size="small">
-          <TableHead>
-            <TableRow
-              sx={{
-                '& .MuiTableCell-head': {
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.4,
-                  color: 'text.secondary',
-                },
-              }}
-            >
-              <TableCell>Usuário</TableCell>
-              <TableCell>E-mail</TableCell>
-              <TableCell>Perfil</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Último Acesso</TableCell>
-              <TableCell>Criado em</TableCell>
-              <TableCell>Ações</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
-                  Nenhum usuário encontrado.
-                </TableCell>
+        </Box>
+        <Box sx={{ overflowX: 'auto' }}>
+          <Table size="small" sx={{ minWidth: 900 }}>
+            <TableHead>
+              <TableRow
+                sx={{
+                  '& .MuiTableCell-head': {
+                    fontWeight: 700,
+                    fontSize: 12,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.4,
+                    color: 'text.secondary',
+                    whiteSpace: 'nowrap',
+                  },
+                }}
+              >
+                <TableCell>Usuário</TableCell>
+                <TableCell>E-mail</TableCell>
+                <TableCell>Perfil</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Último Acesso</TableCell>
+                <TableCell>Criado em</TableCell>
+                <TableCell>Ações</TableCell>
               </TableRow>
-            ) : (
-              filtered.map((u) => (
-                <TableRow
-                  key={u.id}
-                  sx={{
-                    cursor: 'default',
-                    transition: 'background-color 0.15s ease',
-                    '&:hover': { backgroundColor: 'rgba(144,43,41,0.03)' },
-                  }}
-                >
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Avatar
-                        sx={{
-                          width: 32,
-                          height: 32,
-                          fontSize: 12,
-                          fontWeight: 700,
-                          bgcolor: roleColors[u.role].bg,
-                          color: roleColors[u.role].color,
-                        }}
-                      >
-                        {initials(u.name)}
-                      </Avatar>
-                      <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
-                        {u.name}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                      {u.email}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <RoleChip role={u.role} />
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip status={u.status} />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                      {u.lastAccess ?? '—'}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
-                      {u.createdAt}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <Button
-                        size="small"
-                        startIcon={<EditIcon sx={{ fontSize: 14 }} />}
-                        onClick={() => {
-                          openEdit(u);
-                        }}
-                        sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        size="small"
-                        startIcon={<PowerSettingsNewIcon sx={{ fontSize: 14 }} />}
-                        onClick={() => {
-                          handleToggleStatus(u.id);
-                        }}
-                        color={u.status === 'ativo' ? 'error' : 'success'}
-                        sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}
-                      >
-                        {u.status === 'ativo' ? 'Inativar' : 'Ativar'}
-                      </Button>
-                    </Box>
+            </TableHead>
+            <TableBody>
+              {filtered.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}
+                  >
+                    Nenhum usuário encontrado.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                filtered.map((u) => (
+                  <TableRow
+                    key={u.id}
+                    sx={{
+                      cursor: 'default',
+                      transition: 'background-color 0.15s ease',
+                      '&:hover': { backgroundColor: 'rgba(144,43,41,0.03)' },
+                    }}
+                  >
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar
+                          sx={{
+                            width: 32,
+                            height: 32,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            bgcolor: roleColors[u.role].bg,
+                            color: roleColors[u.role].color,
+                          }}
+                        >
+                          {initials(u.name)}
+                        </Avatar>
+                        <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
+                          {u.name}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        {u.email}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <RoleChip role={u.role} />
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip status={u.status} />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        {u.lastAccess ?? '—'}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="caption" sx={{ fontSize: 12, color: 'text.secondary' }}>
+                        {u.createdAt}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <Button
+                          size="small"
+                          startIcon={<EditIcon sx={{ fontSize: 14 }} />}
+                          onClick={() => {
+                            openEdit(u);
+                          }}
+                          sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          size="small"
+                          startIcon={<PowerSettingsNewIcon sx={{ fontSize: 14 }} />}
+                          onClick={() => {
+                            handleToggleStatus(u.id);
+                          }}
+                          color={u.status === 'ativo' ? 'error' : 'success'}
+                          sx={{ fontSize: 12, py: 0.25, px: 1.25, minHeight: 28 }}
+                        >
+                          {u.status === 'ativo' ? 'Inativar' : 'Ativar'}
+                        </Button>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </Box>
       </Card>
 
       <UserDialog

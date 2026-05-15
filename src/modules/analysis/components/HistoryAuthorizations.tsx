@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 import CheckIcon from '@mui/icons-material/Check';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -15,6 +16,8 @@ import Typography from '@mui/material/Typography';
 import { decisionActionConfigMap } from '@/shared/constants';
 
 import { type ConsolidatedHistory } from '../constants/consolidated-history-data';
+
+import PreviousAuthorizationDialog from './PreviousAuthorizationDialog';
 
 // ---- Helpers ----
 type Decision = 'aprovado' | 'negado' | 'ajustado';
@@ -44,6 +47,7 @@ interface HistoryAuthorizationsProps {
 
 export default function HistoryAuthorizations({ authorizations }: HistoryAuthorizationsProps) {
   const [showAll, setShowAll] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const visible = showAll ? authorizations : authorizations.slice(0, 3);
 
   return (
@@ -70,11 +74,23 @@ export default function HistoryAuthorizations({ authorizations }: HistoryAuthori
         </Typography>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2.5 }}>
-          {visible.map((auth) => {
+          {visible.map((auth, index) => {
             const dc = decisionChipColor(auth.decisao);
             return (
               <Box
-                key={auth.id}
+                key={`${auth.id}-${String(index)}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => {
+                  setSelectedId(auth.id);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedId(auth.id);
+                  }
+                }}
+                aria-label={`Abrir detalhes da autorização ${auth.id}`}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -83,6 +99,17 @@ export default function HistoryAuthorizations({ authorizations }: HistoryAuthori
                   border: '1px solid rgba(0,0,0,0.04)',
                   borderRadius: 1.5,
                   backgroundColor: auth.destaque ? 'rgba(245,158,11,0.04)' : 'transparent',
+                  cursor: 'pointer',
+                  transition: 'background-color 150ms ease, border-color 150ms ease',
+                  '&:hover': {
+                    backgroundColor: auth.destaque ? 'rgba(245,158,11,0.08)' : 'rgba(0,0,0,0.03)',
+                    borderColor: 'rgba(0,0,0,0.08)',
+                  },
+                  '&:focus-visible': {
+                    outline: '2px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: 1,
+                  },
                 }}
               >
                 <Box sx={{ flexShrink: 0 }}>{decisionIcon(auth.decisao)}</Box>
@@ -105,6 +132,7 @@ export default function HistoryAuthorizations({ authorizations }: HistoryAuthori
                     fontSize: 12,
                   }}
                 />
+                <ChevronRightIcon sx={{ fontSize: 18, color: 'text.secondary', flexShrink: 0 }} />
               </Box>
             );
           })}
@@ -130,6 +158,13 @@ export default function HistoryAuthorizations({ authorizations }: HistoryAuthori
           {showAll ? 'Mostrar menos' : `Ver mais ${String(authorizations.length - 3)} registros`}
         </Button>
       )}
+      <PreviousAuthorizationDialog
+        open={selectedId !== null}
+        authorizationId={selectedId}
+        onClose={() => {
+          setSelectedId(null);
+        }}
+      />
     </>
   );
 }

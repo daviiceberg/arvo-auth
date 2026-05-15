@@ -437,6 +437,9 @@ export function StepReview({
       </Typography>
       <Box sx={{ mb: 3 }}>
         <ReviewRow label="Categoria" value={form.category} />
+        {form.parentRequestId ? (
+          <ReviewRow label="Vínculo" value={`Complementar a ${form.parentRequestId}`} />
+        ) : null}
         <ReviewRow label="Nome" value={form.nomeBeneficiario} />
         <ReviewRow label="Carteirinha" value={form.carteirinha} />
         <ReviewRow label="Data de Nascimento" value={form.dataNascimento} />

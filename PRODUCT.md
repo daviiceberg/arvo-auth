@@ -1,10 +1,12 @@
-# Arvo Auth TEA — Product Domain Context
+# Arvo Auth — Product Domain Context
 
 > This file provides domain knowledge for AI-assisted development. It answers "what" and "why" so that CLAUDE.md can focus on "how".
 
 ## Identity
 
-Arvo Auth TEA is a **MVP focado em Terapias Especiais (CID F84)** para operadoras de saúde brasileiras. Instância simplificada do Arvo Auth com escopo reduzido a uma única categoria. Produto **white-label** multi-operadora.
+Arvo Auth é uma plataforma de **infraestrutura de autorização** para operadoras de saúde brasileiras. Produto **white-label** multi-operadora que cobre o espectro completo de pedidos de autorização — de terapias ambulatoriais a procedimentos hospitalares críticos e OPME.
+
+A entrega evoluiu por milestones e hoje suporta nove categorias clínicas distintas, cada uma com regras administrativas, fluxos de SLA e validações próprias.
 
 **Core principle:** "A Arvo gera a análise (ponto de vista) — a operadora decide a consequência (decisão/automação)." The AI produces structured analysis; the operator configures what happens as a result.
 
@@ -17,28 +19,41 @@ Authorization analysts at operators spend 80%+ of their time on mechanical cross
 - **ANS (Agência Nacional de Saúde Suplementar):** The federal regulator. All decisions must comply with ANS normatives.
 - **TISS (Troca de Informações em Saúde Suplementar):** The mandatory data exchange standard. Defines field requirements that vary by request type.
 - **TUSS (Terminologia Unificada da Saúde Suplementar):** The standardized procedure code table. Operators may use proprietary package codes that must map back to TUSS.
-- **RN 566/2022:** Prohibits AI from autonomously denying requests on clinical grounds. Administrative denials (missing documents, invalid CRM, ineligibility) are permitted.
+- **RN 566/2022:** Prohibits AI from autonomously denying requests on clinical grounds. Administrative denials (missing documents, invalid CRM, ineligibility) are permitted. Define prazos de realização (constraint que pode encurtar o prazo de resposta).
+- **RN 623/2024:** Substitui RN 395/2016 desde 01/07/2025. Define prazos de resposta ao beneficiário (Art. 12) e IGR (Índice de Garantia de Atendimento). Prazo de resposta nunca pode exceder o prazo de realização — RN 566 atua como constraint.
 - **RN 539/2022:** Governs Terapias Especiais for CID F84.x (autism spectrum). Mandates unlimited therapy sessions — no quantity caps.
+- **RN 483/2022:** NIP (Notificação de Intermediação Preliminar) — quando beneficiário reclama à ANS, dispara prazo regulatório curto. Pedidos com NIP aberta sobem na fila.
+- **Lei 9.656/98 art. 35-C:** Cobertura obrigatória de urgência/emergência. Carência máxima 24h. Manchester vermelho/laranja → atendimento não pode ser interrompido; sistema auto-aprova com registro retroativo para auditoria.
 - **SLA rules:** ANS-mandated response deadlines. The clock does NOT pause for pendency returns, making devolutivas (returned requests) time-critical.
 
-## Request category (MVP)
+## Request categories supported
 
-Este MVP cobre **uma única categoria**:
+O produto cobre **nove categorias clínicas**, entregues incrementalmente por milestone:
 
-- **Terapias Especiais** (behavioral/occupational/speech therapy, especially CID F84.x — Transtornos Globais do Desenvolvimento/TEA)
+| Categoria                    | Escopo principal                                                                                          | Particularidades                                                                          |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| **Terapias Especiais**       | Terapias ABA, fonoaudiologia, terapia ocupacional, fisioterapia, psicopedagogia (CID F84.x — TEA e afins) | RN 539/2022 — sessões ilimitadas                                                          |
+| **SADT**                     | Serviços ambulatoriais de diagnóstico e terapia                                                           | Maior parte automação Tier 1                                                              |
+| **Exames Alta Complexidade** | RM, TC, PET-CT, exames de alto custo                                                                      | DUTs específicas por procedimento                                                         |
+| **Home Care**                | Atendimento domiciliar (enfermagem, fisio, paliativo)                                                     | Frequência + duração + equipamentos                                                       |
+| **Urgência/Emergência**      | Atendimentos em PS/PA, trauma, emergência hospitalar                                                      | Manchester (vermelho/laranja) → auto-aprovação por Lei 9.656/98 art. 35-C                 |
+| **Oncologia**                | Quimio, radio, hormonio, imunoterapia                                                                     | Estadiamento TNM, protocolo, ciclo, linha de tratamento                                   |
+| **Internação**               | Eletiva, semi-eletiva, domiciliar de alta complexidade                                                    | Diárias, taxas, justificativa UTI                                                         |
+| **Cirurgias Eletivas**       | Cirurgias programadas com ou sem OPME embutido                                                            | Procedimento principal + acessórios, pré-operatório, hospitalização                       |
+| **OPME**                     | Órteses, próteses e materiais especiais (standalone ou embutido em cirurgia)                              | ANVISA registro, ≥3 cotações, justificativa estruturada quando não escolher a mais barata |
 
-Modalidades atendidas: Fonoaudiologia, Psicologia (ABA e demais abordagens), Terapia Ocupacional, Fisioterapia, Psicopedagogia. Todas surgem para revisão humana, exceto quando bloqueadas por filtro administrativo automático (ver abaixo).
+Modalidades de Terapias Especiais (categoria fundadora) seguem com tratamento próprio: Fonoaudiologia, Psicologia (ABA e demais abordagens), Terapia Ocupacional, Fisioterapia, Psicopedagogia.
 
 ### Administrative auto-filter
 
-Before any clinical evaluation, the system applies administrative checks. If configurable rules are met, the system can auto-deny without human review:
+Antes de qualquer avaliação clínica, o sistema aplica verificações administrativas. Se regras configuráveis pela operadora forem acionadas, o pedido pode ser auto-negado sem revisão humana. Exemplos comuns:
 
-- CID F84 ausente ou não confirmado no laudo ("Chave de Ouro" — regra operadora-configurável)
-- Laudo neuropsicológico ausente, ilegível ou vencido (>12 meses)
-- Assinatura ou carimbo do médico ausente
-- Invalid CRM (physician registry)
+- CID exigido pela categoria ausente ou não confirmado no laudo (ex.: F84 em Terapias Especiais — regra operadora-configurável)
+- Laudo obrigatório (neuropsicológico, oncológico, anestésico) ausente, ilegível ou vencido
+- Assinatura, carimbo ou CRM do médico inválidos
 - Beneficiary ineligible (carência not fulfilled, contract inactive, delinquency)
 - Prestador não credenciado
+- OPME sem ANVISA vigente (bloqueio regulatório — não pode ser autorizado)
 
 > **Key for developers:** The auto-filter is operator-configurable. Client A may auto-deny on missing signature; Client B may just flag an alert. Never hardcode the consequence — only the detection.
 
@@ -127,7 +142,9 @@ The system works with two code layers simultaneously:
 2. **AI suggestions are advisory.** UI must never present AI output as a final decision. Labels: "Sugestão da IA", "Ponto de Vista", never "Decisão da IA".
 3. **Confidence level drives routing**, not decisioning. High confidence ≥ 90% enables automation for Tier 1. For Tier 2, confidence informs the analyst but does not auto-decide.
 4. **Every AI output must be explainable.** The checklist and justification are mandatory, not optional extras.
-5. **RN 539/2022 override:** For CID F84.x, session limits do not apply. Any alert about exceeded session counts must be suppressed or clearly marked as informational-only.
+5. **RN 539/2022 override (Terapias Especiais):** For CID F84.x, session limits do not apply. Any alert about exceeded session counts must be suppressed or clearly marked as informational-only.
+6. **Auto-aprovação regulatória de Urgência/Emergência:** Manchester vermelho/laranja → `routing.outcome: 'auto_decision'` + `status: 'Aprovado'`. Base: Lei 9.656/98 art. 35-C + RN 566/2022. Auditoria pós-fato confirma adequação clínica; glosa retroativa permitida se descaracterizada.
+7. **OPME — atributo transversal:** Pedidos com OPME podem ter `category: 'OPME'` (standalone) ou OPME embutido em Cirurgias Eletivas / Oncologia (`surgery.hasOpme === true` ou `opmeMaterials.length > 0`). Renderizar `OpmeBadge` ao lado do `CategoryChip` quando embutido. Aba "Tem OPME" na fila operacional unifica visão.
 
 ## Eligibility data layer
 
@@ -136,7 +153,7 @@ The system queries operator data through an abstraction called "Arvo format" —
 - **Beneficiary eligibility:** Contract status, carência fulfillment, inadimplência
 - **Provider credentialing:** Whether the prestador is in the operator's network
 - **Procedure coverage:** Whether the TUSS code is covered by the beneficiary's plan
-- **Utilization limits:** Session quotas, annual caps (except where RN 539 overrides)
+- **Utilization limits:** Session quotas, annual caps (except where RN 539 overrides for Terapias Especiais CID F84.x)
 - **TUSS mapping:** Translation between operator-proprietary codes and official TUSS codes
 
 > **For developers:** When mocking data or building services, always go through the eligibility service layer. Never query operator data directly.

@@ -72,7 +72,7 @@ export default function ProcessingQueueTable() {
 
   return (
     <Card sx={{ mb: 2.5 }}>
-      <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <AutorenewOutlinedIcon

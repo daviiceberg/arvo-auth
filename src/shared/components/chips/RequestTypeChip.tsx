@@ -1,6 +1,7 @@
 'use client';
 
 import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 
 import { CHIP_BASE_SX } from './chip-styles';
 
@@ -13,10 +14,35 @@ const requestTypeConfig: Record<RequestType, { label: string; bg: string; color:
 
 interface RequestTypeChipProps {
   type: RequestType;
+  parentRequestId?: string;
   size?: 'small' | 'medium';
 }
 
-export default function RequestTypeChip({ type, size = 'small' }: RequestTypeChipProps) {
+export default function RequestTypeChip({
+  type,
+  parentRequestId,
+  size = 'small',
+}: RequestTypeChipProps) {
+  // Exclusão mútua: pedidos complementares (com parentRequestId) substituem
+  // o chip de Continuidade/1ª Solicitação. Complementar é a informação mais
+  // acionável quando existe (leva ao pai) — evita poluir a coluna ID com
+  // dois chips lado a lado.
+  if (parentRequestId) {
+    return (
+      <Tooltip title={`Complementar a ${parentRequestId}`} placement="top">
+        <Chip
+          label="Complementar"
+          size={size}
+          sx={{
+            ...CHIP_BASE_SX,
+            backgroundColor: 'rgba(13,148,136,0.1)',
+            color: '#0d9488',
+          }}
+        />
+      </Tooltip>
+    );
+  }
+
   const config = requestTypeConfig[type];
 
   return (

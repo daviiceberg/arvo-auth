@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
 import useHistoryList from '../hooks/useHistoryList';
@@ -30,41 +31,41 @@ export default function HistoryListPage() {
         </Box>
       </Box>
 
-      {/* Filters */}
-      <HistoryListFilterBar
-        search={vm.search}
-        onSearchChange={vm.setSearch}
-        originFilter={vm.originFilter}
-        onOriginFilterChange={vm.setOriginFilter}
-        actionFilter={vm.actionFilter}
-        onActionFilterChange={vm.setActionFilter}
-        divergenceFilter={vm.divergenceFilter}
-        onDivergenceFilterChange={vm.setDivergenceFilter}
-        passedThroughFilter={vm.passedThroughFilter}
-        onPassedThroughFilterChange={vm.setPassedThroughFilter}
-        categoryFilter={vm.categoryFilter}
-        onCategoryFilterChange={vm.setCategoryFilter}
-        hasFilters={vm.hasFilters}
-        onClearFilters={vm.clearFilters}
-        onResetPage={() => {
-          vm.setPage(0);
-        }}
-      />
-
-      {/* Table */}
-      <HistoryListTable
-        pagedEntries={vm.pagedEntries}
-        filteredCount={vm.filteredEntries.length}
-        page={vm.page}
-        rowsPerPage={vm.rowsPerPage}
-        sortDirection={vm.sortDirection}
-        activeCategory={vm.categoryFilter}
-        onToggleSort={vm.toggleSortDirection}
-        onPageChange={vm.setPage}
-        onNavigate={(id) => {
-          router.push('/historico/' + id);
-        }}
-      />
+      {/* Filters + Table — unified card (Fila Operacional pattern) */}
+      <Card>
+        <HistoryListFilterBar
+          search={vm.search}
+          onSearchChange={vm.setSearch}
+          originFilter={vm.originFilter}
+          onOriginFilterChange={vm.setOriginFilter}
+          actionFilter={vm.actionFilter}
+          onActionFilterChange={vm.setActionFilter}
+          divergenceFilter={vm.divergenceFilter}
+          onDivergenceFilterChange={vm.setDivergenceFilter}
+          passedThroughFilter={vm.passedThroughFilter}
+          onPassedThroughFilterChange={vm.setPassedThroughFilter}
+          categoryFilter={vm.categoryFilter}
+          onCategoryFilterChange={vm.setCategoryFilter}
+          hasFilters={vm.hasFilters}
+          onClearFilters={vm.clearFilters}
+          onResetPage={() => {
+            vm.setPage(0);
+          }}
+        />
+        <HistoryListTable
+          pagedEntries={vm.pagedEntries}
+          filteredCount={vm.filteredEntries.length}
+          page={vm.page}
+          rowsPerPage={vm.rowsPerPage}
+          sortDirection={vm.sortDirection}
+          activeCategory={vm.categoryFilter}
+          onToggleSort={vm.toggleSortDirection}
+          onPageChange={vm.setPage}
+          onNavigate={(id) => {
+            router.push('/historico/' + id);
+          }}
+        />
+      </Card>
     </Box>
   );
 }

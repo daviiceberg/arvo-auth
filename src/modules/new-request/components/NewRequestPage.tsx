@@ -88,6 +88,8 @@ function NewRequestInner() {
     set,
     setSelect,
     setCategory,
+    handleSetParentRequest,
+    handleClearParentRequest,
     terapiaProcedimentos,
     handleAddTerapiaProc,
     handleRemoveTerapiaProc,
@@ -236,7 +238,18 @@ function NewRequestInner() {
         setCategory={setCategory}
       />
     ),
-    1: <StepBeneficiary form={form} set={set} isManualEntry={isManualEntry} />,
+    1: (
+      <StepBeneficiary
+        form={form}
+        set={set}
+        isManualEntry={isManualEntry}
+        onSetParentRequest={handleSetParentRequest}
+        onClearParentRequest={handleClearParentRequest}
+        onParentLinked={(parentId) => {
+          showSnackbar(`Vinculado a ${parentId}. Campos pré-preenchidos.`, 'success');
+        }}
+      />
+    ),
     2: (
       <StepClinical
         form={form}
@@ -370,6 +383,18 @@ function NewRequestInner() {
                 fontSize: 11,
                 backgroundColor: 'rgba(144,43,41,0.08)',
                 color: 'primary.main',
+              }}
+            />
+          ) : null}
+          {form.parentRequestId ? (
+            <Chip
+              label={`Complementar a ${form.parentRequestId}`}
+              size="small"
+              sx={{
+                fontWeight: 600,
+                fontSize: 11,
+                backgroundColor: 'rgba(13,148,136,0.08)',
+                color: '#0d9488',
               }}
             />
           ) : null}

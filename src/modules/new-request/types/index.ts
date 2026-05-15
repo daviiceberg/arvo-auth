@@ -158,6 +158,7 @@ export interface PreOpFormItem {
 export interface FormData {
   // Step 1 — Beneficiário
   category: Category | '';
+  parentRequestId: string | null;
   nomeBeneficiario: string;
   carteirinha: string;
   dataNascimento: string;
