@@ -15,6 +15,7 @@
 export type NotificationType =
   | 'processamento_ok'
   | 'processamento_erro'
+  | 'processamento_falhou_definitivamente'
   | 'sla_risco'
   | 'sla_violado'
   | 'sla_critico_1h'

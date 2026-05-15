@@ -1,6 +1,11 @@
 import { type CodeType, type TussCode } from './procedure-codes';
 
-export type ProcessingStatus = 'em_processamento' | 'erro_processamento' | 'processado';
+export type ProcessingStatus =
+  | 'em_processamento'
+  | 'erro_processamento'
+  | 'processado'
+  | 'falhou_definitivamente'
+  | 'descartado';
 
 export type GuideStatus =
   | 'Em Análise'
@@ -460,6 +465,7 @@ export interface ProcessingRequest {
   category: Category;
   entradaEm: Date;
   erroDescricao?: string;
+  retryCount?: number;
 }
 
 export type DecisionAction =

@@ -1,6 +1,8 @@
 'use client';
 
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Chip from '@mui/material/Chip';
 
@@ -10,46 +12,57 @@ interface ProcessingStatusChipProps {
   status: ProcessingRequest['statusProcessamento'];
 }
 
-export default function ProcessingStatusChip({ status }: ProcessingStatusChipProps) {
-  if (status === 'em_processamento') {
-    return (
-      <Chip
-        icon={
-          <AutorenewOutlinedIcon
-            sx={{
-              fontSize: 14,
-              '@keyframes spin': {
-                from: { transform: 'rotate(0deg)' },
-                to: { transform: 'rotate(360deg)' },
-              },
-              animation: 'spin 1.5s linear infinite',
-            }}
-          />
-        }
-        label="Processando..."
-        size="small"
-        sx={{
-          backgroundColor: 'rgba(25,118,210,0.1)',
-          color: 'rgb(25,118,210)',
-          fontWeight: 600,
-          fontSize: 12,
-        }}
-      />
-    );
-  }
+const spinKeyframes = {
+  '@keyframes spin': {
+    from: { transform: 'rotate(0deg)' },
+    to: { transform: 'rotate(360deg)' },
+  },
+  animation: 'spin 1.5s linear infinite',
+};
 
+const chipConfig: Record<
+  ProcessingRequest['statusProcessamento'],
+  { label: string; icon: React.ReactNode; bg: string; color: string }
+> = {
+  em_processamento: {
+    label: 'Processando...',
+    icon: <AutorenewOutlinedIcon sx={{ fontSize: 14, ...spinKeyframes }} />,
+    bg: 'rgba(25,118,210,0.1)',
+    color: 'rgb(25,118,210)',
+  },
+  erro_processamento: {
+    label: 'Erro no processamento',
+    icon: <ErrorOutlineOutlinedIcon sx={{ fontSize: 14 }} />,
+    bg: 'rgba(212,24,61,0.1)',
+    color: '#d4183d',
+  },
+  falhou_definitivamente: {
+    label: 'Falhou definitivamente',
+    icon: <BlockOutlinedIcon sx={{ fontSize: 14 }} />,
+    bg: 'rgba(212,24,61,0.18)',
+    color: '#7f1d1d',
+  },
+  descartado: {
+    label: 'Descartado',
+    icon: <CancelOutlinedIcon sx={{ fontSize: 14 }} />,
+    bg: 'rgba(0,0,0,0.06)',
+    color: '#5a6070',
+  },
+};
+
+export default function ProcessingStatusChip({ status }: ProcessingStatusChipProps) {
+  const { label, icon, bg, color } = chipConfig[status];
   return (
     <Chip
-      icon={<ErrorOutlineOutlinedIcon sx={{ fontSize: 14 }} />}
-      label="Erro — reprocessar"
+      icon={icon as React.ReactElement}
+      label={label}
       size="small"
-      onClick={() => undefined}
       sx={{
-        backgroundColor: 'rgba(211,47,47,0.1)',
-        color: 'error.main',
-        fontWeight: 600,
+        backgroundColor: bg,
+        color,
+        fontWeight: 700,
         fontSize: 12,
-        cursor: 'pointer',
+        height: 22,
       }}
     />
   );

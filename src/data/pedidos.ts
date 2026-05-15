@@ -9167,6 +9167,28 @@ export const pedidosEmProcessamento: ProcessingRequest[] = [
     category: 'Terapias Especiais',
     entradaEm: new Date(Date.now() - 45 * 60000),
     erroDescricao: 'Formato de guia TISS incompatível — versão desatualizada',
+    retryCount: 1,
+  },
+  {
+    id: 'REQ-2026-05011',
+    statusProcessamento: 'falhou_definitivamente',
+    origin: 'email',
+    beneficiary: 'Lucas Almeida Pereira',
+    plan: 'Gold',
+    category: 'Terapias Especiais',
+    entradaEm: new Date(Date.now() - 90 * 60000),
+    erroDescricao: 'Arquivo ilegível após múltiplas tentativas de OCR',
+    retryCount: 3,
+  },
+  {
+    id: 'REQ-2026-05012',
+    statusProcessamento: 'descartado',
+    origin: 'whatsapp',
+    beneficiary: 'Renata Carvalho Dias',
+    plan: 'Premium',
+    category: 'Terapias Especiais',
+    entradaEm: new Date(Date.now() - 60 * 60000),
+    erroDescricao: 'Pedido duplicado — enviado em duplicidade pelo prestador',
   },
 ];
 

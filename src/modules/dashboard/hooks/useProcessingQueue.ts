@@ -5,9 +5,13 @@ import { useState, useMemo } from 'react';
 import { pedidosEmProcessamento } from '@/data/pedidos';
 import { type ProcessingRequest } from '@/types/pedido';
 
+import useProcessingActions from './useProcessingActions';
+
 const statusOrder: Record<string, number> = {
-  em_processamento: 0,
-  erro_processamento: 1,
+  erro_processamento: 0,
+  em_processamento: 1,
+  falhou_definitivamente: 2,
+  descartado: 3,
 };
 
 function sortQueue(items: ProcessingRequest[]): ProcessingRequest[] {
@@ -22,8 +26,19 @@ function sortQueue(items: ProcessingRequest[]): ProcessingRequest[] {
 export default function useProcessingQueue() {
   const [page, setPage] = useState(0);
   const rowsPerPage = 5;
+  const { getOverrides } = useProcessingActions();
+  const overrides = getOverrides();
 
-  const sorted = useMemo(() => sortQueue(pedidosEmProcessamento), []);
+  const merged = useMemo(
+    () =>
+      pedidosEmProcessamento.map((p) => {
+        const ov = overrides.get(p.id);
+        return ov ? { ...p, ...ov } : p;
+      }),
+    [overrides],
+  );
+
+  const sorted = useMemo(() => sortQueue(merged), [merged]);
 
   const pagedItems = useMemo(
     () => sorted.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -31,14 +46,10 @@ export default function useProcessingQueue() {
   );
 
   const counts = useMemo(() => {
-    const processing = pedidosEmProcessamento.filter(
-      (p) => p.statusProcessamento === 'em_processamento',
-    ).length;
-    const error = pedidosEmProcessamento.filter(
-      (p) => p.statusProcessamento === 'erro_processamento',
-    ).length;
+    const processing = merged.filter((p) => p.statusProcessamento === 'em_processamento').length;
+    const error = merged.filter((p) => p.statusProcessamento === 'erro_processamento').length;
     return { processing, error };
-  }, []);
+  }, [merged]);
 
   return {
     page,

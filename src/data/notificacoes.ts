@@ -5,6 +5,17 @@ import { type Notification } from '@/types/notificacao';
  * `src/types/notificacao.ts`. Ordem aproximada: mais recente/urgente primeiro.
  */
 export const NOTIFICACOES: Notification[] = [
+  // ── M6: Falha persistente de processamento — REQ-2026-05011 ─────────
+  {
+    id: 'notif-proc-falhou-005011',
+    type: 'processamento_falhou_definitivamente',
+    title: 'Falha persistente no processamento',
+    message:
+      'Pedido REQ-2026-05011 falhou ao processar após várias tentativas — revisar manualmente.',
+    time: '3min atrás',
+    read: false,
+    href: '/dashboard',
+  },
   // ── Urgência/Emergência — SLA crítico 30min ─────────────────────────
   {
     id: 'notif-ue-002-sla-30min',
