@@ -15,6 +15,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
+import { regulatoryAlertColorMap } from '@/shared/constants';
+
 interface KpiMetrics {
   emAnalise: number;
   pedidosAtivos: number;
@@ -166,27 +168,35 @@ export default function DashboardKpiStrip({ metrics }: DashboardKpiStripProps) {
   // se necessário (não excluído conforme decisão de produto).
   kpis.push({
     label: 'Devolutivas',
-    icon: <AssignmentReturnOutlinedIcon sx={{ fontSize: 18, color: '#d97706' }} />,
-    bg: 'rgba(245,158,11,0.18)',
-    color: '#d97706',
+    icon: (
+      <AssignmentReturnOutlinedIcon
+        sx={{ fontSize: 18, color: regulatoryAlertColorMap.devolutivas.color }}
+      />
+    ),
+    bg: regulatoryAlertColorMap.devolutivas.bg,
+    color: regulatoryAlertColorMap.devolutivas.color,
     href: '/fila?tab=devolutivas',
     value: metrics.devolutivasAtivas ?? 0,
   });
 
   kpis.push({
     label: 'Liminares Judiciais',
-    icon: <GavelOutlinedIcon sx={{ fontSize: 18, color: '#5b21b6' }} />,
-    bg: 'rgba(91,33,182,0.1)',
-    color: '#5b21b6',
+    icon: (
+      <GavelOutlinedIcon sx={{ fontSize: 18, color: regulatoryAlertColorMap.liminares.color }} />
+    ),
+    bg: regulatoryAlertColorMap.liminares.bg,
+    color: regulatoryAlertColorMap.liminares.color,
     href: '/fila?tab=liminares',
     value: metrics.liminaresAtivas ?? 0,
   });
 
   kpis.push({
     label: 'NIPs Abertas',
-    icon: <ReportProblemOutlinedIcon sx={{ fontSize: 18, color: '#c2410c' }} />,
-    bg: 'rgba(194,65,12,0.1)',
-    color: '#c2410c',
+    icon: (
+      <ReportProblemOutlinedIcon sx={{ fontSize: 18, color: regulatoryAlertColorMap.nips.color }} />
+    ),
+    bg: regulatoryAlertColorMap.nips.bg,
+    color: regulatoryAlertColorMap.nips.color,
     href: '/fila?tab=nips',
     value: metrics.nipsAbertas ?? 0,
   });

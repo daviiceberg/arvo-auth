@@ -6,6 +6,7 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import Chip from '@mui/material/Chip';
 
+import { SPIN_ANIMATION, SPIN_KEYFRAMES } from '@/shared/constants';
 import { type ProcessingRequest } from '@/types/pedido';
 
 interface ProcessingStatusChipProps {
@@ -13,11 +14,8 @@ interface ProcessingStatusChipProps {
 }
 
 const spinKeyframes = {
-  '@keyframes spin': {
-    from: { transform: 'rotate(0deg)' },
-    to: { transform: 'rotate(360deg)' },
-  },
-  animation: 'spin 1.5s linear infinite',
+  ...SPIN_KEYFRAMES,
+  animation: SPIN_ANIMATION,
 };
 
 const chipConfig: Record<

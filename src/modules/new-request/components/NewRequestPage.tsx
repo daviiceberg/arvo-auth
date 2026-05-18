@@ -143,6 +143,27 @@ function NewRequestInner() {
     setIsManualEntry,
   } = useNewRequestForm(categoryParam);
 
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    msg: '',
+    severity: 'success',
+  });
+
+  const showSnackbar = useCallback((msg: string, severity: SnackbarState['severity']) => {
+    setSnackbar({ open: true, msg, severity });
+  }, []);
+
+  const closeSnackbar = useCallback(() => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  }, []);
+
+  const handleStepValidationError = useCallback(
+    (msg: string) => {
+      showSnackbar(msg, 'error');
+    },
+    [showSnackbar],
+  );
+
   const {
     currentStep,
     setCurrentStep,
@@ -159,7 +180,11 @@ function NewRequestInner() {
     goToDashboard,
     activeCategory,
     lastStep,
-  } = useStepNavigation({ form, terapiaProcedimentos });
+  } = useStepNavigation({
+    form,
+    terapiaProcedimentos,
+    onValidationError: handleStepValidationError,
+  });
 
   const {
     uploadState,
@@ -180,20 +205,6 @@ function NewRequestInner() {
     activeCategory,
     etapaAutorizacao: form.etapaAutorizacao,
   });
-
-  const [snackbar, setSnackbar] = useState<SnackbarState>({
-    open: false,
-    msg: '',
-    severity: 'success',
-  });
-
-  const showSnackbar = useCallback((msg: string, severity: SnackbarState['severity']) => {
-    setSnackbar({ open: true, msg, severity });
-  }, []);
-
-  const closeSnackbar = useCallback(() => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  }, []);
 
   const handleFileFromStepUpload = useCallback(
     (file: File) => {

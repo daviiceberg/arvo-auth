@@ -29,6 +29,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import DataTablePagination from '@/shared/components/DataTablePagination';
+import { SPIN_ANIMATION, SPIN_KEYFRAMES } from '@/shared/constants';
 import { useUserPermissions } from '@/shared/hooks/useUserPermissions';
 import { type ProcessingRequest } from '@/types/pedido';
 
@@ -277,11 +278,8 @@ export default function ProcessingQueueTable() {
               color="primary"
               sx={{
                 fontSize: 18,
-                '@keyframes spin': {
-                  from: { transform: 'rotate(0deg)' },
-                  to: { transform: 'rotate(360deg)' },
-                },
-                animation: 'spin 2s linear infinite',
+                ...SPIN_KEYFRAMES,
+                animation: SPIN_ANIMATION,
               }}
             />
             <Typography

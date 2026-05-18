@@ -123,11 +123,14 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
     const denied = request.procedures.filter(
       (pr) => (procDecisions[pr.code] ?? 'pendente') === 'negado',
     );
-    const allValid = denied.every(
-      (pr) =>
-        fields.partialDenialReasonMap[pr.code] !== undefined &&
-        (fields.partialDenialJustMap[pr.code] ?? '').trim(),
-    );
+    const allValid = denied.every((pr) => {
+      const reasonIdx = fields.partialDenialReasonMap[pr.code];
+      return (
+        reasonIdx !== undefined &&
+        reasonIdx >= 0 &&
+        (fields.partialDenialJustMap[pr.code] ?? '').trim()
+      );
+    });
     if (!allValid) return;
     dialogs.setShowPartialDialog(false);
     const nApproved = request.procedures.filter(

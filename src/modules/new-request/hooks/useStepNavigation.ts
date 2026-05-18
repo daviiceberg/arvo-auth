@@ -212,6 +212,11 @@ function validateCirurgias(form: FormData): string | null {
   if (blockingPreOp.length > 0) {
     return `Pré-operatório: ${String(blockingPreOp.length)} item(ns) obrigatório(s) ainda pendente(s) (mínimo agendado para avançar).`;
   }
+  // OPME embutido em cirurgia: aplicar mesma validação de OPME standalone (ANVISA + ≥3 cotações).
+  if (form.surgeryHasOpme) {
+    const opmeError = validateOpme(form);
+    if (opmeError !== null) return opmeError;
+  }
   return null;
 }
 
@@ -258,9 +263,14 @@ function validateStepTransition(
 interface UseStepNavigationParams {
   form: FormData;
   terapiaProcedimentos: TerapiaProcedimento[];
+  onValidationError?: (message: string) => void;
 }
 
-export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigationParams) {
+export function useStepNavigation({
+  form,
+  terapiaProcedimentos,
+  onValidationError,
+}: UseStepNavigationParams) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -281,7 +291,11 @@ export function useStepNavigation({ form, terapiaProcedimentos }: UseStepNavigat
   const handleNext = () => {
     const error = validateStepTransition(currentStep, form, terapiaProcedimentos);
     if (error) {
-      alert(error);
+      if (onValidationError) {
+        onValidationError(error);
+      } else {
+        logger.warn('[new-request] validation error sem handler', { error });
+      }
       return;
     }
     if (currentStep < LAST_STEP) {

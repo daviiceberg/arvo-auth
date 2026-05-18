@@ -166,23 +166,52 @@ function SuggestionSection({
 
 /* ---------- Special alerts section ---------- */
 
+type SpecialAlertSeverity = 'error' | 'warning';
+
+interface SpecialAlertConfig {
+  match: string;
+  title: string;
+  message: string;
+  severity: SpecialAlertSeverity;
+}
+
+/**
+ * Alerts renderizados aqui são os que NÃO têm UI dedicada em banner/chip.
+ * SLA Violado, Pendência ativa, Junta médica já são tratados em outros componentes.
+ */
+const SPECIAL_ALERTS_CONFIG: SpecialAlertConfig[] = [
+  {
+    match: 'Fora do Rol ANS',
+    title: 'Fora do Rol ANS',
+    message: 'Procedimento fora da cobertura obrigatória. Avaliação crítica necessária.',
+    severity: 'error',
+  },
+  {
+    match: 'High-User',
+    title: 'Beneficiário high-user',
+    message: 'Padrão de utilização atípico. Verifique histórico de autorizações antes de decidir.',
+    severity: 'warning',
+  },
+];
+
 function SpecialAlertsSection({ alerts }: { alerts: string[] }) {
+  const matched = SPECIAL_ALERTS_CONFIG.filter((c) => alerts.includes(c.match));
+  if (matched.length === 0) return null;
   return (
     <>
-      {alerts.includes('Fora do Rol ANS') && (
+      {matched.map((c) => (
         <Alert
-          severity="error"
+          key={c.match}
+          severity={c.severity}
           icon={<ErrorOutlineIcon fontSize="small" />}
-          sx={{ borderRadius: 2, border: alertOutlines.error }}
+          sx={{ borderRadius: 2, border: alertOutlines[c.severity] }}
         >
           <Typography variant="caption" fontWeight={700} display="block" gutterBottom>
-            Fora do Rol ANS
+            {c.title}
           </Typography>
-          <Typography variant="caption">
-            Procedimento fora da cobertura obrigatória. Avaliação crítica necessária.
-          </Typography>
+          <Typography variant="caption">{c.message}</Typography>
         </Alert>
-      )}
+      ))}
     </>
   );
 }

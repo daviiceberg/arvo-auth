@@ -5,6 +5,8 @@ import Chip from '@mui/material/Chip';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 
+import { regulatoryAlertColorMap } from '@/shared/constants';
+
 interface QueueTabBarProps {
   tabValue: number;
   totalCount: number;
@@ -67,8 +69,8 @@ export default function QueueTabBar({
                   height: 18,
                   fontSize: 12,
                   fontWeight: 700,
-                  backgroundColor: 'rgba(91,33,182,0.12)',
-                  color: '#5b21b6',
+                  backgroundColor: regulatoryAlertColorMap.liminares.bg,
+                  color: regulatoryAlertColorMap.liminares.color,
                 }}
               />
             </Box>
@@ -86,8 +88,8 @@ export default function QueueTabBar({
                   height: 18,
                   fontSize: 12,
                   fontWeight: 700,
-                  backgroundColor: 'rgba(194,65,12,0.12)',
-                  color: '#c2410c',
+                  backgroundColor: regulatoryAlertColorMap.nips.bg,
+                  color: regulatoryAlertColorMap.nips.color,
                 }}
               />
             </Box>
@@ -143,8 +145,8 @@ export default function QueueTabBar({
                   height: 18,
                   fontSize: 12,
                   fontWeight: 700,
-                  backgroundColor: 'rgba(124,58,237,0.12)',
-                  color: '#6d28d9',
+                  backgroundColor: regulatoryAlertColorMap.devolutivas.bg,
+                  color: regulatoryAlertColorMap.devolutivas.color,
                 }}
               />
             </Box>
@@ -162,8 +164,8 @@ export default function QueueTabBar({
                   height: 18,
                   fontSize: 12,
                   fontWeight: 700,
-                  backgroundColor: 'rgba(217,119,6,0.12)',
-                  color: '#b45309',
+                  backgroundColor: regulatoryAlertColorMap.opme.bg,
+                  color: regulatoryAlertColorMap.opme.color,
                 }}
               />
             </Box>
