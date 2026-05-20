@@ -44,15 +44,79 @@ export interface PendencyContext {
   responseReceivedAt?: string;
 }
 
+// Avaliação jurídica acoplada a liminar / NIP (ADR-028, aceita 2026-05-20).
+// Toda liminar útil para o autorizador chega com avaliação do jurídico que
+// orienta a recomendação operacional. UI consome este campo para guiar a
+// decisão; ausência aciona fallback "Aguardando avaliação jurídica".
+export type AvaliacaoJuridicaRecomendacao =
+  | 'cumprir_obrigatorio'
+  | 'cumprir_recorrer_paralelo'
+  | 'avaliar_caso_a_caso'
+  | 'recorrer_sem_cumprir';
+
+export type AvaliacaoJuridicaEscopo =
+  | 'apenas_procedimento'
+  | 'com_intercorrencias'
+  | 'irrestrita_durante_validade';
+
+export type AvaliacaoJuridicaRisco = 'baixo' | 'medio' | 'alto' | 'critico';
+
+// Quem assinou a avaliação. `gestor_regulacao_autorizado` cobre operadoras
+// sem jurídico formal — feature flag `juridico_via_gestor` (não modelada aqui)
+// libera o gestor a assumir o papel; audit log preserva a origem para defesa.
+export type AvaliacaoJuridicaResponsavelTipo = 'juridico_formal' | 'gestor_regulacao_autorizado';
+
+export interface AvaliacaoJuridica {
+  recomendacao: AvaliacaoJuridicaRecomendacao;
+  escopo_cobertura: AvaliacaoJuridicaEscopo;
+  risco_negar?: AvaliacaoJuridicaRisco;
+  observacoes?: string;
+  responsavel_juridico?: string;
+  responsavel_tipo?: AvaliacaoJuridicaResponsavelTipo;
+  data_avaliacao: string;
+}
+
+// Subsídio técnico do auditor para o jurídico (relação bidirecional).
+export interface SubsidioTecnico {
+  id: string;
+  fornecido_por: string;
+  fornecido_por_nome?: string;
+  data: string;
+  conteudo: string;
+}
+
+// Evidência sistêmica para defesa de NIP-órfã (Q4) — co-responsabilidade ANS.
+export type EvidenciaSistemicaTipo =
+  | 'tentativa_contato_prestador'
+  | 'log_sistema_operadora'
+  | 'comunicacao_beneficiario'
+  | 'outro';
+
+export interface EvidenciaSistemica {
+  id: string;
+  tipo: EvidenciaSistemicaTipo;
+  data: string;
+  descricao: string;
+  anexo_url?: string;
+}
+
 export interface InjunctionContext {
   processNumber: string;
   scope: string;
   validUntil?: string;
   court?: string;
   notes?: string;
+  avaliacao_juridica?: AvaliacaoJuridica;
+  subsidios_tecnicos?: SubsidioTecnico[];
 }
 
 export type NipStatus = 'aberta' | 'respondida' | 'arquivada';
+
+// NIP usa subset da avaliação jurídica (sem escopo_cobertura).
+export type NipAvaliacaoJuridica = Pick<
+  AvaliacaoJuridica,
+  'recomendacao' | 'observacoes' | 'responsavel_juridico' | 'responsavel_tipo' | 'data_avaliacao'
+>;
 
 export interface NipContext {
   nipNumber: string;
@@ -60,6 +124,8 @@ export interface NipContext {
   deadline: string;
   status: NipStatus;
   reason?: string;
+  avaliacao_juridica?: NipAvaliacaoJuridica;
+  evidencias_sistemicas?: EvidenciaSistemica[];
 }
 
 export type JuntaMedicaSubStatus =
