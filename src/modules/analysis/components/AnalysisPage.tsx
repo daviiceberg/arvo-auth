@@ -358,9 +358,7 @@ function AnalysisInner() {
         approvalJustification={decision.approvalJustification}
         onApprovalJustificationChange={decision.setApprovalJustification}
         onConfirm={decision.confirmApproval}
-        onClose={() => {
-          decision.setShowApprovalDialog(false);
-        }}
+        onClose={decision.closeApprovalDialog}
       />
 
       {/* Denial Dialog */}
@@ -377,9 +375,7 @@ function AnalysisInner() {
         denialJustification={decision.denialJustification}
         onDenialJustificationChange={decision.setDenialJustification}
         onConfirm={decision.confirmDenial}
-        onClose={() => {
-          decision.setShowDenialDialog(false);
-        }}
+        onClose={decision.closeDenialDialog}
       />
 
       {/* Divergence Dialog */}
@@ -389,9 +385,7 @@ function AnalysisInner() {
         divergenceReason={decision.divergenceReason}
         onDivergenceReasonChange={decision.setDivergenceReason}
         onContinue={decision.handleDivergenceContinue}
-        onClose={() => {
-          decision.setShowDivergenceDialog(false);
-        }}
+        onClose={decision.closeDivergenceDialog}
       />
 
       {/* Injunction Acknowledgment Dialog */}
@@ -402,9 +396,7 @@ function AnalysisInner() {
           acknowledgment={decision.injunctionAcknowledgment}
           onAcknowledgmentChange={decision.setInjunctionAcknowledgment}
           onContinue={decision.handleInjunctionAckContinue}
-          onClose={() => {
-            decision.setShowInjunctionAckDialog(false);
-          }}
+          onClose={decision.closeInjunctionAckDialog}
         />
       ) : null}
 
@@ -418,9 +410,7 @@ function AnalysisInner() {
         partialDenialJustMap={decision.partialDenialJustMap}
         onPartialDenialJustMapChange={decision.setPartialDenialJustMap}
         onConfirm={decision.confirmPartialDecision}
-        onClose={() => {
-          decision.setShowPartialDialog(false);
-        }}
+        onClose={decision.closePartialDialog}
       />
 
       {/* Pendency Dialog (M1) */}

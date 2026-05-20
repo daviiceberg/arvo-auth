@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -30,6 +30,34 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
   const [procDecisions, setProcDecisions] = useState<Record<string, ProcDecision>>(() =>
     Object.fromEntries(request.procedures.map((p) => [p.code, 'pendente' as ProcDecision])),
   );
+
+  // Close handlers — each clears the dialog form state so the next open starts clean.
+  // Cancelled or confirmed paths both flow through these (review item P3.5).
+  const closeApprovalDialog = useCallback(() => {
+    dialogs.setShowApprovalDialog(false);
+    fields.resetApprovalFields();
+  }, [dialogs, fields]);
+
+  const closeDenialDialog = useCallback(() => {
+    dialogs.setShowDenialDialog(false);
+    fields.resetDenialFields();
+  }, [dialogs, fields]);
+
+  const closeDivergenceDialog = useCallback(() => {
+    dialogs.setShowDivergenceDialog(false);
+    fields.resetDivergenceFields();
+    setPendingAction(null);
+  }, [dialogs, fields]);
+
+  const closeInjunctionAckDialog = useCallback(() => {
+    dialogs.setShowInjunctionAckDialog(false);
+    fields.setInjunctionAcknowledgment('');
+  }, [dialogs, fields]);
+
+  const closePartialDialog = useCallback(() => {
+    dialogs.setShowPartialDialog(false);
+    fields.resetPartialDenialFields();
+  }, [dialogs, fields]);
 
   // Decision handlers
   const handleApproveClick = () => {
@@ -63,14 +91,16 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
 
   const handleInjunctionAckContinue = () => {
     if (fields.injunctionAcknowledgment.trim().length < 30) return;
-    dialogs.setShowInjunctionAckDialog(false);
+    closeInjunctionAckDialog();
     dialogs.setShowDenialDialog(true);
   };
 
   const handleDivergenceContinue = () => {
     if (!fields.divergenceReason.trim()) return;
-    dialogs.setShowDivergenceDialog(false);
-    if (pendingAction === 'autorizar') {
+    // Capture pendingAction before close — closeDivergenceDialog resets it.
+    const action = pendingAction;
+    closeDivergenceDialog();
+    if (action === 'autorizar') {
       fields.setApprovalJustification(`Justificativa: ${request.iaJustification}`);
       dialogs.setShowApprovalDialog(true);
     } else {
@@ -81,13 +111,13 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
 
   const confirmApproval = () => {
     if (!fields.approvalReason) return;
-    dialogs.setShowApprovalDialog(false);
+    closeApprovalDialog();
     showSnackbar(`Pedido ${request.id} aprovado com sucesso`, 'success');
   };
 
   const confirmDenial = () => {
     if (fields.denialReasonIdx === -1 || !fields.denialJustification.trim()) return;
-    dialogs.setShowDenialDialog(false);
+    closeDenialDialog();
     showSnackbar(`Pedido ${request.id} negado`, 'error');
   };
 
@@ -132,7 +162,7 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
       );
     });
     if (!allValid) return;
-    dialogs.setShowPartialDialog(false);
+    closePartialDialog();
     const nApproved = request.procedures.filter(
       (pr) => procDecisions[pr.code] === 'aprovado',
     ).length;
@@ -214,6 +244,13 @@ export function useDecisionFlow({ request, allAdjustments, showSnackbar }: UseDe
     handleProcDecisionChange,
     handleConfirmDecisionClick,
     confirmPartialDecision,
+
+    // Close handlers (reset form state on close — P3.5)
+    closeApprovalDialog,
+    closeDenialDialog,
+    closeDivergenceDialog,
+    closeInjunctionAckDialog,
+    closePartialDialog,
 
     // Computed
     isAnyDialogOpen: dialogs.isAnyDialogOpen,
