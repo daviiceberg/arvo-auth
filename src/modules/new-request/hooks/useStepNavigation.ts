@@ -377,7 +377,8 @@ export function useStepNavigation({
 
   const goToDashboard = () => {
     setModalAberto(false);
-    router.push('/dashboard');
+    const target = numeroProtocolo ? `/dashboard?id=${numeroProtocolo}` : '/dashboard';
+    router.push(target);
   };
 
   return {

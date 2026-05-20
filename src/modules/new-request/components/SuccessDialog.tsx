@@ -3,6 +3,7 @@
 import React from 'react';
 
 import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -102,7 +103,7 @@ export function SuccessDialog({
             borderRadius: 2,
             px: 2.5,
             py: 1.5,
-            mb: 1,
+            mb: 1.5,
           }}
         >
           <Typography
@@ -119,6 +120,26 @@ export function SuccessDialog({
           </Typography>
           <Typography variant="body1" fontWeight={700} sx={{ fontSize: 15, mt: 0.25 }}>
             {numeroProtocolo || '\u2014'}
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 1,
+            backgroundColor: 'rgba(37,99,235,0.05)',
+            border: '1px solid rgba(37,99,235,0.15)',
+            borderRadius: 2,
+            px: 2,
+            py: 1.25,
+            textAlign: 'left',
+          }}
+        >
+          <MailOutlineIcon sx={{ fontSize: 16, color: 'info.main', mt: 0.25, flexShrink: 0 }} />
+          <Typography variant="caption" sx={{ fontSize: 12, color: '#334155', lineHeight: 1.5 }}>
+            Uma confirma\u00e7\u00e3o ser\u00e1 enviada por e-mail ao prestador solicitante assim
+            que o pedido for processado.
           </Typography>
         </Box>
       </DialogContent>

@@ -1,8 +1,12 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import AddIcon from '@mui/icons-material/Add';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -20,10 +24,32 @@ import ProcessingQueueTable from './ProcessingQueueTable';
 import RecentRequestsTable from './RecentRequestsTable';
 import SlaPredictiveCard from './SlaPredictiveCard';
 
+const HIGHLIGHT_SCROLL_DELAY_MS = 250;
+
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get('id');
+
   const { loading, metrics, pedidos, categoryBreakdown, hasOpmeTotal } = useDashboardData();
   const permissions = useUserPermissions();
+
+  const processingQueueRef = useRef<HTMLDivElement>(null);
+  const [dismissedHighlight, setDismissedHighlight] = useState(false);
+  const showHighlightBanner = Boolean(highlightId) && !dismissedHighlight;
+
+  // After landing from a fresh submission, smooth-scroll the user to the
+  // "Entrando no sistema" section so they see the request entering the queue
+  // (P2.5 deep-link). Delay lets the layout settle before scrollIntoView.
+  useEffect(() => {
+    if (!showHighlightBanner) return;
+    const timer = window.setTimeout(() => {
+      processingQueueRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, HIGHLIGHT_SCROLL_DELAY_MS);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [showHighlightBanner]);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -63,6 +89,21 @@ export default function DashboardPage() {
         </Button>
       </Box>
 
+      {showHighlightBanner ? (
+        <Alert
+          severity="success"
+          sx={{ mb: 2, borderRadius: 2, fontSize: 13 }}
+          onClose={() => {
+            setDismissedHighlight(true);
+          }}
+        >
+          <AlertTitle sx={{ fontSize: 13, fontWeight: 700 }}>
+            Pedido {highlightId} protocolado com sucesso
+          </AlertTitle>
+          A IA está processando agora. Acompanhe abaixo em &quot;Entrando no sistema&quot;.
+        </Alert>
+      ) : null}
+
       {/* KPI strip */}
       <DashboardKpiStrip metrics={metrics} />
 
@@ -70,7 +111,7 @@ export default function DashboardPage() {
       {permissions.profile === 'gestor' ? <SlaPredictiveCard /> : null}
 
       {/* Processing Queue */}
-      {!loading && <ProcessingQueueTable />}
+      <Box ref={processingQueueRef}>{!loading && <ProcessingQueueTable />}</Box>
 
       {/* Recent Requests + Category breakdown */}
       <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
