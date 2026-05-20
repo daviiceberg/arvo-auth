@@ -8,12 +8,21 @@
  * AGENTS.mode.prototype.md.
  */
 
+import { createPendingApiService } from '../_shared/createPendingApiService';
+
 import { regulatoryFake } from './regulatory.fake';
 import { type RegulatoryService } from './regulatory.types';
 
 const USE_FAKE = process.env.NEXT_PUBLIC_USE_FAKE_REGULATORY !== 'false';
 
-export const regulatoryService: RegulatoryService = USE_FAKE ? regulatoryFake : regulatoryFake;
+const regulatoryApiPending = createPendingApiService<RegulatoryService>(
+  'regulatoryService',
+  'NEXT_PUBLIC_USE_FAKE_REGULATORY',
+);
+
+export const regulatoryService: RegulatoryService = USE_FAKE
+  ? regulatoryFake
+  : regulatoryApiPending;
 
 export type {
   ListActiveInjunctionsResponse,
