@@ -5,12 +5,15 @@ import React from 'react';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 
 import { type Category } from '@/types/pedido';
 
+import { type StepError } from '../hooks/useStepNavigation';
 import { type FormData, type TerapiaProcedimento, type DocUpload } from '../types';
 
 const SECTION_TITLE_BY_CATEGORY: Record<Category, string> = {
@@ -36,6 +39,54 @@ interface StepReviewProps {
   terapiaProcedimentos: TerapiaProcedimento[];
   docsObrigatorios: DocUpload[];
   docsAdicionais: DocUpload[];
+  errors: StepError[];
+  onJumpToStep: (step: number) => void;
+}
+
+function ValidationSummary({
+  errors,
+  onJumpToStep,
+}: {
+  errors: StepError[];
+  onJumpToStep: (step: number) => void;
+}) {
+  if (errors.length === 0) return null;
+  return (
+    <Alert severity="error" sx={{ mb: 2, fontSize: 12, borderRadius: 2 }}>
+      <AlertTitle sx={{ fontSize: 13, fontWeight: 700 }}>
+        {errors.length === 1
+          ? '1 campo obrigatório está pendente'
+          : `${String(errors.length)} campos obrigatórios estão pendentes`}
+      </AlertTitle>
+      <Box component="ul" sx={{ pl: 2, mt: 1, mb: 1 }}>
+        {errors.map((e) => (
+          <Box component="li" key={`${String(e.step)}-${e.label}`} sx={{ fontSize: 12, mb: 0.5 }}>
+            <Box component="span" sx={{ fontWeight: 700 }}>
+              {e.label}
+            </Box>
+            {' — '}
+            {e.error}{' '}
+            <Button
+              size="small"
+              onClick={() => {
+                onJumpToStep(e.step);
+              }}
+              sx={{
+                ml: 0.5,
+                py: 0,
+                px: 1,
+                fontSize: 11,
+                fontWeight: 700,
+                textTransform: 'none',
+              }}
+            >
+              Ir para {e.label}
+            </Button>
+          </Box>
+        ))}
+      </Box>
+    </Alert>
+  );
 }
 
 // ── Helper: row renderer ─────────────────────────────────────────────
@@ -397,36 +448,37 @@ export function StepReview({
   terapiaProcedimentos,
   docsObrigatorios,
   docsAdicionais,
+  errors,
+  onJumpToStep,
 }: StepReviewProps) {
   const dynamicTitle = form.category ? SECTION_TITLE_BY_CATEGORY[form.category] : '';
+  const hasErrors = errors.length > 0;
   return (
     <Box>
       <Typography variant="h6" fontWeight={700} sx={{ mb: 2.5, fontSize: 15 }}>
         Revisão da Solicitação
       </Typography>
-      {!form.cidPrincipal ? (
-        <Alert severity="error" sx={{ mb: 2, fontSize: 12, borderRadius: 2 }}>
-          CID Principal é obrigatório. Volte à etapa &quot;Clínico&quot; e preencha o CID.
-        </Alert>
+      <ValidationSummary errors={errors} onJumpToStep={onJumpToStep} />
+      {!hasErrors ? (
+        <Box
+          sx={{
+            backgroundColor: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: 2,
+            p: 2,
+            mb: 3,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          <CheckCircleOutlineIcon sx={{ color: 'success.main', fontSize: 18 }} />
+          <Typography variant="body2" sx={{ fontSize: 13, color: '#15803d', fontWeight: 500 }}>
+            Revise as informações antes de enviar. Após o envio a solicitação entrará na fila de
+            análise.
+          </Typography>
+        </Box>
       ) : null}
-      <Box
-        sx={{
-          backgroundColor: '#f0fdf4',
-          border: '1px solid #bbf7d0',
-          borderRadius: 2,
-          p: 2,
-          mb: 3,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-        }}
-      >
-        <CheckCircleOutlineIcon sx={{ color: 'success.main', fontSize: 18 }} />
-        <Typography variant="body2" sx={{ fontSize: 13, color: '#15803d', fontWeight: 500 }}>
-          Revise as informações antes de enviar. Após o envio a solicitação entrará na fila de
-          análise.
-        </Typography>
-      </Box>
       {/* Beneficiário */}
       <Typography
         variant="body2"

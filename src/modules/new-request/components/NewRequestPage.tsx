@@ -180,11 +180,20 @@ function NewRequestInner() {
     goToDashboard,
     activeCategory,
     lastStep,
+    allStepErrors,
+    isCurrentStepValid,
   } = useStepNavigation({
     form,
     terapiaProcedimentos,
     onValidationError: handleStepValidationError,
   });
+
+  const handleJumpToStep = useCallback(
+    (step: number) => {
+      setCurrentStep(step);
+    },
+    [setCurrentStep],
+  );
 
   const {
     uploadState,
@@ -343,6 +352,8 @@ function NewRequestInner() {
         terapiaProcedimentos={terapiaProcedimentos}
         docsObrigatorios={docUpload.docsObrigatorios}
         docsAdicionais={docUpload.docsAdicionais}
+        errors={allStepErrors}
+        onJumpToStep={handleJumpToStep}
       />
     ),
   };
@@ -583,7 +594,7 @@ function NewRequestInner() {
                     ) : undefined
                   }
                   onClick={handleNext}
-                  disabled={submitting || (currentStep === 1 && !form.category)}
+                  disabled={submitting || !isCurrentStepValid}
                   sx={{ minHeight: 44, px: 3 }}
                 >
                   {currentStep < lastStep

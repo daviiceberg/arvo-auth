@@ -260,6 +260,32 @@ function validateStepTransition(
   return null;
 }
 
+export interface StepError {
+  step: number;
+  label: string;
+  error: string;
+}
+
+// Aggregate validation across every non-final step. Used by Step 5 (Review)
+// to show all missing fields at once and by the Next button on Review to gate
+// submission (P3.10).
+function collectAllStepErrors(
+  form: FormData,
+  terapiaProcedimentos: TerapiaProcedimento[],
+  stepLabels: readonly string[],
+): StepError[] {
+  const out: StepError[] = [];
+  // Steps 0..3 are covered today. Step 4 (Documents) has no required-field
+  // validation yet — P2.4 is blocked on a product decision with Cinthia.
+  for (let step = 0; step < LAST_STEP; step++) {
+    const error = validateStepTransition(step, form, terapiaProcedimentos);
+    if (error) {
+      out.push({ step, label: stepLabels[step] ?? `Etapa ${String(step + 1)}`, error });
+    }
+  }
+  return out;
+}
+
 interface UseStepNavigationParams {
   form: FormData;
   terapiaProcedimentos: TerapiaProcedimento[];
@@ -287,6 +313,19 @@ export function useStepNavigation({
     { label: 'Documentos' },
     { label: 'Revisão' },
   ];
+
+  const stepLabels = steps.map((s) => s.label);
+
+  // Full-form errors across every step. Computed on every render — validation
+  // is pure and cheap; memoization would only add noise.
+  const allStepErrors = collectAllStepErrors(form, terapiaProcedimentos, stepLabels);
+
+  // Pre-computed disabled state for the Next button (P3.11). On the last step
+  // (Review), valid means the whole form is valid, not just the current step.
+  const isCurrentStepValid =
+    currentStep === LAST_STEP
+      ? allStepErrors.length === 0
+      : validateStepTransition(currentStep, form, terapiaProcedimentos) === null;
 
   const handleNext = () => {
     const error = validateStepTransition(currentStep, form, terapiaProcedimentos);
@@ -358,5 +397,7 @@ export function useStepNavigation({
     activeCategory,
     totalSteps: TOTAL_STEPS,
     lastStep: LAST_STEP,
+    allStepErrors,
+    isCurrentStepValid,
   };
 }
