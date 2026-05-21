@@ -305,32 +305,129 @@ function ProductContent() {
     <>
       <SectionTitle>O que é o Arvo Auth</SectionTitle>
       <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75 }}>
-        Plataforma de autorização de procedimentos médicos para operadoras de saúde. Centraliza a
-        entrada de pedidos, aplica análise assistida por IA para detectar irregularidades e apoia o
-        operador na decisão de aprovar, negar ou escalar cada solicitação. O valor econômico está em{' '}
-        <Box component="strong" sx={{ color: '#1a1a1a' }}>
-          evitar aprovações indevidas
-        </Box>{' '}
-        — cada negativa bem fundamentada representa economia direta para a operadora.
+        Plataforma <strong>white-label</strong> de infraestrutura de autorização para operadoras de
+        saúde suplementar brasileiras. Cobre o espectro completo de pedidos — de terapias
+        ambulatoriais a procedimentos hospitalares críticos e OPME. Centraliza entrada de pedidos,
+        aplica análise assistida por IA para detectar irregularidades e apoia o operador na decisão
+        de aprovar, negar, pendenciar ou escalar cada solicitação.
       </Typography>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75, mt: 2 }}>
+        Analistas de autorização gastam 80%+ do tempo em cross-referencing mecânico (elegibilidade,
+        carência, credenciamento, histórico, prazos SLA) entre sistemas desconectados. O Arvo Auth
+        consolida tudo em um workspace único — IA pré-processa e triagem; cognição humana fica
+        reservada ao juízo clínico.
+      </Typography>
+
+      <SectionTitle>Princípio: Análise vs Consequência</SectionTitle>
+      <Box
+        sx={{
+          border: '1px solid rgba(144,43,41,0.2)',
+          borderRadius: 2,
+          p: 2,
+          backgroundColor: 'rgba(144,43,41,0.03)',
+          mb: 3,
+        }}
+      >
+        <Typography variant="body2" sx={{ color: '#1a1a1a', lineHeight: 1.7, fontStyle: 'italic' }}>
+          &ldquo;A Arvo gera a análise (ponto de vista) — a operadora decide a consequência (decisão
+          / automação).&rdquo;
+        </Typography>
+      </Box>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75 }}>
+        Princípio load-bearing do produto. Arvo produz análise (flags, alertas, scores, checklists)
+        — esse é o domínio da Arvo. A operadora configura a consequência (aprovar, negar,
+        pendenciar, encaminhar à junta médica) — esse é o domínio do cliente. O sistema{' '}
+        <strong>nunca</strong> &ldquo;aprova&rdquo; ou &ldquo;nega&rdquo; clinicamente; ele{' '}
+        <strong>analisa e classifica</strong>. A camada de consequência é cliente-configurável.
+      </Typography>
+
+      <SectionTitle>Modos operacionais</SectionTitle>
+      <SimpleTable
+        headers={['Modo', 'Quando', 'Comportamento']}
+        rows={[
+          [
+            'Automação',
+            'SADT N1, negativas administrativas, U/E Manchester vermelho/laranja',
+            'Sistema decide sem intervenção humana segundo regras do cliente',
+          ],
+          [
+            'Assistência ao analista',
+            'Casos clínicos complexos',
+            'Sistema consolida info + destaca atenções + checklist + sugere. Analista é soberano — sua decisão prevalece',
+          ],
+        ]}
+      />
 
       <SectionTitle>Perfis de acesso</SectionTitle>
       <SimpleTable
         headers={['Perfil', 'Acesso', 'Descrição']}
         rows={[
-          ['Autorizador', 'Fila, Análise, Nova Solicitação', 'Analisa e decide pedidos'],
-          ['Gestor', 'Todas as telas + Usuários', 'Supervisiona operação e equipe'],
-          ['Auditor', 'Histórico (somente leitura)', 'Consulta registros de decisões'],
+          [
+            'Autorizador',
+            'Dashboard, Fila, Análise, Nova Solicitação, Histórico, Notificações',
+            'Analisa e decide pedidos do dia-a-dia',
+          ],
+          [
+            'Gestor',
+            'Tudo de Autorizador + Usuários + SLA Predictive + Configurações',
+            'Supervisiona operação, gere equipe e configura regras white-label',
+          ],
+          [
+            'Auditor',
+            'Histórico (read-only) + auditoria de decisões',
+            'Consulta trilha imutável de decisões para auditoria pós-fato',
+          ],
+        ]}
+      />
+      <Typography variant="body2" sx={{ color: '#9ca3af', fontSize: 12, mt: 1, lineHeight: 1.6 }}>
+        Toggle de perfil de runtime via <Code>useUserPermissions()</Code> — hoje hardcoded como{' '}
+        <Code>&apos;gestor&apos;</Code>. JWT real virá em M10+.
+      </Typography>
+
+      <SectionTitle>Fluxo operacional</SectionTitle>
+      <SimpleTable
+        headers={['Etapa', 'Módulo', 'O que acontece']}
+        rows={[
+          [
+            '1. Entrada',
+            '/nova-solicitacao',
+            'Pedido chega (portal prestador, app, WhatsApp, email, call center). OCR extrai dados. Validação TISS. Verificações administrativas.',
+          ],
+          [
+            '2. Triagem',
+            '/dashboard (ProcessingQueue)',
+            'IA classifica complexidade. Tier 1 elegível → auto-aprovação. Tier 2 → fila operacional após análise IA completa.',
+          ],
+          [
+            '3. Workspace',
+            '/fila',
+            'Fila priorizada: U/E primeiro, Devolutivas (SLA correndo), Geral por complexidade × risco × proximidade SLA.',
+          ],
+          [
+            '4. Análise',
+            '/analise?id=',
+            'Visão consolidada: beneficiário, histórico, procedimentos, documentos, sidebar IA (sugestão + confiança + justificativa + checklist).',
+          ],
+          [
+            '5. Decisão',
+            '/analise',
+            'Analista aprova, nega, pendencia ou escala à Junta Médica. Divergência da IA exige justificativa obrigatória. Tudo gera registro imutável.',
+          ],
+          [
+            '6. Histórico',
+            '/historico',
+            'Apenas decisões finalizadas. Searchable, filterable, auditável.',
+          ],
         ]}
       />
 
       <SectionTitle>Funcionalidades do sistema</SectionTitle>
       <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75, mb: 4 }}>
-        As funcionalidades estão ordenadas por prioridade de desenvolvimento:{' '}
+        Funcionalidades ordenadas por prioridade.{' '}
         <Box component="strong" sx={{ color: '#1a1a1a' }}>
           Primárias
         </Box>{' '}
-        são o núcleo do produto e devem estar 100% funcionais antes de qualquer outra coisa.{' '}
+        são o núcleo do produto.{' '}
         <Box component="strong" sx={{ color: '#1a1a1a' }}>
           Secundárias
         </Box>{' '}
@@ -338,7 +435,7 @@ function ProductContent() {
         <Box component="strong" sx={{ color: '#1a1a1a' }}>
           Terciárias
         </Box>{' '}
-        agregam valor mas não são bloqueantes.
+        agregam valor mas não bloqueiam.
       </Typography>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5 }}>
@@ -348,30 +445,38 @@ function ProductContent() {
           sx={{ backgroundColor: '#7B1C1C', color: '#fff', fontWeight: 700, fontSize: 11 }}
         />
         <Typography variant="body2" sx={{ color: '#9ca3af', fontSize: 12 }}>
-          Núcleo do produto — deve estar 100% funcional antes das demais
+          Núcleo do produto — 100% funcional antes das demais
         </Typography>
       </Box>
 
       <FeatureItem name="Fila Operacional" route="/fila">
-        Central de trabalho do autorizador. Lista todos os pedidos ativos com prioridade, SLA,
-        origem e sugestão da IA. Filtros por prestador, SLA e sugestão. Tabs de triagem: Geral, SLA
-        em Risco, SLA Violado.
+        Central de trabalho do autorizador. Lista pedidos ativos com prioridade, SLA, origem, tipo
+        de guia, categoria e sugestão IA. Tabs de triagem: Geral, Devolutivas, Liminares, NIPs, Tem
+        OPME, SLA em Risco, SLA Violado. Filtros por prestador, SLA, sugestão IA e categoria.
+        Priorização automática: U/E + liminar + NIP sobem; Devolutivas têm clock contínuo.
       </FeatureItem>
       <FeatureItem name="Tela de Análise" route="/analise?id=">
-        Tela principal de decisão. Exibe dados do beneficiário, procedimentos, histórico
-        assistencial, documentos anexados e o Assistente de Decisão (IA) com recomendação, checklist
-        e alertas. Ações: Aprovar, Negar.
+        Tela principal de decisão. Cinco respostas em uma tela: Quem é o paciente? O que pede? Já
+        fez antes? Faz sentido? O que faço agora? Sections: Beneficiário, Procedimentos, Histórico
+        Consolidado, Documentos. Sidebar IA: Sugestão + Confiança + Checklist + Alertas Especiais +
+        Decisão. Banners persistentes: Pendência, Liminar, NIP, Alertas, Guias Simultâneas. Ações:
+        Aprovar, Negar, Pendenciar, Junta Médica, Aprovação Parcial (per-procedure).
       </FeatureItem>
       <FeatureItem name="Nova Solicitação" route="/nova-solicitacao">
-        Fluxo de 6 etapas para entrada de pedidos: Upload do pedido médico (extração automática via
-        IA) → Beneficiário → Clínico → Procedimentos → Documentos → Revisão. Suporta preenchimento
-        manual sem upload.
+        Wizard de 6 etapas: Upload (extração OCR via IA) → Beneficiário → Clínico → Dinâmica
+        (categoria-específica) → Documentos → Revisão. Step Documentos é{' '}
+        <strong>opcional sempre</strong> — pedido sem docs entra com status Pendência. Step Revisão
+        executa full-form validation com quick-jump para steps anteriores.
       </FeatureItem>
-      <FeatureItem name="Assistente de Decisão (IA)" route="(componente da tela de análise)">
-        Painel lateral em <Code>/analise</Code>. Gera recomendação (Aprovar / Negar), checklist de
-        conformidade e alertas contextuais (NIP Ativa, Fora do Rol, High-User, Prestador Não
-        Credenciado). Quando todas as validações administrativas passam 100%, a IA pode aprovar ou
-        negar autonomamente — o autorizador é notificado para auditoria.
+      <FeatureItem
+        name="Assistente de Decisão (IA — Glosildo)"
+        route="(componente AssistantSidebar)"
+      >
+        Painel lateral em <Code>/analise</Code>. Gera <strong>Sugestão</strong> (nunca
+        &ldquo;Decisão&rdquo;) + Confiança + Justificativa Técnica + Checklist verificado + Alertas
+        contextuais (NIP Ativa, Liminar, Fora do Rol, High-User, Prestador Não Credenciado,
+        Co-responsabilidade). Confidence ≥ 90% habilita automação Tier 1 (administrativa). Clínica
+        sempre humana (RN 566/2022).
       </FeatureItem>
 
       <Divider sx={{ my: 3 }} />
@@ -388,19 +493,45 @@ function ProductContent() {
       </Box>
 
       <FeatureItem name="Dashboard" route="/dashboard">
-        Visão gerencial da operação. KPIs: total de pedidos na fila, SLA violado, SLA em risco,
-        aprovações × negações mensais. Blocos: pedidos entrando no sistema, pedidos que requerem
-        atenção agora, principais motivos de negativa.
+        Visão gerencial. KPIs: Total na Fila, SLA Violado, SLA em Risco, Devolutivas, Liminares,
+        NIPs Abertas. ProcessingQueueTable: pedidos entrando no sistema. RecentRequestsTable: top 6
+        urgentes. CategoryBreakdownCard: pizza por categoria. SLA Predictive (gestor-only): previsão
+        de violações nas próximas horas.
       </FeatureItem>
-      <FeatureItem name="Histórico" route="/historico">
-        Registro auditável de todas as decisões tomadas. Filtrável por origem (IA automática /
-        analista), decisão, categoria e divergência IA×analista. Exibe divergências entre
-        recomendação da IA e decisão humana — insumo para calibração do modelo.
+      <FeatureItem name="Histórico" route="/historico, /historico/[id]">
+        Registro imutável e auditável. Append-only. Filtrável por origem (IA automática / analista),
+        decisão, categoria, divergência IA×analista, beneficiário (carteirinha), prestador.
+        HistoryDetailPage replica visão completa da Análise com decisão final + IA snapshot
+        operacional + AppealDialog para reabrir contestação.
       </FeatureItem>
-      <FeatureItem name="Modal pós-submissão" route="(componente de /nova-solicitacao)">
-        Exibido após &ldquo;Enviar Solicitação&rdquo;. Dois cenários: decisão automática pela IA
-        (SADT simples, sem alertas) com link para histórico; ou requer avaliação humana com link
-        direto para a tela de análise do pedido criado.
+      <FeatureItem name="Pendência / Devolutiva" route="(banner + dialog na Análise)">
+        Pendenciar pedido retorna ao prestador com motivos estruturados + texto livre + prazo
+        (3/7/15 dias úteis). <strong>SLA NÃO pausa</strong> (RN 259/2011) — pedido sobe na fila como
+        Devolutiva. Quando prestador responde, pedido reentra com docs novos para nova análise IA.
+      </FeatureItem>
+      <FeatureItem name="Junta Médica" route="(banner + dialog na Análise)">
+        Encaminhamento para desempate clínico. Sub-status: aguardando / parecer recebido / suspenso
+        (exame complementar / ausência beneficiário). Parecer da junta volta como input para IA
+        re-processar e gerar nova sugestão. Auditor decide informado pelo parecer.
+      </FeatureItem>
+      <FeatureItem name="Liminar Judicial" route="(InjunctionBanner na Análise + chip na Fila)">
+        Decisão judicial sobrepõe critérios contratuais. A partir de M7 (ADR-028), liminar carrega{' '}
+        <strong>avaliação jurídica</strong> first-class (recomendação + escopo_cobertura +
+        risco_negar). Botão Negar gateado pela recomendação. SubsídiosTécnicos bidirecional (auditor
+        → jurídico). Fallback &ldquo;Aguardando avaliação jurídica&rdquo; quando ausente.
+      </FeatureItem>
+      <FeatureItem
+        name="NIP — Notificação de Intermediação Preliminar"
+        route="(NipBanner + KPI Dashboard)"
+      >
+        Reclamação do beneficiário à ANS gera NIP (RN 483/2022). Prazo curto, multa pesada se
+        descumprida. Pedido com NIP sobe na fila. NIP-órfã (Q4): operadora é co-responsável pelo
+        prestador credenciado mesmo sem ter recebido o pedido (Bete 2026-05-20).
+      </FeatureItem>
+      <FeatureItem name="Aprovação Parcial (per-procedure)" route="(PartialApprovalDialog)">
+        Em pedido multi-procedure, analista pode aprovar uns e negar outros. Cada negado exige razão
+        estruturada + justificativa ≥ 10 chars. Divergência da sugestão IA dispara DivergenceDialog
+        obrigatório.
       </FeatureItem>
 
       <Divider sx={{ my: 3 }} />
@@ -412,25 +543,110 @@ function ProductContent() {
           sx={{ backgroundColor: '#4A4A4A', color: '#fff', fontWeight: 700, fontSize: 11 }}
         />
         <Typography variant="body2" sx={{ color: '#9ca3af', fontSize: 12 }}>
-          Agregam valor mas não são bloqueantes
+          Agregam valor, não bloqueantes
         </Typography>
       </Box>
 
       <FeatureItem name="Usuários" route="/usuarios">
-        Gestão de equipe: criar, editar, ativar/inativar usuários. Perfis: Autorizador, Gestor,
-        Auditor. Filtro por perfil e status.
+        Gestão de equipe (gestor-only): criar, editar, ativar/inativar. Perfis Autorizador / Gestor
+        / Auditor. Filtro por perfil + status.
       </FeatureItem>
-      <FeatureItem name="Links Úteis" route="(sidebar)">
-        Atalhos para recursos externos: Rol da ANS, Consulta ANVISA, Árvore de Códigos TUSS, Padrão
-        TISS 2026.
+      <FeatureItem name="Notificações" route="(topbar global)">
+        Sino com badge de contagem. 15 tipos de notificação: pendência respondida, junta com
+        parecer, liminar recebida, NIP aberta, NIP prazo próximo, SLA crítico, devolutiva recebida,
+        decisão revisada, etc.
       </FeatureItem>
-      <FeatureItem name="Notificações" route="(header global)">
-        Sino com badge de contagem. Alertas do sistema para o usuário logado. Interface a ser
-        detalhada.
+      <FeatureItem name="Meu Perfil" route="/meu-perfil">
+        Dados do usuário logado + preferências + troca de senha.
       </FeatureItem>
-      <FeatureItem name="Ajuda" route="(sidebar, rodapé)">
-        Ponto de entrada para suporte. Interface a ser detalhada.
+      <FeatureItem name="Ajuda" route="/ajuda, /ajuda/manual">
+        Manual operacional + atalhos de teclado (<Code>?</Code> abre help drawer na Análise).
       </FeatureItem>
+
+      <SectionTitle>Vocabulário controlado</SectionTitle>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mb: 2 }}>
+        Termos canônicos do domínio. Usar exatamente assim em código, UI labels e logs — nunca
+        sinônimos.
+      </Typography>
+      <SimpleTable
+        headers={['Termo', 'Significado']}
+        rows={[
+          ['Guia', 'Pedido de autorização (entidade central)'],
+          ['Beneficiário', 'Paciente segurado'],
+          ['Operadora', 'Cliente (plano de saúde)'],
+          ['Prestador', 'Hospital, clínica, médico que executa'],
+          ['Solicitante', 'Médico que pede'],
+          ['Executante', 'Prestador que executa'],
+          ['Carência', 'Prazo contratual antes da cobertura ativar'],
+          ['Inadimplência', 'Atraso de pagamento do beneficiário'],
+          ['Elegibilidade', 'Se o beneficiário qualifica para o procedimento'],
+          ['Devolutiva', 'Pedido retornado ao prestador por falta de info'],
+          ['Pendência', 'Estado de hold — aguarda info adicional'],
+          ['Junta Médica', 'Escalação para desempate clínico complexo'],
+          ['Divergência', 'Analista discorda da sugestão IA'],
+          ['Laudo', 'Justificativa clínica do médico solicitante'],
+          ['OPME', 'Órteses, Próteses e Materiais Especiais'],
+          ['SADT', 'Serviço Auxiliar de Diagnóstico e Terapia'],
+          ['NIP', 'Notificação de Intermediação Preliminar (ANS)'],
+          ['Liminar', 'Decisão judicial obrigando autorização'],
+          ['High-User', 'Beneficiário com padrão de uso atípico (fraude/desperdício)'],
+          ['Bypass Automático', 'Decisão IA sem revisão humana'],
+          [
+            'Código de Pacote',
+            'Código próprio da operadora agrupando N códigos TUSS (inicia com 9)',
+          ],
+          [
+            'Tabela TISS',
+            '18 (diárias/taxas), 19 (materiais), 20 (medicamentos), 22 (procedimentos)',
+          ],
+          ['CBHPM', 'Classificação Brasileira Hierarquizada de Procedimentos Médicos'],
+        ]}
+      />
+
+      <SectionTitle>Contexto regulatório</SectionTitle>
+      <SimpleTable
+        headers={['Norma', 'O que define']}
+        rows={[
+          [
+            'RN 566/2022',
+            'Proíbe IA de negar autonomamente em bases clínicas. Negativa administrativa OK. Define prazos de realização.',
+          ],
+          [
+            'RN 623/2024',
+            'Substitui RN 395/2016 (01/07/2025). Prazos de resposta ao beneficiário + IGR (Índice de Garantia de Atendimento).',
+          ],
+          [
+            'RN 539/2022',
+            'Terapias Especiais CID F84.x — sessões ilimitadas para TEA e afins. Sistema nunca bloqueia por quantidade.',
+          ],
+          [
+            'RN 483/2022',
+            'NIP — beneficiário reclama à ANS, dispara prazo curto. Pedido sobe na fila.',
+          ],
+          [
+            'Lei 9.656/98 art. 35-C',
+            'Cobertura obrigatória de U/E. Carência máxima 24h. Manchester vermelho/laranja → auto-aprovação com registro retroativo.',
+          ],
+        ]}
+      />
+
+      <SectionTitle>Regras de comportamento da IA</SectionTitle>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 2 }}>
+        <RuleBox type="do">
+          IA gera <strong>Sugestão da IA</strong> / <strong>Ponto de Vista</strong> — sempre rotular
+          como advisória. Confidence ≥ 90% habilita automação Tier 1 administrativa.
+        </RuleBox>
+        <RuleBox type="dont">
+          Nunca rotular output da IA como &ldquo;Decisão da IA&rdquo;. Nunca permitir IA negar
+          clinicamente. Nunca aplicar limite de sessões para CID F84.x.
+        </RuleBox>
+      </Box>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mt: 2 }}>
+        <strong>OPME como atributo transversal:</strong> pedidos com OPME podem ter{' '}
+        <Code>category: &apos;OPME&apos;</Code> (standalone) ou OPME embutido em Cirurgias Eletivas
+        / Oncologia (<Code>surgery.hasOpme === true</Code> ou{' '}
+        <Code>opmeMaterials.length &gt; 0</Code>). Aba &ldquo;Tem OPME&rdquo; na fila unifica visão.
+      </Typography>
 
       <SectionTitle>Mapa de rotas</SectionTitle>
       <SimpleTable
@@ -440,9 +656,92 @@ function ProductContent() {
           ['/fila', 'Fila Operacional', 'Autorizador'],
           ['/analise?id=', 'Tela de Análise', 'Autorizador'],
           ['/nova-solicitacao', 'Nova Solicitação', 'Autorizador'],
-          ['/historico', 'Histórico', 'Auditor'],
+          ['/historico', 'Histórico (lista)', 'Auditor'],
+          ['/historico/[id]', 'Histórico (detalhe)', 'Auditor'],
           ['/usuarios', 'Usuários', 'Gestor'],
+          ['/meu-perfil', 'Meu Perfil', 'Autorizador'],
+          ['/notificacoes', 'Notificações', 'Autorizador'],
+          ['/ajuda', 'Ajuda', 'Público'],
+          ['/ajuda/manual', 'Manual', 'Público'],
           ['/docs', 'Esta página', 'Público'],
+        ]}
+      />
+
+      <SectionTitle>Categorias clínicas (9)</SectionTitle>
+      <SimpleTable
+        headers={['Categoria', 'Particularidade']}
+        rows={[
+          [
+            'Terapias Especiais',
+            'CID F84.x (TEA + afins) — RN 539/2022, sessões ilimitadas. ABA, Fono, TO, Psicopedagogia, Fisioterapia.',
+          ],
+          ['SADT', 'Ambulatorial. Maior parte automação Tier 1 (negativas administrativas).'],
+          ['Exames Alta Complexidade', 'RM, TC, PET-CT — DUTs específicas por procedimento.'],
+          ['Home Care', 'Atendimento domiciliar — frequência + duração + equipamentos.'],
+          [
+            'Urgência/Emergência',
+            'Manchester vermelho/laranja → auto-aprovação por Lei 9.656/98 art. 35-C.',
+          ],
+          [
+            'Oncologia',
+            'Estadiamento TNM + protocolo + ciclo + linha. Quimio limitada a 30 dias por ciclo (risco óbito + custo).',
+          ],
+          [
+            'Internação',
+            'Eletiva / Semi-eletiva / Domiciliar AC. Diárias + taxas + justificativa UTI.',
+          ],
+          [
+            'Cirurgias Eletivas',
+            'Procedimento principal + acessórios + pré-operatório + hospitalização. Pode ter OPME embutido.',
+          ],
+          [
+            'OPME',
+            'Standalone ou embutido. ANVISA registro vigente obrigatório + ≥ 3 cotações + justificativa estruturada se não escolher a mais barata.',
+          ],
+        ]}
+      />
+
+      <SectionTitle>Capacidades transversais (20+)</SectionTitle>
+      <SimpleTable
+        headers={['Capacidade', 'Milestone', 'O que faz']}
+        rows={[
+          ['Pendência / Devolutiva', 'M1', 'Pedido volta ao prestador com prazo. SLA não pausa.'],
+          ['Junta Médica', 'M1', 'Desempate clínico. Parecer realimenta IA.'],
+          ['Notificações', 'M1+', '15 tipos. Sino global + badge.'],
+          ['Permissionamento', 'M1', '3 perfis. JWT real virá M10+.'],
+          ['DUT — Diretriz de Utilização', 'M3', 'Critérios ANS para procedimentos específicos.'],
+          ['Código de Pacote', 'M3', 'Operadora agrupa N códigos TUSS em um. Atômico.'],
+          [
+            'Liminar Judicial',
+            'M3 + M7',
+            'Banner persistente. M7: avaliação jurídica first-class (ADR-028).',
+          ],
+          ['NIP', 'M3', 'Chip + banner + priorização + KPI Dashboard.'],
+          ['SLA Crítico', 'M3', 'Pedidos próximos do limite sobem; KPI dedicado.'],
+          ['Diárias / Taxas', 'M4', 'TISS Tabela 18 — preço diária + taxas hospitalares.'],
+          ['Nível de Auditoria', 'M4', 'AMBULATORIAL / HOSPITALAR / UTI por procedimento.'],
+          ['Pré-Operatório', 'M4', 'Checklist itens obrigatórios + opcionais.'],
+          ['ANVISA', 'M5', 'Consulta de registro vigente para OPME (Tabela 1920).'],
+          [
+            'Cotações OPME',
+            'M5',
+            'Mín. 3 fornecedores + motivos estruturados se não escolher a mais barata.',
+          ],
+          ['Pacote OPME (TISS-19)', 'M5', 'Materiais como pacote consolidado.'],
+          ['Pedidos Complementares', 'M6', 'Vincular novo pedido a histórico do beneficiário.'],
+          ['SLA Predictive', 'M6', 'Gestor-only. Previsão de violações nas próximas horas.'],
+          ['Histórico Clicável', 'M6', 'Drill-down de cada entrada para detalhe.'],
+          [
+            'Avaliação Jurídica Acoplada',
+            'M7',
+            'Liminar carrega recomendação + escopo + risco assinada pelo jurídico ou gestor autorizado.',
+          ],
+          [
+            'Subsídios Técnicos',
+            'M7',
+            'Auditor anexa info técnica para o jurídico (bidirecional).',
+          ],
+          ['operatorLock', 'M1', 'Lock de pedido por operador para evitar concorrência.'],
         ]}
       />
 
@@ -450,11 +749,16 @@ function ProductContent() {
       <SimpleTable
         headers={['', '']}
         rows={[
-          ['Framework', 'Next.js (App Router)'],
-          ['UI', 'MUI (Material UI) com sx props + emotion'],
+          ['Framework', 'Next.js 16 (App Router) + Turbopack'],
+          ['UI', 'MUI v7 com sx props + emotion'],
           ['Ícones', '@mui/icons-material'],
-          ['Deploy', 'Vercel'],
-          ['Estilização', 'Sem Tailwind, sem Lucide, sem D3, sem Recharts'],
+          ['Tipagem', 'TypeScript strict + noUncheckedIndexedAccess'],
+          ['Service layer', 'Prototyping Mode (fakes em src/data/pedidos.ts + src/mocks/)'],
+          ['Backend', 'arvo-auth-api (Go, multi-tenant) — Swagger autoritativo'],
+          ['Auth', 'Auth0 SPA (em planejamento — hoje mock)'],
+          ['Deploy', 'Vercel (1 projeto por milestone)'],
+          ['Logging', 'loglevel via src/shared/utils/logger.ts'],
+          ['Validação', 'npm run validate = typecheck + lint:strict + format:check'],
         ]}
       />
     </>
@@ -913,14 +1217,24 @@ function DesignSystemContent() {
   'Junta Médica': { bg: 'rgba(245,158,11,0.12)', color: '#b45309' },
 }`}</CodeBlock>
 
-        <DSSubTitle>Categorias de Procedimento</DSSubTitle>
+        <DSSubTitle>Categorias de Procedimento (9)</DSSubTitle>
         <Preview>
+          <Chip
+            label="Urgência/Emergência"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(220,38,38,0.1)',
+              color: '#dc2626',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
           <Chip
             label="Internação"
             size="small"
             sx={{
-              backgroundColor: 'rgba(144,43,41,0.1)',
-              color: '#902B29',
+              backgroundColor: 'rgba(79,70,229,0.1)',
+              color: '#4f46e5',
               fontWeight: 600,
               height: 22,
             }}
@@ -929,8 +1243,8 @@ function DesignSystemContent() {
             label="Oncologia"
             size="small"
             sx={{
-              backgroundColor: 'rgba(124,58,237,0.1)',
-              color: '#7c3aed',
+              backgroundColor: 'rgba(147,51,234,0.1)',
+              color: '#9333ea',
               fontWeight: 600,
               height: 22,
             }}
@@ -949,7 +1263,7 @@ function DesignSystemContent() {
             label="OPME"
             size="small"
             sx={{
-              backgroundColor: 'rgba(245,158,11,0.12)',
+              backgroundColor: 'rgba(180,83,9,0.12)',
               color: '#b45309',
               fontWeight: 600,
               height: 22,
@@ -969,8 +1283,8 @@ function DesignSystemContent() {
             label="Cirurgias Eletivas"
             size="small"
             sx={{
-              backgroundColor: 'rgba(5,150,105,0.1)',
-              color: '#059669',
+              backgroundColor: 'rgba(234,88,12,0.1)',
+              color: '#ea580c',
               fontWeight: 600,
               height: 22,
             }}
@@ -996,16 +1310,200 @@ function DesignSystemContent() {
             }}
           />
         </Preview>
-        <CodeBlock>{`const catColorMap = {
-  'Internação':              { bg: 'rgba(144,43,41,0.1)',  color: '#902B29' },
-  'Oncologia':               { bg: 'rgba(124,58,237,0.1)', color: '#7c3aed' },
+        <CodeBlock>{`// src/shared/constants/category-colors.ts
+const categoryColorMap = {
+  'Urgência/Emergência':     { bg: 'rgba(220,38,38,0.1)',  color: '#dc2626' },
+  'Internação':              { bg: 'rgba(79,70,229,0.1)',  color: '#4f46e5' },
+  'Oncologia':               { bg: 'rgba(147,51,234,0.1)', color: '#9333ea' },
   'Terapias Especiais':      { bg: 'rgba(37,99,235,0.1)',  color: '#2563eb' },
-  'OPME':                    { bg: 'rgba(245,158,11,0.12)',color: '#b45309' },
+  'OPME':                    { bg: 'rgba(180,83,9,0.12)',  color: '#b45309' },
   'Exames Alta Complexidade':{ bg: 'rgba(8,145,178,0.1)',  color: '#0891b2' },
-  'Cirurgias Eletivas':      { bg: 'rgba(5,150,105,0.1)',  color: '#059669' },
-  'Home Care':               { bg: 'rgba(13,148,136,0.1)', color: '#0d9488' },
+  'Cirurgias Eletivas':      { bg: 'rgba(234,88,12,0.1)',  color: '#ea580c' },
   'SADT':                    { bg: 'rgba(22,163,74,0.1)',  color: '#16a34a' },
+  'Home Care':               { bg: 'rgba(13,148,136,0.1)', color: '#0d9488' },
 }`}</CodeBlock>
+
+        <DSSubTitle>Avaliação Jurídica (M7 — ADR-028)</DSSubTitle>
+        <Typography variant="body2" sx={{ color: '#5a6070', mb: 1.5, fontSize: 13 }}>
+          Chips no InjunctionBanner refletem a recomendação do jurídico para o pedido com liminar
+          ativa. Texto e cor são inequívocos: o jurídico decidiu, não há margem para confusão com
+          estado de espera.
+        </Typography>
+        <Preview>
+          <Chip
+            label="Cumprimento determinado — sem brecha"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(212,24,61,0.1)',
+              color: '#d4183d',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Cumprir + recorrer em paralelo"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(245,158,11,0.12)',
+              color: '#b45309',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Avaliar caso a caso"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(234,88,12,0.12)',
+              color: '#ea580c',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Jurídico recorreu — não cumprir"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(90,96,112,0.12)',
+              color: '#374151',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Aguardando avaliação jurídica"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(156,163,175,0.18)',
+              color: '#5a6070',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+        </Preview>
+        <CodeBlock>{`// src/types/pedido.ts (M7 — ADR-028)
+type AvaliacaoJuridicaRecomendacao =
+  | 'cumprir_obrigatorio'         // vermelho — sem brecha
+  | 'cumprir_recorrer_paralelo'   // âmbar — escopo restrito
+  | 'avaliar_caso_a_caso'         // laranja — humano sovereign
+  | 'recorrer_sem_cumprir';       // cinza escuro — denial liberado
+
+// Fallback (campo ausente) → cinza claro "Aguardando avaliação jurídica"
+// Botão Negar travado quando ausente OU recomendacao === 'cumprir_obrigatorio'.`}</CodeBlock>
+
+        <DSSubTitle>Regulatório — Liminar / NIP / Devolutiva</DSSubTitle>
+        <Preview>
+          <Chip
+            label="Liminar Judicial"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(91,33,182,0.12)',
+              color: '#5b21b6',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="NIP Ativa"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(194,65,12,0.12)',
+              color: '#c2410c',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Devolutiva"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(217,119,6,0.12)',
+              color: '#d97706',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Pendente"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(245,158,11,0.18)',
+              color: '#92400e',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Junta Médica"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(37,99,235,0.1)',
+              color: '#2563eb',
+              fontWeight: 700,
+              height: 22,
+            }}
+          />
+        </Preview>
+        <CodeBlock>{`// src/shared/constants/regulatory-colors.ts (M6)
+const regulatoryAlertColorMap = {
+  liminares:   { bg: 'rgba(91,33,182,0.12)',  color: '#5b21b6' },
+  nips:        { bg: 'rgba(194,65,12,0.12)',  color: '#c2410c' },
+  devolutivas: { bg: 'rgba(217,119,6,0.12)',  color: '#d97706' },
+}`}</CodeBlock>
+
+        <DSSubTitle>Origem do Pedido</DSSubTitle>
+        <Preview>
+          <Chip
+            label="App"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(37,99,235,0.1)',
+              color: '#2563eb',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="WhatsApp"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(22,163,74,0.1)',
+              color: '#16a34a',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="E-mail"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(8,145,178,0.1)',
+              color: '#0891b2',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Prestador"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(144,43,41,0.1)',
+              color: '#902B29',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
+          <Chip
+            label="Call Center"
+            size="small"
+            sx={{
+              backgroundColor: 'rgba(124,58,237,0.1)',
+              color: '#7c3aed',
+              fontWeight: 600,
+              height: 22,
+            }}
+          />
+        </Preview>
 
         <DSSubTitle>Tipo de Guia</DSSubTitle>
         <Preview>
@@ -1213,6 +1711,348 @@ const theme = createTheme({
   );
 }
 
+// ── Conteúdo — Arquitetura ────────────────────────────────────────────────
+
+function ArchitectureContent() {
+  return (
+    <>
+      <SectionTitle>Padrão arquitetural: MVVM</SectionTitle>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.75, mb: 2 }}>
+        Toda feature segue MVVM (Model-View-ViewModel):
+      </Typography>
+      <SimpleTable
+        headers={['Camada', 'Onde mora', 'Responsabilidade']}
+        rows={[
+          ['Model', 'src/services/, src/data/, API', 'Origem dos dados (API ou mock)'],
+          ['View', 'src/modules/{x}/components/*.tsx', 'Renderiza UI. ZERO lógica de negócio.'],
+          [
+            'ViewModel',
+            'src/modules/{x}/hooks/use*.ts',
+            'Estado + lógica + efeitos. Componente consome via destructuring.',
+          ],
+        ]}
+      />
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+        <RuleBox type="do">
+          Toda regra de negócio vai no hook. Componente recebe valores prontos. Hooks têm sufixo{' '}
+          <Code>use*</Code> e ficam em <Code>hooks/</Code> do módulo.
+        </RuleBox>
+        <RuleBox type="dont">
+          Lógica condicional complexa no JSX. <Code>useState</Code> direto no componente quando
+          afeta múltiplas seções. Side effects em componentes (usar <Code>useEffect</Code> em hook).
+        </RuleBox>
+      </Box>
+
+      <SectionTitle>Estrutura de pastas</SectionTitle>
+      <CodeBlock>{`src/
+├── app/          → Next.js App Router. Routing + layout APENAS. Zero lógica.
+├── core/         → Theme MUI, Providers, API client (Axios)
+├── shared/       → Reusable components (chips, cards), constants (color maps), utils (logger)
+├── modules/      → Feature-based modules. Cada um: components/ hooks/ types/ constants/
+│   ├── analysis/        → Tela de Análise
+│   ├── queue/           → Fila Operacional
+│   ├── dashboard/       → Dashboard + ProcessingQueue
+│   ├── history/         → Histórico (lista + detalhe)
+│   ├── new-request/     → Wizard Nova Solicitação
+│   └── shell/           → Sidebar, Topbar, navegação
+├── types/        → Domain type definitions (pedido, usuario, notificacao)
+├── data/         → Mock data (será substituído por API)
+├── mocks/        → Mocks compartilhados (checklist catalogs, procedure codes)
+└── services/     → Service layer (Implementation & Prototyping modes)
+    └── {domain}/ → .service.ts (barrel), .types.ts, .api.ts, .fake.ts, .fake-data.ts`}</CodeBlock>
+
+      <SectionTitle>Composição de componentes</SectionTitle>
+      <CodeBlock>{`Page (orchestrator) → Sections (feature blocks) → Sub-components (UI pieces)
+
+Hooks gerenciam state + logic do componente pai
+Constants têm domain mappings (cores, labels, opções)
+Types definem interfaces do módulo`}</CodeBlock>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1.5 }}>
+        <RuleBox type="do">
+          Components &lt; 200 linhas. Complexity ≤ 15. Conditional rendering via{' '}
+          <Code>Record&lt;key, ReactNode&gt;</Code>, não cascading ternaries.
+        </RuleBox>
+        <RuleBox type="dont">
+          Sub-component &gt; 80 linhas dentro do mesmo arquivo. Mais de 3 níveis de aninhamento JSX
+          condicional. Decompor agora, não depois.
+        </RuleBox>
+      </Box>
+
+      <SectionTitle>Component map por módulo</SectionTitle>
+      <DSSubTitle>analysis</DSSubTitle>
+      <CodeBlock>{`AnalysisPage (orchestrator)
+├── PageHeader
+├── PendencyBanner / AlertsBanner / InjunctionBanner / SimultaneousGuidesAlert
+├── BeneficiarySection
+├── ProceduresSection → ProcedureRow → ProcedureActionCell
+├── RegisteredAdjustmentsSection
+├── ObservationsSection
+├── ConsolidatedHistorySection
+│   └── HistoryCompleteness, HistoryTimeline, HistoryConsultations
+│   └── HistoryAuthorizations, HistoryWarnings, HistoryEligibility
+├── DocumentsSection
+│   └── DocumentList, DocumentViewer, DocumentUploadModal,
+│       DocumentRequestModal, IAExtractionPanel
+├── AssistantSidebar
+│   └── SuggestionSection, ChecklistSection, SpecialAlertsSection
+│   └── AnalystDecisionSection → ProcedureDecisionCard, DecisionButtons
+├── AdjustmentDrawer
+│   └── AdjustmentFormBody → AdjustmentFieldQuantity/Provider/Code
+└── Dialogs: Approval, Denial, Pendency, MedicalBoard, Divergence,
+            PartialApproval, ShortcutsHelp, InjunctionAcknowledgment
+
+Hooks: useAnalysis, useAdjustmentState, useDecisionFlow,
+       useDecisionFormFields, useDialogVisibility, useKeyboardNavigation`}</CodeBlock>
+
+      <DSSubTitle>queue / dashboard / new-request</DSSubTitle>
+      <CodeBlock>{`QueuePage
+├── QueueMetricsRow
+├── QueueTabBar (Geral, Devolutivas, Liminares, NIPs, Tem OPME, SLA)
+├── QueueFilterBar
+├── QueueTable → QueueTableRow → ProceduresCell, ActionCell, SubStatusLabel
+└── QueuePagination
+Hooks: useQueueData, useQueueFilters, useScrollRestoration
+
+DashboardPage
+├── DashboardKpiStrip (6 KPIs)
+├── SlaPredictiveCard (gestor-only)
+├── ProcessingQueueTable (Entrando no sistema)
+├── RecentRequestsTable
+└── CategoryBreakdownCard
+Hooks: useDashboardData, useProcessingQueue
+
+NewRequestPage (wizard 6 steps)
+├── StepUpload (0)
+├── StepBeneficiary (1)
+├── StepClinical (2)
+├── StepDynamic (3) → StepTherapies / StepSadt / StepOncology / etc.
+├── StepDocuments (4) — opcional
+├── StepReview (5) → ValidationSummary, DocumentsReviewSection
+├── TissDocPreview (sidebar)
+└── SuccessDialog
+Hooks: useNewRequestForm, useStepNavigation, useDocumentUpload, useUploadStep`}</CodeBlock>
+
+      <SectionTitle>Decision tree — recebendo mudança</SectionTitle>
+      <CodeBlock>{`1. Visual only (cor, espaçamento, texto)?
+   → Identificar componente via Component Map
+   → Se o valor vem de shared/constants → alterar lá
+   → Senão: editar sx do componente. NUNCA sobrescrever defaults do tema.
+
+2. New component?
+   → Qual módulo é dono da rota?
+   → Criar em src/modules/{x}/components/
+   → Se tem state/lógica → criar hook em hooks/
+   → Se compartilhável → src/shared/components/
+   → Se > 80 linhas → decompor agora
+
+3. New domain value (status, categoria, tipo)?
+   → Adicionar no type em types/ ou no módulo
+   → Atualizar shared/constants/ PRIMEIRO (cores, labels)
+   → Só depois atualizar componentes consumidores
+   → NUNCA inline color novo no componente
+
+4. Logic change (validação, fluxo)?
+   → Encontrar o ViewModel hook
+   → Mudança vai no hook, não no componente
+   → Validação → função pura extraída
+   → Conditional → manter complexity ≤ 15
+
+5. API integration?
+   → Endpoint existe no Swagger?
+   →   Sim → Implementation Mode
+   →   Não → Prototyping Mode + criar issue no BE`}</CodeBlock>
+
+      <SectionTitle>Modos: Prototyping vs Implementation</SectionTitle>
+      <SimpleTable
+        headers={['Critério', 'Prototyping (atual)', 'Implementation (futuro)']}
+        rows={[
+          ['Quando', 'Endpoint NÃO existe no Swagger', 'Endpoint existe e está documentado'],
+          [
+            'Origem dos dados',
+            'src/data/pedidos.ts + src/mocks/ + .fake.ts',
+            'API real via Axios em .api.ts',
+          ],
+          [
+            'Service barrel',
+            'USE_FAKE=true → resolve para fake',
+            'USE_FAKE=false → resolve para api',
+          ],
+          [
+            'Marcador obrigatório',
+            'Header @prototype + @planned-endpoint',
+            'Tipos derivados do Swagger, contratos via OpenAPI',
+          ],
+          ['Mocks fora de teste', 'Permitidos no service layer', 'PROIBIDOS — só em testes (MSW)'],
+        ]}
+      />
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mt: 2 }}>
+        Service layer atual usa <Code>createPendingApiService</Code> (Proxy stub) em barrels onde{' '}
+        <Code>USE_FAKE=false</Code> mas <Code>.api.ts</Code> ainda não existe — métodos rejeitam com
+        erro descritivo apontando o que falta criar (P0.1 do plano M7).
+      </Typography>
+
+      <SectionTitle>Convenções de código</SectionTitle>
+      <DSSubTitle>Linguagem</DSSubTitle>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mb: 1 }}>
+        <strong>TODO código em inglês</strong> — variáveis, funções, comentários, logs, types, tudo.
+        Git: commits + branches em inglês. PR titles + descriptions em PT-BR (comunicação de time).
+        UI em PT-BR para o usuário final.
+      </Typography>
+
+      <DSSubTitle>TypeScript</DSSubTitle>
+      <CodeBlock>{`// Strict + noUncheckedIndexedAccess habilitados
+// Type imports obrigatórios:
+import { type Foo } from './types'
+
+// Interface > type para APIs públicas
+// Record fallbacks devem usar constants extraídas, não index access com fallback`}</CodeBlock>
+
+      <DSSubTitle>Logging</DSSubTitle>
+      <CodeBlock>{`// ESLint bloqueia console.log/warn/error (no-console: error)
+import { logger } from '@/shared/utils/logger'
+
+logger.debug('dev')
+logger.info('event')
+logger.warn('attention')
+logger.error('failure', err)
+
+// Proibido logar: tokens, senhas, CPF, dados de paciente, PII
+// IDs apenas em contexto de usuário — nunca nomes/emails/documentos
+// Nunca logar response API completo — filtrar campos relevantes`}</CodeBlock>
+
+      <DSSubTitle>Imports — ordem enforçada</DSSubTitle>
+      <CodeBlock>{`// 1. react
+import { useState, useEffect } from 'react'
+
+// 2. next
+import { useRouter } from 'next/navigation'
+
+// 3. external
+import Box from '@mui/material/Box'
+
+// 4. @/core
+import { theme } from '@/core/theme'
+
+// 5. @/shared
+import { statusColorMap } from '@/shared/constants'
+
+// 6. @/modules
+import { useAnalysis } from '@/modules/analysis/hooks/useAnalysis'
+
+// 7. @/types
+import { type Request } from '@/types/pedido'
+
+// 8. @/mocks
+import { TUSS_CODES } from '@/mocks/procedure-codes'
+
+// 9. relative
+import { type LocalType } from './types'
+
+// PROIBIDO: imports relativos profundos (../../) — ESLint bloqueia`}</CodeBlock>
+
+      <DSSubTitle>Git — Conventional Commits</DSSubTitle>
+      <CodeBlock>{`// Format: type(scope): description
+// English, lowercase, no period, max 72 chars
+
+// Types permitidos
+feat, fix, refactor, style, chore, docs, test, ci, perf
+
+// Scopes permitidos
+analise, fila, dashboard, historico, usuarios, nova-solicitacao,
+auth, shared, core, ci, deps
+
+// Branches: type/TICKET-short-description
+feat/NEW-779-setup-guardrails
+
+// Regra ABSOLUTA: NUNCA commit/push automático
+// Esperar instrução explícita do usuário`}</CodeBlock>
+
+      <DSSubTitle>Pull Requests</DSSubTitle>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mb: 1 }}>
+        Title ≤ 70 chars em PT-BR. Body com bullets em PT-BR, sem checkboxes. Sections: Resumo →
+        Mudanças → Screenshots (se aplicável) → Ticket (sempre último). Template em{' '}
+        <Code>.github/PULL_REQUEST_TEMPLATE.md</Code>.
+      </Typography>
+
+      <SectionTitle>Workflow de evolução por milestone</SectionTitle>
+      <Typography variant="body2" sx={{ color: '#5a6070', lineHeight: 1.65, mb: 2 }}>
+        Base ativa avança a cada milestone fechada. PR de cada milestone fica em estado{' '}
+        <strong>open</strong> apontando para <Code>main</Code> mas <strong>NÃO merge</strong>. Merge
+        final acontece depois que backend integrar. Cada milestone tem preview Vercel próprio (1
+        projeto Vercel por milestone, scope <Code>davirojtenberg-labs-projects</Code>).
+      </Typography>
+      <SimpleTable
+        headers={['Milestone', 'Branch', 'Escopo']}
+        rows={[
+          ['M0', 'TEA-MVP', 'TEA MVP (CID F84) — encerrado'],
+          ['M1', 'TEA-M1', 'Maturidade Operacional TEA'],
+          ['M2', 'Ambulatoriais-M2', 'SADT, Exames AC, Home Care'],
+          ['M3', 'Hospitalares-Críticos-M3', 'U/E, Oncologia + capacidades transversais'],
+          ['M4', 'Hospitalares-Core-M4', 'Internação, Cirurgias Eletivas'],
+          ['M5', 'Materiais-M5', 'OPME (ANVISA, cotações, pacote TISS-19)'],
+          ['M6', 'Ajustes-e-Refinamentos-M6', 'Pedidos Complementares, SLA Predictive'],
+          [
+            'M7',
+            'Evolucao-M7 (ativa)',
+            'Avaliação Jurídica acoplada (ADR-028) + cluster regulatório',
+          ],
+        ]}
+      />
+
+      <SectionTitle>Validação obrigatória pós-mudança</SectionTitle>
+      <CodeBlock>{`npm run validate
+# = npm run typecheck && npm run lint:strict && npm run format:check
+
+# Rodar SEMPRE após qualquer mudança de código
+# ESLint com --max-warnings 0
+# Prettier com check (não write) por padrão`}</CodeBlock>
+
+      <SectionTitle>Regras de produto load-bearing</SectionTitle>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <RuleBox type="do">
+          <strong>White-label sempre.</strong> Operadora-specific via{' '}
+          <Code>operatorConfig.&lt;param&gt;</Code> configurável. Mocks podem usar Athena como
+          referência mas sinalizar como ilustrativo.
+        </RuleBox>
+        <RuleBox type="dont">
+          Nunca hardcode &ldquo;Athena&rdquo; em copy, regras, valores. Nunca rotular IA como
+          &ldquo;Decisão da IA&rdquo;. Nunca bloquear F84.x por quantidade de sessões.
+        </RuleBox>
+        <RuleBox type="do">
+          <strong>Step Documentos NUNCA bloqueia submit.</strong> Pedido sem docs entra com status{' '}
+          Pendência. Sistema gerencia via devolutiva, não barreira de UI.
+        </RuleBox>
+        <RuleBox type="dont">
+          Nunca adicionar case <Code>currentStep === 4</Code> em <Code>validateStepTransition</Code>{' '}
+          com validação de documentos obrigatórios. Lista de docs serve para recomendação visual +
+          auto-pendência no submit.
+        </RuleBox>
+        <RuleBox type="do">
+          <strong>Imutabilidade e rastreabilidade.</strong> Decisões geram registro append-only.
+          Snapshot do contexto no momento da decisão (avaliação jurídica, sugestão IA, checklist).
+          Divergência da IA exige justificativa estruturada.
+        </RuleBox>
+        <RuleBox type="dont">
+          Editar histórico. Sobrescrever audit log. Permitir undo de decisão finalizada.
+        </RuleBox>
+      </Box>
+
+      <SectionTitle>Atalhos de teclado (Análise)</SectionTitle>
+      <SimpleTable
+        headers={['Tecla', 'Ação']}
+        rows={[
+          ['?', 'Abre help drawer com lista de atalhos'],
+          ['A', 'Aprovar pedido'],
+          ['N', 'Negar pedido'],
+          ['P', 'Pendenciar'],
+          ['J', 'Encaminhar para Junta Médica'],
+          ['Esc', 'Fecha dialog aberto'],
+        ]}
+      />
+    </>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────
 
 export default function DocsPage() {
@@ -1227,10 +2067,10 @@ export default function DocsPage() {
             Arvo Auth
           </Typography>
           <Typography variant="subtitle1" sx={{ color: '#5a6070', fontWeight: 500, mb: 0.5 }}>
-            Documentação Técnica de Produto
+            Documentação Técnica de Produto, Design System e Arquitetura
           </Typography>
           <Typography variant="caption" sx={{ color: '#9ca3af' }}>
-            v1.0 · Março 2026
+            v2.0 · Maio 2026 · M7 ativo (9 categorias, 20+ capacidades transversais, white-label)
           </Typography>
         </Box>
 
@@ -1247,10 +2087,12 @@ export default function DocsPage() {
             label="Design System"
             sx={{ fontWeight: 600, fontSize: 14, textTransform: 'none' }}
           />
+          <Tab label="Arquitetura" sx={{ fontWeight: 600, fontSize: 14, textTransform: 'none' }} />
         </Tabs>
 
         {tab === 0 && <ProductContent />}
         {tab === 1 && <DesignSystemContent />}
+        {tab === 2 && <ArchitectureContent />}
 
         <Typography
           variant="caption"
