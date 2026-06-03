@@ -275,8 +275,10 @@ function collectAllStepErrors(
   stepLabels: readonly string[],
 ): StepError[] {
   const out: StepError[] = [];
-  // Steps 0..3 are covered today. Step 4 (Documents) has no required-field
-  // validation yet — P2.4 is blocked on a product decision with Cinthia.
+  // Steps 0..3 carry blocking validation. Step 4 (Documents) is intentionally
+  // optional: missing required docs must never block submission — the request
+  // enters the system with status Pendência instead. See feedback memory
+  // `feedback-documentos-nunca-bloqueantes`.
   for (let step = 0; step < LAST_STEP; step++) {
     const error = validateStepTransition(step, form, terapiaProcedimentos);
     if (error) {
